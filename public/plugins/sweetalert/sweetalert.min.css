@@ -1,0 +1,39 @@
+/* start Sweet alert box */
+
+.swal-text {
+    line-height: 25px;
+    text-align: center;
+}
+
+.swal-modal {
+    width: 350px;
+}
+
+.swal-icon {
+    margin: 5px auto;
+}
+
+.swal-icon:first-child {
+    margin-top: 15px;
+}
+
+.swal-title {
+    padding: 11px 0px;
+    font-size: 20px;
+}
+
+.swal-title:not(:last-child) {
+    margin-bottom: 7px;
+}
+
+.swal-footer {
+    text-align: center;
+    margin-top: 0;
+    padding: 10px 16px;
+}
+
+.swal-button {
+    padding: 6px 24px;
+}
+
+/* End Sweet alert box */

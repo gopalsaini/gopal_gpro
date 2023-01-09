@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>basic example</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script> 
+	<script type="text/javascript" src="jquery.qrcode.js"></script>
+	<script type="text/javascript" src="qrcode.js"></script>
+
+	<style>
+		body {font-family: Arial, Helvetica, sans-serif;}
+		* {box-sizing: border-box;}
+
+		input[type=text], select, textarea {
+		  width: 100%;
+		  padding: 12px;
+		  border: 1px solid #ccc;
+		  border-radius: 4px;
+		  box-sizing: border-box;
+		  margin-top: 6px;
+		  margin-bottom: 16px;
+		  resize: vertical;
+		}
+
+		input[type=submit] {
+		  background-color: #04AA6D;
+		  color: white;
+		  padding: 12px 20px;
+		  border: none;
+		  border-radius: 4px;
+		  cursor: pointer;
+		}
+
+		input[type=submit]:hover {
+		  background-color: #45a049;
+		}
+
+		.container {
+		  border-radius: 5px;
+		  background-color: #f2f2f2;
+		  padding: 20px;
+		}
+	</style>
+
+</head>
+<body>
+	<div class="container">
+	  <form action="#" onsubmit="return getQrCode()">
+		<label for="fname">First No</label>
+		<input type="text" name="firstname" placeholder="First No" id="first_no">
+
+		<label for="lname">Second No</label>
+		<input type="text" name="lastname" placeholder="Second No" id="second_no">
+
+		<label for="country">Third No.</label>
+		<input type="text" name="lastname" placeholder="Third No." id="third_no">
+
+		<input type="submit" value="Submit">
+	  </form>
+	</div>
+
+	<div style="position:fixed;bottom:0;left:500px">
+		
+		<div id="qrcodeTable"></div> 
+
+		<div id="content" style="display:none">
+
+			(1) 09332017000201<br>
+			(2) 4050-6<br>
+			(3) 210615<br>
+			
+			LOT 5067-03
+			date 2021-06-15
+
+		</div>
+
+		
+	</div>
+ 
+
+<script>
+	function getQrCode(){
+
+		var value1=$('#first_no').val();
+		var value2=$('#second_no').val();
+		var value3=$('#third_no').val();
+
+		$('#qrcodeTable').html('');
+		$('#content').html('');
+		jQuery('#qrcodeTable').qrcode({
+			<!-- render	: "table", -->
+			text	: "(1) "+value1+" (10) "+value2+" (11) "+value3,
+			width: "87",
+			height: "84"
+		});	
+
+		
+		return false;
+
+	}
+	
+</script>
+
+</body>
+</html>

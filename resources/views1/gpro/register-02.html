@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPro</title>
+
+    <!-- css-files -->
+    <link rel="stylesheet" href="css/all.min.css">
+    <link rel="stylesheet" href="css/fonts.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="css/owl.theme.default.min.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <!---header section start-->
+    <div class="header">
+        <div class="container-fluid custom-container">
+            <div class="row">
+                <div class=" col-6 col-sm-6 col-md-6 col-lg-2 col-xl-3">
+                    <a href="index.html" class="header-logo">
+                        <img src="images/logo.png">
+                    </a>
+                </div>
+                <div class="col-lg-6 col-xl-5 d-lg-block d-xl-block d-none">
+                    <ul class="header-menu">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a data-bs-toggle="modal" href="#exampleModalToggle2">Register</a></li>
+                        <li><a href="javascript:;">Contact-Us</a></li>
+                    </ul>
+                </div>
+                <div class=" col-6 col-sm-6 col-md-6 col-lg-4 col-xl-4">
+                    <div class="header-icons">
+                        <ul class="d-xl-flex d-lg-flex d-none social-icons">
+                            <li><a href="javascript:;" class="icon-img"><i
+                                        class="fa-brands fa-facebook-f icon-size"></i></a></li>
+                            <li><a href="javascript:;" class="icon-img"><i
+                                        class="fa-brands fa-twitter icon-size"></i></a></li>
+                            <li><a href="javascript:;" class="icon-img"><i
+                                        class="fa-brands fa-instagram icon-size"></i></a></li>
+                        </ul>
+                        <ul class="toggle-login">
+                            <li class="dropdown-allie">
+                                <a href="javascript:;" class="profile">
+                                    <div>
+                                        <img src="images/allie-grater.png" alt="img">
+                                    </div>
+                                    <div>
+                                        <p>Allie Grater <span><i class="fas fa-chevron-down"></i></span></p>
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menus">
+                                    <li><a href="javacsript:;">My-Profile</a></li>
+                                    <li><a href="javacsript:;">Log-out</a></li>
+                                </ul>
+                            </li>
+                            <li class="d-xl-none d-lg-none d-block">
+                                <div class="position-relative">
+                                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#sidebar" aria-controls="sidebar" aria-expanded="false"
+                                        aria-label="Toggle navigation">
+                                        <!--just add these span here-->
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                        <!--/end span-->
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- sidebar-css -->
+    <div id="sidebar">
+        <div class="respnsv-logo">
+            <img src="images/logo.png" alt="logo">
+        </div>
+        <div id="cssmenu">
+            <ul>
+                <li><a href="javascript:;">Home</a></li>
+                <li><a href="javascript:;">Register</a></li>
+                <li><a href="javascript:;">Contact-Us</a></li>
+            </ul>
+        </div>
+    </div>
+    <!--header section end-->
+
+    <!-- banner-start -->
+    <div class="inner-banner-wrapper">
+        <div class="container custom-container2">
+            <div class="step-form-wrap step-preview-wrap">
+                <ul>
+                    <li>
+                        <a href="javascript:;" class="active">
+                            <span>01</span>Group Info
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;" class="active">
+                            <span>02</span>Registered 
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <span>03</span>Payment 
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <span>04</span>Travel Info 
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <span>05</span>Session 
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">
+                            <span>06</span>Event Day
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="step-form">
+                <div class="application-wrap">
+                    <div class="application-content">
+                        <svg width="36" height="35" viewBox="0 0 36 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M34.9682 16.7567L33.1803 14.0073L33.6123 10.7495C33.6723 10.2167 33.4203 9.67169 32.9644 9.39293L30.1685 7.69738L29.1606 4.57286C28.9927 4.0522 28.5247 3.68889 27.9965 3.62834L24.7565 3.32556L22.5006 0.963903C22.1165 0.564349 21.5527 0.431071 21.0485 0.624904L18.0003 1.78764L14.9524 0.637084C14.4483 0.443252 13.8724 0.576529 13.5003 0.976083L11.2445 3.33774L8.00446 3.64052C7.46446 3.70107 7.00832 4.06441 6.84032 4.58504L5.82032 7.70984L3.03619 9.39321C2.56824 9.67165 2.31619 10.2048 2.38824 10.7498L2.8203 14.0076L1.03237 16.7569C0.74442 17.2171 0.74442 17.7986 1.03237 18.2586L2.8203 21.008L2.38824 24.2536C2.31619 24.7986 2.56824 25.3314 3.03619 25.6102L5.82032 27.3058L6.82826 30.4303C6.9962 30.9509 7.45237 31.3142 7.99239 31.363L11.2324 31.6779L13.4883 34.0396C13.8724 34.4272 14.4362 34.5724 14.9403 34.3786L18.0003 33.2277L21.0483 34.3783C21.2041 34.4388 21.3603 34.4632 21.5162 34.4632C21.8762 34.4632 22.2362 34.3177 22.5003 34.0393L24.7562 31.6776L27.9962 31.3749C28.5241 31.3143 28.9921 30.951 29.1603 30.4303L30.1683 27.3058L32.9641 25.6103C33.42 25.3318 33.6841 24.7987 33.6121 24.2537L33.18 20.9959L34.968 18.2465C35.2682 17.7983 35.2682 17.2171 34.9682 16.7567L34.9682 16.7567ZM25.5959 14.0439L16.8002 22.9216C16.5482 23.176 16.2002 23.3093 15.8402 23.3093C15.4923 23.3093 15.1323 23.176 14.8802 22.9216L10.4044 18.4043C9.87641 17.8715 9.87641 17.0116 10.4044 16.4666C10.9323 15.9337 11.7964 15.9337 12.3244 16.4666L15.8402 20.015L23.6642 12.1185C24.1922 11.5857 25.0563 11.5857 25.5963 12.1185C26.1242 12.6392 26.1242 13.5113 25.596 14.0441L25.5959 14.0439Z" fill="#111111"/>
+                        </svg>
+                        <h5>Application Approved</h5>
+                    </div>
+                    <div class="edit-btn">
+                        <a href="javascript:;" class="main-btn bg-gray-btn">
+                            <svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.974 5.40783L19.092 7.52483M18.336 3.54283L12.609 9.26983C12.3131 9.56533 12.1113 9.94181 12.029 10.3518L11.5 12.9998L14.148 12.4698C14.558 12.3878 14.934 12.1868 15.23 11.8908L20.957 6.16383C21.1291 5.99173 21.2656 5.78742 21.3588 5.56256C21.4519 5.33771 21.4998 5.09671 21.4998 4.85333C21.4998 4.60994 21.4519 4.36895 21.3588 4.14409C21.2656 3.91923 21.1291 3.71492 20.957 3.54283C20.7849 3.37073 20.5806 3.23421 20.3557 3.14108C20.1309 3.04794 19.8899 3 19.6465 3C19.4031 3 19.1621 3.04794 18.9373 3.14108C18.7124 3.23421 18.5081 3.37073 18.336 3.54283V3.54283Z" stroke="#" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M19.5 15V18C19.5 18.5304 19.2893 19.0391 18.9142 19.4142C18.5391 19.7893 18.0304 20 17.5 20H6.5C5.96957 20 5.46086 19.7893 5.08579 19.4142C4.71071 19.0391 4.5 18.5304 4.5 18V7C4.5 6.46957 4.71071 5.96086 5.08579 5.58579C5.46086 5.21071 5.96957 5 6.5 5H9.5" stroke="#" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Edit</a>
+                    </div>
+                </div>
+                <h4 class="inner-head">Personal Details</h4>
+                <div class="detail-wrap">
+                    <ul>
+                        <li>
+                            <p>Full Name</p>
+                            <span>:&nbsp; &nbsp; &nbsp; Mr. Allie Grater</span>
+                        </li>
+                        <li>
+                            <p>Gender</p>
+                            <span>:&nbsp; &nbsp; &nbsp; Male</span>
+                        </li>
+                        <li>
+                            <p>Date Of Birth</p>
+                            <span>:&nbsp; &nbsp; &nbsp; 12 December 1992</span>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <p>Citizenship</p>
+                            <span>:&nbsp; &nbsp; &nbsp; American</span>
+                        </li>
+                        <li>
+                            <p>Marital status</p>
+                            <span>:&nbsp; &nbsp; &nbsp; Unmaried</span>
+                        </li>
+                    </ul>
+                </div>
+                <h4 class="inner-head section-gap">Contact Details</h4>
+                <div class="detail-wrap">
+                    <ul>
+                        <li>
+                            <p>Postal Address </p>
+                            <span>:&nbsp; &nbsp; &nbsp; UPS </span>
+                        </li>
+                        <li>
+                            <p>Zip/Postal Code</p>
+                            <span>:&nbsp; &nbsp; &nbsp; 0000000</span>
+                        </li>
+                        <li>
+                            <p>Country </p>
+                            <span>:&nbsp; &nbsp; &nbsp; America</span>
+                        </li>
+                        <li>
+                            <p>State/Province</p>
+                            <span>:&nbsp; &nbsp; &nbsp; Alaska</span>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <p>City</p>
+                            <span>:&nbsp; &nbsp; &nbsp; Illinois</span>
+                        </li>
+                        <li>
+                            <p>Phone Number</p>
+                            <span>:&nbsp; &nbsp; &nbsp; 6566777777</span>
+                        </li>
+                        <li>
+                            <p>Business or Home</p>
+                            <span>:&nbsp; &nbsp; &nbsp; 6266569077</span>
+                        </li>
+                        <li>
+                            <p>WhatsApp</p>
+                            <span>:&nbsp; &nbsp; &nbsp; 9876789770</span>
+                        </li>
+                    </ul>
+                </div>
+                <ul class="unstyled centered">
+                    <li>
+                        <input class="styled-checkbox" id="styled-checkbox-1" type="checkbox" value="value1">
+                        <label for="styled-checkbox-1">WhatsApp number is same as phone number</label>
+                      </li>
+                </ul>
+                <h4 class="inner-head section-gap">Ministry Details</h4>
+                <div class="detail-wrap">
+                    <ul>
+                        <li>
+                            <p>Ministry Name  </p>
+                            <span>:&nbsp; &nbsp; &nbsp;  Ministry of Defence </span>
+                        </li>
+                        <li>
+                            <p>Ministry Postal Address </p>
+                            <span>:&nbsp; &nbsp; &nbsp; UPS </span>
+                        </li>
+                        <li>
+                            <p>Zip/Postal Code </p>
+                            <span>:&nbsp; &nbsp; &nbsp; 0000000</span>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <p>Country  </p>
+                            <span>:&nbsp; &nbsp; &nbsp; America</span>
+                        </li>
+                        <li>
+                            <p>State/Province </p>
+                            <span>:&nbsp; &nbsp; &nbsp; Alaska</span>
+                        </li>
+                        <li>
+                            <p>City  </p>
+                            <span>:&nbsp; &nbsp; &nbsp;  Illinois</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="preview-form">
+                    <label for="" class="d-block">Are you a Pastor Trainer (PTer)? </label>
+                    <div class="radio-wrap">
+                        <div class="form__radio-group">
+                            <input type="radio" name="size" id="yes" class="form__radio-input">
+                            <label class="form__label-radio" for="yes" class="form__radio-label">
+                              <span class="form__radio-button"></span> Yes
+                            </label>
+                        </div>
+                        <div class="form__radio-group">
+                            <input type="radio" name="size" id="no" class="form__radio-input">
+                            <label class="form__label-radio" for="no" class="form__radio-label">
+                              <span class="form__radio-button"></span> No
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="section-gap">How are you involved in training pastoral leaders?</h4>
+                <div class="detail-wrap minister-gap">
+                    <ul>
+                        <li>
+                            <p>Ministry Name  </p>
+                            <span>:&nbsp; &nbsp; &nbsp;  Ministry of Defence </span>
+                        </li>
+                        <li>
+                            <p>Ministry Postal Address </p>
+                            <span>:&nbsp; &nbsp; &nbsp; UPS </span>
+                        </li>
+                        <li>
+                            <p>Zip/Postal Code </p>
+                            <span>:&nbsp; &nbsp; &nbsp; 0000000</span>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li>
+                            <p>Country  </p>
+                            <span>:&nbsp; &nbsp; &nbsp; America</span>
+                        </li>
+                        <li>
+                            <p>State/Province </p>
+                            <span>:&nbsp; &nbsp; &nbsp; Alaska</span>
+                        </li>
+                        <li>
+                            <p>City  </p>
+                            <span>:&nbsp; &nbsp; &nbsp;  Illinois</span>
+                        </li>
+                    </ul>
+                </div>
+                <h4 class="section-gap">How are you involved in training pastoral leaders?</h4>
+                <div class="detail-wrap minister-gap">
+                    <ul>
+                        <span>1-10 </span>
+                    </ul>
+                </div>
+                <h4 class="section-gap">How many of them can serve as future pastor trainers?</h4>
+                <div class="detail-wrap minister-gap">
+                    <ul>
+                        <span>10-100 </span>
+                    </ul>
+                </div>
+                <div class="register-next">
+                    <a href="register-02.html" class="main-btn bg-gray-btn">Next</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner-end -->
+
+    <!-- footer-start -->
+    <footer class="footer-inner">
+        <div class="container">
+            <div class="footer-logo">
+                <a href="javascript:;">
+                    <img src="images/footer-logo.png" alt="logo">
+                </a>
+            </div>
+            <div class="footer-menu">
+                <ul>
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a  href="#exampleModalToggle2"   data-bs-toggle="modal">Register</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Contact Us</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Terms of Use</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">Privacy Policy</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="footer-box">
+                        <h4>Contact US</h4>
+                        <p>2108 Selah Way Brattleboro, VT 05301
+                            (1)802-706-3878</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="footer-box">
+                        <h4>Social Handles</h4>
+                        <ul class="footer-social">
+                            <li>
+                                <a href="javascript:;"><i class="fab fa-facebook-f"></i></a>
+                            </li>
+                            <li>
+                                <a href="javascript:;"><i class="fab fa-twitter"></i></a>
+                            </li>
+                            <li>
+                                <a href="javascript:;"><i class="fab fa-instagram"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-footer">
+                <p>Copyright © 2022 <a href="javascript:;">GPRO Congress</a>. All rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- footer-end -->
+
+
+    <!-- login-wrap -->
+    <div class="login-modal">
+        <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+            tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-block border-0 text-center">
+                        <h2 class="main-head">Welcome You !</h2>
+                        <h5>Log in to submit your application</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="row">
+                            <div class="col-lg-12">
+                                <div class="form-check">
+                                    <label class="form-check-label">E-mail <b>*</b> </label>
+                                    <div class="input-box">
+                                        <input type="email" placeholder="Enter Here">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-check">
+                                    <label class="form-check-label">Password <b>*</b> </label>
+                                    <div class="input-box">
+                                        <input type="password" placeholder="Enter Here">
+                                        <i class="toggle-password fas fa-eye-slash eye-wrap"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div>
+                                    <a href="group-login.html" class="login-btn">Login</a>
+                                    <a href="javascript:;" class="forget">Forgot Password?</a>
+                                </div>
+                                <div class="signup">
+                                    <p>Don’t Have an Account? <a href="javascript:;"
+                                            data-bs-target="#exampleModalToggle2" data-bs-toggle="modal"
+                                            data-bs-dismiss="modal">Click Here to Sign Up</a></p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
+            tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-block border-0 text-center">
+                        <h2 class="main-head">Sign Up</h2>
+                        <h5>Log in to submit your application</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form class="row">
+                            <div class="col-lg-12">
+                                <div class="form-check">
+                                    <label class="form-check-label">E-mail <b>*</b> </label>
+                                    <div class="input-box">
+                                        <input type="email" placeholder="Enter Here">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-check">
+                                    <label class="form-check-label">Password <b>*</b> </label>
+                                    <div class="input-box">
+                                        <input type="password" placeholder="Enter Here">
+                                        <i class="toggle-password fas fa-eye-slash eye-wrap"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-check">
+                                    <label class="form-check-label">Confirm Password <b>*</b> </label>
+                                    <div class="input-box">
+                                        <input type="password" placeholder="Enter Here">
+                                        <i class="toggle-password fas fa-eye-slash eye-wrap"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div>
+                                    <a href="javascript:;" class="login-btn" data-bs-target="#exampleModalToggle3"
+                                        data-bs-toggle="modal" data-bs-dismiss="modal">Sign Up</a>
+                                    <a href="javascript:;" class="forget">Forgot Password?</a>
+                                </div>
+                                <div class="signup">
+                                    <p>Don’t Have an Account? <a href="javascript:;"
+                                            data-bs-target="#exampleModalToggle" data-bs-toggle="modal"
+                                            data-bs-dismiss="modal">Click Here to Log In</a></p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModalToggle3" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+            tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-block border-0 text-center">
+                        <h2 class="main-head">Welcome You !</h2>
+                        <h5>Log in to submit your application</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="thank-popup">
+                            <img src="images/right.png" alt="img">
+                            <h4>Thank You</h4>
+                            <p>You are successfully sign up</p>
+                            <div class="d-flex justify-content-center">
+                                <a href="javascript:;" class="main-btn" data-bs-dismiss="modal">ok</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- js-files -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/custom.js"></script>
+
+
+    <script>
+        $('.cover').on('click', function () {
+            $(this).children().css({
+                'z-index': 1,
+                'opacity': 1
+            });
+            $(this).children().trigger('play');
+        });
+        $('video').on('click', function () {
+            console.log('a');
+        });
+    </script>
+
+    <script>
+        // -------- password
+        $(".toggle-password").click(function () {
+            $(this).toggleClass("fas fa-eye");
+            $(this).toggleClass("fas fa-eye-slash");
+            input = $(this).parent().find("input");
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+    </script>
+
+<script> 
+    $(document).ready(function(){
+      $(".click-me").click(function(){
+        $(this).parent().toggleClass("show-icon");
+      });
+    });
+</script>
+
+</body>
+
+</html>

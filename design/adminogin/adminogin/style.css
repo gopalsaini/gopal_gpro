@@ -1,0 +1,240 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap");
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-transform: capitalize;
+  font-family: "Roboto", sans-serif;
+  background: url(Simple\ Shiny.svg) no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+}
+
+.workSpace {
+  display: flex;
+  position: absolute;
+  min-width: 420px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px;
+  height: 500px;
+  background: linear-gradient(
+    to right,
+    #3c90e4 0%,
+    #3c90e4 40%,
+    #3c90e4 40%,
+    #ffffff 40%,
+    #ffffff 100%
+  );
+  box-shadow: black 0px 0px 40px -20px;
+  border-radius: 40px;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  background-color: #3c90e4;
+  position: absolute;
+  left: 51%;
+  top: 65%;
+  transform: translate(-50%);
+  border: 15px #ffffff solid;
+  border-radius: 50%;
+}
+.avatar #infinity {
+  position: relative;
+  top: 35px;
+  left: 7px;
+  width: 106px;
+  height: 50px;
+  box-sizing: content-box;
+}
+.avatar #infinity:before,
+.avatar #infinity:after {
+  content: "";
+  box-sizing: content-box;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 10px solid #ffffff;
+  border-radius: 25px 25px 0 25px;
+  transform: rotate(-45deg);
+}
+.avatar #infinity:after {
+  left: auto;
+  right: 0;
+  border-radius: 25px 25px 25px 0;
+  transform: rotate(45deg);
+}
+
+.left {
+  color: #ffffff;
+  display: flex;
+  flex: 3;
+  flex-direction: column;
+  align-items: left;
+  text-align: left;
+  padding-left: 30px;
+  background: #3c90e4;
+  border-radius: 40px 0 0 40px;
+
+  justify-content: center;
+}
+.left img {
+  width: 250px;
+}
+.left h1 {
+  position: relative;
+  margin-top: -20px;
+  margin-bottom: 5px;
+  font-size: 23px;
+}
+.left p {
+  padding-right: 85px;
+}
+.left h1::after {
+  content: "";
+  position: absolute;
+  width: 20%;
+  height: 3px;
+  left: 0;
+  bottom: -10px;
+  background: #fff;
+}
+
+.right {
+  display: flex;
+  flex: 3;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.right form h1 {
+  text-align: center;
+  position: relative;
+}
+.right form h1::after {
+  content: "";
+  position: absolute;
+  left: 40%;
+  bottom: -6px;
+  width: 15%;
+  height: 3.2px;
+  border-radius: 20px;
+  background: #3c90e4;
+}
+.right .input {
+  outline: none;
+  display: flex;
+  flex: 1;
+  font-size: 15px;
+  margin: 10px 0;
+  padding: 6px 10px;
+  width: 260px;
+  height: 36px;
+  border: none;
+  background-color: #ffffff;
+  border-bottom: 2px gray solid;
+  color: #3c90e4;
+}
+.right h1,
+.right h3 {
+  color: gray;
+}
+.right .button {
+  width: 160px;
+  height: 40px;
+  background-color: #3c90e4;
+  border: 2px #3c90e4 solid;
+  margin: 10px 0;
+  color: #fff;
+  font-size: 22px;
+  outline: none;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.login-btn-box {
+  display: flex;
+  justify-content: center;
+}
+.container {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.container h3 {
+  padding-top: 2px;
+}
+.container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.container .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: #ffffff;
+  border: 3px #3c90e4 solid;
+}
+.container input:checked ~ .checkmark {
+  background-color: #3c90e4;
+}
+
+@media (max-width: 1024px) {
+  .workSpace {
+    width: 100%;
+    height: 620px;
+    background: linear-gradient(
+      to bottom,
+      #3c90e4 0%,
+      #3c90e4 30%,
+      #3c90e4 30%,
+      #ffffff 30%,
+      #ffffff 100%
+    );
+    flex-direction: column;
+  }
+  .workSpace .left {
+    flex-direction: row;
+  }
+  .workSpace .left .logo {
+    flex: 1;
+  }
+  .workSpace .left p {
+    flex: 1;
+  }
+  .workSpace .right {
+    flex: 5;
+  }
+  .workSpace .right h1 {
+    font-size: 2.5em;
+    margin: 0 8px 8px 0;
+  }
+  .workSpace .right .input {
+    width: 320px;
+    height: 40px;
+  }
+  .workSpace .right .button {
+    width: 160px;
+    height: 40px;
+  }
+
+  .avatar {
+    top: 18%;
+  }
+}
