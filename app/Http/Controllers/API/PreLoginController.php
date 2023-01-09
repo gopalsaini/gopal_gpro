@@ -202,8 +202,8 @@ class PreLoginController extends Controller {
 
 						if($userResult->language == 'sp'){
 
-							$url = '<a href="'.url('profile-update').'" target="_blank">Click here</a>';
-							$faq = '<a href="'.url('faq').'">Click here</a>';
+							$url = '<a href="'.url('profile-update').'" target="_blank">aqui</a>';
+							$faq = '<a href="'.url('faq').'">aqui</a>';
 							$subject = 'Welcome '.$name.", Here's your GProCongress II registration information!";
 							$msg = '<span style="color: rgb(0, 0, 0);">Congratulations !</span><br><br><span style="color: rgb(0, 0, 0);">You have successfully created your account for the GProCongress II. To access your account, follow this link: '.$url.'. Please use the link to complete and edit your application at any time.</span><br><br><span style="color: rgb(0, 0, 0);">And, if you would like to find out more about the criteria to attend the Congress, '.$faq.'.</span><br><br><span style="color: rgb(0, 0, 0);">We are here to help! To talk with one of our team members, you can simply respond to this email.</span><br><br><span style="color: rgb(0, 0, 0);">Pray with us toward multiplying the quantity and quality of trainers of pastors.</span><br><br><span style="color: rgb(0, 0, 0);">Warmly,</span><br><span style="color: rgb(0, 0, 0);">GProCongress II Team</span><br>';
 						
@@ -226,7 +226,7 @@ class PreLoginController extends Controller {
 		
 						}else{
 		
-							$url = '<a href="'.url('profile-update').'" target="_blank">Click here</a>';
+							$url = '<a href="'.url('profile-update').'" target="_blank">link</a>';
 							$faq = '<a href="'.url('faq').'">Click here</a>';
 							$subject = 'Welcome '.$name.", Here's your GProCongress II registration information!";
 							$msg = '<p><span style="color: rgb(0, 0, 0);">Congratulations !</span><br></p><p><span style="font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;
@@ -234,7 +234,7 @@ class PreLoginController extends Controller {
 							mso-hansi-theme-font:minor-latin;mso-bidi-theme-font:minor-latin;color:black;
 							mso-ansi-language:EN-IN;mso-fareast-language:EN-GB;mso-bidi-language:AR-SA">You
 							have successfully created your account for the GProCongress II. To access,
-							edit, and complete your account at any time, use this link:&nbsp;</span><span style="color: rgb(0, 0, 0);">'.$url.'</span><span style="font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;
+							edit, and complete your account at any time, use this :&nbsp;</span><span style="color: rgb(0, 0, 0);">'.$url.'</span><span style="font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;
 							mso-ascii-theme-font:minor-latin;mso-fareast-font-family:&quot;Times New Roman&quot;;
 							mso-hansi-theme-font:minor-latin;mso-bidi-theme-font:minor-latin;color:black;
 							mso-ansi-language:EN-IN;mso-fareast-language:EN-GB;mso-bidi-language:AR-SA">.</span><br><br><span style="font-size:12.0pt;font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;
@@ -509,8 +509,7 @@ class PreLoginController extends Controller {
 				
 					$days = $today->diffInDays($created_at);
 
-					$url = '<a href="'.url('profile-update').'" target="_blank">aqui</a>';
-					
+				
 					$to = $result->email;
 					$name= $result->name.' '.$result->last_name;
 					
@@ -536,7 +535,7 @@ class PreLoginController extends Controller {
 						$url = '<a href="'.url('profile-update').'" target="_blank">link</a>';
 					
 						$subject = 'Friendly reminder: Complete your GProCongress II application';
-						$msg = '<div>Dear '.$name.',</div><div><br></div><div>Your application to attend the GProCongress II is incomplete!</div><div>Please use this  '.$url.'; to access, edit, and complete your account at any time. Timely completion will help us secure your spot!&nbsp;</div><div><br></div><div>Do you still have questions, or require assistance&nbsp;<span style="color: rgb(0, 0, 0); background-color: transparent;">Simply respond to this email to connect with a team member. We are here to help!&nbsp;</span><span style="color: rgb(0, 0, 0); background-color: transparent;">Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</span></div><div><br></div><div>Warmly,</div><div><br></div><div>The GProCongress II Team</div>';
+						$msg = '<div>Dear '.$name.',</div><div><br></div><div>Your application to attend the GProCongress II is incomplete!</div><div>Please use this '.$url.'; to access, edit, and complete your account at any time. Timely completion will help us secure your spot!&nbsp;</div><div><br></div><div>Do you still have questions, or require assistance&nbsp;<span style="color: rgb(0, 0, 0); background-color: transparent;">Simply respond to this email to connect with a team member. We are here to help!&nbsp;</span><span style="color: rgb(0, 0, 0); background-color: transparent;">Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</span></div><div><br></div><div>Warmly,</div><div><br></div><div>The GProCongress II Team</div>';
 						
 					}
 
