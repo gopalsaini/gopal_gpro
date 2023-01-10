@@ -29,15 +29,15 @@ return [
     'last_name' => 'Sobrenome',
     'last_name_label' => 'Sobrenome',
     'enter_email' => "Insira o endereço de e-mail",
-    'enter_name' => "Introduzir/Aceder Nome",
+    'enter_name' => "Introduzir",
     //login 
     'login-heading' => 'Bem-vindo a Te!',
     'login-description' => 'Faça login para enviar sua inscrição',
-    'enter' => 'Introduzir/Aceder',
+    'enter' => 'Introduzir',
     'email' => 'Endereço Eletrónico',
-    'passowrd' => 'Senha/Palavra Passe',
+    'passowrd' => 'Senha',
     'forgot' => 'Esqueci',
-    'forgot-password' => 'Esqueceu Sua Senha/Palavra Passe?',
+    'forgot-password' => 'Esqueceu Sua Senha',
     'dont-have-account' => 'Não Tem uma Conta?',
     'click-here-to-sign-up' => 'Clique Aqui para Inscrever-se',
 
@@ -50,9 +50,9 @@ return [
     'click-here-to-sign-in' => 'Clique Aqui para Aceder',
 
     //forgot password
-    'forgot-password-heading' => 'Esqueceu Sua Senha/Palavra Passe?',
+    'forgot-password-heading' => 'Esqueceu Sua Senha',
     'forgot-password-description' => 'Por favor introduza o e-mail cadastrado para Redifinir a senha',
-    'request-passowrd-reset' => 'Requisite a Redifinição da Senha/Palavra-Passe',
+    'request-passowrd-reset' => 'Requisite a Redifinição da Senha',
     'back-to-login' => 'Voltar a Aceder?',
 
     //welcome
@@ -65,7 +65,7 @@ return [
     //footer
     'footer-heading' => 'II CongressoGPro para treinadores de pastores (2023)',
     'footer-description' => 'Multiplicando a Quantidade e Qualidade de treinadores de pastores.',
-    'social-handles' => 'Identificadores Sociais/Distintivos Sociais',
+    'social-handles' => 'Identificadores Sociais',
     'copyright' => 'Direito Autoral',
     'gprocongress' => 'CongressoGPro',
     'all-rights-reserved' => 'Todos direitos reservados',
@@ -84,10 +84,10 @@ return [
     'Stage' => 'Stage',
     'Accepted' => 'Accepted',
     'inProcess' => 'in Process',
-    'Declined' => 'Declined',
+    'Declined' => 'Declinada',
     'NeedHelp' => 'Need Help?',
     'Edit' => 'Edit',
-    'Approve' => 'Approve',
+    'Approve' => 'Aprovada',
     'EmergencyContact' => 'Emergency Contact',
     'FlightInformation' => 'FlightInformation',
     'ArrivaltoPanama' => 'Arrival to Panama',
@@ -99,6 +99,5 @@ return [
     'LogisticsInformation' => 'Logistics Information',
     'Bothlogisticsquestion' => 'Both logistics question',
     'Day' => 'Day',
-    'EventDay' => 'Event Day',
 
 ];

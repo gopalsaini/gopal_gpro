@@ -14,8 +14,8 @@ return [
     */
 
     'change' => 'Mudança',
-    'password' => 'Senha/Palavra-passe',
-    'enter' => 'Introduzir/Aceder',
+    'password' => 'Senha',
+    'enter' => 'Introduzir',
     'old' => 'Antigo/Velho',
     'new' => 'Nova',
     'confirm' => 'Confirmar/Confirme',

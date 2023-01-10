@@ -15,7 +15,7 @@ return [
 
     'group' => 'Grupo',
     'info' => 'Informação',
-    'registered' => 'Registrado/Cadastrado/Inscrito',
+    'registered' => 'Inscrito',
     'registered_fee' => "Registrado/Cadastrado/Inscrito Taxas",
     'payment' => 'Pagamento',
     'travel' => 'Viagem',
@@ -63,7 +63,7 @@ return [
     'cah' => 'Pagamento em dinheiro/espécie/numerário',
     'pay-cash-payment' => 'Pagar em dinheiro/Pagamento à vista',
     'pay-using-money-gram' => 'Se você não consegue pagar com o seu cartão de crédito, então pague usando o grama de dinheiro',
-    'enter' => "Introduzir/Aceder", 
+    'enter' => "Introduzir", 
     'payment-method'=>'Pagamento Método',
     
 ];

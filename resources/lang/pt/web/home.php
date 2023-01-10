@@ -103,7 +103,7 @@ return [
     'Married'=>'Married',
     'Unmarried'=>'Unmarried',
     'submit' => 'Submeter',
-    'enter' => 'Introduzir/Aceder',
+    'enter' => 'Introduzir',
     'n/a' => 'N/A',
     'other'=>'De outros',
 ];

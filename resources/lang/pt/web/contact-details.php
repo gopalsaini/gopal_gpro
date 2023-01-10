@@ -37,7 +37,7 @@ return [
     'terms-and-conditions' => 'Concordo com os Termos e Condições',
     'receive-updates' => 'Eu gostaria de receber as notificações do Congresso pelo WhatsApp',
     'next' => 'Próximo/Próxima',
-    'enter' => 'Introduzir/Aceder',
+    'enter' => 'Introduzir',
 
 
 ];

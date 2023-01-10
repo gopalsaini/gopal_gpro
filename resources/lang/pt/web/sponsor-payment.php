@@ -20,5 +20,5 @@ return [
     'requested-amount' => 'Montante exigido',
     'submit' => 'Submeter',
     'max-payment' => 'O máximo Pagamento que pode ser feito',
-    'enter' => "Introduzir/Aceder", 
+    'enter' => "Introduzir", 
 ];

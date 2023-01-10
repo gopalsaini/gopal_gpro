@@ -21,7 +21,7 @@ return [
     'session' => 'Sessão',
     'event' => 'Evento',
     'day' => 'Dia',
-    'application' => 'Inscrição/Pedido/Candidatura',
+    'application' => 'Inscrição',
     'edit' => 'Pessoal  ',
     'personal' => 'Editar',
     'details' => 'Detalhes',
@@ -51,9 +51,9 @@ return [
     'next' => 'Próximo',
     'Training-to-your-ministry' => 'Deseja adicionar o Treinamento Pastoral ao seu ministério?',
     'envision-training' => 'Quais as formas você prevê em treinar pastores?',
-    'enter' => "Introduzir/Aceder", 
+    'enter' => "Introduzir", 
     'preview' => "Pre-visualização",
-    'review' => "Solicitud en Revisión",
+    'review' => "Revisão da Inscrição",
     'event-day'=>'Evento Dia',
 
 ];

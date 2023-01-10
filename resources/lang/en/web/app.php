@@ -100,6 +100,5 @@ return [
     'LogisticsInformation' => 'Logistics Information',
     'Bothlogisticsquestion' => 'Both logistics question',
     'Day' => 'Day',
-    'EventDay' => 'Event Day',
 
 ];

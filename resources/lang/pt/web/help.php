@@ -18,7 +18,7 @@ return [
     'email' => 'Endereço Eletrónico',
     'mobile' => 'Número de Celular',
     'message' => 'Mensagem',
-    'submit' => 'Submeter/Submeta',
-    'enter' => 'Introduzir/Aceder',
+    'submit' => 'Submeter',
+    'enter' => 'Introduzir',
 
 ];
