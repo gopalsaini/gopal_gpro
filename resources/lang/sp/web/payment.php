@@ -16,6 +16,7 @@ return [
     'group' => 'Grupo',
     'info' => 'Información',
     'registered' => 'Registrado',
+    'registered_fee' => "Registrado Pagos",
     'payment' => 'Pago',
     'travel' => 'Viaje',
     'session' => 'Sesión',
@@ -37,6 +38,7 @@ return [
     'western-union' => 'Western Union',
     'pay-using-western-union' => 'Si no puede pagar con tarjeta de crédito, pague por Western Union',
     'history' => 'Historia',
+    'payment-history'=>'Pago Historia',
     'date' => 'Fecha',
     'amount' => 'Importe',
     'make' => 'Realizar',
@@ -62,5 +64,7 @@ return [
     'pay-cash-payment' => 'Pago en efectivo',
     'pay-using-money-gram' => 'Si no puede pagar con tarjeta de crédito, pague por Pago de Pequeña Cantidad',
     'enter' => 'Entrar', 
+    'payment-method'=>'Pago Método',
+
 
 ];

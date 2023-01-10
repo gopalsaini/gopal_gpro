@@ -28,7 +28,8 @@ return [
     'first_name_label' => 'Prénom',
     'last_name' => 'Nom de famille',
     'last_name_label' => 'Nom de famille',
-    'enter_email' => "Entrer l'adresse e-mail",
+    'enter_email' => "Écrire votre adresse Email ici",
+    'enter_name' => "Écrire votre nom ici",
 
     //login 
     'login-heading' => 'Bienvenue !',

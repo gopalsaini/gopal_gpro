@@ -18,6 +18,7 @@ return [
     'pay-cash-payment' => 'Pay by Cash Payment',
     'info' => 'Info',
     'registered' => 'Registered',
+    'registered_fee' => "Registered Fees",
     'payment' => 'Payment',
     'travel' => 'Travel',
     'session' => 'Session',
@@ -39,6 +40,7 @@ return [
     'western-union' => 'Western Union',
     'pay-using-western-union' => 'If you are unable to pay with your credit card then pay using western union',
     'history' => 'History',
+    'payment-history'=>'Payment History',
     'date' => 'Date',
     'amount' => 'Amount',
     'make' => 'Make',
@@ -62,4 +64,6 @@ return [
     'Status' => 'Status',
     'pay-using-money-gram' => 'If you are unable to pay with your credit card then pay using money Gram',
     'enter' => 'Enter',
+    'payment-method'=>'Payment Method',
+
 ];

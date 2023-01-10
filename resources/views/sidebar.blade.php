@@ -45,7 +45,7 @@
     
     <li>
         <a href="@if($stage->stage > 4) {{url('event-day-information')}} @else # @endif" class="@if($stage->stage > 4) active @endif">
-            <span>0@php echo $i++; @endphp</span> @lang('web/profile.day') @lang('web/profile.event')
+            <span>0@php echo $i++; @endphp</span> @lang('web/profile.event-day')
         </a>
     </li>
     

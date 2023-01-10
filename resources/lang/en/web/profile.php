@@ -54,4 +54,6 @@ return [
     'enter' => "Enter", 
     'preview' => "Preview",
     'review' => "Application Under Review",
+    'event-day'=>'Event Day',
+
 ];

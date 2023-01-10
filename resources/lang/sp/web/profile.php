@@ -54,4 +54,6 @@ return [
     'enter' => 'Entrar', //Vineet - 080123
     'preview' => "Vista previa", //Vineet - 080123
     'review' => "Solicitud en Revisión",
+    'event-day'=>'Evento Día',
+
 ];

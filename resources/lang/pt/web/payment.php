@@ -16,6 +16,7 @@ return [
     'group' => 'Grupo',
     'info' => 'Informação',
     'registered' => 'Registrado/Cadastrado/Inscrito',
+    'registered_fee' => "Registrado/Cadastrado/Inscrito Taxas",
     'payment' => 'Pagamento',
     'travel' => 'Viagem',
     'session' => 'Sessão',
@@ -37,6 +38,7 @@ return [
     'western-union' => 'Western Union',
     'pay-using-western-union' => 'Se você não consegue pagar com o seu cartão de crédito, então pague usando o Western Union',
     'history' => 'História',
+    'payment-history'=>'Pagamento História',
     'date' => 'Data',
     'amount' => 'Montante',
     'make' => 'Fazer/ Faça',
@@ -62,4 +64,6 @@ return [
     'pay-cash-payment' => 'Pagar em dinheiro/Pagamento à vista',
     'pay-using-money-gram' => 'Se você não consegue pagar com o seu cartão de crédito, então pague usando o grama de dinheiro',
     'enter' => "Introduzir/Aceder", 
+    'payment-method'=>'Pagamento Método',
+    
 ];

@@ -28,8 +28,8 @@ return [
     'first_name_label' => 'Primeiro Nome',
     'last_name' => 'Sobrenome',
     'last_name_label' => 'Sobrenome',
-    'enter_email' => 'Insira o endereço de e-mail',
-
+    'enter_email' => "Insira o endereço de e-mail",
+    'enter_name' => "Introduzir/Aceder Nome",
     //login 
     'login-heading' => 'Bem-vindo a Te!',
     'login-description' => 'Faça login para enviar sua inscrição',

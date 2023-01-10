@@ -54,4 +54,5 @@ return [
     'enter' => "Entrer", 
     'preview' => "Aperçu",
     'review' => "Révision de la Demande",
+    'event-day'=>'Jour de l’événement',
 ];

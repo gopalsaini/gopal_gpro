@@ -29,6 +29,7 @@ return [
     'last_name' => 'Last Name',
     'last_name_label' => 'Last Name',
     'enter_email' => 'Enter email address',
+    'enter_name' => "Enter name here",
 
     //login 
     'login-heading' => 'Welcome You !',

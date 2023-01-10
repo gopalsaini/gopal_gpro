@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'payment-by-card' => 'Paiement par carte',
-    'pay-now' => 'Payer maintenant',
+    'payment-by-card' => 'Paiement par Carte',
+    'pay-now' => 'Payer maintenan',
 
 ];
