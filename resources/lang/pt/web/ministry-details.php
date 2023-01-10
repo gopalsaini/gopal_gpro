@@ -59,4 +59,5 @@ return [
     'enter' => "Introduzir/Aceder", 
     'preview' => "Pre-visualização",
     'enter-comments' => "Enter Comments",
+    'n/a' => 'N/A',
 ];

@@ -5,7 +5,6 @@
 
 @section('content')
 
-   
     <!-- banner-start -->
     <div class="inner-banner-wrapper">
         <div class="container custom-container2">
@@ -82,6 +81,8 @@
                         <!-- //Vineet - 080123 -->
                         @lang('web/profile.preview') 
                         <!-- //Vineet - 080123 -->
+                        @elseif($resultData['result']['profile_status']=='Review')
+                            @lang('web/profile.review')
                         @else
                             @lang('web/profile.application') {{$resultData['result']['profile_status']}}
                         @endif
@@ -117,11 +118,20 @@
                         </li>
                         <li>
                             <p>@lang('web/profile.gender')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; @if($resultData['result']['gender']=='1'){{ 'Male' }} @elseif($resultData['result']['gender']=='2'){{ 'Female' }}@endif</span>
+                            <span>:&nbsp; &nbsp; &nbsp; 
+                                @if($resultData['result']['gender']=='1')
+                                    @lang('web/profile-details.male') 
+                                   
+                                @elseif($resultData['result']['gender']=='2')
+
+                                    @lang('web/profile-details.female')
+                                      
+                                @endif
+                            </span>
                         </li>
                         <li>
                             <p>@lang('web/profile.dob')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; @if($resultData['result']['dob']!=''){{ date('d-F-Y',strtotime($resultData['result']['dob'])) }}@endif</span>
+                            <span>:&nbsp; &nbsp; &nbsp; @if($resultData['result']['dob']!=''){{ date('d-m-Y',strtotime($resultData['result']['dob'])) }}@endif</span>
                         </li>
                     </ul>
                     <ul>
@@ -131,7 +141,16 @@
                         </li>
                         <li>
                             <p>@lang('web/profile.marital-status')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; {{$resultData['result']['marital_status']}}</span>
+                            <span>:&nbsp; &nbsp; &nbsp; 
+                                @if($resultData['result']['marital_status']=='Married')
+                                    @lang('web/home.Married')
+                                   
+                                @elseif($resultData['result']['marital_status']=='Unmarried')
+
+                                    @lang('web/home.Unmarried')
+                                      
+                                @endif
+                            </span>
                         </li>
                     </ul>
                     </div>
@@ -144,14 +163,14 @@
 
                                 <!-- //Vineet - 080123 -->
                                 <!-- <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') :</strong> @lang('web/profile-details.yes') -->
-                                <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> @lang('web/profile-details.yes')
+                                <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> &nbsp;@lang('web/profile-details.yes')
                                 <!-- //Vineet - 080123 -->
                                 </li>
                                 <li>@lang('web/home.Spouse') : {{$SpouseParent->name}} {{$SpouseParent->last_name}}</li>
                             @else
                                 <!-- //Vineet - 080123 -->
                                 <!-- <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') :</strong> @if($Spouse) @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif -->
-                                <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> @if($Spouse) @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif
+                                <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> &nbsp;@if($Spouse) @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif
                                 <!-- //Vineet - 080123 -->
                                 </li>
                                 @if($Spouse)<li>@lang('web/home.Spouse') : {{$Spouse['name']}} {{$Spouse['last_name']}}</li>@endif
@@ -162,7 +181,13 @@
 
                         @if(!$Spouse && $resultData['result']['room'] !=null)
                             <ul>
-                                <li colspan="2"><strong>@lang('web/home.stay-in-twin-sharing-or-single') :</strong> {{$resultData['result']['room']}}
+                                <li colspan="2"><strong>@lang('web/home.stay-in-twin-sharing-or-single') :</strong> &nbsp;
+                                @if($resultData['result']['room'] == 'Single')
+                                    @lang('web/profile-details.single-room')
+                                @else
+                                    @lang('web/profile-details.twin')
+                                @endif
+                               
                                 </li> 
                             <ul>
 
@@ -194,7 +219,7 @@
                 </div>
                 <!-- //Vineet - 080123 -->
                 <!-- <h4 class="inner-head section-gap">@lang('web/profile.contact') @lang('web/profile.details')</h4> -->
-                <h4 class="inner-head section-gap">lang('web/contact-details.contact-details-combined')</h4>
+                <h4 class="inner-head section-gap">@lang('web/contact-details.contact-details-combined')</h4>
                 <!-- //Vineet - 080123 -->
                 <div class="detail-wrap">
                     <ul>
@@ -275,7 +300,7 @@
                     <label for="" class="d-block">@lang('web/profile.pastor-trainer')</label>
                     <div class="radio-wrap">
                         <div class="form__radio-group">
-                            {{$resultData['result']['ministry_pastor_trainer']}}
+                        @if($resultData['result']['ministry_pastor_trainer']=='Yes')@lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif
                         </div> 
                     </div>
                 </div>
@@ -289,18 +314,36 @@
                         <ul>
                             <li>
                                 <p>@lang('web/profile.non-formal-pastoral-training')</p>
-                                <span>:&nbsp; &nbsp; &nbsp;  @if(!empty($ministryYesDetail)){{$ministryYesDetail['non_formal_trainor']}}@endif </span>
+                                <span>:&nbsp; &nbsp; &nbsp;  
+                                    
+                                @if(!empty($ministryYesDetail))
+
+                                    @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['non_formal_trainor'])))  
+                                    
+                                @endif </span>
                             </li>
                             <li>
                                 <p>@lang('web/profile.formal-theological-education')</p>
-                                <span>:&nbsp; &nbsp; &nbsp; @if(!empty($ministryYesDetail)){{$ministryYesDetail['formal_theological']}}@endif </span>
+                                <span>:&nbsp; &nbsp; &nbsp; 
+                                    @if(!empty($ministryYesDetail))
+
+                                        @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['formal_theological'])))  
+                                        
+                                    @endif 
+                                </span>
                             </li>
                             <li>
                                 <p>@lang('web/profile.informal-personal-mentoring')</p>
-                                <span>:&nbsp; &nbsp; &nbsp; @if(!empty($ministryYesDetail)){{$ministryYesDetail['informal_personal']}}@endif</span>
+                                <span>:&nbsp; &nbsp; &nbsp; 
+                                    @if(!empty($ministryYesDetail))
+                                        
+                                        @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['informal_personal'])))  
+                                        
+                                    @endif
+                                </span>
                             </li>
-                            <li>@lang('web/home.willing-to-commit-to-trainer-of-pastors') : <strong>@if(!empty($ministryYesDetail) && isset($ministryYesDetail['willing_to_commit'])){{$ministryYesDetail['willing_to_commit']}}@endif</strong></li>
-                            <li>@lang('web/home.comment') : <strong>@if(!empty($ministryYesDetail) && isset($ministryYesDetail['comment'])){{$ministryYesDetail['comment']}}@endif</strong></li>
+                            <li>@lang('web/home.willing-to-commit-to-trainer-of-pastors') : <strong> &nbsp;@if(!empty($ministryYesDetail) && isset($ministryYesDetail['willing_to_commit']))@if($ministryYesDetail['willing_to_commit'] == 'Yes') @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif @endif</strong></li>
+                            <li>@lang('web/home.comment') : <strong> &nbsp;@if(!empty($ministryYesDetail) && isset($ministryYesDetail['comment'])){{$ministryYesDetail['comment']}}@endif</strong></li>
 
                         </ul>
                     </div>
@@ -321,7 +364,7 @@
                         <label for="" class="d-block">@lang('web/profile.Training-to-your-ministry')</label>
                         <div class="radio-wrap">
                             <div class="form__radio-group">
-                            @if(!empty($resultData['result']['doyouseek_postoral'])){{$resultData['result']['doyouseek_postoral']}}@endif 
+                            @if(!empty($resultData['result']['doyouseek_postoral'])) @if($resultData['result']['doyouseek_postoral'] == 'Yes') @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif @endif 
                             </div> 
                         </div>
                     @if($resultData['result']['doyouseek_postoral'] == 'Yes')

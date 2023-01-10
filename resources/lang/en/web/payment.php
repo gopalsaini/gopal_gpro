@@ -61,5 +61,5 @@ return [
     'payment-for' => 'Paid For',
     'Status' => 'Status',
     'pay-using-money-gram' => 'If you are unable to pay with your credit card then pay using money Gram',
-
+    'enter' => 'Enter',
 ];

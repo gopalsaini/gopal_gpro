@@ -283,7 +283,7 @@
                                                 <option  value="Ms." @if($SpouseDetails && $SpouseDetails->salutation == 'Ms.') selected @endif>Ms.</option>
                                                 <option  value="Mrs" @if($SpouseDetails && $SpouseDetails->salutation == 'Mrs') selected @endif>Mrs.</option>
                                                 <option  value="Dr" @if($SpouseDetails && $SpouseDetails->salutation == 'Dr') selected @endif>Dr.</option>
-                                                <option  value="Pastor" @if($SpouseDetails && $SpouseDetails->salutation == 'Pastor') selected @endif>Pastor</option>
+                                                <option  value="Pasteur" @if($SpouseDetails && $SpouseDetails->salutation == 'Pasteur') selected @endif>Pasteur</option>
                                                 <option  value="Bishop" @if($SpouseDetails && $SpouseDetails->salutation == 'Bishop') selected @endif>Bishop</option>
                                                 <option  value="Rev." @if($SpouseDetails && $SpouseDetails->salutation == 'Rev.') selected @endif>Rev.</option>
                                                 <option  value="Prof." @if($SpouseDetails && $SpouseDetails->salutation == 'Prof.') selected @endif>Prof.</option>

@@ -104,5 +104,9 @@ return [
     'like_to_share_your_room'=>'Do you know who would you like to share your room with?',
     'Married'=>'Married',
     'Unmarried'=>'Unmarried',
+    'submit' => 'Submit',
+    'enter' => 'Enter',
+    'n/a' => 'N/A',
+    'other'=>'other',
 
 ];

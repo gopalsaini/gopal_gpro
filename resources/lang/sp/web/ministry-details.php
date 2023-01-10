@@ -30,7 +30,7 @@ return [
     'city' => 'Ciudad',
     'organization' => 'ORGANIZACIÓN',
     'independent' => 'INDEPENDIENTE',
-    'ministry-name' => 'NOMBRE DEL MINISTERIO',
+    'ministry-name' => 'Nombre Del Ministerio',
     'pastor-trainer' => '¿Es usted  Capacitador de Pastores (PTer)?',
     'submit' => 'Enviar',
     'yes' => 'Sí',
@@ -59,8 +59,9 @@ return [
     'willing-to-commit' => '¿Está dispuesto a comprometerse a formar a un capacitador de pastores por año durante los próximos 7 años?',
     'envision-training-pastors' => '¿De qué formas prevé la capacitación de pastores?',
     'enter' => "Entrar", 
-    'preview' => "Vista previa", //Vineet - 080123
-    'enter-comments' => "Vista previa", //Vineet - 080123
+    'preview' => "Vista previa", 
+    'enter-comments' => "añadir comentarios",
+    'n/a' => 'N/A', 
 
 
 ];

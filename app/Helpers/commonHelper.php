@@ -1321,6 +1321,32 @@ class commonHelper{
 		
 	}
 
+	public static function ministryPastorTrainerDetail($id){
+		
+		
+		$data=array(
+			'Practitioner' => 'Practitioner',
+			'Facilitator' => 'Facilitator',
+			'Strategist' => 'Strategist',
+			'Partner' => 'Donor',
+			'Praticien' => 'Practitioner',
+			'Facilitateur' => 'Facilitator',
+			'Stratège' => 'Strategist',
+			'Partenaire' => 'Donor',
+			'Praticante' => 'Practitioner',
+			'Facilitador' => 'Facilitator',
+			'Estrategista/Estratega' => 'Strategist',
+			'Parceiro' => 'Donor',
+			'Practicante Especializado' => 'Practitioner',
+			'Facilitador' => 'Facilitator',
+			'Estratega' => 'Strategist',
+			'Socio' => 'Donor',
+			'N/A' => 'N/A',
+		);
+		
+		return $data[$id];
+	}
+
 
 }
 

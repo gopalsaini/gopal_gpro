@@ -25,5 +25,6 @@ return [
     'add' => 'Adicionar/Adicione',
     'more' => 'Mais',
     'submit' => 'Submeter/Submeta',
+    'enter' => 'Introduzir/Aceder',
 
 ];

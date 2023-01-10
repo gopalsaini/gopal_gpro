@@ -21,5 +21,5 @@ return [
     'email' => 'Email Address',
     'confirm' => 'Confirm',
     'click-to-forgot' => 'Click Here to Forgot Password',
-
+    'enter' => "Enter", 
 ];

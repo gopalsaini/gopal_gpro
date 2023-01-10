@@ -20,5 +20,6 @@ return [
     'requested-amount' => 'Requested Amount',
     'submit' => 'Submit',
     'max-payment' => 'Max Payment that can be made',
-
+    'enter' => "Enter", 
+    
 ];

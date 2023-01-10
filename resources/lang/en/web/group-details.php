@@ -25,5 +25,6 @@ return [
     'add' => 'Add',
     'more' => 'More',
     'submit' => 'Submit',
+    'enter' => 'Enter',
 
 ];

@@ -21,5 +21,5 @@ return [
     'email' => 'Adresse e-mail',
     'confirm' => 'Confirmer',
     'click-to-forgot' => 'Cliquez ici pour oublier votre mot de passe',
-
+    'enter' => "Entrer", 
 ];

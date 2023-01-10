@@ -112,27 +112,34 @@ class PreLoginController extends Controller {
 
 				$name = $userData->name.' '.$userData->last_name;
 
-				$link = '<a href="'.url('email-registration-confirm/'.$token).'">Click here</a>';
-
+				
 				if($userData->language == 'sp'){
 
+					$link = '<a href="'.url('email-registration-confirm/'.$token).'">aqui</a>';
+
 					$subject = 'Se requiere verificación de correo electrónico para inscribirse en el GProCongress II';
-					$msg = '<p>Estimado '.$name.'</p><p><br></p><p>¡Felicidades! Ha creado con éxito su cuenta para el GProCongress II. Para verificar su dirección de correo electrónico y completar el proceso de inscripción, utilice este enlace: '.$link.'.</p><p><br></p><p>Need help, or have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p>¿Tiene preguntas? Simplemente responda a este correo para conectarse con algún miembro de nuestro equipo.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+					$msg = '<p>Estimado '.$name.'</p><p><br></p><p>¡Felicidades! Ha creado con éxito su cuenta para el GProCongress II. Para verificar su dirección de correo electrónico y completar el proceso de inscripción, utilice este enlace: haga click '.$link.'.</p><p><br></p><p>Need help, or have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p>¿Tiene preguntas? Simplemente responda a este correo para conectarse con algún miembro de nuestro equipo.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
 
 				}elseif($userData->language == 'fr'){
+
+					$link = '<a href="'.url('email-registration-confirm/'.$token).'">Click here</a>';
 
 					$subject = 'Vérification des e-mails requise pour l’inscription au GProCongrès II';
 					$msg = '<p>Cher '.$name.', Félicitations !&nbsp; Vous avez créé avec succès votre compte pour le GProCongrès II.&nbsp; Pour vérifier votre adresse e-mail et terminer le processus d’inscription, veuillez utiliser ce lien : '.$link.'.</p><p><br></p><p><br></p><p>Besoin d’aide ou vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe GProCongrès II</p>';
 
 				}elseif($userData->language == 'pt'){
 
+					$link = '<a href="'.url('email-registration-confirm/'.$token).'">link</a>';
+
 					$subject = 'Pedido de verificação de e-mail para inscrição ao II CongressoGPro';
-					$msg = '<p>Prezado '.$name.',&nbsp;</p><p><br></p><p><br></p><p>Parabéns! Você criou sua conta para o II CongressoGPro com sucesso. Para verificar o seu endereço eletrônico, e completar o processo de inscrição, por favor use este link: '.$link.'.&nbsp;</p><p><br></p><p><br></p><p>Precisa de ajuda, ou tem perguntas? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.&nbsp;</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+					$msg = '<p>Prezado '.$name.',&nbsp;</p><p><br></p><p><br></p><p>Parabéns! Você criou sua conta para o II CongressoGPro com sucesso. Para verificar o seu endereço eletrônico, e completar o processo de inscrição, por favor use este : '.$link.'.&nbsp;</p><p><br></p><p><br></p><p>Precisa de ajuda, ou tem perguntas? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.&nbsp;</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
 
 				}else{
 
+					$link = '<a href="'.url('email-registration-confirm/'.$token).'">link</a>';
+
 					$subject = 'Email verification required for GProCongress II registration';
-					$msg = '<p>Dear '.$name.',&nbsp;</p><p><br></p><p>Congratulations!&nbsp; You have successfully created your account for the GProCongress II.&nbsp; To verify your email address, and complete the registration process, please use this link: '.$link.'.</p><p><br></p><p>Need help, or have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
+					$msg = '<p>Dear '.$name.',&nbsp;</p><p><br></p><p>Congratulations!&nbsp; You have successfully created your account for the GProCongress II.&nbsp; To verify your email address, and complete the registration process, please use this : '.$link.'.</p><p><br></p><p>Need help, or have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
 
 				}
 				
@@ -464,7 +471,7 @@ class PreLoginController extends Controller {
 						$url = '<a href="'.url('profile-update').'" target="_blank">aqui</a>';
 
 						$subject = "Un cordial recordatorio: Complete su solicitud para el GProCongress II";
-						$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Su solicitud para asistir al GProCongress II no ha sido completada.</p><p><br></p><p>Por favor, utilice este enlace '.$url.' para acceder, editar y completer su cuenta en cualquier momento. Si completa el formulario a tiempo, nos ayudará a asegurarle su lugar.</p><p>¿Todavía tiene preguntas o necesita ayuda?</p><p><br></p><p>Simplemente responda a este correo, para conectarse con algún miembro nuestro equipo. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+						$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Su solicitud para asistir al GProCongress II no ha sido completada.</p><p><br></p><p>Por favor, utilice este enlace haga click '.$url.' para acceder, editar y completer su cuenta en cualquier momento. Si completa el formulario a tiempo, nos ayudará a asegurarle su lugar.</p><p>¿Todavía tiene preguntas o necesita ayuda?</p><p><br></p><p>Simplemente responda a este correo, para conectarse con algún miembro nuestro equipo. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
 					
 					}elseif($result->language == 'fr'){
 						$url = '<a href="'.url('profile-update').'" target="_blank">Click here</a>';
@@ -517,7 +524,7 @@ class PreLoginController extends Controller {
 						$url = '<a href="'.url('profile-update').'" target="_blank">aqui</a>';
 					
 						$subject = "Un cordial recordatorio: Complete su solicitud para el GProCongress II";
-						$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Su solicitud para asistir al GProCongress II no ha sido completada.</p><p><br></p><p>Por favor, utilice este enlace '.$url.' para acceder, editar y completer su cuenta en cualquier momento. Si completa el formulario a tiempo, nos ayudará a asegurarle su lugar.</p><p>¿Todavía tiene preguntas o necesita ayuda?</p><p><br></p><p>Simplemente responda a este correo, para conectarse con algún miembro nuestro equipo. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+						$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Su solicitud para asistir al GProCongress II no ha sido completada.</p><p><br></p><p>Por favor, utilice este enlace haga click '.$url.' para acceder, editar y completer su cuenta en cualquier momento. Si completa el formulario a tiempo, nos ayudará a asegurarle su lugar.</p><p>¿Todavía tiene preguntas o necesita ayuda?</p><p><br></p><p>Simplemente responda a este correo, para conectarse con algún miembro nuestro equipo. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
 					
 					}elseif($result->language == 'fr'){
 						$url = '<a href="'.url('profile-update').'" target="_blank">link</a>';
@@ -756,8 +763,9 @@ class PreLoginController extends Controller {
 		$rules = [
             'name' => 'required',
             'email' => 'required|email',
-            'mobile' => 'required|numeric|digits:10',
+            'mobile' => 'required|numeric',
             'message' => 'required',
+			'phonecode' => 'required',
 		];
 
 		$validator = \Validator::make($request->json()->all(), $rules);
@@ -779,7 +787,7 @@ class PreLoginController extends Controller {
 				$message = new \App\Models\Message;
 				$message->name = $request->json()->get('name');
 				$message->email = $request->json()->get('email');
-				$message->mobile = $request->json()->get('mobile');
+				$message->mobile =  $request->json()->get('phonecode').$request->json()->get('mobile');
 				$message->message = $request->json()->get('message');
 				$message->save();
 

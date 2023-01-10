@@ -104,4 +104,6 @@ return [
     'Unmarried'=>'Soltero/a',
     'submit' => 'Enviar',
     'enter' => 'Entrar',
+    'n/a' => 'N/A',
+    'other'=>'Otra',
 ];

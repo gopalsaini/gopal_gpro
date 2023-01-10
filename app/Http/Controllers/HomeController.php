@@ -71,8 +71,8 @@ class HomeController extends Controller
     public function getState(Request $request){
 
         $country_id=$request->get('country_id');
-
-        $option="<option value='' selected >--Select State--</option>";
+        \App\Helpers\commonHelper::setLocale();
+        $option="<option value='' selected >--".\Lang::get('web/ministry-details.select')."--</option>";
 
         if($country_id>0){
 
@@ -82,7 +82,7 @@ class HomeController extends Controller
 
                 $option.="<option value='".$state['id']."'>".ucfirst($state['name'])."</option>";
             }
-            $option.="<option value='0'>Other</option>";
+            $option.="<option value='0'>".\Lang::get('web/home.other')."</option>";
 
         }
 
@@ -93,8 +93,8 @@ class HomeController extends Controller
     public function getCity(Request $request){
 
         $stateId=$request->get('state_id');
-
-        $option="<option value='' selected >--Select City--</option>";
+        \App\Helpers\commonHelper::setLocale();
+        $option="<option value='' selected >--".\Lang::get('web/ministry-details.select')."--</option>";
 
         if($stateId>0){
 
@@ -104,9 +104,9 @@ class HomeController extends Controller
     
                 $option.="<option value='".$city['id']."'>".ucfirst($city['name'])."</option>";
             }
-            $option.="<option value='0'>Other</option>";
+            $option.="<option value='0'>".\Lang::get('web/home.other')."</option>";
         }else{
-            $option.="<option value='0'>Other</option>";
+            $option.="<option value='0'>".\Lang::get('web/home.other')."</option>";
         }
         
 
@@ -222,6 +222,7 @@ class HomeController extends Controller
                 'name'=>$request->post('name'),
                 'email'=>$request->post('email'),
                 'mobile'=>$request->post('mobile'),
+                'phonecode'=>$request->post('phonecode'),
                 'message'=>$request->post('message')
             );
     
@@ -240,8 +241,10 @@ class HomeController extends Controller
 
         }
 
+        $country=\App\Models\Country::select('id','name','phonecode')->get();
+
         \App\Helpers\commonHelper::setLocale();
-        return view('help');
+        return view('help', compact('country'));
 
     }
 

@@ -15,8 +15,8 @@ return [
 
     'pricing' => 'Tarif',
     'select_one' => 'Sélectionnez-en un',
-    'with_early_bird' => 'Avec Early Bird',
-    'with_out_early_bird' => 'Sans lève-tôt',
+    'with_early_bird' => 'Avec inscription anticipée',
+    'with_out_early_bird' => 'Sans inscription anticipée',
     'single_room_per_person' => 'CHAMBRE INDIVIDUELLE | PAR PERSONNE | CHAMBRE DELUXE',
     'single_spouse_trainer' => 'FORMATEUR CONJOINT SEUL | CHAMBRE DOUBLE DELUXE',
 

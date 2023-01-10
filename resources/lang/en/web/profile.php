@@ -53,4 +53,5 @@ return [
     'envision-training' => 'What ways do you envision training pastors?',
     'enter' => "Enter", 
     'preview' => "Preview",
+    'review' => "Application Under Review",
 ];

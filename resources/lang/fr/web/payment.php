@@ -18,6 +18,7 @@ return [
     'group' => 'Payer en espèces',
     'info' => 'Info',
     'registered' => 'Enregistré',
+    'registered_fee' => "Frais d'enregistrement",
     'payment' => 'Paiement',
     'travel' => 'Voyages',
     'session' => 'Session',
@@ -28,10 +29,10 @@ return [
     'Accepted' => 'Accepté',
     'in-process' => 'En cours',
     'declined' => 'Refusé',
-    'balance' => 'Équilibre',
+    'balance' => 'Équilibre du Paiement',
     'method' => 'Méthode',
     'how-does-it-work' => 'Comment ça marche?',
-    'credit-card' => 'Carte de crédit',
+    'credit-card' => 'Méthode de Paiement',
     'pay-using-credit-card' => 'Payez vos frais en ligne en utilisant une carte de crédit',
     'offline' => 'Hors ligne',
     'bank-transfer' => 'Virement bancaire',
@@ -61,5 +62,5 @@ return [
     'payment-for' => 'Payé pour',
     'Status' => 'Statut',
     'pay-using-money-gram' => "Si vous n’êtes pas en mesure de payer avec votre carte de crédit, payez en utilisant gramme d'argent",
-
+    'enter' => 'Entrer',
 ];

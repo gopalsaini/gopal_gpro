@@ -20,5 +20,5 @@ return [
     'requested-amount' => 'Montant demandé',
     'submit' => 'Soumettre',
     'max-payment' => 'Paiement maximal pouvant être effectué',
-
+    'enter' => "Entrer", 
 ];

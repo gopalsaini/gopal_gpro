@@ -276,9 +276,9 @@
                                             $ministry_pastor_trainer_detail=json_decode($result->ministry_pastor_trainer_detail,true);
                                         @endphp
                                         <tr>
-                                            <td><strong>Non-formal Pastoral Training :</strong>@if(!empty($ministry_pastor_trainer_detail)){{$ministry_pastor_trainer_detail['non_formal_trainor']}}@endif</td>
-                                            <td><strong>Formal Theological Education :</strong>@if(!empty($ministry_pastor_trainer_detail)){{$ministry_pastor_trainer_detail['formal_theological']}}@endif</td>
-                                            <td><strong>Informal Personal Mentoring :</strong>@if(!empty($ministry_pastor_trainer_detail)){{$ministry_pastor_trainer_detail['informal_personal']}}@endif</td>
+                                            <td><strong>Non-formal Pastoral Training :</strong>@if(!empty($ministry_pastor_trainer_detail)){{ \App\Helpers\commonHelper::ministryPastorTrainerDetail($ministry_pastor_trainer_detail['non_formal_trainor'])}}@endif</td>
+                                            <td><strong>Formal Theological Education :</strong>@if(!empty($ministry_pastor_trainer_detail)){{\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministry_pastor_trainer_detail['formal_theological'])}}@endif</td>
+                                            <td><strong>Informal Personal Mentoring :</strong>@if(!empty($ministry_pastor_trainer_detail)){{\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministry_pastor_trainer_detail['informal_personal'])}}@endif</td>
                                             <td><strong>Are you willing to commit to train one trainer of pastors per year for the next 7 years? :</strong>@if(!empty($ministry_pastor_trainer_detail) && isset($ministry_pastor_trainer_detail['willing_to_commit'])){{$ministry_pastor_trainer_detail['willing_to_commit']}}@endif</td>
                                             <td><strong>Comment :</strong>@if(!empty($ministry_pastor_trainer_detail) && isset($ministry_pastor_trainer_detail['comment']) && isset($ministry_pastor_trainer_detail['comment'])){{$ministry_pastor_trainer_detail['comment']}}@endif</td>
                                         </tr>

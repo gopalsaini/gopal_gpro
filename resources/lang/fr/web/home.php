@@ -18,7 +18,7 @@ return [
     'banner-heading' => 'GProCongrès II',
     'panama' => 'Panama',
     'banner-description1' => 'Multiplier la quantité et la qualité des formateurs de pasteurs',
-    'banner-description2' => 'Congrès Mondial de Proclamation II pour les Formateurs de Pasteurs',
+    'banner-description2' => 'Congrès Mondial de la Proclamation II pour les Formateurs de Pasteurs',
     'november' => 'Novembre',
     'date_heading' => 'Panama, 12-17 novembre 2023 (D.V.)',
     'days' => 'Jours',
@@ -103,8 +103,11 @@ return [
     'flight-details-landing-in-panama' => 'Prière de remplir les détails du vol de l’atterrissage au Panama ou du départ du Panama.',
     'travel_note'=>'Note: If you are reaching early, You can contact Hotel and get discounted rates. Details for same would be <br> shared with you in an email.',
     'like_to_share_your_room'=>'Do you know who would you like to share your room with?',
-    'Married'=>'Married',
-    'Unmarried'=>'Unmarried',
+    'Married'=>'Marier',
+    'Unmarried'=>'Célibataire',
     'submit' => 'Soumettre',
+    'enter' => 'Entrer',
+    'n/a' => 'N/A',
+    'other'=>'Autre',
 
 ];

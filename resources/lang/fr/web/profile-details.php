@@ -16,7 +16,7 @@ return [
     'details' => 'Détails',
     'personal' => 'Personnel',
     'contact' => 'Contact',
-    'personal-details-combined' => 'Détails Contact',
+    'personal-details-combined' => 'Détails Personnel',
     'ministry' => 'Ministère',
     'name' => "Nom complet (tel qu’il apparaît sur le passeport)",
     'gender' => 'Sexe',
@@ -29,7 +29,7 @@ return [
     'single-room' => 'Chambre simple',
     'twin' => 'Partage à deux',
     'next' => 'Suivant',
-    'coming-with-spouse' => 'Allez-vous avec votre conjointe au Congrès ?', 
+    'coming-with-spouse' => 'Allez-vous avec votre Cojoint/e au Congrès ?', 
     'yes' => 'Oui',
     'no' => 'Non',
     'spouse-already-registered' => 'Conjoint/e déjà inscrit au GProCongrès II?',
@@ -37,5 +37,6 @@ return [
     'email' => 'Adresse e-mail',
     'registered-email' => 'Enregistré Adresse e-mail',
     'submit' => 'Soumettre',
+    'enter' => 'Entrer',
 
 ];

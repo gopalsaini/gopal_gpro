@@ -53,4 +53,5 @@ return [
     'envision-training' => 'Quais as formas você prevê em treinar pastores?',
     'enter' => "Introduzir/Aceder", 
     'preview' => "Pre-visualização",
+    'review' => "Solicitud en Revisión",
 ];

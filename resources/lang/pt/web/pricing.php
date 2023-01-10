@@ -17,9 +17,8 @@ return [
     'select_one' => 'Selecione Um',
     'with_early_bird' => 'Com preço promocional',
     'with_out_early_bird' => 'Sem Preço Promocional',
-    'single_room_per_person' => 'Quarto Solteiro/Por Pessoa/Quarto de luxo',
-    'single_spouse_trainer' => 'Cônjuge Treinador Sozinho/Quarto Duplo de Luxo',
-
+    'single_room_per_person' => 'QUARTO SOLTEIRO/POR PESSOA/QUARTO DE LUXO',
+    'single_spouse_trainer' => 'CÔNJUGE TREINADOR SOZINHO/QUARTOuarto DUPLO DE LUXO',
     'description' => 'Por favor selecione o seu país de residência para verificar os detalhes dos custos aplicáveis',
     'country-name' => 'Nome do País',
     'price' => 'Custo',

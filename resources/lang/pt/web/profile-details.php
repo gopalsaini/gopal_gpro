@@ -37,5 +37,6 @@ return [
     'registered-email' => 'Inscrito/Registrado/Cadastrado Endereço Electrónico',
     'email' => 'Endereço Electrónico',
     'submit' => 'Submeter/Submeta',
+    'enter' => 'Introduzir/Aceder',
 
 ];

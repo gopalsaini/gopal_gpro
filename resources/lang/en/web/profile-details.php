@@ -37,5 +37,6 @@ return [
     'email' => 'Email Address',
     'registered-email' => 'Registered Email Address',
     'submit' => 'Submit',
+    'enter' => 'Enter',
 
 ];

@@ -53,4 +53,5 @@ return [
     'envision-training' => '¿De qué formas prevé la capacitación de pastores?',
     'enter' => 'Entrar', //Vineet - 080123
     'preview' => "Vista previa", //Vineet - 080123
+    'review' => "Solicitud en Revisión",
 ];

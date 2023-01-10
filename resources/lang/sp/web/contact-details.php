@@ -16,7 +16,7 @@ return [
     'details' => 'Detalles',
     'personal' => 'Personal',
     'contact' => 'Contacto',
-    'contact-details-combined' => 'Detalles de Contacto', //Vineet - 080123
+    'contact-details-combined' => 'Detalles del Contacto', //Vineet - 080123
     'ministry' => 'Ministerio',
     'postal' => 'Dirección postal',
     'address' => 'Dirección',

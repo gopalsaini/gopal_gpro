@@ -49,13 +49,13 @@
                                             data-bs-target="#collapse{{$key}}" aria-expanded="true"
                                             aria-controls="collapse{{$key}}">
                                             @if(App::getLocale() == 'pt')
-                                                <strong>@lang('web/faq.Question') : </strong> {{ $faq->pt_question }}
+                                                <strong>@lang('web/faq.Question') : </strong> &nbsp;{{ $faq->pt_question }}
                                             @elseif(App::getLocale() == 'sp')
-                                                <strong>@lang('web/faq.Question') : </strong> {{ $faq->sp_question }}
+                                                <strong>@lang('web/faq.Question') : </strong> &nbsp;{{ $faq->sp_question }}
                                             @elseif(App::getLocale() == 'fr')
-                                                <strong>@lang('web/faq.Question') : </strong> {{ $faq->fr_question }}
+                                                <strong>@lang('web/faq.Question') : </strong> &nbsp;{{ $faq->fr_question }}
                                             @else
-                                                <strong>@lang('web/faq.Question') : </strong> {{ $faq->question }}
+                                                <strong>@lang('web/faq.Question') : </strong> &nbsp;{{ $faq->question }}
                                             @endif
 
                                         </button>
@@ -64,13 +64,13 @@
                                         aria-labelledby="heading{{$key}}" data-bs-parent="#accordionExample{{$category->category}}">
                                         <div class="accordion-body">
                                             @if(App::getLocale() == 'pt')
-                                                <strong>@lang('web/faq.Answer') : </strong> <p>{!! $faq->pt_answer !!}</p>
+                                                <strong>@lang('web/faq.Answer') : </strong> <p>&nbsp;{!! $faq->pt_answer !!}</p>
                                             @elseif(App::getLocale() == 'sp')
-                                                <strong>@lang('web/faq.Answer') : </strong> <p>{!! $faq->sp_answer !!}</p>
+                                                <strong>@lang('web/faq.Answer') : </strong> <p>&nbsp;{!! $faq->sp_answer !!}</p>
                                             @elseif(App::getLocale() == 'fr')
-                                                <strong>@lang('web/faq.Answer') : </strong> <p>{!! $faq->fr_answer !!}</p>
+                                                <strong>@lang('web/faq.Answer') : </strong> <p>&nbsp;{!! $faq->fr_answer !!}</p>
                                             @else
-                                                <strong>@lang('web/faq.Answer') : </strong> <p>{!! $faq->answer !!}</p>
+                                                <strong>@lang('web/faq.Answer') : </strong> <p>&nbsp;{!! $faq->answer !!}</p>
                                             @endif
                                         
                                         </div>

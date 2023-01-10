@@ -21,5 +21,5 @@ return [
     'email' => 'Endereço Electrónico',
     'confirm' => 'Confirmar',
     'click-to-forgot' => 'Clique Aqui para esquecer a senha',
-
+    'enter' => "Introduzir/Aceder", 
 ];

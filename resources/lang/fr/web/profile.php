@@ -14,10 +14,10 @@ return [
     */
 
     'group' => 'Groupe',
-    'info' => 'Info',
+    'info' => '',
     'registered' => 'Enregistré',
     'payment' => 'Paiement',
-    'travel' => 'Voyages',
+    'travel' => 'Info Voyages',
     'session' => 'Session',
     'event' => 'Événement',
     'day' => 'Jour',
@@ -53,4 +53,5 @@ return [
     'envision-training' => 'Comment envisagez-vous la formation des pasteurs ?',
     'enter' => "Entrer", 
     'preview' => "Aperçu",
+    'review' => "Révision de la Demande",
 ];

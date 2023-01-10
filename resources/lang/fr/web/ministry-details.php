@@ -17,7 +17,7 @@ return [
     'personal' => 'Personnel',
     'contact' => 'Contact',
     'ministry' => 'Ministère',
-    'ministry-details-combined' => 'Détails Ministère', 
+    'ministry-details-combined' => 'Adresse Postal Ministère', 
     'postal' => 'Postal',
     'address' => 'Adresse',
     'postal-address' => 'Postal Adresse',
@@ -53,11 +53,12 @@ return [
     'ok' => "D’accord",
     'pastoral-training-to-your-ministries' => 'Cherchez-vous à ajouter la formation pastorale à votre ministère ?',
     'comment' => 'Commentaire',
-    'select' => 'Sélectionner',
+    'select' => 'Sélectioner',
     'willing-to-commit' => 'Êtes-vous prêt à vous engager à former un formateur de pasteurs par an pour les 7 prochaines années ?',
     'envision-training-pastors' => 'Comment envisagez-vous la formation des pasteurs ?',
     'enter' => "Entrer", 
     'preview' => "Aperçu",
-    'enter-comments' => "Enter Comments",
+    'enter-comments' => "Commentez",
+    'n/a' => 'N/A',
 
 ];

@@ -35,66 +35,53 @@
                 <ul>
                     <li>
                         <a href="{{url('profile-update')}}" class="active">
-                            <!-- //Vineet - 080123 -->
-                            <!-- <span>01</span>@lang('web/profile-details.personal') @lang('web/profile-details.details') -->
+                           
                             <span>01</span>@lang('web/profile-details.personal-details-combined')
-                            <!-- //Vineet - 080123 -->
+                           
                         </a>
                     </li>
                     <li>
                         <a href="{{url('contact-details')}}" class="active">
-                            <!-- //Vineet - 080123 -->
-                            <!-- <span>02</span>@lang('web/contact-details.contact') @lang('web/contact-details.details') -->
+                           
                             <span>02</span>@lang('web/contact-details.contact-details-combined')
-                            <!-- //Vineet - 080123 -->
+                           
                         </a>
                     </li>
                     <li>
                         <a href="{{url('ministry-details')}}">
-                            <!-- //Vineet - 080123 -->
-                            <!-- <span>03</span>@lang('web/ministry-details.ministry') @lang('web/ministry-details.details') -->
+                            
                             <span>03</span>@lang('web/ministry-details.ministry-details-combined')
-                            <!-- //Vineet - 080123 -->
+                           
                         </a>
                     </li>
                 </ul>
             </div>
             <div class="step-form">
-                <!-- //Vineet - 080123 -->
-                <!-- <h4 class="inner-head">@lang('web/ministry-details.ministry') @lang('web/ministry-details.details')</h4> -->
+                
                 <h4 class="inner-head">@lang('web/ministry-details.ministry-details-combined')</h4>
-                <!-- //Vineet - 080123 -->
+              
                 <form id="formSubmit" action="{{ route('ministry-details') }}" class="row" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="type" class="active-input mt-2" value="preview">
                     <div class="col-lg-12">
-                        <!-- <label for="">@lang('web/ministry-details.organization') / @lang('web/ministry-details.independent') / @lang('web/ministry-details.ministry-name') <span>*</span></label> -->
                         <label for="">@lang('web/ministry-details.ministry-name') </label>
                         <input type="text" autocomplete="text" name="ministry_name" onkeypress="return /[a-z A-Z ]/i.test(event.key)" placeholder="@lang('web/ministry-details.enter') @lang('web/ministry-details.ministry-name')" class="active-input mt-2" value="{{$resultData['result']['ministry_name']}}">
                         
                     </div>
                     <div class="col-lg-6">
-                        <!-- //Vineet - 080123 -->
-                        <!-- <label for="">@lang('web/ministry-details.ministry') @lang('web/ministry-details.postal') @lang('web/ministry-details.address') <span>*</span></label> -->
                         <label for="">@lang('web/ministry-details.postal-address') <span>*</span></label>
-                        <!-- //Vineet - 080123 -->
                         <input type="text" autocomplete="text" name="ministry_address" placeholder="@lang('web/ministry-details.enter') @lang('web/ministry-details.address')"class="mt-2" required value="{{$resultData['result']['ministry_address']}}">
                     </div>
                     <div class="col-lg-6">
-                        <!-- //Vineet - 080123 -->
-                        <!-- <label for="">@lang('web/ministry-details.zip')/@lang('web/ministry-details.postal') @lang('web/ministry-details.code')</label> -->
                         <label for="">@lang('web/ministry-details.zip-postal-code')</label>
-                        <!-- <input type="text" autocomplete="text" name="ministry_zip_code"  placeholder="@lang('web/ministry-details.enter') @lang('web/ministry-details.zip')/@lang('web/ministry-details.postal') @lang('web/ministry-details.code')" class="mt-2" value="{{$resultData['result']['ministry_zip_code']}}"> -->
-                        <input type="text" autocomplete="text" name="ministry_zip_code"  placeholder="@lang('web/ministry-details.enter') @lang('web/ministry-details.zip-postal-code')" class="mt-2" value="{{$resultData['result']['ministry_zip_code']}}">
-                        <!-- //Vineet - 080123 -->
+                         <input type="text" autocomplete="text" name="ministry_zip_code"  placeholder="@lang('web/ministry-details.enter') @lang('web/ministry-details.zip-postal-code')" class="mt-2" value="{{$resultData['result']['ministry_zip_code']}}">
+                       
                     </div>
                     <div class="col-lg-4">
                         <label for="country">@lang('web/ministry-details.country') <span>*</span></label>
                         <div class="common-select">
-                            <!-- //Vineet - 080123 -->
-                            <!-- <select id="country" placeholder="- Select -" data-state_id="{{$resultData['result']['ministry_state_id']}}" data-city_id="{{$resultData['result']['ministry_city_id']}}" class="mt-2 country selectbox test" name="ministry_country_id"> -->
-                            <select id="country" placeholder="@lang('web/ministry-details.select')" data-state_id="{{$resultData['result']['ministry_state_id']}}" data-city_id="{{$resultData['result']['ministry_city_id']}}" class="mt-2 country selectbox test" name="ministry_country_id">
-                            <!-- //Vineet - 080123 -->
+                           <select id="country" placeholder="@lang('web/ministry-details.select')" data-state_id="{{$resultData['result']['ministry_state_id']}}" data-city_id="{{$resultData['result']['ministry_city_id']}}" class="mt-2 country selectbox test" name="ministry_country_id">
+                            
                                 <option value="">@lang('web/ministry-details.select')</option>
                                 @foreach($country as $con)
                                 <option @if($resultData['result']['ministry_country_id']==$con['id']){{'selected'}}@endif value="{{ $con['id'] }}">{{ ucfirst($con['name']) }}</option>
@@ -105,10 +92,8 @@
                     <div class="col-lg-4">
                         <label for="alaska">@lang('web/ministry-details.state')/@lang('web/ministry-details.province') <span>*</span></label>
                         <div class="common-select">
-                            <!-- //Vineet - 080123 -->
-                            <!-- <select id="alaska" autocomplete="off" placeholder="- Select -" class="mt-2 test statehtml selectbox" name="ministry_state_id"> -->
                             <select id="alaska" autocomplete="off" placeholder="@lang('web/ministry-details.select')" class="mt-2 test statehtml selectbox" name="ministry_state_id">
-                            <!-- //Vineet - 080123 -->                                
+                                                         
                             </select>
                         </div>
                         <div style="display: @if($resultData['result']['ministry_state_id'] == 0) block @else none @endif" id="OtherStateDiv">
@@ -118,10 +103,8 @@
                     <div class="col-lg-4">
                         <label for="Illinois">@lang('web/ministry-details.city') <span>*</span></label>
                         <div class="common-select">
-                            <!-- //Vineet - 080123 -->
-                            <!-- <select id="Illinois" autocomplete="off" placeholder="- Select -" class="mt-2 test cityHtml selectbox" name="ministry_city_id"> -->
                             <select id="Illinois" autocomplete="off" placeholder="@lang('web/ministry-details.select')" class="mt-2 test cityHtml selectbox" name="ministry_city_id">
-                            <!-- //Vineet - 080123 -->
+                            
                             </select>
                         </div>
                         <div style="display: @if($resultData['result']['ministry_city_id'] == 0) block @else none @endif" id="OtherCityDiv">
@@ -148,10 +131,8 @@
                     </div>
                     <div class="col-lg-6">
                         <div class="step-next">
-                            <!-- //Vineet - 080123 -->
-                            <!-- <button type="submit" class="main-btn" form="formSubmit">Preview</button> -->
                             <button type="submit" class="main-btn" form="formSubmit">@lang('web/ministry-details.preview')</button>
-                            <!-- //Vineet - 080123 -->
+                           
                         </div>
                     </div>
                 </form>
@@ -183,19 +164,19 @@
                                     <div class="input-box">
                                         <ul class="unstyled centered" style="justify-content: space-evenly;">
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox" type="radio" value="Practitioner" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']=='Practitioner'){{'checked'}}@endif >
+                                                <input class="styled-checkbox" id="styled-checkbox" type="radio" value="@lang('web/ministry-details.practitioner')" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif >
                                                 <label for="styled-checkbox" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.practitioner-tooltip')">@lang('web/ministry-details.practitioner')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-2" type="radio" value="Facilitator" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']=='Facilitator'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-2" type="radio" value="@lang('web/ministry-details.facilitator')" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-2" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.facilitator-tooltip')">@lang('web/ministry-details.facilitator')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-3" type="radio" value="Strategist" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']=='Strategist'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-3" type="radio" value="@lang('web/ministry-details.strategist')" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-3" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.strategist-tooltip')">@lang('web/ministry-details.strategist')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-4" type="radio" value="Partner" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']=='Partner'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-4" type="radio" value="@lang('web/ministry-details.donor')" required name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-4" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.donor-tooltip')">@lang('web/ministry-details.donor')</label>
                                             </li>
                                             <li>
@@ -212,19 +193,19 @@
                                     <div class="input-box">
                                         <ul class="unstyled centered" style="justify-content: space-evenly;">
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox5" type="radio" value="Practitioner"  required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']=='Practitioner'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox5" type="radio" value="{{Lang::get('web/ministry-details.practitioner')}}"  required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif>
                                                 <label for="styled-checkbox5" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.practitioner-tooltip')">@lang('web/ministry-details.practitioner')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-6" type="radio" value="Facilitator"  required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']=='Facilitator'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-6" type="radio" value="{{Lang::get('web/ministry-details.facilitator')}}"  required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-6" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.facilitator-tooltip')">@lang('web/ministry-details.facilitator')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-7" type="radio" value="Strategist"  required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']=='Strategist'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-7" type="radio" value="{{Lang::get('web/ministry-details.strategist')}}"  required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-7" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.strategist-tooltip')">@lang('web/ministry-details.strategist')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-8" type="radio" value="Partner" required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']=='Partner'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-8" type="radio" value="{{Lang::get('web/ministry-details.donor')}}" required name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-8" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.donor-tooltip')">@lang('web/ministry-details.donor')</label>
                                             </li>
                                             
@@ -242,19 +223,19 @@
                                     <div class="input-box">
                                         <ul class="unstyled centered" style="justify-content: space-evenly;">
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox9" type="radio" value="Practitioner" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']=='Practitioner'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox9" type="radio" value="{{Lang::get('web/ministry-details.practitioner')}}" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif>
                                                 <label for="styled-checkbox9" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.practitioner-tooltip')">@lang('web/ministry-details.practitioner')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-10" type="radio" value="Facilitator" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']=='Facilitator'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-10" type="radio" value="{{Lang::get('web/ministry-details.facilitator')}}" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-10" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.facilitator-tooltip')">@lang('web/ministry-details.facilitator')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-11" type="radio" value="Strategist" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']=='Strategist'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-11" type="radio" value="{{Lang::get('web/ministry-details.strategist')}}" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-11" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.strategist-tooltip')">@lang('web/ministry-details.strategist')</label>
                                             </li>
                                             <li>
-                                                <input class="styled-checkbox" id="styled-checkbox-12" type="radio" value="Partner" required name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']=='Partner'){{'checked'}}@endif>
+                                                <input class="styled-checkbox" id="styled-checkbox-12" type="radio" value="{{Lang::get('web/ministry-details.donor')}}" required name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
                                                 <label for="styled-checkbox-12" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.donor-tooltip')">@lang('web/ministry-details.donor')</label>
                                             </li>
                                             

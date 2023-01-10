@@ -18,6 +18,7 @@ return [
     'email' => 'Email Address',
     'mobile' => 'Mobile Number',
     'message' => 'Message',
-    'submit' => 'Submit'
+    'submit' => 'Submit',
+    'enter' => 'Enter',
 
 ];
