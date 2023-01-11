@@ -25,5 +25,5 @@ return [
     'add' => 'Somar/Acrescentar',
     'more' => 'Mais',
     'submit' => 'Submeter',
-    'enter' => "Introduzir/Aceder", 
+    'enter' => "Introduzir", 
 ];

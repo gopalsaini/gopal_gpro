@@ -46,7 +46,7 @@ return [
     'register-heading' => 'Regístrese',
     'register-description' => 'Comience su solicitud registrándose a continuación',
     'confirm' => 'Confirmar',
-    'terms-and-conditions ' => 'Términos y Condiciones',
+    'terms-and-conditions' => 'Términos y Condiciones',
     'already-have-account' => '¿Ya tiene una cuenta?',
     'click-here-to-sign-in' => 'Haga clic aquí para iniciar sesión',
 

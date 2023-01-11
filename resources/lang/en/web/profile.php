@@ -22,6 +22,7 @@ return [
     'event' => 'Event',
     'day' => 'Day',
     'application' => 'Application',
+    'application_approved' => 'Application Approved',
     'edit' => 'Edit',
     'personal' => 'Personal',
     'details' => 'Details',

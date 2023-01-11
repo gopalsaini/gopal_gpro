@@ -24,8 +24,8 @@ return [
     'country-name' => 'Nom du pays',
     'price' => 'Tarif',
     'twin-sharing' => 'PARTAGE A DEUX | PAR PERSONNE | CHAMBRE DELUXE',
-    'early-bird-cost' => "TARIF PRÉFÉRENTIEL",
-    'deluxe-room-early-bird' => 'LES DEUX CONJOINTS SONT FORMATEURS | CHAMBRE DELUXE (TARIF PRÉFÉRENTIEL)',
-    'deluxe-room-after-bird' => 'LES DEUX CONJOINTS SONT FORMATEURS | CHAMBRE DELUXE (NON TARIF PRÉFÉRENTIEL)',
-
+    'early-bird-cost' => "INSCRIPTION ANTICIPÉE",
+    'deluxe-room-early-bird' => 'LES DEUX CONJOINTS SONT FORMATEURS | CHAMBRE DELUXE (INSCRIPTION ANTICIPÉE)',
+    'deluxe-room-after-bird' => 'LES DEUX CONJOINTS SONT FORMATEURS | CHAMBRE DELUXE (NON INSCRIPTION ANTICIPÉE)',
+    
 ];

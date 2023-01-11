@@ -24,7 +24,7 @@ return [
     'delete' => 'Apagar/apague',
     'add' => 'Adicionar/Adicione',
     'more' => 'Mais',
-    'submit' => 'Submeter/Submeta',
-    'enter' => 'Introduzir/Aceder',
+    'submit' => 'Submeter',
+    'enter' => 'Introduzir',
 
 ];

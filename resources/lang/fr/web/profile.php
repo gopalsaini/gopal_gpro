@@ -22,6 +22,7 @@ return [
     'event' => 'Événement',
     'day' => 'Jour',
     'application' => 'Demande',
+    'application_approved' => 'Demande Approuvée',
     'edit' => 'Modifier',
     'personal' => 'Personnel',
     'details' => 'Détails',

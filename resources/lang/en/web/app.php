@@ -46,7 +46,7 @@ return [
     'register-heading' => 'Sign Up',
     'register-description' => 'Start your application by signing up below',
     'confirm' => 'Confirm',
-    'terms-and-conditions ' => 'Terms and Conditions',
+    'terms-and-conditions' => 'Terms and Conditions',
     'already-have-account' => 'Already Have an Account?',
     'click-here-to-sign-in' => 'Click Here to Login',
 

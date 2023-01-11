@@ -26,5 +26,5 @@ return [
     'early-bird-cost' => 'CUSTO PROMOCIONAL',
     'deluxe-room-early-bird' => 'AMBOS CÔNJUGES SÃO TREINADORES | QUARTO DE LUXO (PREÇO PROMOCIONAL)',
     'deluxe-room-after-bird' => 'AMBOS CONJUGES SAO TREINADORES | QUARTO DE LUXO (DEPOIS DA PROMOCAO)',
-
+  
 ];

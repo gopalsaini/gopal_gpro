@@ -16,7 +16,7 @@ return [
     'details' => 'Detalhes',
     'personal' => 'Pessoal',
     'contact' => 'Contacto',
-    'personal-details-combined' => 'Contacto Detalhes',
+    'personal-details-combined' => 'Pessoal Detalhes',
     'ministry' => 'Ministério',
     'name' => 'Nome Completo (como aparece no passaporte)',
     'gender' => 'Gênero',
@@ -36,7 +36,7 @@ return [
     'registered' => 'Inscrito/Registrado/Cadastrado',
     'registered-email' => 'Inscrito/Registrado/Cadastrado Endereço Electrónico',
     'email' => 'Endereço Electrónico',
-    'submit' => 'Submeter/Submeta',
+    'submit' => 'Submeter',
     'enter' => 'Introduzir',
 
 ];

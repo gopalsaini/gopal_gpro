@@ -26,7 +26,6 @@ return [
     'early-bird-cost' => 'EARLY BIRD COST',
     'deluxe-room-early-bird' => 'BOTH SPOUSES ARE TRAINERS | DELUXE ROOM ',
     'deluxe-room-after-bird' => 'BOTH SPOUSES ARE TRAINERS | DELUXE ROOM ',
-    'single-room' => 'SINGLE ROOM | PER PERSON |  DELUXE ROOM',
-    'single-trainer' => 'SINGLE SPOUSE TRAINER | DOUBLE DELUXE ROOM ',
+
 
 ];

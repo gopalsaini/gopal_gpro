@@ -284,7 +284,7 @@
                             </div>
                             <div class="col-lg-12">
                                 <div class="form-check position-relative">
-                                    <label for="terms_and_condition" class="form-check-label ps-4"><a href="{{url('information/terms-and-conditions')}}" target="_blank">@lang('web/app.terms-and-conditions ') </a><b>*</b> </label>
+                                    <label for="terms_and_condition" class="form-check-label ps-4"><a href="{{url('information/terms-and-conditions')}}" target="_blank">@lang('web/app.terms-and-conditions') </a><b>*</b> </label>
                                     <div class="input-box" style="position:absolute; top: -23px">
                                         <input type="checkbox" name="terms_and_condition" id="terms_and_condition" required>
                                     </div>

@@ -45,7 +45,7 @@ return [
     'register-heading' => 'Increva-se',
     'register-description' => 'Comece seu pedido se inscrevendo abaixo',
     'confirm' => 'Confirme',
-    'terms-and-conditions ' => 'Termos e Condições',
+    'terms-and-conditions' => 'Termos e Condições',
     'already-have-account' => 'Já Tem uma Conta?',
     'click-here-to-sign-in' => 'Clique Aqui para Aceder',
 
@@ -59,7 +59,7 @@ return [
     'welcome' => 'Bem-vindo',
     'thank-you' => 'Obrigado',
     'successfully-signed-up' => 'Você se Inscreveu com sucesso',
-    'ok' => 'Tudo certo/Tudo bem',
+    'ok' => 'Tudo certo',
 
 
     //footer
@@ -69,8 +69,8 @@ return [
     'copyright' => 'Direito Autoral',
     'gprocongress' => 'CongressoGPro',
     'all-rights-reserved' => 'Todos direitos reservados',
-    'placeholder-password' => 'Crie nova senha/palavra-passe',
-    'placeholder-re-password' => 'Re-introduza a nova senha/palavra-passe',
+    'placeholder-password' => 'Crie nova senha',
+    'placeholder-re-password' => 'Re-introduza a nova senha',
     'Terms_and_Conditions' => 'Termos e Condições',
     'Privacy_Policy' => 'Políticas de Privacidade',
     'FAQ' => 'PFF (Perguntas Feitas Frequentemente)',

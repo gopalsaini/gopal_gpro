@@ -34,7 +34,7 @@ return [
     'home' => 'Domicile',
     'whatsapp' => 'WhatsApp',
     'whatsapp-same-phone' => 'Le numéro WhatsApp est identique au numéro de téléphone',
-    'terms-and-conditions' => "J’accepte les termes et conditions",
+    'terms-and-conditions' => "Termes et Conditions",
     'receive-updates' => 'Je souhaite recevoir des notifications du Congrès via WhatsApp',
     'next' => 'Suivant',
     'enter' => 'Entrer',

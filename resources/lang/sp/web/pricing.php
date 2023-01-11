@@ -26,5 +26,5 @@ return [
     'price' => 'Costo',
     'early-bird-cost' => 'COSTO POR POR PAGO ANTICIPADO',
     'deluxe-room-after-bird' => 'AMBOS CÓNYUGES SON CAPACITADORES | HABITACIÓN DE LUJO (COSTO SIN DESCUENTO POR PAGO ANTICIPADO)',
-
+    
 ];

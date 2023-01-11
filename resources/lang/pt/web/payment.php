@@ -48,7 +48,7 @@ return [
     'partial' => 'Parcial',
     'sponsored' => 'Subsidiado',
     'enter-reference-number' => 'Introduza o Número de Referência',
-    'submit' => 'Submeta/Submeter',
+    'submit' => 'Submeta',
     'requested' => 'Solicitado',
     'name' => 'Nome',
     'email' => 'Endereço Electrónico',

@@ -89,7 +89,6 @@ return [
     'travel-info-not-available' => 'Travel Info Not Available',
     'admin-verifying-visa-info' => 'Administration verifying visa letter information',
     'verify-visa-letter-info' => 'Verify your visa letter information',
-    'verify-visa-letter-info' => 'your visa letter information',
     'enter-remarks' => 'Enter Remarks',
     'flight-info' => 'Flight Information',
     'emergency-contact-info' => 'Emergency Contact Information',

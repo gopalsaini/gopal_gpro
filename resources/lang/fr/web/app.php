@@ -46,7 +46,7 @@ return [
     'register-heading' => "S’inscrire",
     'register-description' => 'Commencez votre candidature en vous inscrivant ci-dessous',
     'confirm' => 'Confirmer',
-    'terms-and-conditions' => 'Termes et conditions',
+    'terms-and-conditions' => 'Termes et Conditions',
     'already-have-account' => 'Avez-vous déjà un compte?',
     'click-here-to-sign-in' => 'Cliquez ici pour vous connecter',
 
@@ -71,7 +71,7 @@ return [
     'all-rights-reserved' => 'Tous droits réservés',
     'placeholder-password' => 'Créer un nouveau mot de passe',
     'placeholder-re-password' => 'Ressaisir le nouveau mot de passe',
-    'Terms_and_Conditions' => 'Termes et conditions',
+    'Terms_and_Conditions' => 'Termes et Conditions',
     'Privacy_Policy' => 'Politique de confidentialité',
     'FAQ' => 'FAQ',
 

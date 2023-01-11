@@ -83,6 +83,8 @@
                         <!-- //Vineet - 080123 -->
                         @elseif($resultData['result']['profile_status']=='Review')
                             @lang('web/profile.review')
+                        @elseif($resultData['result']['profile_status']=='Approved')
+                            @lang('web/profile.application_approved')
                         @else
                             @lang('web/profile.application') {{$resultData['result']['profile_status']}}
                         @endif
