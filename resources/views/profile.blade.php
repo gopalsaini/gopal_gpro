@@ -117,7 +117,7 @@
                         <li>
                             <p>@lang('web/profile.full-name')</p>
                             <span>:&nbsp; &nbsp; &nbsp; 
-                            @lang('web/profile.'.(\App\Helpers\commonHelper::ministryPastorTrainerDetail($resultData['result']['salutation'])))  
+                            @lang('web/profile-details.'.(\App\Helpers\commonHelper::ministryPastorTrainerDetail($resultData['result']['salutation'])))  
                                     
                             {{$resultData['result']['name']}} {{$resultData['result']['last_name']}}</span>
                         </li>

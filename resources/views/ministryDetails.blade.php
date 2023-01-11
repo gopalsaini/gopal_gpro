@@ -70,7 +70,7 @@
                     </div>
                     <div class="col-lg-6">
                         <label for="">@lang('web/ministry-details.postal-address') <span>*</span></label>
-                        <input type="text" autocomplete="text" name="ministry_address" placeholder="@lang('web/ministry-details.enter') @lang('web/ministry-details.address')"class="mt-2" required value="{{$resultData['result']['ministry_address']}}">
+                        <input type="text" autocomplete="text" name="ministry_address" placeholder="@lang('web/ministry-details.enter') @lang('web/ministry-details.address')" class="mt-2" required value="{{$resultData['result']['ministry_address']}}">
                     </div>
                     <div class="col-lg-6">
                         <label for="">@lang('web/ministry-details.zip-postal-code')</label>
