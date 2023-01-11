@@ -1342,6 +1342,23 @@ class commonHelper{
 			'Estratega' => 'Strategist',
 			'Socio' => 'Donor',
 			'N/A' => 'N/A',
+
+			'Mr.'=>'Mr.', // en
+			'Sr.'=> 'Mr.', // pt sp
+			'Ms.' => 'Ms.', //en
+			'Sra.'=> 'Ms.' , // sp
+			'Senhorita.' => 'Ms.' , // pt
+			'Mrs.'=> 'Mrs.', // en
+			'Srta.'=> 'Mrs.', // sp
+			'Senhora.'=> 'Mrs.' , // pt
+			'Dr.' => 'Dr.',
+			'Pasteur' => 'Pastor',
+			'Pastor' => 'Pastor', // sp
+			'Bishop' => 'Bishop', // en
+			'Bispo' => 'Bishop' , //pt
+			'Obispo' => 'Bishop', // sp
+			'Rev.' => 'Rev.',
+			'Prof.' => 'Prof.',
 		);
 		
 		return $data[$id];

@@ -89,14 +89,16 @@
                             <label for="name">@lang('web/profile-details.name') <span>*</span></label>
                             <select id="name" placeholder="Mr." required class="mt-2" name="salutation">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
-                                <option @if($resultData['result']['salutation']=='Mr.'){{'selected'}}@endif value="Mr.">Mr.</option>
-                                <option @if($resultData['result']['salutation']=='Ms.'){{'selected'}}@endif value="Ms.">Ms.</option>
-                                <option @if($resultData['result']['salutation']=='Mrs'){{'selected'}}@endif value="Mrs">Mrs.</option>
-                                <option @if($resultData['result']['salutation']=='Dr.'){{'selected'}}@endif value="Dr">Dr.</option>
-                                <option @if($resultData['result']['salutation']=='Pastor'){{'selected'}}@endif value="Pastor">Pastor</option>
-                                <option @if($resultData['result']['salutation']=='Bishop'){{'selected'}}@endif value="Bishop">Bishop</option>
-                                <option @if($resultData['result']['salutation']=='Rev.'){{'selected'}}@endif value="Rev.">Rev.</option>
-                                <option @if($resultData['result']['salutation']=='Prof.'){{'selected'}}@endif value="Prof.">Prof.</option>
+                                
+                                <option  value="@lang('web/profile-details.Mr.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Mr.')) selected @endif>@lang('web/profile-details.Mr.')</option>
+                                <option  value="@lang('web/profile-details.Ms.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Ms.')) selected @endif>@lang('web/profile-details.Ms.')</option>
+                                <option  value="@lang('web/profile-details.Mrs.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Mrs.')) selected @endif>@lang('web/profile-details.Mrs.')</option>
+                                <option  value="@lang('web/profile-details.Dr.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Dr.')) selected @endif>@lang('web/profile-details.Dr.')</option>
+                                <option  value="@lang('web/profile-details.Pastor')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Pastor')) selected @endif>@lang('web/profile-details.Pastor')</option>
+                                <option  value="@lang('web/profile-details.Bishop')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Bishop')) selected @endif>@lang('web/profile-details.Bishop')</option>
+                                <option  value="@lang('web/profile-details.Rev.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Rev.')) selected @endif>@lang('web/profile-details.Rev.')</option>
+                                <option  value="@lang('web/profile-details.Prof.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Prof.')) selected @endif>@lang('web/profile-details.Prof.')</option>
+
                             </select>
                         </div>
                     </div>
@@ -279,14 +281,14 @@
                                         <div class="select-option">
                                             <label for="name">@lang('web/profile-details.name') <span>*</span></label>
                                             <select id="name" class="mt-2" required name="salutation">
-                                                <option  value="Mr." @if($SpouseDetails && $SpouseDetails->salutation == 'Mr.') selected @endif>Mr.</option>
-                                                <option  value="Ms." @if($SpouseDetails && $SpouseDetails->salutation == 'Ms.') selected @endif>Ms.</option>
-                                                <option  value="Mrs" @if($SpouseDetails && $SpouseDetails->salutation == 'Mrs') selected @endif>Mrs.</option>
-                                                <option  value="Dr" @if($SpouseDetails && $SpouseDetails->salutation == 'Dr') selected @endif>Dr.</option>
-                                                <option  value="Pasteur" @if($SpouseDetails && $SpouseDetails->salutation == 'Pasteur') selected @endif>Pasteur</option>
-                                                <option  value="Bishop" @if($SpouseDetails && $SpouseDetails->salutation == 'Bishop') selected @endif>Bishop</option>
-                                                <option  value="Rev." @if($SpouseDetails && $SpouseDetails->salutation == 'Rev.') selected @endif>Rev.</option>
-                                                <option  value="Prof." @if($SpouseDetails && $SpouseDetails->salutation == 'Prof.') selected @endif>Prof.</option>
+                                                <option  value="@lang('web/profile-details.Mr.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Mr.')) selected @endif>@lang('web/profile-details.Mr.')</option>
+                                                <option  value="@lang('web/profile-details.Ms.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Ms.')) selected @endif>@lang('web/profile-details.Ms.')</option>
+                                                <option  value="@lang('web/profile-details.Mrs.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Mrs.')) selected @endif>@lang('web/profile-details.Mrs.')</option>
+                                                <option  value="@lang('web/profile-details.Dr.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Dr.')) selected @endif>@lang('web/profile-details.Dr.')</option>
+                                                <option  value="@lang('web/profile-details.Pastor')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Pastor')) selected @endif>@lang('web/profile-details.Pastor')</option>
+                                                <option  value="@lang('web/profile-details.Bishop')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Bishop')) selected @endif>@lang('web/profile-details.Bishop')</option>
+                                                <option  value="@lang('web/profile-details.Rev.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Rev.')) selected @endif>@lang('web/profile-details.Rev.')</option>
+                                                <option  value="@lang('web/profile-details.Prof.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Prof.')) selected @endif>@lang('web/profile-details.Prof.')</option>
                                             </select>
                                         </div>
                                     </div>

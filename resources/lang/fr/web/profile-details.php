@@ -39,4 +39,13 @@ return [
     'submit' => 'Soumettre',
     'enter' => 'Entrer',
 
+    'Mr.'=>'Mr.',
+    'Ms.' => 'Ms.',
+    'Mrs.'=> 'Mrs.', 
+    'Dr.' => 'Dr.',
+    'Pastor' => 'Pasteur',
+    'Bishop' => 'Bishop',
+    'Rev.' => 'Rev.',
+    'Prof.' => 'Prof.',
+
 ];

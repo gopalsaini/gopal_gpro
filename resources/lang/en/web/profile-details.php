@@ -16,7 +16,7 @@ return [
     'details' => 'Details',
     'personal' => 'Personal',
     'contact' => 'Contact',
-    'personal-details-combined' => 'Contact Details',
+    'personal-details-combined' => 'Personal Details',
     'ministry' => 'Ministry',
     'name' => 'Full name (as it appears on passport)',
     'gender' => 'Gender',
@@ -38,5 +38,14 @@ return [
     'registered-email' => 'Registered Email Address',
     'submit' => 'Submit',
     'enter' => 'Enter',
+
+    'Mr.'=>'Mr.',
+    'Ms.' => 'Ms.',
+    'Mrs.'=> 'Mrs.', 
+    'Dr.' => 'Dr.',
+    'Pastor' => 'Pasteur',
+    'Bishop' => 'Bishop',
+    'Rev.' => 'Rev.',
+    'Prof.' => 'Prof.',
 
 ];

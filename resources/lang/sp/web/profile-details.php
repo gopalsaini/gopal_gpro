@@ -39,4 +39,14 @@ return [
     'submit' => 'Enviar',
     'enter' => 'Entrar',
 
+    
+    'Mr.'=>'Sr.',
+    'Ms.' => 'Sra.',
+    'Mrs.'=> 'Srta.', 
+    'Dr.' => 'Dr.',
+    'Pastor' => 'Pastor',
+    'Bishop' => 'Obispo',
+    'Rev.' => 'Rev.',
+    'Prof.' => 'Prof.',
+
 ];
