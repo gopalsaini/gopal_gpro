@@ -643,7 +643,7 @@ class ProfileController extends Controller
             $intent = $data['intent'];
             $order_id = $data['order_id'];
             $id = $data['order_id'];
-
+            \App\Helpers\commonHelper::setLocale();
             return view('stripe',compact('intent','order_id','id'));
             
         }else{

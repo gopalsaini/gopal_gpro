@@ -1081,7 +1081,6 @@ class commonHelper{
 		$payment->user_id=$user->id ?? null;
 		$payment->order_id=$orderId;
 		$payment->payment_by='1';
-		$payment->currency_id='233';
 		$payment->transaction_id=$transactionId;
 		$payment->amount=$amount;
 		$payment->payment_status='0';

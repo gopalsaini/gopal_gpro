@@ -206,7 +206,7 @@ class HomeController extends Controller
 		}else{
 
 			\Session::forget('intent');
-          
+            \App\Helpers\commonHelper::setLocale();
             return redirect('/')->with('gpro_success','Payment Successful');
 			
 			
