@@ -182,14 +182,14 @@
                                 <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> &nbsp;@lang('web/profile-details.yes')
                                 <!-- //Vineet - 080123 -->
                                 </li>
-                                <li>@lang('web/home.Spouse') : {{$SpouseParent->name}} {{$SpouseParent->last_name}}</li>
+                                <li>@lang('web/home.spouse') : {{$SpouseParent->name}} {{$SpouseParent->last_name}}</li>
                             @else
                                 <!-- //Vineet - 080123 -->
                                 <!-- <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') :</strong> @if($Spouse) @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif -->
                                 <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> &nbsp;@if($Spouse) @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif
                                 <!-- //Vineet - 080123 -->
                                 </li>
-                                @if($Spouse)<li>@lang('web/home.Spouse') : {{$Spouse['name']}} {{$Spouse['last_name']}}</li>@endif
+                                @if($Spouse)<li>@lang('web/home.spouse') : {{$Spouse['name']}} {{$Spouse['last_name']}}</li>@endif
 
                             @endif
                         
@@ -210,16 +210,24 @@
                         @endif
                         
                         @if($Spouse && $Spouse->spouse_confirm_status=='Approve')
-
-                            
                             <ul>
-                                <td colspan="2"><strong>@lang('web/home.spouse-confirmation-received') :</strong> {{$Spouse->spouse_confirm_status}}
+                                <td colspan="2"><strong>@lang('web/home.spouse-confirmation-received') :</strong>  @lang('web/app.Approve') 
                                 </li> 
                             <ul>
                             
-                        @elseif($Spouse)
+                        @elseif($Spouse && $Spouse->spouse_confirm_status=='Confirm')
                             <ul>
-                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : {{$Spouse->spouse_confirm_status}}</strong>
+                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.confirm') </strong>
+                                </li> 
+                            <ul>
+                        @elseif($Spouse && $Spouse->spouse_confirm_status=='Pending')
+                            <ul>
+                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.pending') </strong>
+                                </li> 
+                            <ul>
+                        @else($Spouse && $Spouse->spouse_confirm_status=='Decline')
+                            <ul>
+                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.decline') </strong>
                                 </li> 
                             <ul>
                         @endif
@@ -265,11 +273,12 @@
                             <p>@lang('web/profile.phone')</p>
                             <span>:&nbsp; &nbsp; &nbsp; +{{$resultData['result']['phone_code']}} {{$resultData['result']['mobile']}}</span>
                         </li>
-                        <li>
-                            <p>@lang('web/profile.business-or-home')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; +{{$resultData['result']['contact_business_codenumber']}} {{$resultData['result']['contact_business_number']}}</span>
-                        </li>
-
+                        @if($resultData['result']['contact_business_number'])
+                            <li>
+                                <p>@lang('web/profile.business-or-home')</p>
+                                <span>:&nbsp; &nbsp; &nbsp; +{{$resultData['result']['contact_business_codenumber']}} {{$resultData['result']['contact_business_number']}}</span>
+                            </li>
+                        @endif
                         @if($resultData['result']['contact_business_number']!=$resultData['result']['contact_whatsapp_number'])
                             <li>
                                 <p>@lang('web/profile.whatsapp')</p>
@@ -285,7 +294,7 @@
                 <div class="detail-wrap">
                     <ul>
                         <li>
-                            <p>@lang('web/profile.ministry') @lang('web/profile.name')</p>
+                            <p>@lang('web/ministry-details.ministry-name')</p>
                             <span>:&nbsp; &nbsp; &nbsp;  @if($resultData['result']['ministry_name'] == '') Independent @else {{ucfirst($resultData['result']['ministry_name'])}} @endif </span>
                         </li>
                         <li>

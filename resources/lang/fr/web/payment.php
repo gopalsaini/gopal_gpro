@@ -61,7 +61,7 @@ return [
     'payment-pay' => 'Payé par',
     'payment-for' => 'Payé pour',
     'Status' => 'Statut',
-    'pay-using-money-gram' => "Si vous n’êtes pas en mesure de payer avec votre carte de crédit, payez en utilisant money gram",
+    'pay-using-money-gram' => "Si vous n’êtes pas en mesure de payer avec votre carte de crédit, payez en utilisant MoneyGram",
     'enter' => 'Entrer',
     'payment-history'=>'Historique du Paiement',
     'payment-method'=>'Méthode de Paiement',

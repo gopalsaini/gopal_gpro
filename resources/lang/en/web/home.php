@@ -57,7 +57,7 @@ return [
     'pending' => 'Pending',
     'please-choose-option' => 'Please choose an option',
     'wire-transfer' => 'Wire transfer',
-    'money-gram' => 'Money Gram',
+    'money-gram' => 'MoneyGram',
     'western-union' => 'Western Union',
     'upload-payment-image' => 'Upload Payment Image',
     'coming-along-with-spouse' => 'Are you coming along with your spouse to the Congress?',

@@ -62,7 +62,7 @@ return [
     'Status' => 'Estado',
     'cah' => 'Pago en efectivo',
     'pay-cash-payment' => 'Pago en efectivo',
-    'pay-using-money-gram' => 'Si no puede pagar con tarjeta de crédito, pague por Pago de Pequeña Cantidad',
+    'pay-using-money-gram' => 'Si no puede pagar con tarjeta de crédito, pague por Pago de MoneyGram',
     'enter' => 'Entrar', 
     'payment-method'=>'Pago Método',
 

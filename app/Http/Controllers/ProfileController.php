@@ -664,6 +664,8 @@ class ProfileController extends Controller
                     'reference_number' => 'required',
                     'amount' => 'required|numeric',
                     'type' => 'required|in:Offline,Online',
+                    'name' => 'required',
+                    'country_of_sender' => 'required',
                 ];
         
                 $validator = \Validator::make($request->all(), $rules);
@@ -704,6 +706,8 @@ class ProfileController extends Controller
                                 $transaction->method = $request->post('type');
                                 $transaction->amount = $request->post('amount');
                                 $transaction->bank_transaction_id = $request->post('reference_number');
+                                $transaction->name = $request->post('name');
+						        $transaction->country_of_sender = $request->post('country_of_sender');
                                 $transaction->status = '0';
                                 $transaction->particular_id = '1';
             

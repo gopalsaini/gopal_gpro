@@ -91,7 +91,7 @@
                                             <b>${{\App\Helpers\commonHelper::getTotalRejectedAmount($resultData['result']['id'], true)}}</b>
                                         </li>
                                         <li>
-                                            <p>@lang('web/payment.paymnet-balance') @lang('web/payment.payment')</p>
+                                            <p>@lang('web/payment.balance') </p>
                                             <b>${{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], true)}}</b>
                                         </li>
                                     </ul>
@@ -499,7 +499,7 @@
                                     </div>
                                     <div class="partial-content">
                                         <h5>@lang('web/payment.cah') - ${{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], true)}}</h5>
-                                        <p>@lang('web/payment.pay-cash-payment')</p>
+                                      
                                     </div>
                                 </div>
                             @endif
@@ -514,7 +514,7 @@
                                 </div>
                                 <div class="partial-content">
                                     <h5>@lang('web/payment.amount') @lang('web/payment.full')  - ${{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], true)}}</h5>
-                                    <p>@lang('web/payment.pay-card-payment-method')</p>
+                                    
                                 </div>
                             </div>
                            <div class="partial-box" data-bs-target="#partialamount" data-bs-toggle="modal" data-bs-dismiss="modal">
@@ -529,7 +529,6 @@
                                 </div>
                                 <div class="partial-content">
                                     <h5>@lang('web/payment.partial') @lang('web/payment.amount')</h5>
-                                    <p>@lang('web/payment.pay-card-payment-method')</p>
                                 </div>
                             </div>
                             <div class="partial-box mb-0" data-bs-target="#SponsoredAmount" data-bs-toggle="modal"
@@ -544,7 +543,6 @@
                                 </div>
                                 <div class="partial-content">
                                     <h5>@lang('web/payment.sponsored')</h5>
-                                    <p>@lang('web/payment.pay-card-payment-method')</p>
                                 </div>
                             </div>
                         </div>
@@ -593,14 +591,14 @@
                                     <label for="">@lang('web/payment.transfer-type')<span>*</span></label>
                                     <select name="mode" class="mt-2 form-control addInFullAmountPaymentField" required>
                                         <option value="">--@lang('web/payment.transfer-type')--</option>
-                                        <option value="Wire">Wire transfer</option>
-                                        <option value="MG">Money Gram</option>
+                                        <option value="Wire">Wire Transfer</option>
+                                        <option value="MG">MoneyGram</option>
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
                                 
                                 <div class="col-lg-12 divShowForOnChangePaymentType" style="display:none" id="showWire">
-                                    <label for="">Wire transfer Name</label>
+                                    <label for="">Wire Transfer </label>
                                 </div>
                                 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none" id="showInFullAmount">
@@ -624,11 +622,7 @@
                                     <input type="test" name="reference_number"  value="" placeholder="Enter Reference Number" class="mt-2"  id="reference_numberRequiredIn_FullAmount">
                                 </div>
 
-
-
-
-
-                                <div class="col-lg-12">
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount">
                                     <label for="">Upload Payment Image </label>
                                     <input type="file" name="file"  value="" class="mt-2" >
                                 </div>
@@ -681,13 +675,13 @@
                                     <label for="">@lang('web/payment.transfer-type')<span>*</span></label>
                                     <select name="mode" class="mt-2 form-control addPaymentTypeInPartial" required>
                                         <option value="">--@lang('web/ministry-details.select')--</option>
-                                        <option value="Wire">Wire transfer</option>
-                                        <option value="MG">Money Gram</option>
+                                        <option value="Wire">Wire Transfer</option>
+                                        <option value="MG">MoneyGram</option>
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
                                 <div class="col-lg-12 divShowForOnChangePaymentInPartial" style="display:none" id="showInPartialWire">
-                                    <label for="">Wire transfer Name</label>
+                                    <label for="">Wire Transfer </label>
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none" id="showInPartialWU">
@@ -711,7 +705,7 @@
                                     <input type="test" name="reference_number"  value="" placeholder="Enter Reference Number" class="mt-2"  id="reference_numberRequired">
                                 </div>
 
-                                <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial">
                                     <label for="">Upload Payment Image </label>
                                     <input type="file" name="file"  value="" class="mt-2" >
                                 </div>
@@ -1199,7 +1193,6 @@
 
                     
                 }else if ( this.value == 'MG'){
-                    $("#showMG").show();
                     $("#countryOfSenderRequired").attr('required',true);
                     $("#senderNameRequiredInFullAmount").attr('required',true);
                     $("#AmountRequiredInFullAmount").attr('required',true);
