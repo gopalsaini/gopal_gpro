@@ -1367,124 +1367,7 @@ class commonHelper{
 		if($lang == 'sp'){
 
 			$data=array(
-				'Practitioner' => 'Practitioner',
-				'Facilitator' => 'Facilitator',
-				'Strategist' => 'Strategist',
-				'Partner' => 'Donor',
-				'Praticien' => 'Practitioner',
-				'Facilitateur' => 'Facilitator',
-				'Stratège' => 'Strategist',
-				'Partenaire' => 'Donor',
-				'Praticante' => 'Practitioner',
-				'Facilitador' => 'Facilitator',
-				'Estrategista/Estratega' => 'Strategist',
-				'Parceiro' => 'Donor',
-				'Practicante Especializado' => 'Practitioner',
-				'Facilitador' => 'Facilitator',
-				'Estratega' => 'Strategist',
-				'Socio' => 'Donor',
-				'N/A' => 'N/A',
-	
-				'Mr.'=>'Mr.', // en
-				'Sr.'=> 'Mr.', // pt sp
-				'Ms.' => 'Ms.', //en
-				'Sra.'=> 'Ms.' , // sp
-				'Senhorita.' => 'Ms.' , // pt
-				'Mrs.'=> 'Mrs.', // en
-				'Srta.'=> 'Mrs.', // sp
-				'Senhora.'=> 'Mrs.' , // pt
-				'Dr.' => 'Dr.',
-				'Pasteur' => 'Pastor',
-				'Pastor' => 'Pastor', // sp
-				'Bishop' => 'Bishop', // en
-				'Bispo' => 'Bishop' , //pt
-				'Obispo' => 'Bishop', // sp
-				'Rev.' => 'Rev.',
-				'Prof.' => 'Prof.',
-			);
-
-		}elseif($lang == 'fr'){
-
-			$data=array(
-				'Practitioner' => 'Practitioner',
-				'Facilitator' => 'Facilitator',
-				'Strategist' => 'Strategist',
-				'Partner' => 'Donor',
-				'Praticien' => 'Practitioner',
-				'Facilitateur' => 'Facilitator',
-				'Stratège' => 'Strategist',
-				'Partenaire' => 'Donor',
-				'Praticante' => 'Practitioner',
-				'Facilitador' => 'Facilitator',
-				'Estrategista/Estratega' => 'Strategist',
-				'Parceiro' => 'Donor',
-				'Practicante Especializado' => 'Practitioner',
-				'Facilitador' => 'Facilitator',
-				'Estratega' => 'Strategist',
-				'Socio' => 'Donor',
-				'N/A' => 'N/A',
-	
-				'Mr.'=>'Mr.', // en
-				'Sr.'=> 'Mr.', // pt sp
-				'Ms.' => 'Ms.', //en
-				'Sra.'=> 'Ms.' , // sp
-				'Senhorita.' => 'Ms.' , // pt
-				'Mrs.'=> 'Mrs.', // en
-				'Srta.'=> 'Mrs.', // sp
-				'Senhora.'=> 'Mrs.' , // pt
-				'Dr.' => 'Dr.',
-				'Pasteur' => 'Pastor',
-				'Pastor' => 'Pastor', // sp
-				'Bishop' => 'Bishop', // en
-				'Bispo' => 'Bishop' , //pt
-				'Obispo' => 'Bishop', // sp
-				'Rev.' => 'Rev.',
-				'Prof.' => 'Prof.',
-			);
-
-		}elseif($lang == 'pt'){
-
-			$data=array(
-				'Practitioner' => 'Practitioner',
-				'Facilitator' => 'Facilitator',
-				'Strategist' => 'Strategist',
-				'Partner' => 'Donor',
-				'Praticien' => 'Practitioner',
-				'Facilitateur' => 'Facilitator',
-				'Stratège' => 'Strategist',
-				'Partenaire' => 'Donor',
-				'Praticante' => 'Practitioner',
-				'Facilitador' => 'Facilitator',
-				'Estrategista/Estratega' => 'Strategist',
-				'Parceiro' => 'Donor',
-				'Practicante Especializado' => 'Practitioner',
-				'Facilitador' => 'Facilitator',
-				'Estratega' => 'Strategist',
-				'Socio' => 'Donor',
-				'N/A' => 'N/A',
-	
-				'Mr.'=>'Mr.', // en
-				'Sr.'=> 'Mr.', // pt sp
-				'Ms.' => 'Ms.', //en
-				'Sra.'=> 'Ms.' , // sp
-				'Senhorita.' => 'Ms.' , // pt
-				'Mrs.'=> 'Mrs.', // en
-				'Srta.'=> 'Mrs.', // sp
-				'Senhora.'=> 'Mrs.' , // pt
-				'Dr.' => 'Dr.',
-				'Pasteur' => 'Pastor',
-				'Pastor' => 'Pastor', // sp
-				'Bishop' => 'Bishop', // en
-				'Bispo' => 'Bishop' , //pt
-				'Obispo' => 'Bishop', // sp
-				'Rev.' => 'Rev.',
-				'Prof.' => 'Prof.',
-			);
-
-		}else{
-
-			$data=array(
-				'Please-select-Yes-No' => 'Please select Yes or No',
+				'Please-select-YesNo' => 'Please select Yes or No',
 				'Please-Group-Users' => 'Please add email of Group Users.',
 				'Wehave-duplicate-email-group-users.' => "We've found duplicate email in Group users.",
 				'isalready-exist-please-use-another-email-id' => 'is already exist with us so please use another email id',
@@ -1536,7 +1419,377 @@ class commonHelper{
 				'Visa-letter-info-doesnot-exist' => 'Visa letter info does not exist',	
 				'Visaletter-file-fetche-succesully' => 'Visa letter file fetched succesully',	
 				'Notification=fetched-successfully' => 'Notification fetched successfully',	
-				'Email-already-exists-Please-try-with-another-email-id' => 'Email already exists. Please try with another email id',	
+				'Emailalready-existsPlease-trywithanother-emailid' => 'Email already exists. Please try with another email id',	
+				'EmailVerification-linkhasbeen-sentsuccessfully-onyour-emailid' => 'Email Verification link has been sent successfully on your email id',	
+				'Yourregistration-hasbeen-completedsuccessfullyPlease-updateyourprofile' => 'Your registration has been completed successfully. Please update your profile',	
+				'Email-alreadyverifiedPlease-Login' => 'Email already verified. Please Login',	
+				'This-account-doesnot-exist' => 'This account does not exist',	
+				'Youraccount-hasbeenblocked-Pleasecontact-Administrator' => 'Your account has been blocked. Please contact Administrator',	
+				'Invalid-Password' => 'Invalid Password',	
+				'Payment-link-hasbeen-expired' => 'Payment link has been expired',	
+				'Payment-Successful' => 'Payment Successful',	
+				'Sponsor-Submitted-Payment' => 'Payment Successful',	
+				'Confirmation-link-has-expired' => 'Confirmation link has expired',	
+				'Your-SpouseConfirmation-isRejected!' => 'Your Spouse Confirmation is Rejected!',	
+				'Confirmation-Successful' => 'Confirmation Successful',	
+				'Wehave-sentpassword-resetlinkon-youremail-address' => 'We have sent password reset link on your email address',	
+				'Resetpassword-linkhasbeen-expired' => 'Reset password link has been expired',	
+				'Yourprofile-isunder-review' => 'Your profile is under review',	
+				'Your-Travel-Information-pending' => 'Your Travel Information pending',	
+				'YourSession-Informationpending' => 'Your Session Information pending',	
+				'Your-application-alreadyApproved' => 'Your application already Approved',	
+				'Cash-payment-addedsuccessful' => 'Cash payment added successful',	
+				'TravelInformation-approved-successful' => 'Travel Information approved successful',	
+				'Travel-Information-notapproved' => 'Travel Information not approved',	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using MoneyGram",	
+				'Payyour-registrationfee-usinga-sponsorship' => 'Pay your registration fee using a sponsorship',	
+				'Done' =>'Done',	
+				'Youhave-madethe-full-payment' => 'You have made the full payment',	
+				'Send-Request' => 'Send Request',	
+				'Pay-the-full-registration-feewith' => 'Pay the full registration fee with',	
+				'Pay-a-little-amount-With' =>' Pay a little amount with',	
+				'&-rest-later' => '& rest later',	
+				'Transaction-Details' => 'Transaction Details',	
+				'Order-ID' => 'Order ID',	
+				'You' => 'You',	
+				'Your-Sponsor' => 'Your Sponsor',	
+				'Donation' => 'Donation',	
+				'No Transactions Found' => 'No Transactions Found',	
+				"Thankyoufor-submittingyourprofile-forreviewWe'll-updateyousoon." => "Thank you for submitting your profile for review. We'll update you soon.",	
+				"Account-Rejected" => "Account Rejected",	
+				"Sorry-youraccount-didntpassour-verificationsystem" => "Sorry, your account didn't pass our verification system",	
+				"Vie-Details" => "View Details",	
+				'Your-SpouseDetails' => 'Your Spouse Details',	
+				'Not-Available' => 'Not Available',	
+				'Nothing-Found' => 'Nothing Found',	
+				"You-dont-haveanytravel-informationPlease" => "You don't have any travel information. Please add your travel information to see & manage it here",	
+				'No-SessionAvailable' => 'No Session Available',	
+				'Something-happenedplease-tryagainlater' => 'Something happened, please try again later',	
+				'Please-submityourprofile-dataOnour-website' => 'Something happened, please try again later',	
+				"Youve-successfullyoffline" => "You've successfully submitted the offline payment for review",	
+				"Your-paymentwas-successful" => "Your payment was successful",	
+				'Please-checkinputs&try-again' => 'Please check inputs & try again',
+			);
+
+		}elseif($lang == 'fr'){
+
+			$data=array(
+				'Please-select-YesNo' => 'Please select Yes or No',
+				'Please-Group-Users' => 'Please add email of Group Users.',
+				'Wehave-duplicate-email-group-users.' => "We've found duplicate email in Group users.",
+				'isalready-exist-please-use-another-email-id' => 'is already exist with us so please use another email id',
+				"Wehave-found-duplicate-mobile-Group-users." => "We've found duplicate mobile in Group users.",
+				'isalreadyexist-withusso-please-use-another-mobile-number.' => 'is already exist with us so please use another mobile number.',
+				"We-have-found-duplicateWhatsAppmobile-numberin-groupusers." => "We've found duplicate WhatsApp mobile number in Group users.",
+				'is-already-existwith-usso-please-use-anotherwhatsapp-number.' => 'is already exist with us so please use another WhatsApp number.',
+				'GroupInfo-updated-successfully.' => 'Group Info updated successfully.',
+				'Spouse-not-found' => 'Spouse not found',
+				'Spouse-already-associated-withother-user' => 'Spouse already associated with other user',
+				'Youhave-already-updated-spouse-detail' => 'You have already updated spouse detail',
+				'DateOfBirthyear-mustbemore-than-18years' => 'Date of Birth year must be more than 18 years',
+				'Spouse-update-successful' => 'Spouse update successful',
+				'Stay-room-update-successful' => 'Stay room update successful',
+				'NewPassword-update-successful' => 'New Password update successful',
+				'Profile-updated-successfully' => 'Profile updated successfully',
+				'Something-went-wrongPlease-try-again' => 'Something went wrong. Please try again',
+				'Contact-Details-updated-successfully.' => 'Contact Details updated successfully.',
+				'Youare-not-allowedto-update-profile' => 'You are not allowed to update profile',
+				'Pastor-detail-not-found' => 'Pastor detail not found',
+				'Profile-details-submit-successfully' => 'Profile details submit successfully',
+				'Please-verify-ministry-details' => 'Please verify ministry details',
+				'Ministry-Pastor-detail-updated-successfully.' => 'Ministry Pastor detail updated successfully.',
+				'Your-travelinfo-hasbeenalready-added' => 'Your travel info has been already added',
+				'Travel-Info-Submittedsuccesfully' => 'Travel Info Submitted succesfully',
+				'Your-travelinfo-hasbeen-sendSuccessfully' => 'Your travel info has been send successfully',
+				'Please-verify-yourtravel-information' => 'Please verify your travel information',
+				'Travel-information-hasbeen-successfully-completed' => 'Travel information has been successfully completed',	
+				'Your-travelInfo-has-been-verified-successfully' => 'Your travel info has been verified successfully',	
+				'Preliminary-Visa-Letter-successfully-verified' => 'Preliminary Visa Letter successfully verified',	
+				'TravelInfo-doesnot-exist' => 'Travel info does not exist',	
+				'TravelInformation-remarksubmit-successful.' => 'Travel information remark submit successful.',	
+				'Youarenot-allowedto-updateTravelInformation' => 'You are not allowed to update Travel information',	
+				'Yoursession-hasbeen-addedsuccessfully' => 'Your session has been added successfully',	
+				'Session-information-hasbeen-successfully-completed.' => 'Session information has been successfully completed.',	
+				'Sessioninfo-doesnot-exists' => 'Session info does not exists.',	
+				'Session-information-hasbeen-successfullyverified' => 'Session information has been successfully verified',	
+				'Youarenot-allowedto-updatesession-information' => 'You are not allowed to update session information',	
+				'Payment-Linksent-succesfully' => 'Payment Link sent succesfully',	
+				'Payment-Link' => 'Payment Link',	
+				'Payment-Successful' => 'Payment Successful',	
+				'Transaction-already-exists' => 'Transaction already exists',	
+				'Transaction-hasbeensent-successfully' => 'Transaction has been sent successfully',	
+				'Requestor-Payment-is-completed' => 'Requestor Payment is completed',	
+				'Offline-payment-successful' => 'Offline payment successful',	
+				'Data-not-available' => 'Data not available',	
+				'payment-added-successful' => 'payment added successful',	
+				'No-payment-due' => 'No payment due',	
+				'Visa-letter-info-doesnot-exist' => 'Visa letter info does not exist',	
+				'Visaletter-file-fetche-succesully' => 'Visa letter file fetched succesully',	
+				'Notification=fetched-successfully' => 'Notification fetched successfully',	
+				'Emailalready-existsPlease-trywithanother-emailid' => 'Email already exists. Please try with another email id',	
+				'EmailVerification-linkhasbeen-sentsuccessfully-onyour-emailid' => 'Email Verification link has been sent successfully on your email id',	
+				'Yourregistration-hasbeen-completedsuccessfullyPlease-updateyourprofile' => 'Your registration has been completed successfully. Please update your profile',	
+				'Email-alreadyverifiedPlease-Login' => 'Email already verified. Please Login',	
+				'This-account-doesnot-exist' => 'This account does not exist',	
+				'Youraccount-hasbeenblocked-Pleasecontact-Administrator' => 'Your account has been blocked. Please contact Administrator',	
+				'Invalid-Password' => 'Invalid Password',	
+				'Payment-link-hasbeen-expired' => 'Payment link has been expired',	
+				'Payment-Successful' => 'Payment Successful',	
+				'Sponsor-Submitted-Payment' => 'Payment Successful',	
+				'Confirmation-link-has-expired' => 'Confirmation link has expired',	
+				'Your-SpouseConfirmation-isRejected!' => 'Your Spouse Confirmation is Rejected!',	
+				'Confirmation-Successful' => 'Confirmation Successful',	
+				'Wehave-sentpassword-resetlinkon-youremail-address' => 'We have sent password reset link on your email address',	
+				'Resetpassword-linkhasbeen-expired' => 'Reset password link has been expired',	
+				'Yourprofile-isunder-review' => 'Your profile is under review',	
+				'Your-Travel-Information-pending' => 'Your Travel Information pending',	
+				'YourSession-Informationpending' => 'Your Session Information pending',	
+				'Your-application-alreadyApproved' => 'Your application already Approved',	
+				'Cash-payment-addedsuccessful' => 'Cash payment added successful',	
+				'TravelInformation-approved-successful' => 'Travel Information approved successful',	
+				'Travel-Information-notapproved' => 'Travel Information not approved',	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using MoneyGram",	
+				'Payyour-registrationfee-usinga-sponsorship' => 'Pay your registration fee using a sponsorship',	
+				'Done' =>'Done',	
+				'Youhave-madethe-full-payment' => 'You have made the full payment',	
+				'Send-Request' => 'Send Request',	
+				'Pay-the-full-registration-feewith' => 'Pay the full registration fee with',	
+				'Pay-a-little-amount-With' =>' Pay a little amount with',	
+				'&-rest-later' => '& rest later',	
+				'Transaction-Details' => 'Transaction Details',	
+				'Order-ID' => 'Order ID',	
+				'You' => 'You',	
+				'Your-Sponsor' => 'Your Sponsor',	
+				'Donation' => 'Donation',	
+				'No Transactions Found' => 'No Transactions Found',	
+				"Thankyoufor-submittingyourprofile-forreviewWe'll-updateyousoon." => "Thank you for submitting your profile for review. We'll update you soon.",	
+				"Account-Rejected" => "Account Rejected",	
+				"Sorry-youraccount-didntpassour-verificationsystem" => "Sorry, your account didn't pass our verification system",	
+				"Vie-Details" => "View Details",	
+				'Your-SpouseDetails' => 'Your Spouse Details',	
+				'Not-Available' => 'Not Available',	
+				'Nothing-Found' => 'Nothing Found',	
+				"You-dont-haveanytravel-informationPlease" => "You don't have any travel information. Please add your travel information to see & manage it here",	
+				'No-SessionAvailable' => 'No Session Available',	
+				'Something-happenedplease-tryagainlater' => 'Something happened, please try again later',	
+				'Please-submityourprofile-dataOnour-website' => 'Something happened, please try again later',	
+				"Youve-successfullyoffline" => "You've successfully submitted the offline payment for review",	
+				"Your-paymentwas-successful" => "Your payment was successful",	
+				'Please-checkinputs&try-again' => 'Please check inputs & try again',
+			);
+
+		}elseif($lang == 'pt'){
+
+			$data=array(
+				'Please-select-YesNo' => 'Please select Yes or No',
+				'Please-Group-Users' => 'Please add email of Group Users.',
+				'Wehave-duplicate-email-group-users.' => "We've found duplicate email in Group users.",
+				'isalready-exist-please-use-another-email-id' => 'is already exist with us so please use another email id',
+				"Wehave-found-duplicate-mobile-Group-users." => "We've found duplicate mobile in Group users.",
+				'isalreadyexist-withusso-please-use-another-mobile-number.' => 'is already exist with us so please use another mobile number.',
+				"We-have-found-duplicateWhatsAppmobile-numberin-groupusers." => "We've found duplicate WhatsApp mobile number in Group users.",
+				'is-already-existwith-usso-please-use-anotherwhatsapp-number.' => 'is already exist with us so please use another WhatsApp number.',
+				'GroupInfo-updated-successfully.' => 'Group Info updated successfully.',
+				'Spouse-not-found' => 'Spouse not found',
+				'Spouse-already-associated-withother-user' => 'Spouse already associated with other user',
+				'Youhave-already-updated-spouse-detail' => 'You have already updated spouse detail',
+				'DateOfBirthyear-mustbemore-than-18years' => 'Date of Birth year must be more than 18 years',
+				'Spouse-update-successful' => 'Spouse update successful',
+				'Stay-room-update-successful' => 'Stay room update successful',
+				'NewPassword-update-successful' => 'New Password update successful',
+				'Profile-updated-successfully' => 'Profile updated successfully',
+				'Something-went-wrongPlease-try-again' => 'Something went wrong. Please try again',
+				'Contact-Details-updated-successfully.' => 'Contact Details updated successfully.',
+				'Youare-not-allowedto-update-profile' => 'You are not allowed to update profile',
+				'Pastor-detail-not-found' => 'Pastor detail not found',
+				'Profile-details-submit-successfully' => 'Profile details submit successfully',
+				'Please-verify-ministry-details' => 'Please verify ministry details',
+				'Ministry-Pastor-detail-updated-successfully.' => 'Ministry Pastor detail updated successfully.',
+				'Your-travelinfo-hasbeenalready-added' => 'Your travel info has been already added',
+				'Travel-Info-Submittedsuccesfully' => 'Travel Info Submitted succesfully',
+				'Your-travelinfo-hasbeen-sendSuccessfully' => 'Your travel info has been send successfully',
+				'Please-verify-yourtravel-information' => 'Please verify your travel information',
+				'Travel-information-hasbeen-successfully-completed' => 'Travel information has been successfully completed',	
+				'Your-travelInfo-has-been-verified-successfully' => 'Your travel info has been verified successfully',	
+				'Preliminary-Visa-Letter-successfully-verified' => 'Preliminary Visa Letter successfully verified',	
+				'TravelInfo-doesnot-exist' => 'Travel info does not exist',	
+				'TravelInformation-remarksubmit-successful.' => 'Travel information remark submit successful.',	
+				'Youarenot-allowedto-updateTravelInformation' => 'You are not allowed to update Travel information',	
+				'Yoursession-hasbeen-addedsuccessfully' => 'Your session has been added successfully',	
+				'Session-information-hasbeen-successfully-completed.' => 'Session information has been successfully completed.',	
+				'Sessioninfo-doesnot-exists' => 'Session info does not exists.',	
+				'Session-information-hasbeen-successfullyverified' => 'Session information has been successfully verified',	
+				'Youarenot-allowedto-updatesession-information' => 'You are not allowed to update session information',	
+				'Payment-Linksent-succesfully' => 'Payment Link sent succesfully',	
+				'Payment-Link' => 'Payment Link',	
+				'Payment-Successful' => 'Payment Successful',	
+				'Transaction-already-exists' => 'Transaction already exists',	
+				'Transaction-hasbeensent-successfully' => 'Transaction has been sent successfully',	
+				'Requestor-Payment-is-completed' => 'Requestor Payment is completed',	
+				'Offline-payment-successful' => 'Offline payment successful',	
+				'Data-not-available' => 'Data not available',	
+				'payment-added-successful' => 'payment added successful',	
+				'No-payment-due' => 'No payment due',	
+				'Visa-letter-info-doesnot-exist' => 'Visa letter info does not exist',	
+				'Visaletter-file-fetche-succesully' => 'Visa letter file fetched succesully',	
+				'Notification=fetched-successfully' => 'Notification fetched successfully',	
+				'Emailalready-existsPlease-trywithanother-emailid' => 'Email already exists. Please try with another email id',	
+				'EmailVerification-linkhasbeen-sentsuccessfully-onyour-emailid' => 'Email Verification link has been sent successfully on your email id',	
+				'Yourregistration-hasbeen-completedsuccessfullyPlease-updateyourprofile' => 'Your registration has been completed successfully. Please update your profile',	
+				'Email-alreadyverifiedPlease-Login' => 'Email already verified. Please Login',	
+				'This-account-doesnot-exist' => 'This account does not exist',	
+				'Youraccount-hasbeenblocked-Pleasecontact-Administrator' => 'Your account has been blocked. Please contact Administrator',	
+				'Invalid-Password' => 'Invalid Password',	
+				'Payment-link-hasbeen-expired' => 'Payment link has been expired',	
+				'Payment-Successful' => 'Payment Successful',	
+				'Sponsor-Submitted-Payment' => 'Payment Successful',	
+				'Confirmation-link-has-expired' => 'Confirmation link has expired',	
+				'Your-SpouseConfirmation-isRejected!' => 'Your Spouse Confirmation is Rejected!',	
+				'Confirmation-Successful' => 'Confirmation Successful',	
+				'Wehave-sentpassword-resetlinkon-youremail-address' => 'We have sent password reset link on your email address',	
+				'Resetpassword-linkhasbeen-expired' => 'Reset password link has been expired',	
+				'Yourprofile-isunder-review' => 'Your profile is under review',	
+				'Your-Travel-Information-pending' => 'Your Travel Information pending',	
+				'YourSession-Informationpending' => 'Your Session Information pending',	
+				'Your-application-alreadyApproved' => 'Your application already Approved',	
+				'Cash-payment-addedsuccessful' => 'Cash payment added successful',	
+				'TravelInformation-approved-successful' => 'Travel Information approved successful',	
+				'Travel-Information-notapproved' => 'Travel Information not approved',	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using MoneyGram",	
+				'Payyour-registrationfee-usinga-sponsorship' => 'Pay your registration fee using a sponsorship',	
+				'Done' =>'Done',	
+				'Youhave-madethe-full-payment' => 'You have made the full payment',	
+				'Send-Request' => 'Send Request',	
+				'Pay-the-full-registration-feewith' => 'Pay the full registration fee with',	
+				'Pay-a-little-amount-With' =>' Pay a little amount with',	
+				'&-rest-later' => '& rest later',	
+				'Transaction-Details' => 'Transaction Details',	
+				'Order-ID' => 'Order ID',	
+				'You' => 'You',	
+				'Your-Sponsor' => 'Your Sponsor',	
+				'Donation' => 'Donation',	
+				'No Transactions Found' => 'No Transactions Found',	
+				"Thankyoufor-submittingyourprofile-forreviewWe'll-updateyousoon." => "Thank you for submitting your profile for review. We'll update you soon.",	
+				"Account-Rejected" => "Account Rejected",	
+				"Sorry-youraccount-didntpassour-verificationsystem" => "Sorry, your account didn't pass our verification system",	
+				"Vie-Details" => "View Details",	
+				'Your-SpouseDetails' => 'Your Spouse Details',	
+				'Not-Available' => 'Not Available',	
+				'Nothing-Found' => 'Nothing Found',	
+				"You-dont-haveanytravel-informationPlease" => "You don't have any travel information. Please add your travel information to see & manage it here",	
+				'No-SessionAvailable' => 'No Session Available',	
+				'Something-happenedplease-tryagainlater' => 'Something happened, please try again later',	
+				'Please-submityourprofile-dataOnour-website' => 'Something happened, please try again later',	
+				"Youve-successfullyoffline" => "You've successfully submitted the offline payment for review",	
+				"Your-paymentwas-successful" => "Your payment was successful",	
+				'Please-checkinputs&try-again' => 'Please check inputs & try again',
+			);
+
+		}else{
+
+			$data=array(
+				'Please-select-YesNo' => 'Please select Yes or No',
+				'Please-Group-Users' => 'Please add email of Group Users.',
+				'Wehave-duplicate-email-group-users.' => "We've found duplicate email in Group users.",
+				'isalready-exist-please-use-another-email-id' => 'is already exist with us so please use another email id',
+				"Wehave-found-duplicate-mobile-Group-users." => "We've found duplicate mobile in Group users.",
+				'isalreadyexist-withusso-please-use-another-mobile-number.' => 'is already exist with us so please use another mobile number.',
+				"We-have-found-duplicateWhatsAppmobile-numberin-groupusers." => "We've found duplicate WhatsApp mobile number in Group users.",
+				'is-already-existwith-usso-please-use-anotherwhatsapp-number.' => 'is already exist with us so please use another WhatsApp number.',
+				'GroupInfo-updated-successfully.' => 'Group Info updated successfully.',
+				'Spouse-not-found' => 'Spouse not found',
+				'Spouse-already-associated-withother-user' => 'Spouse already associated with other user',
+				'Youhave-already-updated-spouse-detail' => 'You have already updated spouse detail',
+				'DateOfBirthyear-mustbemore-than-18years' => 'Date of Birth year must be more than 18 years',
+				'Spouse-update-successful' => 'Spouse update successful',
+				'Stay-room-update-successful' => 'Stay room update successful',
+				'NewPassword-update-successful' => 'New Password update successful',
+				'Profile-updated-successfully' => 'Profile updated successfully',
+				'Something-went-wrongPlease-try-again' => 'Something went wrong. Please try again',
+				'Contact-Details-updated-successfully.' => 'Contact Details updated successfully.',
+				'Youare-not-allowedto-update-profile' => 'You are not allowed to update profile',
+				'Pastor-detail-not-found' => 'Pastor detail not found',
+				'Profile-details-submit-successfully' => 'Profile details submit successfully',
+				'Please-verify-ministry-details' => 'Please verify ministry details',
+				'Ministry-Pastor-detail-updated-successfully.' => 'Ministry Pastor detail updated successfully.',
+				'Your-travelinfo-hasbeenalready-added' => 'Your travel info has been already added',
+				'Travel-Info-Submittedsuccesfully' => 'Travel Info Submitted succesfully',
+				'Your-travelinfo-hasbeen-sendSuccessfully' => 'Your travel info has been send successfully',
+				'Please-verify-yourtravel-information' => 'Please verify your travel information',
+				'Travel-information-hasbeen-successfully-completed' => 'Travel information has been successfully completed',	
+				'Your-travelInfo-has-been-verified-successfully' => 'Your travel info has been verified successfully',	
+				'Preliminary-Visa-Letter-successfully-verified' => 'Preliminary Visa Letter successfully verified',	
+				'TravelInfo-doesnot-exist' => 'Travel info does not exist',	
+				'TravelInformation-remarksubmit-successful.' => 'Travel information remark submit successful.',	
+				'Youarenot-allowedto-updateTravelInformation' => 'You are not allowed to update Travel information',	
+				'Yoursession-hasbeen-addedsuccessfully' => 'Your session has been added successfully',	
+				'Session-information-hasbeen-successfully-completed.' => 'Session information has been successfully completed.',	
+				'Sessioninfo-doesnot-exists' => 'Session info does not exists.',	
+				'Session-information-hasbeen-successfullyverified' => 'Session information has been successfully verified',	
+				'Youarenot-allowedto-updatesession-information' => 'You are not allowed to update session information',	
+				'Payment-Linksent-succesfully' => 'Payment Link sent succesfully',	
+				'Payment-Link' => 'Payment Link',	
+				'Payment-Successful' => 'Payment Successful',	
+				'Transaction-already-exists' => 'Transaction already exists',	
+				'Transaction-hasbeensent-successfully' => 'Transaction has been sent successfully',	
+				'Requestor-Payment-is-completed' => 'Requestor Payment is completed',	
+				'Offline-payment-successful' => 'Offline payment successful',	
+				'Data-not-available' => 'Data not available',	
+				'payment-added-successful' => 'payment added successful',	
+				'No-payment-due' => 'No payment due',	
+				'Visa-letter-info-doesnot-exist' => 'Visa letter info does not exist',	
+				'Visaletter-file-fetche-succesully' => 'Visa letter file fetched succesully',	
+				'Notification=fetched-successfully' => 'Notification fetched successfully',	
+				'Emailalready-existsPlease-trywithanother-emailid' => 'Email already exists. Please try with another email id',	
+				'EmailVerification-linkhasbeen-sentsuccessfully-onyour-emailid' => 'Email Verification link has been sent successfully on your email id',	
+				'Yourregistration-hasbeen-completedsuccessfullyPlease-updateyourprofile' => 'Your registration has been completed successfully. Please update your profile',	
+				'Email-alreadyverifiedPlease-Login' => 'Email already verified. Please Login',	
+				'This-account-doesnot-exist' => 'This account does not exist',	
+				'Youraccount-hasbeenblocked-Pleasecontact-Administrator' => 'Your account has been blocked. Please contact Administrator',	
+				'Invalid-Password' => 'Invalid Password',	
+				'Payment-link-hasbeen-expired' => 'Payment link has been expired',	
+				'Payment-Successful' => 'Payment Successful',	
+				'Sponsor-Submitted-Payment' => 'Payment Successful',	
+				'Confirmation-link-has-expired' => 'Confirmation link has expired',	
+				'Your-SpouseConfirmation-isRejected!' => 'Your Spouse Confirmation is Rejected!',	
+				'Confirmation-Successful' => 'Confirmation Successful',	
+				'Wehave-sentpassword-resetlinkon-youremail-address' => 'We have sent password reset link on your email address',	
+				'Resetpassword-linkhasbeen-expired' => 'Reset password link has been expired',	
+				'Yourprofile-isunder-review' => 'Your profile is under review',	
+				'Your-Travel-Information-pending' => 'Your Travel Information pending',	
+				'YourSession-Informationpending' => 'Your Session Information pending',	
+				'Your-application-alreadyApproved' => 'Your application already Approved',	
+				'Cash-payment-addedsuccessful' => 'Cash payment added successful',	
+				'TravelInformation-approved-successful' => 'Travel Information approved successful',	
+				'Travel-Information-notapproved' => 'Travel Information not approved',	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using MoneyGram",	
+				'Payyour-registrationfee-usinga-sponsorship' => 'Pay your registration fee using a sponsorship',	
+				'Done' =>'Done',	
+				'Youhave-madethe-full-payment' => 'You have made the full payment',	
+				'Send-Request' => 'Send Request',	
+				'Pay-the-full-registration-feewith' => 'Pay the full registration fee with',	
+				'Pay-a-little-amount-With' =>' Pay a little amount with',	
+				'&-rest-later' => '& rest later',	
+				'Transaction-Details' => 'Transaction Details',	
+				'Order-ID' => 'Order ID',	
+				'You' => 'You',	
+				'Your-Sponsor' => 'Your Sponsor',	
+				'Donation' => 'Donation',	
+				'No Transactions Found' => 'No Transactions Found',	
+				"Thankyoufor-submittingyourprofile-forreviewWe'll-updateyousoon." => "Thank you for submitting your profile for review. We'll update you soon.",	
+				"Account-Rejected" => "Account Rejected",	
+				"Sorry-youraccount-didntpassour-verificationsystem" => "Sorry, your account didn't pass our verification system",	
+				"Vie-Details" => "View Details",	
+				'Your-SpouseDetails' => 'Your Spouse Details',	
+				'Not-Available' => 'Not Available',	
+				'Nothing-Found' => 'Nothing Found',	
+				"You-dont-haveanytravel-informationPlease" => "You don't have any travel information. Please add your travel information to see & manage it here",	
+				'No-SessionAvailable' => 'No Session Available',	
+				'Something-happenedplease-tryagainlater' => 'Something happened, please try again later',	
+				'Please-submityourprofile-dataOnour-website' => 'Something happened, please try again later',	
+				"Youve-successfullyoffline" => "You've successfully submitted the offline payment for review",	
+				"Your-paymentwas-successful" => "Your payment was successful",	
+				'Please-checkinputs&try-again' => 'Please check inputs & try again',	
 				
 	
 				
@@ -1546,56 +1799,6 @@ class commonHelper{
 		
 		return $data[$word];
 	}
-
-	  Email Verification link has been sent successfully on your email id	
-    Your registration has been completed successfully. Please update your profile	
-    Email already verified. Please Login	
-    This account does not exist	
-    Your account has been blocked. Please contact Administrator	
-    Invalid Password	
-    Payment link has been expired	
-    Payment Successful	
-    Sponsor Submitted Payment	
-    Confirmation link has expired	
-    Your Spouse Confirmation is Rejected!	
-    Confirmation Successful	
-    We have sent password reset link on your email address	
-    Reset password link has been expired	
-    Your profile is under review	
-    Your Travel Information pending	
-    Your Session Information pending	
-    Your application already Approved	
-    Cash payment added successful	
-    Travel Information approved successful	
-    Travel Information not approved	
-    If you're unable to pay with your credit card then pay using MoneyGram	
-    Pay your registration fee using a sponsorship	
-    Done	
-    You have made the full payment	
-    Send Request	
-    Pay the full registration fee with	
-    Pay a little amount with	
-    & rest later	
-    Transaction Details	
-    Order ID	
-    You	
-    Your Sponsor	
-    Donation	
-    No Transactions Found	
-    Thank you for submitting your profile for review. We'll update you soon.	
-    Account Rejected	
-    Sorry, your account didn't pass our verification system	
-    View Details	
-    Your Spouse Details	
-    Not Available	
-    Nothing Found	
-    You don't have any travel information. Please add your travel information to see & manage it here	
-    No Session Available	
-    Something happened, please try again later	
-    Please submit your profile data on our website first before logging in	
-    You've successfully submitted the offline payment for review	
-    Your payment was successful	
-    Please check inputs & try again
 }
 
 
