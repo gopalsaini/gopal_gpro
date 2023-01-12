@@ -1779,9 +1779,9 @@ class PostLoginController extends Controller {
 						$transaction->transaction_id = $transactionId;
 						$transaction->method = $request->post('type');
 						$transaction->amount = $request->post('amount');
-						$transaction->bank_transaction_id = $request->post('reference_number');
 						$transaction->country_of_sender = $request->post('country_of_sender');
 						$transaction->name = $request->post('name');
+						$transaction->bank_transaction_id = $request->post('reference_number');
 						$transaction->status = '0';
 						$transaction->particular_id = '1';
 

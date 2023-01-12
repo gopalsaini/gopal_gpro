@@ -118,7 +118,7 @@ class PreLoginController extends Controller {
 					$link = '<a href="'.url('email-registration-confirm/'.$token).'">aqui</a>';
 
 					$subject = 'Se requiere verificación de correo electrónico para inscribirse en el GProCongress II';
-					$msg = '<p>Estimado '.$name.'</p><p><br></p><p>¡Felicidades! Ha creado con éxito su cuenta para el GProCongress II. Para verificar su dirección de correo electrónico y completar el proceso de inscripción, utilice este enlace: haga click '.$link.'.</p><p><br></p><p>Need help, or have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p>¿Tiene preguntas? Simplemente responda a este correo para conectarse con algún miembro de nuestro equipo.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+					$msg = '<p>Estimado '.$name.'</p><p><br></p><p>¡Felicidades! Ha creado con éxito su cuenta para el GProCongress II. Para verificar su dirección de correo electrónico y completar el proceso de inscripción, utilice este enlace: haga click '.$link.'.</p><p><br></p><p>¿Necesita ayuda o tiene alguna pregunta? Solo tienes que responder a este correo electrónico, y nuestro equipo se pondrá en contacto con usted.&nbsp;</p><p>¿Tiene preguntas? Simplemente responda a este correo para conectarse con algún miembro de nuestro equipo.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
 
 				}elseif($userData->language == 'fr'){
 
@@ -1215,7 +1215,11 @@ class PreLoginController extends Controller {
 			
 			}else{
 	
-				$Result = \App\Models\Testimonial::where('id', '3')->where('id', '4')->where('id', '5')->get();
+				$Result = \App\Models\Testimonial::where(function ($query) {
+													$query->where('id',3)
+														->orWhere('id',4)
+														->orWhere('id',5);
+												})->get();
 			
 			}
 			
@@ -1813,11 +1817,12 @@ class PreLoginController extends Controller {
 					'pricing'=>\File::getRequire(base_path().'/resources/lang/fr/web/pricing.php'),
 					'reset-password'=>\File::getRequire(base_path().'/resources/lang/fr/web/reset-password.php'),
 					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/fr/web/sponsor-payment.php'),
-					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/fr/web/sponsor-payment.php'),
 					'spouse-details'=>\File::getRequire(base_path().'/resources/lang/fr/web/spouse-details.php'),
 					'stripe'=>\File::getRequire(base_path().'/resources/lang/fr/web/stripe.php'),
 					'verification'=>\File::getRequire(base_path().'/resources/lang/fr/web/verification.php'),
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/fr/web/profile-details.php'),
+					'profile'=>\File::getRequire(base_path().'/resources/lang/fr/web/profile.php'),
+					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/fr/web/common-helper-value.php'),
 					
 				];
 
@@ -1837,12 +1842,13 @@ class PreLoginController extends Controller {
 					'pricing'=>\File::getRequire(base_path().'/resources/lang/en/web/pricing.php'),
 					'reset-password'=>\File::getRequire(base_path().'/resources/lang/pt/web/reset-password.php'),
 					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/pt/web/sponsor-payment.php'),
-					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/pt/web/sponsor-payment.php'),
 					'spouse-details'=>\File::getRequire(base_path().'/resources/lang/pt/web/spouse-details.php'),
 					'stripe'=>\File::getRequire(base_path().'/resources/lang/pt/web/stripe.php'),
 					'verification'=>\File::getRequire(base_path().'/resources/lang/pt/web/verification.php'),
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/pt/web/profile-details.php'),
-					
+					'profile'=>\File::getRequire(base_path().'/resources/lang/pt/web/profile.php'),
+					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/pt/web/common-helper-value.php'),
+
 				];
 
 
@@ -1861,12 +1867,13 @@ class PreLoginController extends Controller {
 					'pricing'=>\File::getRequire(base_path().'/resources/lang/sp/web/pricing.php'),
 					'reset-password'=>\File::getRequire(base_path().'/resources/lang/sp/web/reset-password.php'),
 					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/sp/web/sponsor-payment.php'),
-					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/sp/web/sponsor-payment.php'),
 					'spouse-details'=>\File::getRequire(base_path().'/resources/lang/sp/web/spouse-details.php'),
 					'stripe'=>\File::getRequire(base_path().'/resources/lang/sp/web/stripe.php'),
 					'verification'=>\File::getRequire(base_path().'/resources/lang/sp/web/verification.php'),
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/sp/web/profile-details.php'),
-					
+					'profile'=>\File::getRequire(base_path().'/resources/lang/sp/web/profile.php'),
+					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/sp/web/common-helper-value.php'),
+
 				];
 
 				
@@ -1885,12 +1892,13 @@ class PreLoginController extends Controller {
 					'pricing'=>\File::getRequire(base_path().'/resources/lang/en/web/pricing.php'),
 					'reset-password'=>\File::getRequire(base_path().'/resources/lang/en/web/reset-password.php'),
 					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/en/web/sponsor-payment.php'),
-					'sponsor-payment'=>\File::getRequire(base_path().'/resources/lang/en/web/sponsor-payment.php'),
 					'spouse-details'=>\File::getRequire(base_path().'/resources/lang/en/web/spouse-details.php'),
 					'stripe'=>\File::getRequire(base_path().'/resources/lang/en/web/stripe.php'),
 					'verification'=>\File::getRequire(base_path().'/resources/lang/en/web/verification.php'),
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/en/web/profile-details.php'),
-					
+					'profile'=>\File::getRequire(base_path().'/resources/lang/en/web/profile.php'),
+					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/en/web/common-helper-value.php'),
+
 				];
 			}
 

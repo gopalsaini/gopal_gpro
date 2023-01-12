@@ -1341,7 +1341,6 @@ class commonHelper{
 			'Estratega' => 'Strategist',
 			'Socio' => 'Donor',
 			'N/A' => 'N/A',
-
 			'Mr.'=>'Mr.', // en
 			'Sr.'=> 'Mr.', // pt sp
 			'Ms.' => 'Ms.', //en

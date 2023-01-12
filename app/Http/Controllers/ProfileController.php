@@ -643,12 +643,14 @@ class ProfileController extends Controller
             $intent = $data['intent'];
             $order_id = $data['order_id'];
             $id = $data['order_id'];
+
             \App\Helpers\commonHelper::setLocale();
             return view('stripe',compact('intent','order_id','id'));
             
         }else{
 
             \Session::flash('gpro_error', 'Payment already paid.');
+            \App\Helpers\commonHelper::setLocale();
             return redirect('/');
         }
 
@@ -663,9 +665,9 @@ class ProfileController extends Controller
                 $rules = [
                     'reference_number' => 'required',
                     'amount' => 'required|numeric',
-                    'type' => 'required|in:Offline,Online',
                     'name' => 'required',
                     'country_of_sender' => 'required',
+                    'type' => 'required|in:Offline,Online',
                 ];
         
                 $validator = \Validator::make($request->all(), $rules);
@@ -705,9 +707,9 @@ class ProfileController extends Controller
                                 $transaction->transaction_id = $transactionId;
                                 $transaction->method = $request->post('type');
                                 $transaction->amount = $request->post('amount');
-                                $transaction->bank_transaction_id = $request->post('reference_number');
                                 $transaction->name = $request->post('name');
 						        $transaction->country_of_sender = $request->post('country_of_sender');
+                                $transaction->bank_transaction_id = $request->post('reference_number');
                                 $transaction->status = '0';
                                 $transaction->particular_id = '1';
             
