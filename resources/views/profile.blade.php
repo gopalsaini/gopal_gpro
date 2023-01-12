@@ -222,12 +222,12 @@
                             <ul>
                         @elseif($Spouse && $Spouse->spouse_confirm_status=='Pending')
                             <ul>
-                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.pending') </strong>
+                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/home.pending') </strong>
                                 </li> 
                             <ul>
                         @else($Spouse && $Spouse->spouse_confirm_status=='Decline')
                             <ul>
-                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.decline') </strong>
+                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.Declined') </strong>
                                 </li> 
                             <ul>
                         @endif
