@@ -106,4 +106,5 @@ return [
     'enter' => 'Introduzir',
     'n/a' => 'N/A',
     'other'=>'De outros',
+    'waiting'=>'waiting',
 ];

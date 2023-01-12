@@ -109,5 +109,6 @@ return [
     'enter' => 'Entrer',
     'n/a' => 'N/A',
     'other'=>'Autre',
+    'waiting'=>'waiting',
 
 ];

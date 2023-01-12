@@ -78,15 +78,26 @@
                         @endif 
                         <h5>
                         @if($resultData['result']['profile_submit_type'] == 'preview')
-                        <!-- //Vineet - 080123 -->
-                        @lang('web/profile.preview') 
-                        <!-- //Vineet - 080123 -->
+                        
+                            @lang('web/profile.preview') 
+                        
                         @elseif($resultData['result']['profile_status']=='Review')
+
                             @lang('web/profile.review')
+                            
                         @elseif($resultData['result']['profile_status']=='Approved')
+                            
                             @lang('web/profile.application_approved')
+                            
+                        @elseif($resultData['result']['profile_status']=='Rejected')
+                            
+                            @lang('web/profile.application') @lang('web/home.decline') 
+
+                        @elseif($resultData['result']['profile_status']=='Waiting')
+                            
+                            @lang('web/profile.application') @lang('web/home.waiting') 
                         @else
-                            @lang('web/profile.application') {{$resultData['result']['profile_status']}}
+                            @lang('web/profile.application') @lang('web/home.pending') 
                         @endif
                     </h5>
                         
