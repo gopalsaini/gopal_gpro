@@ -598,19 +598,36 @@
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
+                                
                                 <div class="col-lg-12 divShowForOnChangePaymentType" style="display:none" id="showWire">
-                                    <label for="">Wire transfer Details<span>*</span></label>
+                                    <label for="">Wire transfer Name</label>
                                 </div>
-                                <div class="col-lg-12 divShowForOnChangePaymentType" style="display:none" id="showMG">
-                                    <label for="">Money Gram Details<span>*</span></label>
+                                
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none" id="showInFullAmount">
+                                    <label for="">Country of sender<span>*</span></label>
+                                    <input type="text" name="country_of_sender"  value="" placeholder="Enter Country of sender" class="mt-2"  id="countryOfSenderRequiredInFullAmount">
                                 </div>
-                                <div class="col-lg-12 divShowForOnChangePaymentType" style="display:none" id="showWU">
-                                    <label for="">Western Union Details<span>*</span></label>
+                              
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none">
+                                    <label for="">Sender name<span>*</span></label>
+                                    <input type="text" name="name" value="" placeholder="Enter Name" class="mt-2" id="senderNameRequiredInFullAmount">
+
                                 </div>
-                                <div class="col-lg-12">
+                              
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none">
+                                    <label for="">@lang('web/payment.amount') (USD)<span>*</span></label>
+                                    <input type="tel" name="amount" id="AmountRequiredInFullAmount" value="{{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], false)}}"  onkeypress="return /[0-9 ]/i.test(event.key)" maxLength="6" placeholder="@lang('web/payment.amount')" class="mt-2" >
+                                </div>
+
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none">
                                     <label for="">@lang('web/payment.enter-reference-number')<span>*</span></label>
-                                    <input type="tel" name="reference_number" required value="" placeholder="Enter Reference Number" class="mt-2" >
+                                    <input type="test" name="reference_number"  value="" placeholder="Enter Reference Number" class="mt-2"  id="reference_numberRequiredIn_FullAmount">
                                 </div>
+
+
+
+
+
                                 <div class="col-lg-12">
                                     <label for="">Upload Payment Image </label>
                                     <input type="file" name="file"  value="" class="mt-2" >
@@ -670,24 +687,31 @@
                                     </select>
                                 </div>
                                 <div class="col-lg-12 divShowForOnChangePaymentInPartial" style="display:none" id="showInPartialWire">
-                                    <label for="">Wire Transfer Details<span>*</span></label>
+                                    <label for="">Wire transfer Name</label>
                                 </div>
-                                <div class="col-lg-12 divShowForOnChangePaymentInPartial" style="display:none" id="showInPartialMG">
-                                    <label for="">Money Gram Details<span>*</span></label>
+
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none" id="showInPartialWU">
+                                    <label for="">Country of sender<span>*</span></label>
+                                    <input type="text" name="country_of_sender"  value="" placeholder="Enter Country of sender" class="mt-2"  id="countryOfSenderRequired">
                                 </div>
-                                <div class="col-lg-12 divShowForOnChangePaymentInPartial" style="display:none" id="showInPartialWU">
-                                    <label for="">Western Union Details<span>*</span></label>
+                              
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
+                                    <label for="">Sender name<span>*</span></label>
+                                    <input type="text" name="name" value="" placeholder="Enter Name" class="mt-2" id="senderNameRequired">
+
                                 </div>
-                                <div class="col-lg-12">
-                                    <label for="">@lang('web/payment.amount')<span>*</span></label>
-                                    <input type="tel" required name="amount" value="{{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], false)}}"  onkeypress="return /[0-9 ]/i.test(event.key)" maxLength="6" placeholder="@lang('web/payment.amount')" class="mt-2" >
-                                    <input type="hidden" name="type" required value="Offline"  >
+                              
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
+                                    <label for="">@lang('web/payment.amount') (USD)<span>*</span></label>
+                                    <input type="tel" name="amount" id="AmountRequired" value="{{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], false)}}"  onkeypress="return /[0-9 ]/i.test(event.key)" maxLength="6" placeholder="@lang('web/payment.amount')" class="mt-2" >
                                 </div>
-                                <div class="col-lg-12">
+
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
                                     <label for="">@lang('web/payment.enter-reference-number')<span>*</span></label>
-                                    <input type="test" name="reference_number" required value="" placeholder="Enter Reference Number" class="mt-2" >
+                                    <input type="test" name="reference_number"  value="" placeholder="Enter Reference Number" class="mt-2"  id="reference_numberRequired">
                                 </div>
-                                <div class="col-lg-12">
+
+                                <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
                                     <label for="">Upload Payment Image </label>
                                     <input type="file" name="file"  value="" class="mt-2" >
                                 </div>
@@ -1164,11 +1188,23 @@
 			$('.addInFullAmountPaymentField').on('change', function() {
 
                 $(".divShowForOnChangePaymentType").hide();
+                $(".ExtraFieldOnChangePaymentInFullAmount").show();
                 if ( this.value == 'Wire'){
                     $("#showWire").show();
+                    $("#showInFullAmount").show();
+                    $("#showInFullAmount").hide();
+                    $("#senderNameRequiredInFullAmount").attr('required',true);
+                    $("#AmountRequiredInFullAmount").attr('required',true);
+                    $("#reference_numberRequiredIn_FullAmount").attr('required',true);
+
                     
                 }else if ( this.value == 'MG'){
                     $("#showMG").show();
+                    $("#countryOfSenderRequired").attr('required',true);
+                    $("#senderNameRequiredInFullAmount").attr('required',true);
+                    $("#AmountRequiredInFullAmount").attr('required',true);
+                    $("#countryOfSenderRequiredInFullAmount").attr('required',true);
+
                 }else{
                     $("#showWU").show();
                 }
@@ -1180,13 +1216,25 @@
 			$('.addPaymentTypeInPartial').on('change', function() {
 
                 $(".divShowForOnChangePaymentInPartial").hide();
+                $(".ExtraFieldOnChangePaymentInPartial").show();
                 if ( this.value == 'Wire'){
                     $("#showInPartialWire").show();
+                    $("#showInPartialWU").hide();
+                    $("#senderNameRequired").attr('required',true);
+                    $("#AmountRequired").attr('required',true);
+                    $("#reference_numberRequired").attr('required',true);
                     
                 }else if ( this.value == 'MG'){
                     $("#showInPartialMG").show();
+                    $("#countryOfSenderRequired").attr('required',true);
+                    $("#senderNameRequired").attr('required',true);
+                    $("#AmountRequired").attr('required',true);
+
                 }else{
-                    $("#showInPartialWU").show();
+                    $("#senderNameRequired").attr('required',true);
+                    $("#countryOfSenderRequired").attr('required',true);
+                    $("#AmountRequired").attr('required',true);
+
                 }
 			});
 		});

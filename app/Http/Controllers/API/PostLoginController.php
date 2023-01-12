@@ -1737,6 +1737,8 @@ class PostLoginController extends Controller {
 			'mode' => 'required|string|in:WU,MG,Wire',
 			'reference_number' => 'required',
             'amount' => 'required|numeric',
+            'name' => 'required',
+            'country_of_sender' => 'required',
             'type' => 'required|in:Offline,Online',
 		];
 
@@ -1778,6 +1780,8 @@ class PostLoginController extends Controller {
 						$transaction->method = $request->post('type');
 						$transaction->amount = $request->post('amount');
 						$transaction->bank_transaction_id = $request->post('reference_number');
+						$transaction->country_of_sender = $request->post('country_of_sender');
+						$transaction->name = $request->post('name');
 						$transaction->status = '0';
 						$transaction->particular_id = '1';
 

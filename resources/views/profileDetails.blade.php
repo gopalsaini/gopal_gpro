@@ -89,7 +89,6 @@
                             <label for="name">@lang('web/profile-details.name') <span>*</span></label>
                             <select id="name" placeholder="Mr." required class="mt-2" name="salutation">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
-                                
                                 <option  value="@lang('web/profile-details.Mr.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Mr.')) selected @endif>@lang('web/profile-details.Mr.')</option>
                                 <option  value="@lang('web/profile-details.Ms.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Ms.')) selected @endif>@lang('web/profile-details.Ms.')</option>
                                 <option  value="@lang('web/profile-details.Mrs.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Mrs.')) selected @endif>@lang('web/profile-details.Mrs.')</option>
@@ -98,7 +97,6 @@
                                 <option  value="@lang('web/profile-details.Bishop')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Bishop')) selected @endif>@lang('web/profile-details.Bishop')</option>
                                 <option  value="@lang('web/profile-details.Rev.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Rev.')) selected @endif>@lang('web/profile-details.Rev.')</option>
                                 <option  value="@lang('web/profile-details.Prof.')" @if($resultData['result']['salutation'] == Lang::get('web/profile-details.Prof.')) selected @endif>@lang('web/profile-details.Prof.')</option>
-
                             </select>
                         </div>
                     </div>
