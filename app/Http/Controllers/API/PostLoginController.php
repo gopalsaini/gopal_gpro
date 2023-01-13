@@ -23,7 +23,9 @@ class PostLoginController extends Controller {
 	
 		
 		if($request->json()->get('is_group')==''){
-			return response(array("error"=>true, 'message'=>'Please select Yes or No'), 403);
+
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Please-select-YesNo');
+			return response(array("error"=>true, 'message'=>$message), 403);
 		}else{
 			$rules = [
 				'is_group' => 'required',
@@ -59,7 +61,8 @@ class PostLoginController extends Controller {
 
 					if(count($request->json()->get('group_list'))==0){
 
-						return response(array("error"=>true, "message"=>"Please add email of Group User's."), 403);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Please-Group-Users');
+						return response(array("error"=>true, "message"=>$message), 200);
 
 					}else{
 
@@ -69,7 +72,8 @@ class PostLoginController extends Controller {
 		
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
-							return response(array( "message"=>"We've found duplicate email in Group users."), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users.');
+							return response(array( "message"=>$message), 200);
 						
 						}else{
 
@@ -78,7 +82,8 @@ class PostLoginController extends Controller {
 
 							if($checkExistUsers->count()>0){
 
-								return response(array("message"=>$checkExistUsers[0]['email']." is already exist with us so please use another email id."), 403);
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users.');
+								return response(array("message"=>$checkExistUsers[0]['email'].$message), 200);
 
 							}
 						}
@@ -90,7 +95,8 @@ class PostLoginController extends Controller {
 		
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
-							return response(array("message"=>"We've found duplicate mobile in Group users."), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-found-duplicate-mobile-Group-users.');
+							return response(array("message"=>$message), 200);
 						
 						}else{
 
@@ -99,7 +105,8 @@ class PostLoginController extends Controller {
 
 							if($checkExistUsers->count()>0){
 
-								return response(array("message"=>$checkExistUsers[0]['mobile']." is already exist with us so please use another mobile number."), 403);
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'isAlreadyExist-withusSo-please-use-another-mobile-number');
+								return response(array("message"=>$checkExistUsers[0]['mobile'].$message), 200);
 
 							}
 						}
@@ -110,7 +117,8 @@ class PostLoginController extends Controller {
 		
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
-							return response(array("error"=>true, "message"=>"We've found duplicate What's up mobile number in Group users."), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'We-have-found-duplicateWhatsAppmobile-numberin-groupusers.');
+							return response(array("error"=>true, "message"=>$message), 200);
 						
 						}else{
 
@@ -119,7 +127,8 @@ class PostLoginController extends Controller {
 
 							if($checkExistUsers->count()>0){
 
-								return response(array("error"=>true, "message"=>$checkExistUsers[0]['contact_whatsapp_number']." is already exist with us so please use another What's number."), 403);
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'isAlreadyExist-withusSo-please-use-another-mobile-number');
+								return response(array("error"=>true, "message"=>$checkExistUsers[0]['contact_whatsapp_number'].$message), 200);
 
 							}
 						}
@@ -208,7 +217,8 @@ class PostLoginController extends Controller {
 
 				} 
 
-				return response(array("error"=>true, "message"=>'Group Info updated successfully.'), 200);
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'GroupInfo-updated-successfully.');
+				return response(array("error"=>true, "message"=>$message), 200);
 
 			} catch (\Exception $e) {
 				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
@@ -275,11 +285,13 @@ class PostLoginController extends Controller {
 						if(!$users){
 							
 
-							return response(array("error"=>true, 'message'=>'Spouse not found'), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-not-found');
+							return response(array("error"=>true, 'message'=>$message), 200);
 						
 						}elseif($users->parent_id != null){
 
-							return response(array("error"=>true, "message"=>'Spouse already associated with other user'), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-already-associated-withother-user');
+							return response(array("error"=>true, "message"=>$message), 200);
 						}
 
 						$users->parent_id = $request->user()->id;
@@ -297,16 +309,17 @@ class PostLoginController extends Controller {
 		
 						if($existSpouse){
 		
-							
-							return response(array("error"=>true, 'message'=>'You have already updated spouse detail'), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Youhave-already-updated-spouse-detail');
+							return response(array("error"=>true, 'message'=>$message), 200);
 		
 						}else{
 
 							$users = \App\Models\User::where('email', $request->json()->get('email'))->first();
 
 							if($users && $users->parent_id != null){
-
-								return response(array("error"=>true, "message"=>'Spouse already associated with other user'), 403);
+								
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-already-associated-withother-user');
+								return response(array("error"=>true, "message"=>$message), 200);
 							}
 
 							$date1 = $dob;
@@ -316,7 +329,8 @@ class PostLoginController extends Controller {
 						
 							if($years<18){
 
-								return response(array("error"=>true, 'message'=>'Date of Birth year must be more than 18 years'), 403);
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($users->language,'DateOfBirthyear-mustbemore-than-18years');
+								return response(array("error"=>true, "message"=>$message), 200);
 							
 							}else{
 								
@@ -369,12 +383,14 @@ class PostLoginController extends Controller {
 			
 					\App\Models\User::where('id',$request->json()->get('id'))->update($users);
 
-					return response(array("error"=>false, "message"=>'Spouse update successful'), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-update-successful');
+					return response(array("error"=>false, "message"=>$message), 200);
 
 				}
 
 
-				return response(array("error"=>true, "message"=>'Spouse added successful'), 200);
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-added-successful');
+				return response(array("error"=>false, "message"=>$message), 200);
 
 			} catch (\Exception $e) {
 				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
@@ -417,7 +433,8 @@ class PostLoginController extends Controller {
 
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Stay room update');
 				
-				return response(array("error"=>true, "message"=>'Stay room update successful'), 200);
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Stay-room-update-successful');
+				return response(array("error"=>true, "message"=>$message), 200);
 
 			} catch (\Exception $e) {
 				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
@@ -485,7 +502,8 @@ class PostLoginController extends Controller {
 				
 				\App\Helpers\commonHelper::emailSendToUser($request->user()->email, $subject, $msg);
 
-				return response(array("error"=>true, "message"=>'New Password update successful', "result"=>$users->toArray()), 200);
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'NewPassword-update-successful');
+				return response(array("error"=>true, "message"=>$message, "result"=>$users->toArray()), 200);
 
 			} catch (\Exception $e) {
 				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
@@ -539,7 +557,8 @@ class PostLoginController extends Controller {
 					
 					if($years<18){
 
-						return response(array("error"=>true, 'message'=>'Birth year must be more than 18 years'), 403);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'DateOfBirthyear-mustbemore-than-18years');
+						return response(array("error"=>true, 'message'=>$message), 200);
 					}else{
 
 						$user = \App\Models\User::find($request->user()->id);
@@ -637,17 +656,20 @@ class PostLoginController extends Controller {
 						$user->profile_updated_at = date('Y-m-d H:i:s'); 
 						$user->save(); 
 						
-						return response(array("error"=>false, 'message'=>'Profile updated successfully.'), 200);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Profile-updated-successfully');
+						return response(array("error"=>true, 'message'=> $message), 200);
 
 					} 
 
 				}catch (\Exception $e){
-					return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+					return response(array("error"=>true, "message" => $message), 403); 
 				}
 			}
 
 		}else{
-			return response(array("error"=>true, 'message'=>'You have not allowed for profile update process'), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Profile-updated-successfully');
+			return response(array("error"=>true, 'message'=> $message), 200);
 		}
         
 	}
@@ -748,15 +770,19 @@ class PostLoginController extends Controller {
 					$msg='User Contact Details updated';
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Contact Details updated');
 				
-					return response(array('message'=>'Contact Details updated successfully.'), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Contact-Details-updated-successfully.');
+					return response(array('message'=>$message), 200);
 						
 				}catch (\Exception $e){
-					return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+					
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+					return response(array("error"=>true, "message" => $message), 403); 
 				}
 			}
 
 		}else{
-			return response(array("error"=>true, 'message'=>'You have not allowed for profile update process'), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Youare-not-allowedto-update-profile');
+			return response(array("error"=>true, "message" => $message), 200); 
 		}
         
 	}
@@ -812,12 +838,14 @@ class PostLoginController extends Controller {
 
 						if($request->json()->get('ministry_pastor_trainer')=='Yes' && $request->user()->get('ministry_pastor_trainer_detail')==''){
 
-							return response(array("error"=>true, 'message'=>"Pastor detail not found."), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Pastor-detail-not-found');
+							return response(array("error"=>true, "message" => $message), 403); 
 						}
 
 						if($request->json()->get('ministry_pastor_trainer')=='No' && $request->user()->get('doyouseek_postoral')==''){
 
-							return response(array("error"=>true, 'message'=>"Pastor detail not found."), 403);
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Pastor-detail-not-found');
+							return response(array("error"=>true, "message" => $message), 403); 
 						}
 					}
 
@@ -1044,22 +1072,26 @@ class PostLoginController extends Controller {
 
 						// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 
-						return response(array('message'=>'Profile details submit successfully.'), 200);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Profile-details-submit-successfully');
+						return response(array("error"=>true, "message" => $message), 200); 
 					
 					}else{
 
-						return response(array('message'=>'Please verify ministry details.'), 200);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Please-verify-ministry-details');
+						return response(array("error"=>true, "message" => $message), 200); 
 
 					}
 
 				}catch (\Exception $e){
 
-					return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+					return response(array("error"=>true, "message" => $message), 403); 
 				}
 			}
 
 		}else{
-			return response(array("error"=>true, 'message'=>'You have not allowed for profile update process'), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Youare-not-allowedto-update-profile');
+			return response(array("error"=>true, "message" => $message), 200);
 		}
         
 	}
@@ -1139,10 +1171,12 @@ class PostLoginController extends Controller {
 
 				$user->save();
 
-				return response(array('message'=>'Ministry Pastor detail updated successfully.'), 200);
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Ministry-Pastor-detail-updated-successfully.');
+				return response(array("error"=>true, "message" => $message), 200);
 					
 			}catch (\Exception $e){
-				return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+				return response(array("error"=>true, "message" => $message), 403);
 			}
 		} 
         
@@ -1205,7 +1239,8 @@ class PostLoginController extends Controller {
 					$result = \App\Models\TravelInfo::where('user_id', $request->user()->id)->first();
 
 					if ($result) {
-						return response(array("error"=>true, "message" => "Your travel info has been already added."), 403);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your-travelinfo-hasbeenalready-added');
+						return response(array("error"=>true, "message" => $message), 403);
 					}
 
 					$return_flight_details = '';
@@ -1321,7 +1356,9 @@ class PostLoginController extends Controller {
 
 					// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 					
-					return response(array('message'=>'Travel information has been successfully completed.'), 200);
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Travel-information-hasbeen-successfully-completed');
+					return response(array("error"=>true, "message" => $message), 200);
 						
 				// }catch (\Exception $e){
 				// 	return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
@@ -1329,7 +1366,8 @@ class PostLoginController extends Controller {
 			}
 
 		}else{
-			return response(array("error"=>true, 'message'=>'You have not allowed for travel process'), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Youarenot-allowedto-updateTravelInformation');
+			return response(array("error"=>true, "message" => $message), 403);
 		}
         
 	}
@@ -1362,7 +1400,9 @@ class PostLoginController extends Controller {
 					$result = \App\Models\TravelInfo::where('user_id', $request->user()->id)->first();
 
 					if (!$result) {
-						return response(array("error"=>true, "message" => "Travel info is not exits."), 403);
+
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'TravelInfo-doesnot-exist');
+						return response(array("error"=>true, "message" => $message), 403);
 					}
 
 					$result = \App\Models\TravelInfo::where('user_id', $request->user()->id)->update(['user_status' => $request->json()->get('status')]);
@@ -1380,15 +1420,20 @@ class PostLoginController extends Controller {
 
 					// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 					
-					return response(array('message'=>'Preliminary Visa Letter successfully verified.'), 200);
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Preliminary-Visa-Letter-successfully-verified');
+					return response(array("error"=>true, "message" => $message), 200);
 						
 				}catch (\Exception $e){
-					return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+					return response(array("error"=>true, "message" => $message), 200);
 				}
 			}
 
 		}else{
-			return response(array("error"=>true, 'message'=>'You have not allowed for travel process'), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Youarenot-allowedto-updateTravelInformation');
+			return response(array("error"=>true, "message" => $message), 403);
 		}
         
 	}
@@ -1421,7 +1466,10 @@ class PostLoginController extends Controller {
 					$result = \App\Models\TravelInfo::where('user_id', $request->user()->id)->first();
 
 					if (!$result) {
-						return response(array("error"=>true, "message" => "Travel info is not exits."), 403);
+
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'TravelInfo-doesnot-exist');
+						return response(array("error"=>true, "message" => $message), 403);
+
 					}
 
 					$result = \App\Models\TravelInfo::where('user_id', $request->user()->id)->update(['remark' => $request->json()->get('remark')]);
@@ -1435,15 +1483,19 @@ class PostLoginController extends Controller {
 
 					// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 					
-					return response(array('message'=>'Travel information remark submit successful.'), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'TravelInformation-remarksubmit-successful.');
+					return response(array("error"=>true, "message" => $message), 200);
 						
 				}catch (\Exception $e){
-					return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+					return response(array("error"=>true, "message" => $message), 403);
 				}
 			}
 
 		}else{
-			return response(array("error"=>true, 'message'=>'You have not allowed for travel process'), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'TravelInfo-doesnot-exist');
+			return response(array("error"=>true, "message" => $message), 403);
 		}
         
 	}
@@ -1476,7 +1528,8 @@ class PostLoginController extends Controller {
 
 				if($sessionData && $sessionData->submit_status == '1'){
 
-					return response(array("error"=>true, 'message'=>'You have not allowed for session process'), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Youarenot-allowedto-updatesession-information');
+					return response(array("error"=>true, "message" => $message), 403);
 
 				}else{
 
@@ -1562,11 +1615,14 @@ class PostLoginController extends Controller {
 					$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$request->user()->name.' '.$request->user()->last_name.' has updated session Info for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$request->user()->name.' '.$request->user()->last_name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$request->user()->email.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Please review and revert.</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
 					\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
 					
-					return response(array('message'=>'Session information has been successfully completed.'), 200);
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Session-information-hasbeen-successfully-completed');
+					return response(array("error"=>true, "message" => $message), 200);
 				}
 					
 			}catch (\Exception $e){
-				return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+				return response(array("error"=>true, "message" => $message), 403);
 			}
 		}
 
@@ -1584,7 +1640,8 @@ class PostLoginController extends Controller {
 
 				if (empty($result)) {
 
-					return response(array("error"=>true, "message" => "Session info is not exits."), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Sessioninfo-doesnot-exists');
+					return response(array("error"=>true, "message" => $message), 403);
 				}
 
 				$resultData = \App\Models\SessionInfo::where('user_id', $request->user()->id)->get();
@@ -1615,17 +1672,19 @@ class PostLoginController extends Controller {
 
 				// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 				
-				return response(array('message'=>'Session information has been successfully verified.'), 200);
+
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Session-information-hasbeen-successfullyverified');
+				return response(array("error"=>true, "message" => $message), 200);
 					
 			}catch (\Exception $e){
-
-				return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again');
+				return response(array("error"=>true, "message" => $message), 403);
 			}
 			
 
 		}else{
-
-			return response(array("error"=>true, 'message'=>'You have not allowed for session process'), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Sessioninfo-doesnot-exists');
+			return response(array("error"=>true, "message" => $message), 403);
 		}
         
 	}
@@ -1658,7 +1717,9 @@ class PostLoginController extends Controller {
 
 				if(\App\Helpers\commonHelper::getTotalPendingAmount($request->user()->id) == 0){
 					
-					return response(array("error"=>true, "message"=>'No payment due'), 403);
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'No-payment-due');
+					return response(array("error"=>true, "message" => $message), 403);
 
 				}else{
 
@@ -1719,7 +1780,8 @@ class PostLoginController extends Controller {
 					});
 
 					
-					return response(array("error"=>false, "message"=>'Sponsor payment send done', "result"=>$users->toArray()), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Sponsor-Submitted-Payment');
+					return response(array("error"=>false, "message"=>$message, "result"=>$users->toArray()), 200);
 
 
 				}
@@ -1761,7 +1823,8 @@ class PostLoginController extends Controller {
 				$referenceNumberCheck = \App\Models\Transaction::where('bank_transaction_id',$request->post('reference_number'))->first();
 				if($referenceNumberCheck){
 
-					return response(array("error"=>true, "message"=>'Transaction already exists'), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Transaction-already-exists');
+					return response(array("error"=>true, "message"=>$message), 403);
 
 				}else{
 
@@ -1823,11 +1886,13 @@ class PostLoginController extends Controller {
 
 						// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 
-						return response(array("error"=>false, "message"=>'Offline payment added successful'), 200);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Offline-payment-successful');
+						return response(array("error"=>true, "message"=>$message), 200);
 		
 					}else{
 
-						return response(array("error"=>true, "message"=>'payment already paid'), 403);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Payment-Successful');
+						return response(array("error"=>true, "message"=>$message), 403);
 		
 					}
 				}
@@ -1883,11 +1948,13 @@ class PostLoginController extends Controller {
 					$transaction->particular_id = '1';
 					$transaction->save();
 	
-					return response(array("error"=>false, "message"=>'Offline payment added successful'), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Offline-payment-successful');
+					return response(array("error"=>false, "message"=>$message), 200);
 	
 				}else{
 
-					return response(array("error"=>true, "message"=>'payment already paid'), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Payment-Successful');
+					return response(array("error"=>true, "message"=>$message), 403);
 	
 				}
 				
@@ -2003,9 +2070,13 @@ class PostLoginController extends Controller {
 			
 			
 			return response(array("error"=>false, "message"=>'Stage zero data fetch done', "result"=>$result), 200);
+
+
 		
 		}else{
-			return response(array("error"=>true, "message"=>'data not available', "result"=>$result), 200);
+
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Nothing-Found');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 200);
 
 		}
 		
@@ -2119,7 +2190,8 @@ class PostLoginController extends Controller {
 			return response(array("error"=>false, "message"=>'Stage One data fetch done', "result"=>$result), 200);
 
 		}else{
-			return response(array("error"=>true, "message"=>'data not available', "result"=>$result), 200);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Nothing-Found');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 200);
 
 		}
 	}
@@ -2149,7 +2221,8 @@ class PostLoginController extends Controller {
 			return response(array("error"=>false, "message"=>'Stage Two data fetch done', "result"=>$result), 200);
 
 		}else{
-			return response(array("error"=>true, "message"=>'data not available', "result"=>$result), 200);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Nothing-Found');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 200);
 
 		}
 
@@ -2161,7 +2234,9 @@ class PostLoginController extends Controller {
 
 		if (!$result) {
 			$result = [];
-			return response(array("error"=>true, "message" => "Travel info is not exits.","result"=>$result), 403);
+
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'TravelInfo-doesnot-exist');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 403);
 
 		}else{
 
@@ -2208,7 +2283,9 @@ class PostLoginController extends Controller {
 		
 		if (!$result) {
 
-			return response(array("error"=>true, "message" => "Session info is not exits."), 403);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Sessioninfo-doesnot-exists');
+			return response(array("error"=>true, "message" => $message), 403);
+
 
 		}else{
 
@@ -2265,7 +2342,8 @@ class PostLoginController extends Controller {
 				$referenceNumberCheck = \App\Models\Transaction::where('bank_transaction_id',$request->post('reference_number'))->first();
 				if($referenceNumberCheck){
 
-					return response(array("error"=>true, "message"=>'Transaction already exists'), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Transaction-already-exists');
+					return response(array("error"=>true, "message"=>$message), 403);
 
 				}else{
 
@@ -2296,7 +2374,8 @@ class PostLoginController extends Controller {
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User donate payments');
 					
 					
-					return response(array("error"=>false, "message"=>'payment added successful'), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'payment-added-successful');
+					return response(array("error"=>false, "message"=>$message), 200);
 				}
 
 			} catch (\Exception $e) {
@@ -2325,7 +2404,8 @@ class PostLoginController extends Controller {
 			return response(array("error"=>false, "message"=>'Stage Five data fetch done', "result"=>$result), 200);
 
 		}else{
-			return response(array("error"=>true, "message"=>'data not available', "result"=>$result), 200);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Data-not-available');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 200);
 
 		}
 
@@ -2354,11 +2434,12 @@ class PostLoginController extends Controller {
 				'terms_and_condition'=>$value['terms_and_condition'],
 			];
 			
-			
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Done');
 			return response(array("error"=>false, "message"=>'Contact Details', "result"=>$result), 200);
 
 		}else{
-			return response(array("error"=>true, "message"=>'data not available', "result"=>$result), 200);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Data-not-available');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 200);
 
 		}
 
@@ -2386,11 +2467,12 @@ class PostLoginController extends Controller {
 				'doyouseek_postoralcomment'=>$data['doyouseek_postoralcomment'],
 			];
 			
-			
 			return response(array("error"=>false, "message"=>'Ministry Details', "result"=>$result), 200);
 
+
 		}else{
-			return response(array("error"=>true, "message"=>'data not available', "result"=>$result), 200);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Data-not-available');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 200);
 
 		}
 
@@ -2429,11 +2511,13 @@ class PostLoginController extends Controller {
 					$order_id = $data['order_id'];
 					$payment_intent = $data['payment_intent'];
 
-					return response(array("error"=>false, "message"=>'payment added successful','client_secret'=>$client_secret,'order_id'=>$order_id,'payment_intent'=>$payment_intent), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'payment-added-successful');
+
+					return response(array("error"=>false, "message"=>$message,'client_secret'=>$client_secret,'order_id'=>$order_id,'payment_intent'=>$payment_intent), 200);
 				
 				}else{
-            
-					return response(array("error"=>true, "message"=>'No payment due'), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'No-payment-due');
+					return response(array("error"=>true, "message"=>$message), 403);
 	
 				}
 
@@ -2469,7 +2553,9 @@ class PostLoginController extends Controller {
 
 		}else{
 
-			return response(array("error"=>true, "message"=>'data not available', "result"=>$result), 200);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Data-not-available');
+			return response(array("error"=>true, "message"=>$message, "result"=>$result), 200);
+
 
 		}
 
@@ -2911,7 +2997,7 @@ class PostLoginController extends Controller {
 				'QrCode'=>$stage5['qrcode'],
 			];
 		}
-
+		
 		return response(array("error"=>false, "message"=>'Data fetch done', "group_info"=>$groupInfo, "registerData"=>$RegisterData, "paymentInfo"=>$paymentInfo, "travelInfo"=>$TravelInfo, "SessionInfo"=>$SessionInfo, "QRInfo"=>$QRInfo), 200);
 
 
@@ -2923,7 +3009,9 @@ class PostLoginController extends Controller {
 		$file = null;
 		if (!$resultData) {
 			$result = [];
-			return response(array("error"=>true, "message" => "Visa letter info is not exits.","result"=>$result), 403);
+
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Visa-letter-info-doesnot-exist');
+			return response(array("error"=>true, "message" => $message,"result"=>$result), 403);
 
 		}else{
 
@@ -2946,7 +3034,8 @@ class PostLoginController extends Controller {
 				'remark'=>$file,
 			];
 
-			return response(array("error"=>false, "message"=>'Visa letter file fetch done', "result"=>$result), 200);
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Visaletter-file-fetche-succesully');
+			return response(array("error"=>false, "message"=>$message, "result"=>$result), 200);
 		}
 		
 
@@ -2960,7 +3049,8 @@ class PostLoginController extends Controller {
 			
 			if(!$Result){
 				
-				return response(array("message" => 'Result not found.','error'=>true),404); 
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Data-not-available');
+				return response(array("message" => $message,'error'=>true),404); 
 			}else{
 				
 				$result=[];
@@ -2973,7 +3063,9 @@ class PostLoginController extends Controller {
 						'message'=>$val->message,
 					];
 				}
-				return response(array("message" => 'Notification fetched successfully.','result'=>$result,'error'=>false),200); 
+
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Notification-fetched-successfully');
+				return response(array("message" =>$message,'result'=>$result,'error'=>false),200); 
 				
 			}
 			

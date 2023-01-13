@@ -658,7 +658,8 @@ class PreLoginController extends Controller {
 
 				if(!$userResult){
 					
-					return response(array('message'=>"Invalid Email id."), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'This-account-doesnot-exist');
+					return response(array('message'=>$message), 403);
 					
 				}else{
 
@@ -703,7 +704,8 @@ class PreLoginController extends Controller {
 										
 				if(!$emailResult){
 					
-					return response(array('message'=>"Invalid Email id."),403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($emailResult->language,'Sorry-yourAccount-didntPassOur-verifiCationsystem');
+					return response(array('message'=>$message), 403);
 				
 				}else{
 
@@ -713,7 +715,9 @@ class PreLoginController extends Controller {
 											])->first();
 
 					if(!$tokenResult){
-						return response(array('message'=>"Invalid token."), 403);
+
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($emailResult->language,'This-account-doesnot-exist');
+						return response(array('message'=> $message), 403);
 					}else{
 
 						$user = \App\Models\User::where('email', $request->json()->get('email'))->update([
@@ -750,7 +754,8 @@ class PreLoginController extends Controller {
 					
 						\App\Helpers\commonHelper::emailSendToUser($request->json()->get('email'), $subject, $msg);
 
-						return response(array('message'=>'Your password has been updated successfully.'), 200);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($emailResult->language,'NewPassword-update-successful');
+						return response(array('message'=>$message), 200);
 
 					}
 					

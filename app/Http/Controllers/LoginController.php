@@ -259,7 +259,13 @@ class LoginController extends Controller
             ])->first();
 
         if(!$tokenResult){
-            \Session::flash('gpro_error', 'Reset password link has been expired.');
+
+            $tokenResult=\DB::table('password_resets')->where([
+                ['email','=',$email],
+                ])->first();
+
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($tokenResult->language,'Resetpassword-linkhasbeen-expired');
+            \Session::flash('gpro_error', $message);
             return redirect()->route('home');
         } else {
 
