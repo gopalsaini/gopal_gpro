@@ -10,8 +10,9 @@ class PreLoginController extends Controller {
 
     public function registration(Request $request){
 	
+	
 		$rules = [
-            'email' => ['required', 'email','unique:users,email'],
+            'email' => ['required', 'email'],
 			'password' => 'required|confirmed',
 			'terms_and_condition' => 'required|in:0,1',
 			'first_name' => 'required|string',
@@ -40,7 +41,7 @@ class PreLoginController extends Controller {
 										
 				if($result){
 
-					return response(array("error"=>true, 'message'=>'Email is already exist with us. Please try another email id.'), 403);
+					return response(array("error"=>true, 'message'=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'Emailalready-existsPlease-trywithanother-emailid')), 403);
 				
 				}else{
    
@@ -154,7 +155,7 @@ class PreLoginController extends Controller {
 				// $html = view('email_templates.otp', compact('to', 'otp'))->render();
 				// $a = \App\Helpers\commonHelper::sendZeptoEmail($html);
 				
-				$message = "Email Verification link has been sent successfully on your email id : ".$to;
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userData->language,'EmailVerification-linkhasbeen-sentsuccessfully-onyour-emailid').' : '.$to;
 					 	
 				return response(array('message'=>$message), 200);
 				
@@ -375,7 +376,9 @@ class PreLoginController extends Controller {
 					return response(array('message'=>'Email verified successfully.'), '200');
 
 				}else{
-					return response(array("error"=>true, "message"=>"Email already verified, Please Login"), 403);
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Email-already-verifiedPlease-Login');
+					return response(array("error"=>true, "message"=> $message), 403);
 				}
 				
 			}catch (\Exception $e){
