@@ -65,5 +65,6 @@ return [
     'pay-using-money-gram' => 'If you are unable to pay with your credit card then pay using MoneyGram',
     'enter' => 'Enter',
     'payment-method'=>'Payment Method',
+    'upload-payment-image'=>'Upload Payment Image',
 
 ];

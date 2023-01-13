@@ -26,6 +26,7 @@
                             <thead>
                                 <tr>
                                     <th> #ID </th>
+                                    <th> Date</th>
                                     <th> Name</th>
                                     <th> Email </th>
                                     <th> Mobile</th>
@@ -42,6 +43,7 @@
                             <tfoot>
                                 <tr>
                                     <th> #ID </th>
+                                    <th> Date</th>
                                     <th> Name</th>
                                     <th> Email </th>
                                     <th> Mobile</th>
@@ -98,6 +100,9 @@ $(document).ready(function() {
                     return meta.row + meta.settings._iDisplayStart + 1 + '.';
                 },
                 className: "text-center font-weight-bold"
+            },
+            {
+                "data": "date"
             },
             {
                 "data": "name"

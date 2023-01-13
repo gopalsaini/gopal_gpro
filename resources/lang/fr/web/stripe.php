@@ -14,6 +14,6 @@ return [
     */
 
     'payment-by-card' => 'Paiement par Carte',
-    'pay-now' => 'Payer maintenan',
+    'pay-now' => 'Payer maintenant',
 
 ];

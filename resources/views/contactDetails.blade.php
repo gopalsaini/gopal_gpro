@@ -84,8 +84,8 @@
                     <div class="col-lg-4">
                         <label for="country">@lang('web/contact-details.country') <span>*</span></label>
                         <div class="common-select">
-                            <select id="country" placeholder="- @lang('web/ministry-details.select') -" data-state_id="{{$resultData['result']['contact_state_id']}}" data-city_id="{{$resultData['result']['contact_city_id']}}" class="mt-2 country selectbox test" name="contact_country_id">
-                                <option value="">--@lang('web/ministry-details.select')--</option>
+                            <select id="country" placeholder="- @lang('web/app.select_code') -" data-state_id="{{$resultData['result']['contact_state_id']}}" data-city_id="{{$resultData['result']['contact_city_id']}}" class="mt-2 country selectbox test" name="contact_country_id">
+                                <option value="">--@lang('web/app.select_code')--</option>
                                 @foreach($country as $con)
                                 <option data-phoneCode="{{ $con['phonecode'] }}" @if($resultData['result']['contact_country_id']==$con['id']){{'selected'}}@endif value="{{ $con['id'] }}">{{ ucfirst($con['name']) }}</option>
                                 @endforeach
@@ -119,7 +119,7 @@
                     <div class="col-lg-4">
                         <label for="">@lang('web/contact-details.phone') <span>*</span></label>
                         <select class="form-control test phoneCode" name="user_mobile_code"> 
-                            <option value="" >--@lang('web/contact-details.code')--</option>
+                            <option value="" >--@lang('web/app.select_code')--</option>
                             @foreach($country as $con)
                                 <option @if($resultData['result']['phone_code']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                             @endforeach
@@ -129,7 +129,7 @@
                     <div class="col-lg-4">
                         <label for="">@lang('web/contact-details.business') @lang('web/contact-details.or') @lang('web/contact-details.home')</label>
                         <select class="form-control test phoneCode" name="contact_business_codenumber"> 
-                            <option value="" >--@lang('web/contact-details.code')--</option>
+                            <option value="" >--@lang('web/app.select_code')--</option>
                             @foreach($country as $con)
                                 <option @if($resultData['result']['contact_business_codenumber']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                             @endforeach
@@ -137,9 +137,9 @@
                         <input style="margin-left:-4px;width: 70%;" type="tel" id="home" class="mt-2" name="contact_business_number" onkeypress="return /[0-9 ]/i.test(event.key)"  value="{{$resultData['result']['contact_business_number']}}" autocomplete="off">
                     </div>
                     <div class="col-lg-4"  id="whatsup"  style="display:@if($resultData['result']['contact_whatsapp_number']==$resultData['result']['mobile']){{'none'}}@else{{'block'}}@endif">
-                        <label for="">@lang('web/contact-details.whatsapp') <span>*</span></label>
+                        <label for="">@lang('web/app.select_code') <span>*</span></label>
                         <select class="form-control test phoneCode" name="contact_whatsapp_codenumber"> 
-                            <option value="" >--@lang('web/contact-details.code')--</option>
+                            <option value="" >--@lang('web/app.select_code')--</option>
                             @foreach($country as $con)
                                 <option @if($resultData['result']['contact_whatsapp_codenumber']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                             @endforeach

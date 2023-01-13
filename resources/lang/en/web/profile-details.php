@@ -43,7 +43,7 @@ return [
     'Ms.' => 'Ms.',
     'Mrs.'=> 'Mrs.', 
     'Dr.' => 'Dr.',
-    'Pastor' => 'Pasteur',
+    'Pastor' => 'Pastor',
     'Bishop' => 'Bishop',
     'Rev.' => 'Rev.',
     'Prof.' => 'Prof.',

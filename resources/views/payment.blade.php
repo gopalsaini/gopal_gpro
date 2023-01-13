@@ -623,7 +623,7 @@
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount">
-                                    <label for="">Upload Payment Image </label>
+                                    <label for="">@lang('web/payment.upload-payment-image') </label>
                                     <input type="file" name="file"  value="" class="mt-2" >
                                 </div>
                                 <div class="col-lg-12">

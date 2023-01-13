@@ -103,7 +103,7 @@ return [
     'flight-details-landing-in-panama' => 'Prière de remplir les détails du vol de l’atterrissage au Panama ou du départ du Panama.',
     'travel_note'=>'Note: If you are reaching early, You can contact Hotel and get discounted rates. Details for same would be <br> shared with you in an email.',
     'like_to_share_your_room'=>'Do you know who would you like to share your room with?',
-    'Married'=>'Marier',
+    'Married'=>'Marié/e',
     'Unmarried'=>'Célibataire',
     'submit' => 'Soumettre',
     'enter' => 'Entrer',

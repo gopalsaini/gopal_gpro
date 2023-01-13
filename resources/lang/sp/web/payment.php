@@ -65,6 +65,7 @@ return [
     'pay-using-money-gram' => 'Si no puede pagar con tarjeta de crédito, pague por Pago de MoneyGram',
     'enter' => 'Entrar', 
     'payment-method'=>'Pago Método',
+    'upload-payment-image'=>'Upload Payment Image',
 
 
 ];

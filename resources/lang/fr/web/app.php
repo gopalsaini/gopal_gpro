@@ -28,7 +28,7 @@ return [
     'first_name_label' => 'Prénom',
     'last_name' => 'Nom de famille',
     'last_name_label' => 'Nom de famille',
-    'enter_email' => "Écrire votre adresse Email ici",
+    'enter_email' => "Entrer l’adresse e-mail",
     'enter_name' => "Écrire votre nom ici",
 
     //login 
@@ -98,6 +98,6 @@ return [
     'LogisticsInformation' => 'Informations logistiques',
     'Bothlogisticsquestion' => 'Les deux questions logistiques',
     'Day' => 'Jour',
-    'EventDay' => "Jour de l'événement",
+    'select_code' => "sélectionnez le code",
 
 ];

@@ -53,7 +53,7 @@ return [
     'Training-to-your-ministry' => 'Cherchez-vous à ajouter la formation pastorale à votre ministère ?',
     'envision-training' => 'Comment envisagez-vous la formation des pasteurs ?',
     'enter' => "Entrer", 
-    'preview' => "Aperçu",
+    'preview' => "Prévisualisation",
     'review' => "Révision de la Demande",
     'event-day'=>'Jour de l’événement',
 ];

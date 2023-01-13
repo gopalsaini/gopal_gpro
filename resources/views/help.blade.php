@@ -43,7 +43,7 @@
                     
                     <div class="col-lg-4"  id="whatsup" >
                         <select class="form-control test phoneCode active-input" name="phonecode" > 
-                            <option value="" >-- @lang('web/ministry-details.select') @lang('web/contact-details.code') --</option>
+                            <option value="" >-- @lang('web/app.select_code') --</option>
                             @foreach($country as $con)
                                 <option  value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                             @endforeach

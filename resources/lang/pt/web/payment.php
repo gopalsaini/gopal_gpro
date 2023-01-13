@@ -65,5 +65,6 @@ return [
     'pay-using-money-gram' => 'Se você não consegue pagar com o seu cartão de crédito, então pague usando o grama MoneyGram',
     'enter' => "Introduzir", 
     'payment-method'=>'Pagamento Método',
+    'upload-payment-image'=>'Upload Payment Image',
     
 ];

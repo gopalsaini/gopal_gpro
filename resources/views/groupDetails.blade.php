@@ -65,7 +65,7 @@
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.whatsapp')</label>
                                         <select class="form-control test" name="user_whatsup_code">
-                                            <option value="" >--@lang('web/group-details.code')--</option>
+                                            <option value="" >--@lang('web/app.select_code')--</option>
                                             @foreach($country as $con)
                                                 <option @if($resultData['result']['contact_whatsapp_codenumber']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                                             @endforeach
@@ -75,7 +75,7 @@
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.mobile')</label>
                                         <select class="form-control test" name="user_mobile_code"> 
-                                            <option value="" >--@lang('web/group-details.code')--</option>
+                                            <option value="" >--@lang('web/app.select_code')--</option>
                                             @foreach($country as $con)
                                                 <option @if($resultData['result']['phone_code']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                                             @endforeach
@@ -95,7 +95,7 @@
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.whatsapp')</label>
                                         <select class="form-control test" name="whatsapp_code[]">
-                                            <option value="">--@lang('web/group-details.code')--</option>
+                                            <option value="">--@lang('web/app.select_code')--</option>
                                             @foreach($country as $con)
                                                 <option value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                                             @endforeach
@@ -103,9 +103,9 @@
                                         <input style="margin-left: -4px;width: 70%;" type="text" placeholder="@lang('web/app.enter') @lang('web/group-details.whatsapp')" class="mt-2 requiredField" onkeypress="return /[0-9 ]/i.test(event.key)" name="whatsup[]">
                                     </div>
                                     <div class="col-lg-3"> 
-                                        <label for="">@lang('web/group-details.mobile')</label>
+                                        <label for="">@lang('web/app.select_code')</label>
                                         <select class="form-control test" name="mobile_code[]">
-                                            <option value="">--@lang('web/group-details.code')--</option>
+                                            <option value="">--@lang('web/app.select_code')--</option>
                                             @foreach($country as $con)
                                                 <option value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
                                             @endforeach

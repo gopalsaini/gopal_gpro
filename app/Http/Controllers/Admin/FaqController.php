@@ -228,10 +228,10 @@ class FaqController extends Controller {
 			
 			$limit = $request->input('length');
 			$start = $request->input('start');
-			$order = $columns[$request->input('order.0.column')];
-			$dir = $request->input('order.0.dir');
+			// $order = $columns[$request->input('order.0.column')];
+			// $dir = $request->input('order.0.dir');
 
-			$query = \App\Models\Message::orderBy($order,$dir);
+			$query = \App\Models\Message::orderBy('id','desc');
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
@@ -245,6 +245,9 @@ class FaqController extends Controller {
 			return \DataTables::of($data)
 			->setOffset($start)
 
+			->addColumn('date', function($data){
+				return $data->created_at;
+		    })
 			->addColumn('name', function($data){
 				return $data->name;
 		    })

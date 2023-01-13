@@ -99,5 +99,6 @@ return [
     'LogisticsInformation' => 'Logistics Information',
     'Bothlogisticsquestion' => 'Both logistics question',
     'Day' => 'Day',
+    'select_code' => "Seleccione Código",
 
 ];

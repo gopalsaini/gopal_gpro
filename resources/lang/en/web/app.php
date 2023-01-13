@@ -100,5 +100,6 @@ return [
     'LogisticsInformation' => 'Logistics Information',
     'Bothlogisticsquestion' => 'Both logistics question',
     'Day' => 'Day',
+    'select_code' => "Select code",
 
 ];
