@@ -414,11 +414,13 @@ class PreLoginController extends Controller {
 				
 				if (!$userResult) {
 
-					return response(array("error"=>true, 'message'=>"This account does not exist."), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'This-account-doesnot-exist');
+					return response(array("error"=>true, 'message'=> $message), 403);
 
 				} else if ($userResult->status == '1') {
 
-					return response(array("error"=>true, 'message'=>"Your account has been blocked. Please contact Administrator."), 403);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'YourAccount-hasbeenBlocked-Pleasecontact-Administrator');
+					return response(array("error"=>true, 'message'=> $message), 403);
 
 				} else if (\Hash::check($request->json()->get('password'), $userResult->password) && $userResult->otp_verified=='Yes') {
 
@@ -427,7 +429,8 @@ class PreLoginController extends Controller {
 					$UserHistory->action='User Login';
 					$UserHistory->save();
 
-					return response(array('message'=>"Login successfully.", "otp_verified"=>'Yes',"token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourprofiler');
+					return response(array('message'=> $message, "otp_verified"=>'Yes',"token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
 					
 				} else if ($userResult->otp_verified=='No'){
 
@@ -440,7 +443,8 @@ class PreLoginController extends Controller {
 					
 				}else{
 
-					return response(array("error"=>true, 'message'=>"Invalid Password."), 403); 
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Invalid-Password');
+					return response(array("error"=>true, 'message'=>$message), 403); 
 				}
 
 			} catch (\Exception $e) {
@@ -658,8 +662,8 @@ class PreLoginController extends Controller {
 					
 				}else{
 
-					
-					return response(array('message'=>"Link created successfully.","token"=>md5(rand(1111,4444))), 200);
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'WeHave-sentPassword-resetLinkOn-yourEmail-address');
+					return response(array('message'=>$message,"token"=>md5(rand(1111,4444))), 200);
 
 				}
 								

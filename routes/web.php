@@ -230,6 +230,11 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::post('status', 'Admin\FaqController@status')->name('status');
 	});
 
+	// helpList
+	Route::group(['prefix'=>'help', 'as'=>'help.'], function() {
+		Route::get('list', 'Admin\FaqController@helpList')->name('list');
+	});
+
 	// FAQ
 	Route::group(['prefix'=>'category', 'as'=>'category.'], function() {
 		Route::match(['get','post'], 'add', 'Admin\CategoryController@add')->name('add');

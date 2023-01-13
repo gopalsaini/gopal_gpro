@@ -219,4 +219,54 @@ class FaqController extends Controller {
 
 	}
 	
+
+	public function helpList(Request $request) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('messages');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			$order = $columns[$request->input('order.0.column')];
+			$dir = $request->input('order.0.dir');
+
+			$query = \App\Models\Message::orderBy($order,$dir);
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData = \App\Models\Message::count();
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));  
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('name', function($data){
+				return $data->name;
+		    })
+			->addColumn('email', function($data){
+				return $data->email;
+		    })
+			->addColumn('mobile', function($data){
+				return $data->mobile;
+		    })
+			->addColumn('message', function($data){
+				return $data->message;
+		    })
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+        \App\Helpers\commonHelper::setLocale();
+        return view('admin.help.helplist');
+
+	}
 }
