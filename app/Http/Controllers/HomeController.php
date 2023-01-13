@@ -155,13 +155,13 @@ class HomeController extends Controller
                 
             }else{
 
-                \Session::flash('gpro_error', 'Payment already paid.');
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Payment-Successful');
+                \Session::flash('gpro_error', $message);
                 return redirect('/');
             }
 
         }else{
 
-            \Session::flash('gpro_error', 'Payment link has been expired.');
             return redirect('/');
         }
 
@@ -177,7 +177,9 @@ class HomeController extends Controller
 
         }else{
 
-            \Session::flash('gpro_error', 'Payment link has been expired.');
+            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Payment-link-hasbeen-expired');
+
+            \Session::flash('gpro_error', $message);
             return redirect('/');
         }
 
@@ -410,7 +412,6 @@ class HomeController extends Controller
 
         }else{
 
-            \Session::flash('gpro_error', 'Confirm link has been expired.');
             return redirect('/');
         }
 
@@ -510,12 +511,16 @@ class HomeController extends Controller
 
             $history->save();
             
-            \Session::flash('gpro_success', 'Your Confirmation Update Successful.');
+            
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Confirmation-Successful');
+
+            \Session::flash('gpro_success', $message);
             return redirect('profile-update');
 
         }else{
 
-            \Session::flash('gpro_error', 'Confirm link has been expired.');
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Confirmation-link-has-expired');
+            \Session::flash('gpro_error', $message);
             return redirect('profile-update');
         }
 
