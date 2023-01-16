@@ -107,4 +107,18 @@ return [
     'n/a' => 'N/A',
     'other'=>'Otra',
     'waiting'=>'waiting',
+    'Payment-Successful' => 'Pago exitoso',	
+    'Payment-link-hasbeen-expired' => 'El enlace de pago ha expirado',
+    'Confirmation-Successful' => 'Confirmación exitosa',
+    'Confirmation-link-has-expired' => 'El enlace de confirmación ha sido expirado',
+    'Your-Travel-Information-pending' => 'Su información de viaje pendiente',
+    'Yourprofile-isunder-review' => 'Su perfil está en revisión','WeHave-sentPassword-resetLinkOn-yourEmail-address' => 'Hemos enviado un enlace de restablecimiento de contraseña a su dirección de correo electrónico',
+    'YourSession-Informationpending' => 'La información de su sesión pendiente',
+    'Requestor-Payment-is-completed' => 'El pago del solicitante ha sido completado',
+    'Transaction-already-exists' => 'La transacción ya existe',
+    'Offline-payment-successful' => 'Pago fuera de línea exitoso',
+    'TravelInformation-approved-successful' => 'Información de viaje aprobada con éxito',
+    
+
+
 ];

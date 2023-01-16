@@ -155,8 +155,7 @@ class HomeController extends Controller
                 
             }else{
 
-				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Payment-Successful');
-                \Session::flash('gpro_error', $message);
+                \Session::flash('gpro_error', Lang::get('web/home.Payment-Successful.'));
                 return redirect('/');
             }
 
@@ -180,9 +179,7 @@ class HomeController extends Controller
 
         }else{
 
-            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Payment-link-hasbeen-expired');
-
-            \Session::flash('gpro_error', $message);
+            \Session::flash('gpro_error',Lang::get('web/home.Payment-link-hasbeen-expired.'));
             return redirect('/');
         }
 
@@ -212,7 +209,7 @@ class HomeController extends Controller
 
 			\Session::forget('intent');
             \App\Helpers\commonHelper::setLocale();
-            return redirect('/')->with('gpro_success','Payment Successful');
+            return redirect('/')->with('gpro_success', \Lang::get('web/home.Payment-Successful'));
 			
 			
 		}
@@ -515,17 +512,15 @@ class HomeController extends Controller
             }
 
             $history->save();
-            
-            
-			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Confirmation-Successful');
 
-            \Session::flash('gpro_success', $message);
+            \App\Helpers\commonHelper::setLocale();
+            \Session::flash('gpro_success', \Lang::get('web/home.Confirmation-Successful'));
             return redirect('profile-update');
 
         }else{
 
-			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Confirmation-link-has-expired');
-            \Session::flash('gpro_error', $message);
+			\App\Helpers\commonHelper::setLocale();
+            \Session::flash('gpro_error', \Lang::get('web/home.Confirmation-link-has-expired'));
             return redirect('profile-update');
         }
 

@@ -367,7 +367,7 @@ class PreLoginController extends Controller {
 
 						// \App\Helpers\commonHelper::sendSMS($userResult->mobile);
 
-						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourprofile');
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourProfile');
 
 						return response(array('message'=>$message, "token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
 					} 
@@ -380,8 +380,7 @@ class PreLoginController extends Controller {
 
 				}else{
 
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Email-already-verifiedPlease-Login');
-					return response(array("error"=>true, "message"=> $message), 403);
+					return response(array("error"=>true, "langError"=>true, "message"=>'Link not found'), 403);
 				}
 				
 			}catch (\Exception $e){
@@ -432,7 +431,7 @@ class PreLoginController extends Controller {
 					$UserHistory->action='User Login';
 					$UserHistory->save();
 
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourprofiler');
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourProfile');
 					return response(array('message'=> $message, "otp_verified"=>'Yes',"token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
 					
 				} else if ($userResult->otp_verified=='No'){

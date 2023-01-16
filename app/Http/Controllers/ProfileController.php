@@ -94,7 +94,8 @@ class ProfileController extends Controller
 
         }else{
 
-            return redirect('profile-update')->with('gpro_error','Your profile is under review');
+            \App\Helpers\commonHelper::setLocale();
+            return redirect('profile-update')->with('gpro_error',\Lang::get('web/home.Yourprofile-isunder-review'));
         }
         
         
@@ -155,7 +156,8 @@ class ProfileController extends Controller
 
         }else{
 
-            return redirect('travel-information')->with('gpro_error','Your Travel Information pending');
+            \App\Helpers\commonHelper::setLocale();
+            return redirect('travel-information')->with('gpro_error',\Lang::get('web/home.Your-Travel-Information-pending'));
         }
         
         
@@ -176,7 +178,8 @@ class ProfileController extends Controller
 
         }else{
 
-            return redirect('session-information')->with('gpro_error','Your Session Information pending');
+            \App\Helpers\commonHelper::setLocale();
+            return redirect('session-information')->with('gpro_error',\Lang::get('web/home.YourSession-Informationpending'));
         }
         
         
@@ -649,8 +652,8 @@ class ProfileController extends Controller
             
         }else{
 
-            \Session::flash('gpro_error', 'Payment already paid.');
             \App\Helpers\commonHelper::setLocale();
+            \Session::flash('gpro_error', \Lang::get('web/home.Requestor-Payment-is-completed'));
             return redirect('/');
         }
 
@@ -689,7 +692,8 @@ class ProfileController extends Controller
                         $referenceNumberCheck = \App\Models\Transaction::where('bank_transaction_id',$request->post('reference_number'))->first();
                         if($referenceNumberCheck){
 
-                            return response(array("error"=>true, "message"=>'Transaction already exists'), 403);
+                            \App\Helpers\commonHelper::setLocale();
+                            return response(array("error"=>true, "message"=> \Lang::get('web/home.Transaction-already-exists')), 403);
 
                         }else{
 
@@ -750,12 +754,13 @@ class ProfileController extends Controller
             
                                 // \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
             
-                                
-                                return response(array("error"=>false, "message"=>'Offline payment added successful'), 200);
+                                \App\Helpers\commonHelper::setLocale();
+                                return response(array("error"=>false, "message"=> \Lang::get('web/home.Offline-payment-successful')), 200);
                 
                             }else{
             
-                                return response(array("error"=>true, "message"=>'payment already paid'), 403);
+                                 \App\Helpers\commonHelper::setLocale();
+                                return response(array("error"=>true, "message"=> \Lang::get('web/home.Requestor-Payment-is-completed')), 403);
                 
                             }
                             
@@ -856,11 +861,13 @@ class ProfileController extends Controller
                         // \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 
                         
-                        return response(array("error"=>false, "message"=>'Cash payment added successful'), 200);
+                        \App\Helpers\commonHelper::setLocale();
+                        return response(array("error"=>false, "message"=> \Lang::get('web/home.Cash-Payment-addedSuccessful')), 200);
         
                     }else{
 
-                        return response(array("error"=>true, "message"=>'payment already paid'), 403);
+                        \App\Helpers\commonHelper::setLocale();
+                        return response(array("error"=>true, "message"=> \Lang::get('web/home.Requestor-Payment-is-completed')), 403);
         
                     }
                       
@@ -966,14 +973,15 @@ class ProfileController extends Controller
         $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/travel-info-verify', json_encode($data));
         
         $resultData=json_decode($result->content, true);
-
+        \App\Helpers\commonHelper::setLocale();
         if($result->status==200){
             
-            return redirect('travel-information')->with('gpro_success','Travel Information approved successful');
+           
+            return redirect('travel-information')->with('gpro_success', \Lang::get('web/home.TravelInformation-approved-successful'));
 
         }else{
 
-            return redirect('travel-information')->with('gpro_error','Travel Information not approved');
+            return redirect('travel-information')->with('gpro_error', \Lang::get('web/home.Travel-Information-notApproved'));
         }
     }
 

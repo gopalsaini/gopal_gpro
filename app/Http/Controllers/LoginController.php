@@ -94,8 +94,16 @@ class LoginController extends Controller
 
         }else{
 
+            if(isset($resultData['langError']) && $resultData['langError'] == true){
 
-            \Session::flash('gpro_success', $resultData['message']);
+                \App\Helpers\commonHelper::setLocale();
+                \Session::flash('gpro_success', $resultData['message'],\Lang::get('web/home.Email-already-verifiedPlease-Login') );
+
+            }else{
+
+                \Session::flash('gpro_success', $resultData['message']);
+            }
+            
             return redirect('/');
             // return response(array('message'=>$resultData['message']), $result->status);
         }
@@ -216,7 +224,8 @@ class LoginController extends Controller
 					$message->to($to);
 				});
                 
-                return response(array('reset'=>true, 'message'=>'We have sent password reset link on your email address.'), $result->status);
+                \App\Helpers\commonHelper::setLocale();
+                return response(array('reset'=>true, 'message'=> \Lang::get('web/home.WeHave-sentPassword-resetLinkOn-yourEmail-address')), $result->status);
     
             }else{
                 return response(array('message'=>$resultData['message']), $result->status);

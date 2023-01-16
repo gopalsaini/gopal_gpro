@@ -108,5 +108,17 @@ return [
     'n/a' => 'N/A',
     'other'=>'other',
     'waiting'=>'waiting',
+    'Payment-Successful'=> 'Payment-Successful',
+    'Payment-link-hasbeen-expired' => 'Payment link has been expired',
+    'Confirmation-Successful' => 'Confirmation Successful',
+    'Confirmation-link-has-expired' => 'Confirmation link has expired',
+    'Your-Travel-Information-pending' => 'Your Travel Information pending',
+    'WeHave-sentPassword-resetLinkOn-yourEmail-address' => 'We have sent password reset link on your email address',
+    'Yourprofile-isunder-review' => 'Your profile is under review',	
+    'YourSession-Informationpending' => 'Your Session Information pending',
+    'Requestor-Payment-is-completed' => 'Requestor Payment is completed',
+    'Transaction-already-exists' => 'Transaction already exists',
+    'Offline-payment-successful' => 'Offline payment successful',
+    'TravelInformation-approved-successful' => 'Travel Information approved successful',
 
 ];

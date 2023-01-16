@@ -110,5 +110,16 @@ return [
     'n/a' => 'N/A',
     'other'=>'Autre',
     'waiting'=>'waiting',
-
+    'Payment-Successful' => 'Paiement réussi',
+    'Payment-link-hasbeen-expired' => 'Lien de paiement a été expiré',
+    'Confirmation-Successful' => 'Confirmation réussie',
+    'Confirmation-link-has-expired' => 'Lien de confirmation a été expiré',
+    'Your-Travel-Information-pending' => 'Vos informations de voyage sont en attente',
+    'WeHave-sentPassword-resetLinkOn-yourEmail-address' => 'Nous avons envoyé un lien de réinitialisation de mot de passe sur votre adresse e-mail',
+    'Yourprofile-isunder-review' => "Votre profil est en cours d'examen",
+    'YourSession-Informationpending' => 'Vos informations de session sont en attente',
+    'Requestor-Payment-is-completed' => 'Paiement du demandeur a été complété',
+    'Transaction-already-exists' => 'Transaction existe déjà',
+    'Offline-payment-successful' => 'Paiement hors ligne réussi',
+    'TravelInformation-approved-successful' => 'Informations de voyage approuvées réussies',
 ];
