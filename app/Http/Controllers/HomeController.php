@@ -162,6 +162,9 @@ class HomeController extends Controller
 
         }else{
 
+            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Payment-link-hasbeen-expired');
+            \Session::flash('gpro_error', $message);
+
             return redirect('/');
         }
 
@@ -412,6 +415,8 @@ class HomeController extends Controller
 
         }else{
 
+            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Confirmation-link-has-expired');
+            \Session::flash('gpro_error', $message);
             return redirect('/');
         }
 

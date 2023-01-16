@@ -367,13 +367,16 @@ class PreLoginController extends Controller {
 
 						// \App\Helpers\commonHelper::sendSMS($userResult->mobile);
 
-						return response(array('message'=>'Your registration has been completed successfully, Please update your profile.', "token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourprofile');
+
+						return response(array('message'=>$message, "token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
 					} 
 
 					$userResult->Save();
 
- 
-					return response(array('message'=>'Email verified successfully.'), '200');
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Confirmation-Successful');
+
+					return response(array('message'=>$message), '200');
 
 				}else{
 
@@ -1299,21 +1302,24 @@ class PreLoginController extends Controller {
 			if($request->json()->get('lang') == 'fr'){
 
 				$result=[
-					'Video1'=>asset('images/Gpromobile French-1.m4vv'),
+					// 'Video1'=>asset('images/Gpromobile French-1.m4vv'),//Vineet-13012023
+					'Video1'=>asset('images/Gpromobile-French-1.m4vv'),
 					'Video2'=>asset('assets/images/a_glimpse_of_the_gprocongress.mp4'),
 				];
 
 			}elseif($request->json()->get('lang') == 'pt'){
 
 				$result=[
-					'Video1'=>asset('images/Gpromobile Protugese-1.m4v'),
+					// 'Video1'=>asset('images/Gpromobile Protugese-1.m4v'), //Vineet-13012023
+					'Video1'=>asset('images/Gpromobile-Protugese-1.m4v'),
 					'Video2'=>asset('assets/images/a_glimpse_of_the_gprocongress.mp4'),
 				];
 
 			}elseif($request->json()->get('lang') == 'sp'){
 
 				$result=[
-					'Video1'=>asset('images/Gpromobile Spain-1.m4v'),
+					// 'Video1'=>asset('images/Gpromobile Spain-1.m4v'),//Vineet-13012023
+					'Video1'=>asset('images/Gpromobile-Spain-1.m4v'),
 					'Video2'=>asset('assets/images/a_glimpse_of_the_gprocongress.mp4'),
 				];
 				

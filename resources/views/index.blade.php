@@ -95,11 +95,14 @@
                 </video>
                 <video class="w-100 d-md-none d-sm-block d-block" id="mobVideo">
                     @if(App::getLocale() == 'pt')
-                        <source src="{{ asset('images/Gpromobile Protugese-1.m4v') }}" type="video/mp4">
+                        <!-- <source src="{{ asset('images/Gpromobile Protugese-1.m4v') }}" type="video/mp4"> -->
+                        <source src="{{ asset('images/Gpromobile-Protugese-1.m4v') }}" type="video/mp4">
                     @elseif(App::getLocale() == 'sp')
-                        <source src="{{ asset('images/Gpromobile Spain-1.m4v') }}" type="video/mp4">
+                        <!-- <source src="{{ asset('images/Gpromobile Spain-1.m4v') }}" type="video/mp4"> -->
+                        <source src="{{ asset('images/Gpromobile-Spain-1.m4v') }}" type="video/mp4">
                     @elseif(App::getLocale() == 'fr')
-                        <source src="{{ asset('images/Gpromobile French-1.m4v') }}" type="video/mp4">
+                        <!-- <source src="{{ asset('images/Gpromobile French-1.m4v') }}" type="video/mp4"> -->
+                        <source src="{{ asset('images/Gpromobile-French-1.m4v') }}" type="video/mp4">
                     @else
                         <source src="{{ asset('assets/images/Gpromobile-1.m4v') }}" type="video/mp4">
                     @endif
