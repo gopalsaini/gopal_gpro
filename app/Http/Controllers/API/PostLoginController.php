@@ -221,7 +221,7 @@ class PostLoginController extends Controller {
 				return response(array("error"=>true, "message"=>$message), 200);
 
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -286,7 +286,7 @@ class PostLoginController extends Controller {
 							
 
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-not-found');
-							return response(array("error"=>true, 'message'=>$message), 200);
+							return response(array("error"=>true, 'message'=>$message), 403);
 						
 						}elseif($users->parent_id != null){
 
@@ -393,7 +393,7 @@ class PostLoginController extends Controller {
 				return response(array("error"=>false, "message"=>$message), 200);
 
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -437,7 +437,7 @@ class PostLoginController extends Controller {
 				return response(array("error"=>true, "message"=>$message), 200);
 
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -506,7 +506,7 @@ class PostLoginController extends Controller {
 				return response(array("error"=>true, "message"=>$message, "result"=>$users->toArray()), 200);
 
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -1103,7 +1103,6 @@ class PostLoginController extends Controller {
 			$rules = [
 				'ministry_pastor_trainer' => 'required|in:Yes,No',
 				'non_formal_trainor' => 'required', 
-				'non_formal_trainor' => 'required', 
 				'informal_personal' => 'required', 
 				'howmany_pastoral' => 'required', 
 				'howmany_futurepastor' => 'required',
@@ -1234,7 +1233,7 @@ class PostLoginController extends Controller {
 				
 			}else{
 
-				// try{
+				try{
 
 					$result = \App\Models\TravelInfo::where('user_id', $request->user()->id)->first();
 
@@ -1360,9 +1359,9 @@ class PostLoginController extends Controller {
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Travel-information-hasbeen-successfully-completed');
 					return response(array("error"=>true, "message" => $message), 200);
 						
-				// }catch (\Exception $e){
-				// 	return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
-				// }
+				}catch (\Exception $e){
+					return response(array("error"=>true, "message" => "Something went wrong.please try again"), 403); 
+				}
 			}
 
 		}else{
@@ -1787,7 +1786,7 @@ class PostLoginController extends Controller {
 				}
 				
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -1898,7 +1897,7 @@ class PostLoginController extends Controller {
 				}
 
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -1959,7 +1958,7 @@ class PostLoginController extends Controller {
 				}
 				
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -2380,7 +2379,7 @@ class PostLoginController extends Controller {
 
 			} catch (\Exception $e) {
 
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -2523,7 +2522,7 @@ class PostLoginController extends Controller {
 
 			} catch (\Exception $e) {
 
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -3076,6 +3075,45 @@ class PostLoginController extends Controller {
 		} 	 
 		
 	}
+
+	
+	public function changeUserLanguage(Request $request){
+	
+		
+		$rules = [
+            'language' => 'required|in:en,sp,fr,pt',
+		];
+
+		$validator = \Validator::make($request->json()->all(), $rules);
+		 
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message = $msg[0];
+				break;
+			}
+			
+			return response(array("error"=>true, 'message'=>$message), 403);
+			
+		}else{
+
+			try {
+				
+				$users = \App\Models\User::where('id',$request->user()->id)->first();
+				
+				$users->language = $request->json()->get('language');
+				$users->save();
+
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Done');
+				return response(array("error"=>true, "message"=>$message), 200);
+
+			} catch (\Exception $e) {
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			}
+		}
+
+    }
 
 	
 

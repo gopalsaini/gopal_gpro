@@ -12,15 +12,29 @@ class PreLoginController extends Controller {
 	
 	
 		$rules = [
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email','unique:users,email'],
 			'password' => 'required|confirmed',
 			'terms_and_condition' => 'required|in:0,1',
 			'first_name' => 'required|string',
 			'last_name' => 'required|string',
+			'password_confirmation' => 'required',
 			'language' => 'required|in:en,sp,fr,pt',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'email_email'),
+			'password.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'password_required'), 
+			'password_confirmation.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'password_confirmed_required'), 
+			'password.confirmed' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'password_confirmed'), 
+			'language.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'language_required'),  
+			'terms_and_condition.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'terms_and_condition_required'),  
+			'email.unique' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'email_unique'),
+			'last_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'last_name_required'),
+			'first_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'first_name_required'),
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -64,14 +78,14 @@ class PreLoginController extends Controller {
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Registration Action');
 				
 
-					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp', json_encode(array('email'=>$request->json()->get('email'))));
+					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp?lang='.$request->json()->get('language'), json_encode(array('email'=>$request->json()->get('email'))));
  
 					return response((array)json_decode($sendOtpResult->content), $sendOtpResult->status);
 					
 				}
 				
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->json()->get('language'),'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -79,11 +93,23 @@ class PreLoginController extends Controller {
 
 	public function sendOtp(Request $request){
 		
+		$lang = 'en';
+		if(isset($_GET['lang']) && $_GET['lang'] != ''){
+
+			$lang = $_GET['lang'];
+			
+		}
+
 		$rules = [
             'email' => 'required|email',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_email'),
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -161,7 +187,7 @@ class PreLoginController extends Controller {
 				
 			}catch (\Exception $e){
 
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403); 
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Something-went-wrongPlease-try-again')), 403); 
 			}
 		}
 		
@@ -285,11 +311,22 @@ class PreLoginController extends Controller {
 
 	public function validateToken(Request $request){
 		
+		$lang = 'en';
+		if(isset($_GET['lang']) && $_GET['lang'] != ''){
+
+			$lang = $_GET['lang'];
+			
+		}
 		$rules = [
             'token' => 'required',
 		];
+
 		
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'token.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'token_required'),
+		);
+		
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		
 		if ($validator->fails()) {
 			$message = [];
@@ -384,19 +421,30 @@ class PreLoginController extends Controller {
 				}
 				
 			}catch (\Exception $e){
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403); 
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Something-went-wrongPlease-try-again')), 403); 
 			}
 		}
 	}
 
 	public function login(Request $request){
-		
+		$lang = 'en';
+		if(isset($_GET['lang']) && $_GET['lang'] != ''){
+
+			$lang = $_GET['lang'];
+			
+		}
 		$rules = [
             'email' => 'required|email',
 			'password' => 'required',
 		];
+
+		$messages = array(
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_email'),
+			'password.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'password_required'), 
+		);
 		
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		
 		if ($validator->fails()) {
 			$message = [];
@@ -416,7 +464,7 @@ class PreLoginController extends Controller {
 				
 				if (!$userResult) {
 
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'This-account-doesnot-exist');
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'This-account-doesnot-exist');
 					return response(array("error"=>true, 'message'=> $message), 403);
 
 				} else if ($userResult->status == '1') {
@@ -436,7 +484,7 @@ class PreLoginController extends Controller {
 					
 				} else if ($userResult->otp_verified=='No'){
 
-					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp', json_encode(array('email'=>$request->json()->get('email'))));
+					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp?lang='.$userResult->language, json_encode(array('email'=>$request->json()->get('email'))));
 					$response=(array)json_decode($sendOtpResult->content);
 					$response['otp_verified']='No';
 
@@ -450,7 +498,7 @@ class PreLoginController extends Controller {
 				}
 
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403); 
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Something-went-wrongPlease-try-again')), 403); 
 			}
 		}
 	}
@@ -637,10 +685,20 @@ class PreLoginController extends Controller {
     }
 
 	public function forgotPassword(Request $request){
+		$lang = 'en';
+		if(isset($_GET['lang']) && $_GET['lang'] != ''){
+
+			$lang = $_GET['lang'];
+			
+		}
+		$rules['email'] = 'required|email';
 		
-		$rules['email'] = 'required|email|exists:users,email';
-		
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_email'),
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
 		
 		if ($validator->fails()) {
 			$message = [];
@@ -658,9 +716,16 @@ class PreLoginController extends Controller {
 				
 				$userResult=\App\Models\User::where([['email','=',$request->json()->get('email')]])->first();
 
+				$lang = 'en';
+				if(isset($_GET['lang']) && $_GET['lang'] != ''){
+
+					$lang = $_GET['lang'];
+					
+				}
+				
 				if(!$userResult){
 					
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'This-account-doesnot-exist');
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'This-account-doesnot-exist');
 					return response(array('message'=>$message), 403);
 					
 				}else{
@@ -672,7 +737,7 @@ class PreLoginController extends Controller {
 								
 			}catch (\Exception $e){
 				
-				return response(array("error"=>true, "message" => $e->getMessage()), 403);
+				return response(array("error"=>true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Something-went-wrongPlease-try-again')), 403);
 			
 			}
 		}
@@ -680,13 +745,28 @@ class PreLoginController extends Controller {
 
 	public function resetPassword(Request $request){
 		
+		$lang = 'en';
+		if(isset($_GET['lang']) && $_GET['lang'] != ''){
+
+			$lang = $_GET['lang'];
+			
+		}
+
 		$rules = [
             'token' => 'required',
             'email' => 'required|email',    
-            'password' => 'required|min:8|confirmed'
+            'password' => 'required|confirmed'
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_email'),
+			'token.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'token_required'),			
+			'password.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'password_required'), 
+
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -703,10 +783,10 @@ class PreLoginController extends Controller {
 			try{
 				
 				$emailResult=\App\Models\User::where([['email','=',$request->json()->get('email')]])->first();
-										
+				
 				if(!$emailResult){
 					
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($emailResult->language,'Sorry-yourAccount-didntPassOur-verifiCationsystem');
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Sorry-yourAccount-didntPassOur-verifiCationsystem');
 					return response(array('message'=>$message), 403);
 				
 				}else{
@@ -718,7 +798,7 @@ class PreLoginController extends Controller {
 
 					if(!$tokenResult){
 
-						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($emailResult->language,'This-account-doesnot-exist');
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'This-account-doesnot-exist');
 						return response(array('message'=> $message), 403);
 					}else{
 
@@ -765,7 +845,7 @@ class PreLoginController extends Controller {
 				
 			}catch (\Exception $e){
 				
-				return response(array("error" => true, "message" => $e->getMessage()), 403);
+				return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Something-went-wrongPlease-try-again')), 403);
 			
 			}
 		}
@@ -774,6 +854,12 @@ class PreLoginController extends Controller {
 
 	public function help(Request $request){
 		
+		$lang = 'en';
+		if(isset($_GET['lang']) && $_GET['lang'] != ''){
+
+			$lang = $_GET['lang'];
+			
+		}
 		$rules = [
             'name' => 'required',
             'email' => 'required|email',
@@ -782,7 +868,18 @@ class PreLoginController extends Controller {
 			'phonecode' => 'required',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'email_email'),			
+			'mobile.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'mobile_required'), 
+			'mobile.numeric' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'mobile_numeric'), 
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'name_required'), 
+			'phonecode.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'phonecode_required'), 
+			'message.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'message_required'), 
+
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -809,7 +906,7 @@ class PreLoginController extends Controller {
 				
 			}catch (\Exception $e){
 				
-				return response(array("error" => true, "message" => $e->getMessage()), 403);
+				return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Something-went-wrongPlease-try-again')), 403);
 			
 			}
 		}
@@ -1302,7 +1399,7 @@ class PreLoginController extends Controller {
 
 				$result=[
 					// 'Video1'=>asset('images/Gpromobile French-1.m4vv'),//Vineet-13012023
-					'Video1'=>asset('images/Gpromobile-French-1.m4vv'),
+					'Video1'=>asset('images/Gpromobile-French-1.m4v'),
 					'Video2'=>asset('assets/images/a_glimpse_of_the_gprocongress.mp4'),
 				];
 
@@ -1812,8 +1909,6 @@ class PreLoginController extends Controller {
 		}
 
     }
-
-	
 
 	public function getAllLanguageFolderFile(Request $request){
 		

@@ -92,6 +92,7 @@
                 $('#CategoryDiv').css('display','block');
                 $('#selectCategory').attr('required',true);
                 $('#selectCategory').val("");
+                $('#selectOffer').val('');
 
             }else{
                 
@@ -100,6 +101,7 @@
                 
                 $('#selectCategory').val("");
                 $('#early_bird').val("No");
+                $('#selectOffer').val('');
                 if($('#early_bird').val() == 'Yes'){
 
                     $('#payable_amount').val((parseInt(base_amount)-parseInt(100)));
@@ -121,6 +123,7 @@
         $('#selectCategory').change(function(){
 
             $('#early_bird').val("No");
+            $('#selectOffer').val('');
             if($('#early_bird').val() == 'Yes'){
 
                 $('#payable_amount').val((parseInt(base_amount)-parseInt(100)));
@@ -224,11 +227,12 @@
         
         $('#early_bird').change(function(){
 
-            
+            $('#selectOffer').val('');
             if(this.value == 'Yes'){
                 
                 
                 var selectCategory = $('#selectCategory').val();
+                
                 if(selectCategory == 'Upgrade to Single Deluxe Room'){
 
                     if(finAmount > 975){
@@ -272,6 +276,7 @@
                 
                 
                 var selectCategory = $('#selectCategory').val();
+                
                 if(selectCategory == 'Upgrade to Single Deluxe Room'){
 
                     if(finAmount >= 975){
@@ -311,6 +316,7 @@
 
                 $('#early_bird').attr('disabled',true);
                 $('#early_bird').val('No');
+                $('#selectOffer').val('');
 
                 finAmount = (parseInt(finAmount)+parseInt(100));
                 $('#payable_amount').val(finAmount);

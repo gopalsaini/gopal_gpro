@@ -120,5 +120,7 @@ return [
     'Transaction-already-exists' => 'Transaction already exists',
     'Offline-payment-successful' => 'Offline payment successful',
     'TravelInformation-approved-successful' => 'Travel Information approved successful',
+    'Email-already-verifiedPlease-Login' => 'Email already verified. Please Login',	
+
 
 ];

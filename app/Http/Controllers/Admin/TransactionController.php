@@ -55,6 +55,9 @@ class TransactionController extends Controller {
 			// 	return $data->transaction_id;
 		    // })
 
+			->addColumn('country', function($data){
+				return $data->country_of_sender ?? '-';
+		    })
 			->addColumn('method', function($data){
 				return $data->method;
 		    })

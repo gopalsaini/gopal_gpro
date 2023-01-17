@@ -269,7 +269,7 @@ class ProfileController extends Controller
 
         if($resultData['result']['profile_status'] == 'Approved'){
     
-            \Session::flash('gpro_success', 'Your application already Approved.');
+            \Session::flash('gpro_success', \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Your-application-alreadyApproved'));
             return redirect('profile');
             
         }elseif($resultData['result']['profile_submit_type'] == 'submit'){
@@ -641,12 +641,14 @@ class ProfileController extends Controller
 
         if($user && $user->amount >0){
 
-            $data = \App\Helpers\commonHelper::paymentGateway($user->id,$user->amount,1);
+            $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, false);
+            
+            $data = \App\Helpers\commonHelper::paymentGateway($user->id,$totalPendingAmount,1);
             
             $intent = $data['intent'];
             $order_id = $data['order_id'];
             $id = $data['order_id'];
-
+            \Session::put('intent',$intent);
             \App\Helpers\commonHelper::setLocale();
             return view('stripe',compact('intent','order_id','id'));
             
@@ -669,9 +671,12 @@ class ProfileController extends Controller
                     'reference_number' => 'required',
                     'amount' => 'required|numeric',
                     'name' => 'required',
-                    'country_of_sender' => 'required',
                     'type' => 'required|in:Offline,Online',
                 ];
+
+                if($request->post('mode') != 'Wire'){
+                    $rules['country_of_sender'] = 'required';
+                }
         
                 $validator = \Validator::make($request->all(), $rules);
                  
@@ -712,7 +717,7 @@ class ProfileController extends Controller
                                 $transaction->method = $request->post('type');
                                 $transaction->amount = $request->post('amount');
                                 $transaction->name = $request->post('name');
-						        $transaction->country_of_sender = $request->post('country_of_sender');
+						        $transaction->country_of_sender = $request->post('country_of_sender') ?? '';
                                 $transaction->bank_transaction_id = $request->post('reference_number');
                                 $transaction->status = '0';
                                 $transaction->particular_id = '1';
@@ -769,7 +774,7 @@ class ProfileController extends Controller
                         
                         
                     } catch (\Exception $e) {
-                        return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+                        return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Something-went-wrongPlease-try-again')), 403);
                     }
                 }
 
@@ -872,7 +877,7 @@ class ProfileController extends Controller
                     }
                       
                 } catch (\Exception $e) {
-                    return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+                    return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Something-went-wrongPlease-try-again')), 403);
                 }
             }
 

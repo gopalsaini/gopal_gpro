@@ -155,13 +155,13 @@ class HomeController extends Controller
                 
             }else{
 
-                \Session::flash('gpro_error', Lang::get('web/home.Payment-Successful.'));
+                \Session::flash('gpro_error', \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-Successful'));
                 return redirect('/');
             }
 
         }else{
 
-            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Payment-link-hasbeen-expired');
+            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-link-hasbeen-expired');
             \Session::flash('gpro_error', $message);
 
             return redirect('/');
@@ -172,6 +172,7 @@ class HomeController extends Controller
     public function sponsorPaymentLink(Request $request,$token){
 
         $linkPayment = \App\Models\SponsorPayment::where('token',$token)->first();
+        \App\Helpers\commonHelper::setLocale();
 
         if($linkPayment){
 
@@ -179,7 +180,7 @@ class HomeController extends Controller
 
         }else{
 
-            \Session::flash('gpro_error',Lang::get('web/home.Payment-link-hasbeen-expired.'));
+            \Session::flash('gpro_error',\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-link-hasbeen-expired'));
             return redirect('/');
         }
 
@@ -228,7 +229,7 @@ class HomeController extends Controller
                 'message'=>$request->post('message')
             );
     
-            $result=\App\Helpers\commonHelper::callAPI('POST', '/help', json_encode($data));
+            $result=\App\Helpers\commonHelper::callAPI('POST', '/help?lang='.\Session::get('lang'), json_encode($data));
             $resultData=json_decode($result->content,true);
 
             if($result->status==200){
@@ -275,7 +276,20 @@ class HomeController extends Controller
 
     public function localization(Request $request) {
 		if($request->ajax() && $request->isMethod('post')){
+
 		    \Session::put('lang', $request->post('lang'));
+
+            if(\Session::has('gpro_user')){
+
+                $data=array(
+                    'language'=>$request->post('lang'),
+                );
+
+                $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/change-user-language', json_encode($data));
+                $resultData=json_decode($result->content, true);
+               
+
+            }
             return response(array('reload' => true), 200);
         }
 	}
@@ -330,7 +344,7 @@ class HomeController extends Controller
 				}
 				
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -386,7 +400,7 @@ class HomeController extends Controller
                 return response(array('message'=>'','urlPage'=>true,'url'=>url('stripe/'.$order_id)), 200);
 	
 			} catch (\Exception $e) {
-				return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Something-went-wrongPlease-try-again')), 403);
 			}
 		}
 
@@ -412,7 +426,7 @@ class HomeController extends Controller
 
         }else{
 
-            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Confirmation-link-has-expired');
+            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Confirmation-link-has-expired');
             \Session::flash('gpro_error', $message);
             return redirect('/');
         }

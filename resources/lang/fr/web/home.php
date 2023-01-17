@@ -122,4 +122,5 @@ return [
     'Transaction-already-exists' => 'Transaction existe déjà',
     'Offline-payment-successful' => 'Paiement hors ligne réussi',
     'TravelInformation-approved-successful' => 'Informations de voyage approuvées réussies',
+    'Email-already-verifiedPlease-Login' => 'E-mail déjà vérifié. Veuillez vous connecter',	
 ];

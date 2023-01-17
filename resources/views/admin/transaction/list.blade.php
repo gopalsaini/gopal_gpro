@@ -32,6 +32,7 @@
                                     <th> @lang('admin.razorpay') / @lang('admin.paypal') @lang('admin.order') @lang('admin._id') </th>
                                     <th> @lang('admin.transaction') @lang('admin._id') </th>
                                     <th> @lang('admin.method') </th> -->
+                                    <th> Country of Sender </th>
                                     <th> @lang('admin.mode') </th>
                                     <th> @lang('admin.transfer-id') </th>
                                     <th> @lang('admin.utr-no') </th>
@@ -59,6 +60,7 @@
                                     <th> @lang('admin.razorpay') / @lang('admin.paypal') @lang('admin.order') @lang('admin._id') </th>
                                     <th> @lang('admin.transaction') @lang('admin._id') </th>
                                     <th> @lang('admin.method') </th> -->
+                                    <th> Country of Sender </th>
                                     <th> @lang('admin.mode') </th>
                                     
                                     <th> @lang('admin.transfer-id') </th>
@@ -183,6 +185,9 @@
                 // {
                 //     "data": "transaction_id"
                 // },
+                {
+                    "data": "country"
+                },
                 {
                     "data": "method"
                 },

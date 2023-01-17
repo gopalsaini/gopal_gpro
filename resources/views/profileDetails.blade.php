@@ -448,6 +448,7 @@
             success: function(data) { 
                 $('#exampleModalToggle4').modal('toggle');
                 submitButton(formId, btnhtml, false);
+                showMsg('success', data.message);
             },
             cache: false,
             contentType: false,
@@ -537,6 +538,7 @@
             success: function(data) { 
                 $('#exampleModalToggle4').modal('toggle');
                 submitButton(formId, btnhtml, false);
+                showMsg('success', data.message);
             },
             cache: false,
             contentType: false,
@@ -582,6 +584,7 @@
                     location.href = "{{ route('contact-details') }}";
                 }
                 submitButton(formId, btnhtml, false);
+                showMsg('success', data.message);
             },
             cache: false,
             contentType: false,

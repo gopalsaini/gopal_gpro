@@ -118,6 +118,7 @@ return [
     'Transaction-already-exists' => 'La transacción ya existe',
     'Offline-payment-successful' => 'Pago fuera de línea exitoso',
     'TravelInformation-approved-successful' => 'Información de viaje aprobada con éxito',
+    'Email-already-verifiedPlease-Login' => 'Se ha verificado el correo electrónico, por favor, inicie sesión',	
     
 
 

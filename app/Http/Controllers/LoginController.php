@@ -63,7 +63,7 @@ class LoginController extends Controller
             'email'=>$request->post('email')
         );
 
-        $result=\App\Helpers\commonHelper::callAPI('POST', '/send-otp', json_encode($data));
+        $result=\App\Helpers\commonHelper::callAPI('POST', '/send-otp?lang='.\Session::get('lang'), json_encode($data));
         $resultData=json_decode($result->content, true);
 
         return response(array('message'=>$resultData['message']), $result->status);
@@ -77,7 +77,7 @@ class LoginController extends Controller
             'token'=>$token,
         );
 
-        $result=\App\Helpers\commonHelper::callAPI('POST', '/send-token', json_encode($data));
+        $result=\App\Helpers\commonHelper::callAPI('POST', '/send-token?lang='.\Session::get('lang'), json_encode($data));
         
         $resultData=json_decode($result->content, true);
 
@@ -95,9 +95,9 @@ class LoginController extends Controller
         }else{
 
             if(isset($resultData['langError']) && $resultData['langError'] == true){
-
+               
                 \App\Helpers\commonHelper::setLocale();
-                \Session::flash('gpro_success', $resultData['message'],\Lang::get('web/home.Email-already-verifiedPlease-Login') );
+                \Session::flash('gpro_success', \Lang::get('web/home.Email-already-verifiedPlease-Login') );
 
             }else{
 
@@ -143,10 +143,11 @@ class LoginController extends Controller
        
         $data=array(
             'email'=>$request->post('email'),
-            'password'=>$request->post('password')
+            'password'=>$request->post('password'),
+            'lang'=>\Session::get('lang'),
         );
 
-        $result=\App\Helpers\commonHelper::callAPI('POST', '/login', json_encode($data));
+        $result=\App\Helpers\commonHelper::callAPI('POST', '/login?lang='.\Session::get('lang'), json_encode($data));
         
         $resultData=json_decode($result->content,true);
 
@@ -180,8 +181,9 @@ class LoginController extends Controller
             $data=array(
                 'email'=>$request->post('email')
             );
-    
-            $result=\App\Helpers\commonHelper::callAPI('POST', '/forgot-password', json_encode($data));
+
+            $result=\App\Helpers\commonHelper::callAPI('POST', '/forgot-password?lang='.\Session::get('lang'), json_encode($data));
+           
             $resultData=json_decode($result->content,true);
 
             if($result->status==200){
@@ -194,25 +196,31 @@ class LoginController extends Controller
                 $token = $resultData['token']; 
                 $subject = 'Reset your password';
 
-                $link = url('reset-password/'.$to.'/'.$token);
-
                 if($user->language == 'sp'){
+
+                    $link = '<a href="'.url('reset-password/'.$to.'/'.$token).'">aqui</a>';
 
                     $subject = "Restablezca su contraseña.";
                     $msg = '<p><font color="#999999"><span style="font-size: 14px;">Estimado '.$user->name.' '.$user->last_name.',</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">A continuación, encontrará un enlace que puede utilizar para restablecer su contraseña: '.$link.'.</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">¿No pidió restablecer su contraseña? ¿Tienes alguna otra pregunta? Simplemente responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">El Equipo GproCongress II</span></font></p><div><br></div>';
                 
                 }elseif($user->language == 'fr'){
                 
+                    $link = '<a href="'.url('reset-password/'.$to.'/'.$token).'">aqui</a>';
+
                     $subject = "Réinitialisez votre mot de passe.";
                     $msg = '<p><font color="#999999"><span style="font-size: 14px;">Cher '.$user->name.' '.$user->last_name.',&nbsp;</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">Nous avons reçu une notification indiquant que vous avez oublié votre mot de passe.&nbsp; Voici un lien que vous pouvez utiliser pour réinitialiser votre mot de passe : '.$link.'.&nbsp;</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">Vous n’avez pas demandé à réinitialiser votre mot de passe ? Vous avez d’autres questions ? Il suffit de répondre à ce courriel pour parler à l’un des membres de notre équipe.&nbsp;</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">Cordialement,</span></font></p><p><font color="#999999"><span style="font-size: 14px;">L’équipe du GProCongrès II</span></font></p><div><br></div>';
         
                 }elseif($user->language == 'pt'){
                 
+                    $link = '<a href="'.url('reset-password/'.$to.'/'.$token).'">aqui</a>';
+
                     $subject = "Redefinir sua senha.";
                     $msg = '<p><font color="#999999"><span style="font-size: 14px;">Prezado '.$user->name.' '.$user->last_name.',</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">Recebemos uma notificação de que você se esqueceu da sua senha. Aqui está o link que pode usar para redefinir sua senha: '.$link.';</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">Não pediu para redefinir sua senha? Tem qualquer outra pergunta? Simplesmente responda este email para falar com um dos membros da nossa equipe.</span></font></p><p><span style="font-size: 14px;"><br></span></p><p><font color="#999999"><span style="font-size: 14px;">Calorosamente,</span></font></p><p><font color="#999999"><span style="font-size: 14px;">Equipe do II CongressoGPro</span></font></p><div><br></div>';
                 
                 }else{
                 
+                    $link = '<a href="'.url('reset-password/'.$to.'/'.$token).'">Click here</a>';
+
                     $subject = 'Reset your password';
                     $msg = '<div><div><div><span style="font-size: 14px;">Dear '.$user->name.' '.$user->last_name.',</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">We received notification that you have forgotten your password.&nbsp; Here’s a link you can use to reset your password: '.$link.'.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Didn’t ask to reset your password? Have any other questions? Simply reply to this email to speak with one of our team members.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Warmly,</span></div><div><span style="font-size: 14px;">GProCongress II Team&nbsp;</span></div></div></div>';
                                     
@@ -246,7 +254,7 @@ class LoginController extends Controller
                 'password_confirmation'=>$request->post('password_confirmation'),
             );
     
-            $result=\App\Helpers\commonHelper::callAPI('POST', '/reset-password', json_encode($data));
+            $result=\App\Helpers\commonHelper::callAPI('POST', '/reset-password?lang='.\Session::get('lang'), json_encode($data));
             $resultData=json_decode($result->content,true);
     
             if($result->status==200){

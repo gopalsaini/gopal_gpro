@@ -225,18 +225,14 @@
                                 <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/home.pending') </strong>
                                 </li> 
                             <ul>
-                        @else($Spouse && $Spouse->spouse_confirm_status=='Decline')
-                            <ul>
-                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.Declined') </strong>
-                                </li> 
-                            <ul>
+                       
                         @endif
 
                         @php $history = \App\Models\SpouseStatusHistory::where([['spouse_id', $resultData['result']['spouse_id']], ['parent_id', $resultData['result']['id']]])->first(); @endphp
 
                         @if($history && $history->status=='Reject')
                             <ul>
-                                <li colspan="2"><strong style="color:red">{{$history->remark}}</strong>
+                                <li colspan="2"><strong style="color:red">@lang('web/home.spouse-confirmation-received') : @lang('web/app.Declined')</strong>
                                 </li> 
                             <ul>
                         @endif
