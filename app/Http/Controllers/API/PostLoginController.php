@@ -72,7 +72,7 @@ class PostLoginController extends Controller {
 		
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
-							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users.');
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
 							return response(array( "message"=>$message), 200);
 						
 						}else{
@@ -82,7 +82,7 @@ class PostLoginController extends Controller {
 
 							if($checkExistUsers->count()>0){
 
-								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users.');
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
 								return response(array("message"=>$checkExistUsers[0]['email'].$message), 200);
 
 							}
@@ -95,7 +95,7 @@ class PostLoginController extends Controller {
 		
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
-							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-found-duplicate-mobile-Group-users.');
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-found-duplicate-mobile-Group-users');
 							return response(array("message"=>$message), 200);
 						
 						}else{
@@ -117,7 +117,7 @@ class PostLoginController extends Controller {
 		
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
-							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'We-have-found-duplicateWhatsAppmobile-numberin-groupusers.');
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'We-have-found-duplicateWhatsAppmobile-numberin-groupusers');
 							return response(array("error"=>true, "message"=>$message), 200);
 						
 						}else{
@@ -217,7 +217,7 @@ class PostLoginController extends Controller {
 
 				} 
 
-				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'GroupInfo-updated-successfully.');
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'GroupInfo-updated-successfully');
 				return response(array("error"=>true, "message"=>$message), 200);
 
 			} catch (\Exception $e) {
@@ -770,7 +770,7 @@ class PostLoginController extends Controller {
 					$msg='User Contact Details updated';
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Contact Details updated');
 				
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Contact-Details-updated-successfully.');
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Contact-Details-updated-successfully');
 					return response(array('message'=>$message), 200);
 						
 				}catch (\Exception $e){
@@ -1170,7 +1170,7 @@ class PostLoginController extends Controller {
 
 				$user->save();
 
-				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Ministry-Pastor-detail-updated-successfully.');
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Ministry-Pastor-detail-updated-successfully');
 				return response(array("error"=>true, "message" => $message), 200);
 					
 			}catch (\Exception $e){
@@ -1482,7 +1482,7 @@ class PostLoginController extends Controller {
 
 					// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 					
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'TravelInformation-remarksubmit-successful.');
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'TravelInformation-remarksubmit-successful');
 					return response(array("error"=>true, "message" => $message), 200);
 						
 				}catch (\Exception $e){
