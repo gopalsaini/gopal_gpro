@@ -678,7 +678,16 @@ class ProfileController extends Controller
                     $rules['country_of_sender'] = 'required';
                 }
         
-                $validator = \Validator::make($request->all(), $rules);
+                $messages = array(
+                    'reference_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'reference_number'),
+                    'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'amount_required'),
+                    'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'name_required'),
+                    'type.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'type'),
+                    'country_of_sender.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'country_of_sender'),
+				
+                );
+
+                $validator = \Validator::make($request->all(), $rules,$messages);
                  
                 if ($validator->fails()) {
                     $message = [];
@@ -803,8 +812,14 @@ class ProfileController extends Controller
                 'amount' => 'required|numeric',
                 'type' => 'required|in:Cash',
             ];
+
+            $messages = array(
+                'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'amount_required'),
+                'type.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'type'),
+            
+            );
     
-            $validator = \Validator::make($request->all(), $rules);
+            $validator = \Validator::make($request->all(), $rules,$messages);
                 
             if ($validator->fails()) {
                 $message = [];

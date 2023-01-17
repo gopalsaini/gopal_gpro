@@ -1493,7 +1493,8 @@ class commonHelper{
 				'user_whatsup_code_required' => 'User whatsup code field is required',	
 				'contact_whatsapp_number_required' => 'Contact whatsapp number field is required',	
 				'user_mobile_code_required' => 'User mobile code field is required',	
-				'contact_business_number_required' => 'Contact business number field is required',	
+				'contact_business_number_required' => 'Contact business number field is required',
+				'contact_business_number_unique' => 'The business number has already been taken',	
 				'is_spouse_required' => 'Is spouse field is required',	
 				'is_spouse_registered_required' => 'Is spouse registered field is required',	
 				'id_required' => 'Id field is required',	
@@ -1564,6 +1565,8 @@ class commonHelper{
 				'user_id' => 'user id field is required',	
 				'amount_lesser_than' => 'Please select amount lesser than maximum payment',	
 				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',	
+				'howmany_futurepastor'=> 'How many future pastor field is required',
+				'order_required'=> 'order',
 				
 			);
 
@@ -1697,6 +1700,7 @@ class commonHelper{
 				'contact_whatsapp_number_required' => 'Contact whatsapp number field is required',	
 				'user_mobile_code_required' => 'User mobile code field is required',	
 				'contact_business_number_required' => 'Contact business number field is required',	
+				'contact_business_number_unique' => 'The business number has already been taken',	
 				'is_spouse_required' => 'Is spouse field is required',	
 				'is_spouse_registered_required' => 'Is spouse registered field is required',	
 				'id_required' => 'Id field is required',	
@@ -1766,7 +1770,9 @@ class commonHelper{
 				'type' => 'Type field is required',	
 				'user_id' => 'user id field is required',	
 				'amount_lesser_than' => 'Please select amount lesser than maximum payment',	
-				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',	
+				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',
+				'howmany_futurepastor'=> 'How many future pastor field is required',	
+				'order_required'=> 'order',
 				
 			);
 
@@ -1897,7 +1903,8 @@ class commonHelper{
 				'user_whatsup_code_required' => 'User whatsup code field is required',	
 				'contact_whatsapp_number_required' => 'Contact whatsapp number field is required',	
 				'user_mobile_code_required' => 'User mobile code field is required',	
-				'contact_business_number_required' => 'Contact business number field is required',	
+				'contact_business_number_required' => 'Contact business number field is required',
+				'contact_business_number_unique' => 'The business number has already been taken',	
 				'is_spouse_required' => 'Is spouse field is required',	
 				'is_spouse_registered_required' => 'Is spouse registered field is required',	
 				'id_required' => 'Id field is required',	
@@ -1968,6 +1975,8 @@ class commonHelper{
 				'user_id' => 'user id field is required',	
 				'amount_lesser_than' => 'Please select amount lesser than maximum payment',	
 				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',	
+				'howmany_futurepastor'=> 'How many future pastor field is required',
+				'order_required'=> 'order',
 				
 			);
 
@@ -2098,7 +2107,8 @@ class commonHelper{
 				'user_whatsup_code_required' => 'User whatsup code field is required',	
 				'contact_whatsapp_number_required' => 'Contact whatsapp number field is required',	
 				'user_mobile_code_required' => 'User mobile code field is required',	
-				'contact_business_number_required' => 'Contact business number field is required',	
+				'contact_business_number_required' => 'Contact business number field is required',
+				'contact_business_number_unique' => 'The business number has already been taken',	
 				'is_spouse_required' => 'Is spouse field is required',	
 				'is_spouse_registered_required' => 'Is spouse registered field is required',	
 				'id_required' => 'Id field is required',	
@@ -2169,6 +2179,8 @@ class commonHelper{
 				'user_id' => 'user id field is required',	
 				'amount_lesser_than' => 'Please select amount lesser than maximum payment',	
 				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',	
+				'howmany_futurepastor'=> 'How many future pastor field is required',
+				'order_required'=> 'order',
 				
 	
 				

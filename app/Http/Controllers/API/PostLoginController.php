@@ -40,7 +40,17 @@ class PostLoginController extends Controller {
 			$rules['contact_business_number']='required|unique:users,contact_business_number,'.$request->user()->id;
 		}
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'is_group.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'is_group_required'),
+			'user_whatsup_code.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'user_whatsup_code_required'),
+			'contact_whatsapp_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_whatsapp_number_required'), 
+			'user_mobile_code.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'user_mobile_code_required'), 
+			'contact_business_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_business_number_required'), 
+			'contact_business_number.unique' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_business_number_unique'),  
+			
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -253,7 +263,21 @@ class PostLoginController extends Controller {
 			
 		}
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_email'),
+			'email.unique' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_unique'),
+			'first_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'first_name_required'),  
+			'last_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'last_name_required'),
+			'gender.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'gender_required'),
+			'date_of_birth.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'date_of_birth_required'),
+			'date_of_birth.date' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'date_of_birth_date'),
+			'citizenship.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'citizenship_required'),
+			'salutation.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'salutation'),
+			
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -407,7 +431,12 @@ class PostLoginController extends Controller {
             'room' => 'required|in:Single,Sharing',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'room.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'room_required'),
+			
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -452,7 +481,15 @@ class PostLoginController extends Controller {
             'confirm_password' => 'required|same:new_password',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'old_password.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'old_password_required'),
+			'new_password.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'new_password_required'),
+			'confirm_password.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'confirm_password_required'),
+			'confirm_password.same' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'password_confirmed'),
+			
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -533,8 +570,20 @@ class PostLoginController extends Controller {
 				$rule['room']="required|in:Single,Sharing";
 			}
 			
+			$messages = array(
+				'salutation.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'salutation_required'),
+				'first_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'first_name_required'),
+				'last_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'last_name_required'),
+				'gender.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'gender_required'),
+				'dob.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'date_of_birth_required'),
+				'dob.date' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'date_of_birth_date'),
+				'citizenship.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'citizenship_required'),
+				'marital_status.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'marital_status_required'),
+				'room.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'room_required'),
+				
+			);
 	
-			$validator = \Validator::make($request->json()->all(), $rules);
+			$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			 
 			if ($validator->fails()) {
 				$message = [];
@@ -712,7 +761,22 @@ class PostLoginController extends Controller {
 
 			}
 	
-			$validator = \Validator::make($request->json()->all(), $rules);
+			$messages = array(
+				'contact_address.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_address_required'),
+				'contact_zip_code.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_zip_code_required'),
+				'contact_country_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_country_id_required'),
+				'contact_state_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_state_id_required'),
+				'contact_city_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_city_id_required'),
+				'user_mobile_code.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'user_mobile_code_required'),
+				'mobile.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mobile_required'),
+				'whatsapp_number_same_mobile.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'whatsapp_number_same_mobile_required'),
+				'contact_whatsapp_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_whatsapp_number_required'),
+				'contact_state_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_state_name_required'),
+				'contact_city_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_city_name'),
+				
+			);
+
+			$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			 
 			if ($validator->fails()) {
 				$message = [];
@@ -796,6 +860,7 @@ class PostLoginController extends Controller {
 			$rules = [
 				'type' => 'required|in:preview,submit',
 			];
+
 			if($request->json()->get('type')=='preview'){
 
 				$rules['ministry_address'] = 'required';
@@ -818,8 +883,20 @@ class PostLoginController extends Controller {
 
 			}
 			
+			$messages = array(
+				'type.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'type'),
+				'ministry_address.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_address'),
+				'ministry_country_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_country_id'),
+				'ministry_state_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_state_id'),
+				'ministry_city_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_city_id'),
+				'ministry_pastor_trainer.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_pastor_trainer'),
+				'ministry_state_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_state_name'),
+				'ministry_city_name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_city_name'),
+				
+				
+			);
 	
-			$validator = \Validator::make($request->json()->all(), $rules);
+			$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			 
 			if ($validator->fails()) {
 				$message = [];
@@ -1119,9 +1196,20 @@ class PostLoginController extends Controller {
 			];
 
 		}
-		
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'ministry_pastor_trainer.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_pastor_trainer'),
+			'non_formal_trainor.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'non_formal_trainor'),
+			'informal_personal.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'informal_personal'),
+			'howmany_pastoral.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'howmany_pastoral'),
+			'howmany_futurepastor.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'howmany_futurepastor'),
+			'comment.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'comment_required'),
+			'ministry_pastor_trainer.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'ministry_pastor_trainer'),
+			'pastorno.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'pastorno'),
+				
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			
 		if ($validator->fails()) {
 			$message = [];
@@ -1218,8 +1306,32 @@ class PostLoginController extends Controller {
 				];
 			}
 			
+			$messages = array(
+				'arrival_flight_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'arrival_flight_number'),
+				'arrival_start_location.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'arrival_start_location'),
+				'arrival_date_departure.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'arrival_date_departure'),
+				'arrival_date_arrival.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'arrival_date_arrival'),
+				'departure_flight_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'departure_flight_number'),
+				'departure_start_location.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'departure_flight_number'),
+				'departure_date_departure.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'departure_date_departure'),
+				'departure_date_arrival.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'departure_date_arrival'),
+				'logistics_dropped.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'logistics_dropped'),
+				'logistics_picked.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'logistics_picked'),
+				'mobile.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mobile_required'),
+				'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
+				'spouse_arrival_flight_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_arrival_flight_number'),
+				'spouse_arrival_start_location.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_arrival_start_location'),
+				'spouse_arrival_date_departure.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_arrival_date_departure'),
+				'spouse_arrival_date_arrival.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_arrival_date_arrival'),
+				'spouse_departure_flight_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_departure_flight_number'),
+				'spouse_departure_start_location.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_departure_start_location'),
+				'spouse_departure_date_departure.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_departure_date_departure'),
+				'spouse_departure_date_arrival.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'spouse_departure_date_arrival'),
+				
+					
+			);
 	
-			$validator = \Validator::make($request->json()->all(), $rules);
+			$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			 
 			if ($validator->fails()) {
 				$message = [];
@@ -1381,7 +1493,12 @@ class PostLoginController extends Controller {
 				'status' => 'required|in:0,1',
 			];
 	
-			$validator = \Validator::make($request->json()->all(), $rules);
+			$messages = array(
+				'status.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'status_required_validation'),
+					
+			);
+
+			$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			 
 			if ($validator->fails()) {
 				$message = [];
@@ -1447,7 +1564,12 @@ class PostLoginController extends Controller {
 				'remark' => 'required',
 			];
 	
-			$validator = \Validator::make($request->json()->all(), $rules);
+			$messages = array(
+				'remark.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'remark_required_validation'),
+					
+			);
+
+			$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			 
 			if ($validator->fails()) {
 				$message = [];
@@ -1507,7 +1629,14 @@ class PostLoginController extends Controller {
 			'session' => 'required',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'session_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'session_id'),
+			'session_date.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'session_date'),
+			'session.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'session_required_validation'),
+				
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			
 		if ($validator->fails()) {
 			$message = [];
@@ -1698,7 +1827,15 @@ class PostLoginController extends Controller {
             'email' => 'required|email',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_required'),
+			'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_email'),
+				
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -1803,7 +1940,17 @@ class PostLoginController extends Controller {
             'type' => 'required|in:Offline,Online',
 		];
 
-		$validator = \Validator::make($request->all(), $rules);
+		$messages = array(
+			'mode.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mode_required'),
+			'reference_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'reference_number'),
+			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
+			'country_of_sender.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'country_of_sender'),
+			'type.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'type'),
+				
+		);
+
+		$validator = \Validator::make($request->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -1912,7 +2059,15 @@ class PostLoginController extends Controller {
             'reference_number' => 'required',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
+			'mode.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mode_required'),
+			'type.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'type'),
+			'reference_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'reference_number'),
+				
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -2322,7 +2477,15 @@ class PostLoginController extends Controller {
             'reference_number' => 'required',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_required'),
+			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
+			'reference_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'reference_number'),
+				
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -2485,7 +2648,12 @@ class PostLoginController extends Controller {
 				'amount' => 'required|numeric|gt:0',
 			];
 
-			$validator = \Validator::make($request->json()->all(), $rules);
+			$messages = array(
+				'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
+					
+			);
+
+			$validator = \Validator::make($request->json()->all(), $rules,$messages);
 			
 			if ($validator->fails()) {
 				$message = [];
@@ -3084,7 +3252,12 @@ class PostLoginController extends Controller {
             'language' => 'required|in:en,sp,fr,pt',
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$messages = array(
+			'language.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'language_required'),
+				
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];

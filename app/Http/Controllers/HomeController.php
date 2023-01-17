@@ -192,7 +192,12 @@ class HomeController extends Controller
 
 		$rules['order']='required';
 
-		$validator = \Validator::make($request->all(), $rules);
+        $messages = array(
+			'order.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'order_required'),
+				
+		);
+
+		$validator = \Validator::make($request->all(), $rules,$messages);
 		
 		if ($validator->fails()){
 			
@@ -303,7 +308,15 @@ class HomeController extends Controller
             'user_id' => 'required',
 		];
 
-		$validator = \Validator::make($request->all(), $rules);
+        $messages = array(
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'name_required'),
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'email_required'),
+			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'amount_required'),
+			'user_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'user_id'),
+				
+		);
+
+		$validator = \Validator::make($request->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -361,7 +374,15 @@ class HomeController extends Controller
             'user_id' => 'required',
 		];
 
-		$validator = \Validator::make($request->all(), $rules);
+        $messages = array(
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'name_required'),
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'email_required'),
+			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'amount_required'),
+			'user_id.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'user_id'),
+				
+		);
+
+		$validator = \Validator::make($request->all(), $rules,$messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
