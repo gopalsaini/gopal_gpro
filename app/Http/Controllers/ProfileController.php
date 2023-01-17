@@ -241,6 +241,7 @@ class ProfileController extends Controller
                 } 
     
                 $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/group-leader', json_encode($data));
+                
                 $resultData=json_decode($result->content, true);
                 
                 if($result->status==200){
