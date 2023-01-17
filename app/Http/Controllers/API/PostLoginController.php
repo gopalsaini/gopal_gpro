@@ -72,7 +72,7 @@ class PostLoginController extends Controller {
 					if(count($request->json()->get('group_list'))==0){
 
 						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Please-Group-Users');
-						return response(array("error"=>true, "message"=>$message), 200);
+						return response(array("error"=>true, "message"=>$message), 403);
 
 					}else{
 
@@ -83,7 +83,7 @@ class PostLoginController extends Controller {
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
-							return response(array( "message"=>$message), 200);
+							return response(array( "message"=>$message), 403);
 						
 						}else{
 
@@ -93,7 +93,7 @@ class PostLoginController extends Controller {
 							if($checkExistUsers->count()>0){
 
 								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
-								return response(array("message"=>$checkExistUsers[0]['email'].$message), 200);
+								return response(array("message"=>$checkExistUsers[0]['email'].$message), 403);
 
 							}
 						}
@@ -106,7 +106,7 @@ class PostLoginController extends Controller {
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-found-duplicate-mobile-Group-users');
-							return response(array("message"=>$message), 200);
+							return response(array("message"=>$message), 403);
 						
 						}else{
 
@@ -116,7 +116,7 @@ class PostLoginController extends Controller {
 							if($checkExistUsers->count()>0){
 
 								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'isAlreadyExist-withusSo-please-use-another-mobile-number');
-								return response(array("message"=>$checkExistUsers[0]['mobile'].$message), 200);
+								return response(array("message"=>$checkExistUsers[0]['mobile'].$message), 403);
 
 							}
 						}
@@ -128,7 +128,7 @@ class PostLoginController extends Controller {
 						if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
 
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'We-have-found-duplicateWhatsAppmobile-numberin-groupusers');
-							return response(array("error"=>true, "message"=>$message), 200);
+							return response(array("error"=>true, "message"=>$message), 403);
 						
 						}else{
 
@@ -138,7 +138,7 @@ class PostLoginController extends Controller {
 							if($checkExistUsers->count()>0){
 
 								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'isAlreadyExist-withusSo-please-use-another-mobile-number');
-								return response(array("error"=>true, "message"=>$checkExistUsers[0]['contact_whatsapp_number'].$message), 200);
+								return response(array("error"=>true, "message"=>$checkExistUsers[0]['contact_whatsapp_number'].$message), 403);
 
 							}
 						}
@@ -187,7 +187,7 @@ class PostLoginController extends Controller {
 							$faq = '<a href="'.url('faq').'">aqui</a>';
 
 							$subject = "¡Su inscripción al GproCongress II ha iniciado!";
-							$msg = '<p>Estimado '.$group['name'].',</p><p>&nbsp;</p><p>'.$request->user()->name.' '.$request->user()->last_name.' ha inicado el proceso de inscripción al GproCongress II al ingresar tu nombre.</p><p>Quedamos a la espera de recibir su solicitud completa.</p><p><br></p><p>Por favor, utilice este enlace haga click '.$url.' para acceder, editar y completer su cuenta en cualquier momento.&nbsp;</p><p><br></p><p>Si usted desea más información sobre los criterios de admisibilidad para candidatos potenciales al congreso, antes de continuar, haga click, '.$faq.'</p><p><br></p><p>Para hablar con uno de los miembros de nuestro equipo, usted solo tiene que responder a este email. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							$msg = '<p>Estimado '.$group['name'].',</p><p>&nbsp;</p><p>'.$request->user()->name.' '.$request->user()->last_name.' ha inicado el proceso de inscripción al GproCongress II al ingresar tu nombre.</p><p>Quedamos a la espera de recibir su solicitud completa.</p><p><br></p><p>Por favor, utilice este enlace haga click '.$url.' para acceder, editar y completer su cuenta en cualquier momento.&nbsp;</p><p><br><div><br>Dirección de correo electrónico: '.$to.'<br>Contraseña: '.$password.'<br></div></p><p>Si usted desea más información sobre los criterios de admisibilidad para candidatos potenciales al congreso, antes de continuar, haga click, '.$faq.'</p><p><br></p><p>Para hablar con uno de los miembros de nuestro equipo, usted solo tiene que responder a este email. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
 						
 						}elseif($request->user()->language == 'fr'){
 						
@@ -195,7 +195,7 @@ class PostLoginController extends Controller {
 							$faq = '<a href="'.url('faq').'">cliquez ici</a>';
 	
 							$subject = "Votre inscription au GProCongrès II a commencé!";
-							$msg = '<p>Cher '.$group['name'].',&nbsp;</p><p>'.$request->user()->name.' '.$request->user()->last_name.' a commencé le processus d’inscription au GProCongrès II, en soumettant votre nom!&nbsp;</p><p><br></p><p><br></p><p><br></p><p>Nous sommes impatients de recevoir votre demande complète. Veuillez utiliser ce lien '.$url.' pour accéder, modifier et compléter votre compte à tout moment.&nbsp;</p><p><br></p><p>Si vous souhaitez plus d’informations sur les critères d’éligibilité pour les participants potentiels au Congrès, avant de continuer,  '.$faq.'.</p><p><br></p><p>Pour parler à l’un des membres de notre équipe, vous pouvez simplement répondre à ce courriel. Nous sommes là pour vous aider !</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+							$msg = '<p>Cher '.$group['name'].',&nbsp;</p><p>'.$request->user()->name.' '.$request->user()->last_name.' a commencé le processus d’inscription au GProCongrès II, en soumettant votre nom!&nbsp;</p><p><br></p><p><br></p><p><br></p><p>Nous sommes impatients de recevoir votre demande complète. Veuillez utiliser ce lien '.$url.' pour accéder, modifier et compléter votre compte à tout moment.&nbsp;</p><p><br><div><br>E-mail: '.$to.'<br>Mot de passe: '.$password.'<br></div></p><p>Si vous souhaitez plus d’informations sur les critères d’éligibilité pour les participants potentiels au Congrès, avant de continuer,  '.$faq.'.</p><p><br></p><p>Pour parler à l’un des membres de notre équipe, vous pouvez simplement répondre à ce courriel. Nous sommes là pour vous aider !</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
 						
 						}elseif($request->user()->language == 'pt'){
 						
@@ -203,7 +203,7 @@ class PostLoginController extends Controller {
 							$faq = '<a href="'.url('faq').'">clique aqui</a>';
 	
 							$subject = "A sua inscrição para o II CongressoGPro já Iniciou!";
-							$msg = '<p>Prezado '.$group['name'].',</p><p><br></p><p>'.$request->user()->name.' '.$request->user()->last_name.' iniciou com o processo de inscrição para o II CongressoGPro, por submeter o teu nome!&nbsp;</p><p><br></p><p>Nós esperamos receber a sua inscrição complete.</p><p>Por favor use este '.$url.' para aceder, editar e terminar a sua conta a qualquer momento.</p><p><br></p><p>Se você precisa de mais informações sobre o critério de elegibilidade para participantes potenciais ao Congresso, antes de continuar,  '.$faq.'</p><p><br></p><p>Para falar com um dos nossos membros da equipe, você pode simplesmente responder a este e-mail. Estamos aqui para ajudar!</p><p><br></p><p>Ore conosco, a medida que nos esforçamos para multiplicar o número, e desenvolvemos a capacidade dos treinadores de pastores&nbsp;</p><p><br></p><p>Calorosamente,</p><p><br></p><p>A Equipe do II CongressoGPro</p>';
+							$msg = '<p>Prezado '.$group['name'].',</p><p><br></p><p>'.$request->user()->name.' '.$request->user()->last_name.' iniciou com o processo de inscrição para o II CongressoGPro, por submeter o teu nome!&nbsp;</p><p><br></p><p>Nós esperamos receber a sua inscrição complete.</p><p>Por favor use este '.$url.' para aceder, editar e terminar a sua conta a qualquer momento.</p><p><br><div><br>Eletrónico: '.$to.'<br>Senha: '.$password.'<br></div></p><p>Se você precisa de mais informações sobre o critério de elegibilidade para participantes potenciais ao Congresso, antes de continuar,  '.$faq.'</p><p><br></p><p>Para falar com um dos nossos membros da equipe, você pode simplesmente responder a este e-mail. Estamos aqui para ajudar!</p><p><br></p><p>Ore conosco, a medida que nos esforçamos para multiplicar o número, e desenvolvemos a capacidade dos treinadores de pastores&nbsp;</p><p><br></p><p>Calorosamente,</p><p><br></p><p>A Equipe do II CongressoGPro</p>';
 						
 						}else{
 						
@@ -211,7 +211,7 @@ class PostLoginController extends Controller {
 							$faq = '<a href="'.url('faq').'">click here</a>';
 	
 							$subject = "Your registration for GProCongress II has begun!";
-							$msg = '<p>Dear '.$group['name'].',</p><p><br></p><p>'.$request->user()->name.' '.$request->user()->last_name.' has begun the registration process for the GProCongress II, by submitting your name!&nbsp;</p><p><br></p><p>We look forward to receiving your full application.</p><p>Please use this  '.$url.' to access, edit, and complete your account at any time.&nbsp;</p><p><br></p><p>If you want more information about the eligibility criteria for potential Congress attendees, before proceeding,  '.$faq.'.</p><p><br></p><p>To speak with one of our team members, you can simply respond to this email. We are here to help!</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+							$msg = '<p>Dear '.$group['name'].',</p><p><br></p><p>'.$request->user()->name.' '.$request->user()->last_name.' has begun the registration process for the GProCongress II, by submitting your name!&nbsp;</p><p><br></p><p>We look forward to receiving your full application.</p><p>Please use this  '.$url.' to access, edit, and complete your account at any time.&nbsp;</p><p><br><div>Your registered email and password are:</div><div><br>Email: '.$to.'<br>Password: '.$password.'<br></div></p><p>If you want more information about the eligibility criteria for potential Congress attendees, before proceeding,  '.$faq.'.</p><p><br></p><p>To speak with one of our team members, you can simply respond to this email. We are here to help!</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
 							
 						}
 
@@ -273,7 +273,7 @@ class PostLoginController extends Controller {
 			'date_of_birth.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'date_of_birth_required'),
 			'date_of_birth.date' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'date_of_birth_date'),
 			'citizenship.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'citizenship_required'),
-			'salutation.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'salutation'),
+			'salutation.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'salutation_required'),
 			
 		);
 
@@ -308,14 +308,13 @@ class PostLoginController extends Controller {
 
 						if(!$users){
 							
-
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-not-found');
 							return response(array("error"=>true, 'message'=>$message), 403);
 						
 						}elseif($users->parent_id != null){
 
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-already-associated-withother-user');
-							return response(array("error"=>true, "message"=>$message), 200);
+							return response(array("error"=>true, "message"=>$message), 403);
 						}
 
 						$users->parent_id = $request->user()->id;
@@ -1007,7 +1006,7 @@ class PostLoginController extends Controller {
 									$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">aqui</a>';
 		
 									$subject = "¡Su cónyuge ha iniciado la inscripción al GproCongress II!";
-									$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>'.$name.' ha iniciado el proceso de inscripción al GproCongress II al ingresar su nombre.&nbsp;</p><p><br></p><p>Quedamos a la espera de recibir su solicitud completa.</p><p><br></p><p>Por favor, utilice este enlace haga click'.$url.' para acceder, editar y completer su cuenta en cualquier momento. Completar su solicitud a tiempo nos ayudara para ubicarles en la misma habitación. Your registered email and password are:</div><div><br>Email: '.$existSpouse->email.'<br>Password: '.$password.'<br></div> </p><p><br></p><p>Por favor, utilice este enlace &lt;ink&gt; para acceder, editar y completer su cuenta en cualquier momento. haga click'.$faq.'</p><p><br></p><p>Si usted desea más información sobre los criterios de admisibilidad para candidatos potenciales al congreso, antes de continuar, haga click aquí, &lt;Link&gt;</p><p><br></p><p>Para hablar con uno de los miembros de nuestro equipo, usted solo tiene que responder a este email. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+									$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>'.$name.' ha iniciado el proceso de inscripción al GproCongress II al ingresar su nombre.&nbsp;</p><p><br></p><p>Quedamos a la espera de recibir su solicitud completa.</p><p><br></p><p>Por favor, utilice este enlace haga click'.$url.' para acceder, editar y completer su cuenta en cualquier momento. Completar su solicitud a tiempo nos ayudara para ubicarles en la misma habitación. </div><div><br>Dirección de correo electrónico: '.$existSpouse->email.'<br>Contraseña: '.$password.'<br></div> </p><p><br></p><p>Por favor, utilice este enlace &lt;ink&gt; para acceder, editar y completer su cuenta en cualquier momento. haga click'.$faq.'</p><p><br></p><p>Si usted desea más información sobre los criterios de admisibilidad para candidatos potenciales al congreso, antes de continuar, haga click aquí, &lt;Link&gt;</p><p><br></p><p>Para hablar con uno de los miembros de nuestro equipo, usted solo tiene que responder a este email. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
 								
 								}elseif($existSpouse->language == 'fr'){
 								
@@ -1016,7 +1015,7 @@ class PostLoginController extends Controller {
 									$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
 		
 									$subject = "Votre conjoint/e a commencé votre inscription au GProCongrès II!";
-									$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p>'.$name.' a commencé le processus d’inscription au GProCongrès II, en soumettant votre nom !&nbsp;</p><p><br></p><p><br></p><p>Nous sommes impatients de recevoir votre demande complète. Veuillez utiliser ce lien '.$url.' pour accéder, modifier et compléter votre compte à tout moment. L’achèvement en temps opportun nous aidera à vous placer dans la même chambre. Your registered email and password are:</div><div><br>Email: '.$existSpouse->email.'<br>Password: '.$password.'<br></div> </p><p><br></p><p>Si vous souhaitez plus d’informations sur les critères d’éligibilité pour les participants potentiels au Congrès, avant de continuer, cliquez ici '.$faq.'.</p><p><br></p><p><br></p><p><br></p><p>Pour parler à l’un des membres de notre équipe, vous pouvez simplement répondre à ce courriel. Nous sommes là pour vous aider !</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+									$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p>'.$name.' a commencé le processus d’inscription au GProCongrès II, en soumettant votre nom !&nbsp;</p><p><br></p><p><br></p><p>Nous sommes impatients de recevoir votre demande complète. Veuillez utiliser ce lien '.$url.' pour accéder, modifier et compléter votre compte à tout moment. L’achèvement en temps opportun nous aidera à vous placer dans la même chambre. </div><div><br>Adresse e-mail: '.$existSpouse->email.'<br>Mot de passe: '.$password.'<br></div> </p><p><br></p><p>Si vous souhaitez plus d’informations sur les critères d’éligibilité pour les participants potentiels au Congrès, avant de continuer, cliquez ici '.$faq.'.</p><p><br></p><p><br></p><p><br></p><p>Pour parler à l’un des membres de notre équipe, vous pouvez simplement répondre à ce courriel. Nous sommes là pour vous aider !</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
 								
 								}elseif($existSpouse->language == 'pt'){
 								
@@ -1025,7 +1024,7 @@ class PostLoginController extends Controller {
 									$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
 		
 									$subject = "Seu cônjuge iniciou o seu processo de inscrição para o II CongressoGPro!";
-									$msg = '<p>Prezado/a '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p><br></p><p>'.$name.' iniciou com o processo de inscrição para o II CongressoGPro, po submeter o seu nome!</p><p><br></p><p>Nós esperamos receber a sua inscrição completa.</p><p>Por favor use este '.$url.' para aceder, editar e terminar a sua conta a qualquer momento. Ao completar a tempo, vai nos ajudar a colocar vocês no mesmo quarto. Your registered email and password are:</div><div><br>Email: '.$existSpouse->email.'<br>Password: '.$password.'<br></div> </p><p><br></p><p>Se você precisa de mais informações sobre o critério de elegibilidade para participantes potenciais ao Congresso, antes de continuar, clique aqui '.$faq.'</p><p><br></p><p>Para falar com um dos nossos membros da equipe, você pode simplesmente responder a este e-mail. Estamos aqui para ajudar!</p><p><br></p><p>Ore conosco, a medida que nos esforçamos para multiplicar o número, e desenvolvemos a capacidade dos treinadores de pastores&nbsp;</p><p><br></p><p>Calorosamente,</p><p><br></p><p>A Equipe do II CongressoGPro</p>';
+									$msg = '<p>Prezado/a '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p><br></p><p>'.$name.' iniciou com o processo de inscrição para o II CongressoGPro, po submeter o seu nome!</p><p><br></p><p>Nós esperamos receber a sua inscrição completa.</p><p>Por favor use este '.$url.' para aceder, editar e terminar a sua conta a qualquer momento. Ao completar a tempo, vai nos ajudar a colocar vocês no mesmo quarto. </div><div><br>Endereço Eletrónico: '.$existSpouse->email.'<br>Senha: '.$password.'<br></div> </p><p><br></p><p>Se você precisa de mais informações sobre o critério de elegibilidade para participantes potenciais ao Congresso, antes de continuar, clique aqui '.$faq.'</p><p><br></p><p>Para falar com um dos nossos membros da equipe, você pode simplesmente responder a este e-mail. Estamos aqui para ajudar!</p><p><br></p><p>Ore conosco, a medida que nos esforçamos para multiplicar o número, e desenvolvemos a capacidade dos treinadores de pastores&nbsp;</p><p><br></p><p>Calorosamente,</p><p><br></p><p>A Equipe do II CongressoGPro</p>';
 								
 								}else{
 								

@@ -31,6 +31,7 @@ class ProfileController extends Controller
 
         
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        print_r($result); die;
         $resultData=json_decode($result->content, true); 
         $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
  
@@ -363,6 +364,7 @@ class ProfileController extends Controller
         }
  
         $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/spouse-add', json_encode($data));
+        
         $resultData=json_decode($result->content, true);
         
         if($result->status==200){
@@ -381,6 +383,7 @@ class ProfileController extends Controller
         );
 
         $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/stay-room', json_encode($data));
+        
         $resultData=json_decode($result->content, true);
 
         if($result->status==200){

@@ -482,7 +482,7 @@ class PreLoginController extends Controller {
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourProfile');
 					return response(array('message'=> $message, "otp_verified"=>'Yes',"token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
 					
-				} else if ($userResult->otp_verified=='No'){
+				} else if (\Hash::check($request->json()->get('password'), $userResult->password) &&  $userResult->otp_verified=='No'){
 
 					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp?lang='.$userResult->language, json_encode(array('email'=>$request->json()->get('email'))));
 					$response=(array)json_decode($sendOtpResult->content);

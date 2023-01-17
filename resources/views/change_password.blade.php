@@ -95,7 +95,7 @@
             success: function(data) {
                 showMsg('success', data.message);
                 submitButton(formId, btnhtml, false);
-                location.href = "{{ route('profile') }}";
+                location.href = "{{ route('profile-update') }}";
                 
             },
             cache: false,

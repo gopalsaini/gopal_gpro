@@ -1357,6 +1357,7 @@ class commonHelper{
 			'Obispo' => 'Bishop', // sp
 			'Rev.' => 'Rev.',
 			'Prof.' => 'Prof.',
+			'' => '',
 		);
 		
 		return $data[$id];
