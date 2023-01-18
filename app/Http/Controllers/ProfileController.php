@@ -31,7 +31,7 @@ class ProfileController extends Controller
 
         
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
-        print_r($result); die;
+       
         $resultData=json_decode($result->content, true); 
         $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
  
@@ -190,6 +190,7 @@ class ProfileController extends Controller
     public function groupInfo(Request $request){
 
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+       
         $resultData=json_decode($result->content, true);
        
         \Session::put('lang',$resultData['result']['language']);

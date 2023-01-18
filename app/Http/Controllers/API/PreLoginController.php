@@ -482,7 +482,7 @@ class PreLoginController extends Controller {
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourProfile');
 					return response(array('message'=> $message, "otp_verified"=>'Yes',"token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
 					
-				} else if (\Hash::check($request->json()->get('password'), $userResult->password) &&  $userResult->otp_verified=='No'){
+				} else if (\Hash::check($request->json()->get('password'), $userResult->password) && $userResult->otp_verified=='No'){
 
 					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp?lang='.$userResult->language, json_encode(array('email'=>$request->json()->get('email'))));
 					$response=(array)json_decode($sendOtpResult->content);
@@ -1580,25 +1580,12 @@ class PreLoginController extends Controller {
 				
 					if($result->early_bird == 'Yes'){
 
-						$amounts = \App\Models\Wallet::where([['user_id', '=', $result->id], ['type', '=', 'Cr'], ['status', '=', 'Success']])->whereDate('created_at','<=','2022-11-23')->sum('amount');
-					
-						if($amounts > 0){
+						$user = \App\Models\User::where('id', $result->id)->first();
 
-							$percentage = (((int)$amounts / (int)($result->amount)) * 100);
-
-							if($percentage < 20) {
-
-								$result->amount = $result->amount+100;
-								$result->early_bird == 'No';
-								$result->save();
-
-							}
-							
-						}else{
-
-							$result->amount = $result->amount+100;
-							$result->save();
-						}
+						$user->amount = $result->amount-100;
+						$user->early_bird = 'No';
+						$user->save();
+						
 					}
 					
 				}

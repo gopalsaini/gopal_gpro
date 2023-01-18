@@ -85,7 +85,7 @@
                         <label for="country">@lang('web/contact-details.country') <span>*</span></label>
                         <div class="common-select">
                             <select id="country" placeholder="- @lang('web/app.select_code') -" data-state_id="{{$resultData['result']['contact_state_id']}}" data-city_id="{{$resultData['result']['contact_city_id']}}" class="mt-2 country selectbox test" name="contact_country_id">
-                                <option value="">--@lang('web/app.select_code')--</option>
+                                <option value="">--@lang('web/ministry-details.select')--</option>
                                 @foreach($country as $con)
                                 <option data-phoneCode="{{ $con['phonecode'] }}" @if($resultData['result']['contact_country_id']==$con['id']){{'selected'}}@endif value="{{ $con['id'] }}">{{ ucfirst($con['name']) }}</option>
                                 @endforeach

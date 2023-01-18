@@ -471,16 +471,13 @@ class HomeController extends Controller
 
 
                 $user = \App\Models\User::where('id',$linkPayment->parent_id)->first();
-                if($user){
+               
+                $name = $user->salutation.' '.$user->name.' '.$user->last_name;
 
-                    $name = $user->salutation.' '.$user->name.' '.$user->last_name;
-
-                    $subject = 'Your spouse confirmation is Approve  !';
-                    $msg = '<div>Dear '.$user->salutation.' '.$user->name.' '.$user->last_name.',</div><div><br></div><div>has begun your registration for the GProCongress II! Please use this link </div>';
-                    
-                    \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-
-                }
+                $subject = 'Your spouse confirmation is Approve  !';
+                $msg = '<div>Dear '.$user->salutation.' '.$user->name.' '.$user->last_name.',</div><div><br></div><div>has begun your registration for the GProCongress II! Please use this link </div>';
+                
+                \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
                 if(date('Y-m-d',strtotime($linkPayment->created_at)) < date('Y-m-d',strtotime($user->created_at))){
 
@@ -488,15 +485,17 @@ class HomeController extends Controller
                     // $linkPayment->added_as = null;
                     $linkPayment->spouse_confirm_status = 'Approve';
                     $linkPayment->spouse_confirm_token = '';
-                    $linkPayment->save();
+                   
 
                 }else{
 
                     $linkPayment->spouse_confirm_status = 'Approve';
                     $linkPayment->spouse_confirm_token = '';
-                    $linkPayment->save();
-
+                    
                 }
+
+                $linkPayment->room = null;
+                $linkPayment->save();
 
             }else{
 

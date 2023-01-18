@@ -311,7 +311,7 @@ class PostLoginController extends Controller {
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-not-found');
 							return response(array("error"=>true, 'message'=>$message), 403);
 						
-						}elseif($users->parent_id != null){
+						}elseif($users->added_as == 'Spouse'){
 
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-already-associated-withother-user');
 							return response(array("error"=>true, "message"=>$message), 403);
@@ -339,7 +339,7 @@ class PostLoginController extends Controller {
 
 							$users = \App\Models\User::where('email', $request->json()->get('email'))->first();
 
-							if($users && $users->parent_id != null){
+							if($users && $users->added_as == 'Spouse'){
 								
 								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-already-associated-withother-user');
 								return response(array("error"=>true, "message"=>$message), 200);
@@ -352,7 +352,7 @@ class PostLoginController extends Controller {
 						
 							if($years<18){
 
-								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($users->language,'DateOfBirthyear-mustbemore-than-18years');
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'DateOfBirthyear-mustbemore-than-18years');
 								return response(array("error"=>true, "message"=>$message), 200);
 							
 							}else{
