@@ -258,6 +258,10 @@ class HomeController extends Controller
 
     public function information(Request $request, $slug) {
 
+        if(isset($_GET['lang']) && $_GET['lang'] !=  ''){
+            \App::setLocale($_GET['lang']);
+        }
+        
         $information = \App\Models\Information::where([['slug', $slug], ['status', '1']])->first();
         \App\Helpers\commonHelper::setLocale();
         return view('information', compact('information'));
