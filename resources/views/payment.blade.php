@@ -308,7 +308,7 @@
                                                                             Donation
                                                                         @endif
                                                                     </td>
-                                                                    <td>@if($transaction->status == 0) @lang('web/home.pending') @elseif($transaction->status == 1) @lang('web/home.confirm') @else @lang('web/home.decline') @endif</td>
+                                                                    <td>@if($transaction->payment_status == 0) @lang('web/home.pending') @elseif($transaction->payment_status == 2) @lang('web/home.confirm') @else @lang('web/home.decline') @endif</td>
                                                                     
                                                                 </tr>
                                                             @endforeach
@@ -568,7 +568,14 @@
                             <ul>
                                 <li>
                                     <div class="register-next">
-                                        <a href="{{url('online-payment-full')}}" class="main-btn bg-gray-btn">@lang('web/payment.online') @lang('web/payment.payment')</a>
+                                        <a href="{{url('online-payment-full/stripe')}}" class="main-btn bg-gray-btn">@lang('web/payment.online') @lang('web/payment.payment') Stripe</a>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul>
+                                <li>
+                                    <div class="register-next">
+                                        <a href="{{url('online-payment-full/paypal')}}" class="main-btn bg-gray-btn">@lang('web/payment.online') @lang('web/payment.payment') Paypal</a>
                                     </div>
                                 </li>
                             </ul>
@@ -729,9 +736,18 @@
                                 @csrf
                                 <input type="hidden" name="type" required value="Online"  >
                                 <div class="col-lg-12">
+                                    <label for="">Select Payment Type<span>*</span></label>
+                                    <select name="payment_type" class="mt-2 form-control " required>
+                                        <option value="">--@lang('web/ministry-details.select')--</option>
+                                        <option value="stripe">Stripe Payment Gateway</option>
+                                        <option value="paypal">Paypal Payment Gateway</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-12">
                                     <label for="">@lang('web/payment.registered') @lang('web/payment.amount')<span>*</span></label>
                                     <input type="tel" name="amount" value="{{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], false)}}" onkeypress="return /[0-9 ]/i.test(event.key)" maxLength="6" placeholder="Type Requested Amount Here" class="mt-2" >
                                 </div>
+                                
                                 
                                 <div class="col-lg-12">
                                     <div class="step-next">

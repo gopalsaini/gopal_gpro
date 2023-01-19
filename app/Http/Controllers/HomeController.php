@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
+use Omnipay\Omnipay;
 
 use Stripe;
 
@@ -561,6 +562,191 @@ class HomeController extends Controller
             \Session::flash('gpro_error', \Lang::get('web/home.Confirmation-link-has-expired'));
             return redirect('profile-update');
         }
+
+    }
+
+    public function PaypalSuccessUrl(Request $request)
+    {
+
+        $gateway = Omnipay::create('PayPal_Rest');
+        $gateway->setClientId(env('PAYPAL_CLIENT_ID'));
+        $gateway->setSecret(env('PAYPAL_CLIENT_SECRET'));
+        $gateway->setTestMode(true);
+
+        if ($request->input('paymentId') && $request->input('PayerID')) {
+
+            $transaction = $gateway->completePurchase(array(
+                'payer_id' => $request->input('PayerID'),
+                'transactionReference' => $request->input('paymentId')
+            ));
+
+            $response = $transaction->send();
+
+            if ($response->isSuccessful()) {
+
+                $arr = $response->getData();
+                
+                if(isset($arr['transactions'][0]['description'])){
+
+                    $transaction=\App\Models\Transaction::where('order_id',$arr['transactions'][0]['description'])->first();
+		
+                    if($transaction){
+
+                        $transaction->razorpay_order_id=$arr['id'];
+                        $transaction->razorpay_paymentid=$arr['id'];
+                        $transaction->card_id=$arr['cart'];
+                        $transaction->bank=$arr['payer']['payment_method'];
+                        $transaction->bank_transaction_id=$arr['payer']['payer_info']['payer_id'];
+                        $transaction->payment_status='2';
+                        $transaction->status='1';
+                        $transaction->method='Online';
+                        $transaction->bank='Card';
+                        $transaction->save();
+
+                        $Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
+                        $Wallet->status = 'Success';
+                        $Wallet->save();
+
+                        if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
+
+                            $totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
+                            $totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
+                            $totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
+                            $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
+
+                            $user = \App\Models\User::find($transaction->user_id);
+                            $user->stage = 3;
+                            $user->save();
+
+                            $resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
+                        
+                            if($resultSpouse){
+
+                                $resultSpouse->stage = 3;
+                                $resultSpouse->payment_status = '2';
+                                $resultSpouse->save();
+                            }
+
+                            $subject = 'Payment Completed';
+                            $msg = 'Your '.$user->amount.'  amount has been accepted and payment has been completed successfully.<p><strong>Accepted Amount</strong> : '.$totalAcceptedAmount.'</p><p><strong>Amount In Process</strong> : '.$totalAmountInProcess.'</p><p><strong>Decline Amount</strong> : '.$totalRejectedAmount.'</p><p><strong>Pending Amount</strong> : '.$totalPendingAmount.'</p>';
+                            
+                            \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+                            // \App\Helpers\commonHelper::sendSMS($result->User->mobile);
+                            
+                            if($user->language == 'sp'){
+
+                                $subject = "Por favor, envíe su información de viaje.";
+                                $msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+                            
+                            }elseif($user->language == 'fr'){
+                            
+                                $subject = "Veuillez soumettre vos informations de voyage.";
+                                $msg = "<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p>Nous sommes ravis de vous voir au GProCongrès à Panama City, au Panama !</p><p><br></p><p>Pour aider les délégués à obtenir des visas, nous leur demandons de nous soumettre leurs informations de voyage.&nbsp;</p><p><br></p><p>Veuillez répondre à cet e-mail avec vos informations de vol.&nbsp; Dès réception, nous vous enverrons un e-mail pour confirmer que les informations que nous avons reçues sont correctes.&nbsp;</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>";
+                    
+                            }elseif($user->language == 'pt'){
+                            
+                                $subject = "Por favor submeta sua informação de viagem";
+                                $msg = '<p>Prezado '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Nós estamos emocionados em ver você no CongressoGPro na Cidade de Panamá, Panamá!</p><p><br></p><p>Para ajudar os delegados na obtenção de vistos, nós estamos pedindo que submetam a nós sua informação de viagem.&nbsp;</p><p><br></p><p>Por favor responda este e-mail com informações do seu voo. Depois de recebermos, iremos lhe enviar um e-mail confirmando que a informação que recebemos é correta.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+                            
+                            }else{
+                            
+                                $subject = 'Please submit your travel information.';
+                                $msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+                                                    
+                            }
+                            \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+                        }
+
+                        \Session::flash('gpro_success', \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-Successful'));
+                        return redirect('payment');
+
+                    }
+                    
+                }else{
+
+                    \Session::flash('gpro_error', 'Payment declined!!');
+                    return redirect('payment');
+                }
+                
+                
+
+            }else{
+
+                $paymentIntent = \Session::get('paypal_order_id'); 
+					
+                if(isset($paymentIntent)){
+
+                    $transaction=\App\Models\Transaction::where('order_id',$paymentIntent)->first();
+
+                    if($transaction){
+
+                        $transaction->payment_status='7';
+                        $transaction->status='0';
+                        $transaction->save();
+
+                        $Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
+                        $Wallet->status = 'Failed';
+                        $Wallet->save();
+
+                    }
+                }
+                
+                \Session::flash('gpro_error', $response->getMessage());
+                return redirect('payment');
+            }
+
+        }else{
+
+            $paymentIntent = \Session::get('paypal_order_id'); 
+					
+            if(isset($paymentIntent)){
+
+                $transaction=\App\Models\Transaction::where('order_id',$paymentIntent)->first();
+
+                if($transaction){
+
+                    $transaction->payment_status='7';
+                    $transaction->status='0';
+                    $transaction->save();
+
+                    $Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
+                    $Wallet->status = 'Failed';
+                    $Wallet->save();
+
+                }
+            }
+            
+            \Session::flash('gpro_error', 'Payment declined!!');
+            return redirect('payment');
+
+        }
+    }
+
+    public function PaypalErrorUrl(Request $request)
+    {
+        
+        $paymentIntent = \Session::get('paypal_order_id'); 
+					
+        if(isset($paymentIntent)){
+
+            $transaction=\App\Models\Transaction::where('order_id',$paymentIntent)->first();
+
+            if($transaction){
+
+                $transaction->payment_status='7';
+                $transaction->status='0';
+                $transaction->save();
+
+                $Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
+                $Wallet->status = 'Failed';
+                $Wallet->save();
+
+            }
+        }
+        \Session::flash('gpro_error', 'User declined the payment');
+        return redirect('payment');
 
     }
 

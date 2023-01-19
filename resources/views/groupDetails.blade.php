@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.email')</label>
-                                        <input type="text" placeholder="@lang('web/app.enter') @lang('web/group-details.email')" class="mt-2 requiredField" name="user_email" value="{{$resultData['result']['email']}}">
+                                        <input type="text" placeholder="@lang('web/app.enter_email')" class="mt-2 requiredField" name="user_email" value="{{$resultData['result']['email']}}">
                                     </div>
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.whatsapp')</label>
@@ -90,7 +90,7 @@
                                     </div>
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.email')</label>
-                                        <input type="text" placeholder="@lang('web/app.enter') @lang('web/group-details.email')" class="mt-2 requiredField"  name="email[]">
+                                        <input type="text" placeholder="@lang('app.enter_email')" class="mt-2 requiredField"  name="email[]">
                                     </div>
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.whatsapp')</label>

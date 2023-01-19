@@ -23,7 +23,7 @@ return [
     'postal-address' => 'Adresse postale',
     'zip' => 'Zip',
     'code' => 'Code',
-    'zip-postal-code' => 'Code postal- Entrer Code Postal',
+    'zip-postal-code' => 'Postal Code- Code postal',
     'country' => 'Pays',
     'state' => 'État',
     'province' => 'Province',

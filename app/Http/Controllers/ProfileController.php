@@ -640,22 +640,40 @@ class ProfileController extends Controller
     }
 
     
-    public function OnlinePaymentFull(Request $request){
+    public function OnlinePaymentFull(Request $request,$type = ''){
 
         $user = \App\Models\User::where('id',\Session::get('gpro_result')['id'])->first();
 
         if($user && $user->amount >0){
 
+            
             $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, false);
             
-            $data = \App\Helpers\commonHelper::paymentGateway($user->id,$totalPendingAmount,1);
+            $data = \App\Helpers\commonHelper::paymentGateway($user->id,$totalPendingAmount,1,$type);
+
+            if($type == 'paypal'){
+
+                if($data['error'] == false){
+
+                    return redirect($data['url']);
+
+                }else{
+
+                    \App\Helpers\commonHelper::setLocale();
+                    \Session::flash('gpro_error', $data['message']);
+                    return redirect('/');
+                }
+
+            }else{
+
+                $intent = $data['intent'];
+                $order_id = $data['order_id'];
+                $id = $data['order_id'];
+                \Session::put('intent',$intent);
+                \App\Helpers\commonHelper::setLocale();
+                return view('stripe',compact('intent','order_id','id'));
+            }
             
-            $intent = $data['intent'];
-            $order_id = $data['order_id'];
-            $id = $data['order_id'];
-            \Session::put('intent',$intent);
-            \App\Helpers\commonHelper::setLocale();
-            return view('stripe',compact('intent','order_id','id'));
             
         }else{
 
@@ -794,15 +812,32 @@ class ProfileController extends Controller
 
             }else{
 
-                $data = \App\Helpers\commonHelper::paymentGateway(\Session::get('gpro_result')['id'],$request->post('amount'));
 
-                $intent = $data['intent'];
+                $data = \App\Helpers\commonHelper::paymentGateway(\Session::get('gpro_result')['id'],$request->post('amount'),1,$request->post('payment_type'));
+               
+                if($request->post('payment_type') == 'paypal'){
 
-                \Session::put('intent',$data['intent']);
+                    if($data['error'] == false){
+                      
+                        return response(array('message'=>'','urlPage'=>true,'url'=>$data['url']), 200);
 
-                $order_id = $data['order_id'];
+                    }else{
+
+                        return response(array('message'=>$data['message'],'urlPage'=>false,'error'=>true), 403);
+                    }
+
+                }else{
+
+                    $intent = $data['intent'];
+
+                    \Session::put('intent',$data['intent']);
+
+                    $order_id = $data['order_id'];
+                    
+                    return response(array('message'=>'','urlPage'=>true,'url'=>url('stripe/'.$order_id)), 200);
+                }
                 
-                return response(array('message'=>'','urlPage'=>true,'url'=>url('stripe/'.$order_id)), 200);
+                
             }
             
         }

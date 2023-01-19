@@ -3,6 +3,7 @@ namespace App\Helpers;
 use Ixudra\Curl\Facades\Curl;
 use Session;
 use DB;
+use Omnipay\Omnipay;
 
 use Stripe;
 
@@ -1061,7 +1062,7 @@ class commonHelper{
 
 	}
 
-	public static function paymentGateway($id,$amount = '',$particular = '1') {
+	public static function paymentGateway($id,$amount = '',$particular = '1',$type = 'stripe') {
 		
 		
 		$user = \App\Models\User::where('id',$id)->first();
@@ -1097,31 +1098,18 @@ class commonHelper{
 		$Wallet->transaction_id = $payment->id;
 		$Wallet->save();
 
-		// Enter Your Stripe Secret
-		\Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
-		
-		$amount = (int) $amount;
-		$amount *= 100;
-		$amount = $amount;
-		
-		$stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-		$customer = $stripe->customers->create(
-			[
-			'name' => $user->name,
-			'address' => [
-				'line1' => $user->contact_address,
-				'postal_code' => $user->contact_zip_code,
-				'city' => \App\Helpers\commonHelper::getCityNameById($user->contact_city_id),
-				'state' => \App\Helpers\commonHelper::getStateNameById($user->contact_state_id),
-				'country' => \App\Helpers\commonHelper::getCountryNameById($user->contact_country_id),
-				],
-			]
-		);
+		if($type == 'stripe'){
 
-		$payment_intent = \Stripe\PaymentIntent::create([
-			'customer'  => $customer['id'], 
-			'description' => 'Stripe Test Payment',
-			'shipping' => [
+			// Enter Your Stripe Secret
+			\Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
+			
+			$amount = (int) $amount;
+			$amount *= 100;
+			$amount = $amount;
+			
+			$stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+			$customer = $stripe->customers->create(
+				[
 				'name' => $user->name,
 				'address' => [
 					'line1' => $user->contact_address,
@@ -1129,19 +1117,63 @@ class commonHelper{
 					'city' => \App\Helpers\commonHelper::getCityNameById($user->contact_city_id),
 					'state' => \App\Helpers\commonHelper::getStateNameById($user->contact_state_id),
 					'country' => \App\Helpers\commonHelper::getCountryNameById($user->contact_country_id),
-				],
-			],
-			'amount' => $amount,
-			'currency' => "USD",
-			'payment_method_types' => ['card'],
-			"metadata" => ["order_id" => $orderId],
-			'capture_method' => 'automatic',
-			'confirmation_method' => 'automatic',
-		]);
+					],
+				]
+			);
 
-		$intent = $payment_intent->client_secret;
-		$payment_intent = $payment_intent->id;
-		return ['order_id'=>$orderId,'intent'=>$intent,'payment_intent'=>$payment_intent];
+			$payment_intent = \Stripe\PaymentIntent::create([
+				'customer'  => $customer['id'], 
+				'description' => 'Stripe Test Payment',
+				'shipping' => [
+					'name' => $user->name,
+					'address' => [
+						'line1' => $user->contact_address,
+						'postal_code' => $user->contact_zip_code,
+						'city' => \App\Helpers\commonHelper::getCityNameById($user->contact_city_id),
+						'state' => \App\Helpers\commonHelper::getStateNameById($user->contact_state_id),
+						'country' => \App\Helpers\commonHelper::getCountryNameById($user->contact_country_id),
+					],
+				],
+				'amount' => $amount,
+				'currency' => "USD",
+				'payment_method_types' => ['card'],
+				"metadata" => ["order_id" => $orderId],
+				'capture_method' => 'automatic',
+				'confirmation_method' => 'automatic',
+			]);
+
+			$intent = $payment_intent->client_secret;
+			$payment_intent = $payment_intent->id;
+			return ['order_id'=>$orderId,'intent'=>$intent,'payment_intent'=>$payment_intent];
+			
+		}
+
+		if($type == 'paypal'){
+
+			\Session::put('paypal_order_id',$orderId);
+			$gateway = Omnipay::create('PayPal_Rest');
+			$gateway->setClientId(env('PAYPAL_CLIENT_ID'));
+			$gateway->setSecret(env('PAYPAL_CLIENT_SECRET'));
+			$gateway->setTestMode(true);
+
+			$response = $gateway->purchase(array(
+                'amount' => $amount,
+                'description' => $orderId,
+                'currency' => 'USD',
+                'returnUrl' => route('paypal-payment-success'),
+                'cancelUrl' => route('paypal-payment-success')
+            ))->send();
+
+            if ($response->isRedirect()) {
+				
+				return ['error'=>false,'url'=>$response->getRedirectUrl()];
+
+            }else{
+
+				return ['error'=>true,'message'=>$response->getMessage()];
+            }
+		}
+		
                 
 
 	}
