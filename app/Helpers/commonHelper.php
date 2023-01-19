@@ -1596,8 +1596,8 @@ class commonHelper{
 				'country_of_sender' => 'Country of sender field is required',	
 				'type' => 'Type field is required',	
 				'user_id' => 'user id field is required',	
-				'amount_lesser_than' => 'Please select amount lesser than maximum payment',	
-				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',	
+				'amount_lesser_than' => 'Seleccione un importe inferior al pago máximo',	
+				'Your_submission_has_been_sent' => 'Su envío se ha realizado correctamente.',	
 				'howmany_futurepastor'=> 'How many future pastor field is required',
 				'order_required'=> 'order',
 				
@@ -1802,8 +1802,8 @@ class commonHelper{
 				'country_of_sender' => 'Country of sender field is required',	
 				'type' => 'Type field is required',	
 				'user_id' => 'user id field is required',	
-				'amount_lesser_than' => 'Please select amount lesser than maximum payment',	
-				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',
+				'amount_lesser_than' => 'Veuillez sélectionner un montant inférieur au paiement maximum',	
+				'Your_submission_has_been_sent' => 'Votre demande a été envoyée avec succès.',
 				'howmany_futurepastor'=> 'How many future pastor field is required',	
 				'order_required'=> 'order',
 				
@@ -2006,8 +2006,8 @@ class commonHelper{
 				'country_of_sender' => 'Country of sender field is required',	
 				'type' => 'Type field is required',	
 				'user_id' => 'user id field is required',	
-				'amount_lesser_than' => 'Please select amount lesser than maximum payment',	
-				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',	
+				'amount_lesser_than' => 'Por favor, selecione um montante inferior ao valor máximo',	
+				'Your_submission_has_been_sent' => 'A sua submissão foi realizada com sucesso',	
 				'howmany_futurepastor'=> 'How many future pastor field is required',
 				'order_required'=> 'order',
 				

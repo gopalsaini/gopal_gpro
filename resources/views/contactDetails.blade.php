@@ -100,7 +100,7 @@
                             </select>
                         </div>
                         
-                        <div style="display: @if($resultData['result']['contact_state_id'] == 0) block @else none @endif " id="OtherStateDiv">
+                        <div style="display: @if($resultData['result']['contact_state_id'] == 0) block  @else none @endif " id="OtherStateDiv">
                             <input type="text" autocomplete="off" placeholder="@lang('web/contact-details.enter') @lang('web/contact-details.state')/@lang('web/contact-details.province')" name="contact_state_name" id="ContactStateName" class="mt-2" value="{{$resultData['result']['contact_state_name']}}">
                         </div>
                     </div>
@@ -112,7 +112,7 @@
                                 
                             </select>
                         </div>
-                        <div style="display:@if($resultData['result']['contact_city_id'] == 0) block @else none @endif" id="OtherCityDiv">
+                        <div style="display:@if($resultData['result']['contact_city_id'] == 0) block  @else none @endif" id="OtherCityDiv">
                             <input type="text" autocomplete="off" placeholder="@lang('web/contact-details.enter') @lang('web/contact-details.city')" name="contact_city_name" class="mt-2" id="ContactCityName" value="{{$resultData['result']['contact_city_name']}}">
                         </div>
                     </div>
@@ -276,6 +276,8 @@
 
     
     $('.statehtml').on('change', function() {
+        $("#OtherStateDiv").css('display','none');
+
         if(this.value == '0'){
             $("#OtherStateDiv").css('display','block');
             $("#ContactStateName").attr('required',true);
@@ -285,6 +287,8 @@
         }
     }); 
     $('.cityHtml').on('change', function() {
+        $("#OtherCityDiv").css('display','none');
+
         if(this.value == '0'){
             $("#OtherCityDiv").css('display','block');
             $("#ContactCityName").attr('required',true);
