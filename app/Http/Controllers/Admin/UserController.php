@@ -1846,7 +1846,7 @@ class UserController extends Controller {
 						
 						}
 
-						// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 						// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
@@ -1880,7 +1880,7 @@ class UserController extends Controller {
 
 						$to = $resultSpouse->email;
 						
-						// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 						// \App\Helpers\commonHelper::sendSMS($resultSpouse->mobile);
 
@@ -1909,7 +1909,7 @@ class UserController extends Controller {
 					$name= $result->name.' '.$result->last_name;
 					$subject = 'Congratulations, '.$name.', your application has been approved!';
 					$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
-					// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 					// \App\Helpers\commonHelper::sendSMS($result->mobile);
 				}
@@ -1947,7 +1947,7 @@ class UserController extends Controller {
 					
 				}
 
-				// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
@@ -1977,7 +1977,7 @@ class UserController extends Controller {
 					
 				}
 				
-				// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
 			}
@@ -1985,17 +1985,17 @@ class UserController extends Controller {
 
 			$result->save();
 
-			// $UserHistory=new \App\Models\UserHistory();
-			// $UserHistory->user_id=$result->id;
-			// $UserHistory->action_id=\Auth::user()->id;
-			// $UserHistory->action='User Profile '.$request->post('status');
-			// $UserHistory->save();
+			$UserHistory=new \App\Models\UserHistory();
+			$UserHistory->user_id=$result->id;
+			$UserHistory->action_id=\Auth::user()->id;
+			$UserHistory->action='User Profile '.$request->post('status');
+			$UserHistory->save();
 
 			if ($request->post('status') == 'Approved') {
 
 				$name = $result->name.' '.$result->last_name;
 
-				// \App\Helpers\commonHelper::sendPaymentReminderMailSend($result->id,$result->email,$name);
+				\App\Helpers\commonHelper::sendPaymentReminderMailSend($result->id,$result->email,$name);
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
 

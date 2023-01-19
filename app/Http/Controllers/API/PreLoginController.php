@@ -1572,15 +1572,14 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '>', '1'], ['amount', '>', 0]])->get();
+			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '>', '1'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
 			
 			if(count($results) > 0){
 
 				foreach ($results as $result) {
 				
-					if($result->early_bird == 'Yes'){
-
-						$user = \App\Models\User::where('id', $result->id)->first();
+					$user = \App\Models\User::where('id', $result->id)->first();
+					if($user){
 
 						$user->amount = $result->amount-100;
 						$user->early_bird = 'No';
@@ -2010,6 +2009,219 @@ class PreLoginController extends Controller {
 		}
 
     }
+
+	
+	public function getApprovedUserSendEmail(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('profile_status','Approved')->get();
+
+			if(count($results) > 0){
+
+				foreach ($results as $key => $user) {
+				
+					$name = '';
+
+					$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+
+					if($user->language == 'sp'){
+
+						$subject = "El estado de inscripción de su cónyuge no está confirmado";
+						$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge.&nbsp;&nbsp;</p><p><br></p><p>Estamos escribiendo para informarle que nuestro equipo ha hecho varios intentos para conectarse con su cónyuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', vía correo electrónico a '.$existSpouse->email.', para solicitar confirmación de su asistencia, pero no hemos tenido respuesta alguna.&nbsp;&nbsp;</p><p>Si desea que actualicemos la información de contacto de su cónyuge, responda a este correo electrónico y conéctese con nuestro equipo.</p><p><br></p><p>Por el momento, estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+					
+					}elseif($user->language == 'fr'){
+					
+						$subject = "Le statut d’inscription de votre conjoint/e n’est pas confirmé";
+						$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama, avec votre conjoint/e.&nbsp;&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous informer que notre équipe a tenté à plusieurs reprises de joindre votre conjoint/e, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', par courriel à '.$existSpouse->email.', pour demander une confirmation de sa présence, mais en vain.</p><p><br></p><p>Si vous souhaitez que nous mettions à jour les coordonnées de votre conjoint/e, veuillez répondre à ce courriel et communiquer avec notre équipe.&nbsp;</p><p><br></p><p>Pour le moment, nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.&nbsp;</p><p><br></p><p><br></p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+					
+					}elseif($user->language == 'pt'){
+					
+						$subject = "O estado da inscrição do seu cônjuge não está confirmado";
+						$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge.&nbsp;</p><p><br></p><p>Estamos a escrever para lhe informar que nossa equipe fez várias tentativas para alcançar o seu cônjuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via e-mail pelo '.$existSpouse->email.', para pedir confirmação da participação dele/a, mas sem sucesso.&nbsp;</p><p><br></p><p>Se você gostaria que nós atualizássemos as informações de contato de seu cônjuge, por favor responda este e-mail, e se conecte com nossa equipe.</p><p><br></p><p>Por agora, estamos a mudar os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p><br></p><p>Tem perguntas? Simplesmente responda este e-mail e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+					
+					}else{
+					
+						$subject = 'Your spouse’s registration status is unconfirmed';
+						$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama, with your spouse.&nbsp;&nbsp;</p><p><br></p><p>We are writing to inform you that our team has made several attempts to reach your spouse, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via email at '.$existSpouse->email.', to request confirmation of their attendance, but to no avail.</p><p><br></p><p>If you would like us to update your spouse’s contact information, please reply to this email, and connect with our team.&nbsp;</p><p><br></p><p>For the moment, we are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.&nbsp;</p><p><br></p><p>Have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+					
+					}
+
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
+				
+					
+				}
+				
+				return response(array('message'=>' Reminders has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	
+
+	public function paypalWebhookResponse(Request $request){ 
+
+		$payload = file_get_contents('php://input');
+		
+		$console=new \App\Models\PaymentConsole();
+
+		$console->value=file_get_contents('php://input');
+		$console->order_id='test';
+
+		$console->save();
+
+		try{
+			
+			$gateway = Omnipay::create('PayPal_Rest');
+			$gateway->setClientId(env('PAYPAL_CLIENT_ID'));
+			$gateway->setSecret(env('PAYPAL_CLIENT_SECRET'));
+			$gateway->setTestMode(true);
+
+			if ($request->input('paymentId') && $request->input('PayerID')) {
+
+				$transaction = $gateway->completePurchase(array(
+					'payer_id' => $request->input('PayerID'),
+					'transactionReference' => $request->input('paymentId')
+				));
+
+				$response = $transaction->send();
+
+				if ($response->isSuccessful()) {
+
+					$arr = $response->getData();
+					
+					if(isset($arr['transactions'][0]['description'])){
+
+						$transaction=\App\Models\Transaction::where('order_id',$arr['transactions'][0]['description'])->first();
+			
+						if($transaction){
+
+							$transaction->razorpay_order_id=$arr['id'];
+							$transaction->razorpay_paymentid=$arr['id'];
+							$transaction->card_id=$arr['cart'];
+							$transaction->bank=$arr['payer']['payment_method'];
+							$transaction->bank_transaction_id=$arr['id'];
+							$transaction->payment_status='2';
+							$transaction->status='1';
+							$transaction->method='Online';
+							$transaction->bank='Paypal';
+							$transaction->save();
+
+							$Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
+							$Wallet->status = 'Success';
+							$Wallet->save();
+
+							if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
+
+								$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
+								$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
+								$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
+								$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
+
+								$user = \App\Models\User::find($transaction->user_id);
+								$user->stage = 3;
+								$user->save();
+
+								$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
+							
+								if($resultSpouse){
+
+									$resultSpouse->stage = 3;
+									$resultSpouse->payment_status = '2';
+									$resultSpouse->save();
+								}
+
+								$subject = 'Payment Completed';
+								$msg = 'Your '.$user->amount.'  amount has been accepted and payment has been completed successfully.<p><strong>Accepted Amount</strong> : '.$totalAcceptedAmount.'</p><p><strong>Amount In Process</strong> : '.$totalAmountInProcess.'</p><p><strong>Decline Amount</strong> : '.$totalRejectedAmount.'</p><p><strong>Pending Amount</strong> : '.$totalPendingAmount.'</p>';
+								
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+								// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
+								
+								if($user->language == 'sp'){
+
+									$subject = "Por favor, envíe su información de viaje.";
+									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+								
+								}elseif($user->language == 'fr'){
+								
+									$subject = "Veuillez soumettre vos informations de voyage.";
+									$msg = "<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p>Nous sommes ravis de vous voir au GProCongrès à Panama City, au Panama !</p><p><br></p><p>Pour aider les délégués à obtenir des visas, nous leur demandons de nous soumettre leurs informations de voyage.&nbsp;</p><p><br></p><p>Veuillez répondre à cet e-mail avec vos informations de vol.&nbsp; Dès réception, nous vous enverrons un e-mail pour confirmer que les informations que nous avons reçues sont correctes.&nbsp;</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>";
+						
+								}elseif($user->language == 'pt'){
+								
+									$subject = "Por favor submeta sua informação de viagem";
+									$msg = '<p>Prezado '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Nós estamos emocionados em ver você no CongressoGPro na Cidade de Panamá, Panamá!</p><p><br></p><p>Para ajudar os delegados na obtenção de vistos, nós estamos pedindo que submetam a nós sua informação de viagem.&nbsp;</p><p><br></p><p>Por favor responda este e-mail com informações do seu voo. Depois de recebermos, iremos lhe enviar um e-mail confirmando que a informação que recebemos é correta.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+								
+								}else{
+								
+									$subject = 'Please submit your travel information.';
+									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+														
+								}
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+							}
+
+							\Session::flash('gpro_success', \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-Successful'));
+							return redirect('payment');
+
+						}
+						
+					}else{
+
+						\Session::flash('gpro_error', 'Payment declined!!');
+						return redirect('payment');
+					}
+					
+					
+
+				}else{
+
+					$paymentIntent = \Session::get('paypal_order_id'); 
+						
+					if(isset($paymentIntent)){
+
+						$transaction=\App\Models\Transaction::where('order_id',$paymentIntent)->first();
+
+						if($transaction){
+
+							$transaction->payment_status='7';
+							$transaction->status='0';
+							$transaction->save();
+
+							$Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
+							$Wallet->status = 'Failed';
+							$Wallet->save();
+
+						}
+					}
+					
+					\Session::flash('gpro_error', $response->getMessage());
+					return redirect('payment');
+				}
+
+			}
+
+		}catch (\Exception $e){
+						
+			$console=new \App\Models\PaymentConsole();
+
+			$console->value=$e->getMessage();
+	
+			$console->save();
+		
+		}
+		echo 'done';
+	}
 
 
 

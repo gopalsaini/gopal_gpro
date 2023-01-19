@@ -192,6 +192,7 @@ class ProfileController extends Controller
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
        
         $resultData=json_decode($result->content, true);
+        
        
         \Session::put('lang',$resultData['result']['language']);
         

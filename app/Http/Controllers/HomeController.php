@@ -596,11 +596,11 @@ class HomeController extends Controller
                         $transaction->razorpay_paymentid=$arr['id'];
                         $transaction->card_id=$arr['cart'];
                         $transaction->bank=$arr['payer']['payment_method'];
-                        $transaction->bank_transaction_id=$arr['payer']['payer_info']['payer_id'];
+                        $transaction->bank_transaction_id=$arr['id'];
                         $transaction->payment_status='2';
                         $transaction->status='1';
                         $transaction->method='Online';
-                        $transaction->bank='Card';
+                        $transaction->bank='Paypal';
                         $transaction->save();
 
                         $Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();

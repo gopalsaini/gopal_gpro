@@ -153,12 +153,12 @@
                                 <label for="styled-checkbox-1">@lang('web/contact-details.whatsapp-same-phone')</label>
                               </li>
                               <li>
-                                <input class="styled-checkbox" id="styled-checkbox-2" type="checkbox" value="1" required name="terms_and_condition" @if($resultData['result']['terms_and_condition'] == '1'){{'checked'}}@endif>
-                                <label for="styled-checkbox-2">@lang('web/contact-details.terms-and-conditions')</label>
-                              </li>
-                              <li>
                                 <input class="styled-checkbox" id="styled-checkbox-3" type="checkbox" value="Yes" name="update_whatsup" >
                                 <label for="styled-checkbox-3">@lang('web/contact-details.receive-updates')</label>
+                              </li>
+                              <li>
+                                <input class="styled-checkbox" id="styled-checkbox-2" type="checkbox" value="1" required name="terms_and_condition" @if($resultData['result']['terms_and_condition'] == '1'){{'checked'}}@endif>
+                                <label for="styled-checkbox-2">@lang('web/contact-details.terms-and-conditions')</label>
                               </li>
                         </ul>
                     </div>
