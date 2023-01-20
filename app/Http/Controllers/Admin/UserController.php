@@ -347,7 +347,10 @@ class UserController extends Controller {
 			->addColumn('action', function($data){
 				
 				if (\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' || \Auth::user()->designation_id == '12') {
-					return '<a class="btn btn-sm btn-dark px-3 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></a>';
+					return '<a class="btn btn-sm btn-dark px-3 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
+					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></a>
+					<a href="'.route('admin.user.archiveUserDelete', ['id' => $data->id] ).'" title="user delete" class="btn btn-sm btn-danger px-3 m-1 text-white" ><i class="fas fa-trash"></i></a></a>
+					';
 				}
 			})
 
@@ -3178,6 +3181,109 @@ class UserController extends Controller {
     }
 
     
+	public function archiveUser(Request $request,$id){
+	
+		try{
+
+				$exitsUser = \App\Models\User::find($id);
+
+				$user = new \App\Models\ArchiveUser();
+
+				$user->user_id=$exitsUser->id;
+				$user->parent_id=$exitsUser->parent_id;
+				$user->added_as=$exitsUser->added_as;
+				$user->salutation=$exitsUser->salutation;
+				$user->name=$exitsUser->name;
+				$user->last_name=$exitsUser->last_name;
+				$user->email=$exitsUser->email;
+				$user->phone_code=$exitsUser->phone_code;
+				$user->mobile=$exitsUser->mobile;
+				$user->reg_type=$exitsUser->reg_type;
+				$user->status=$exitsUser->status;
+				$user->status_change_at=$exitsUser->status_change_at;
+				$user->profile_status=$exitsUser->profile_status;
+				$user->remark=$exitsUser->remark;
+				$user->user_type=$exitsUser->user_type;
+				$user->otp_verified=$exitsUser->otp_verified;
+				$user->otp=$exitsUser->otp;
+				$user->password=$exitsUser->password;
+				$user->gender=$exitsUser->gender;
+				$user->dob=$exitsUser->dob;
+				$user->citizenship=$exitsUser->citizenship;
+				$user->marital_status=$exitsUser->marital_status;
+				$user->contact_address=$exitsUser->contact_address;
+				$user->contact_zip_code=$exitsUser->contact_zip_code;
+				$user->contact_country_id=$exitsUser->contact_country_id;
+				$user->contact_state_id=$exitsUser->contact_state_id;
+				$user->contact_city_id=$exitsUser->contact_city_id;
+				$user->contact_business_codenumber=$exitsUser->contact_business_codenumber;
+				$user->contact_business_number=$exitsUser->contact_business_number;
+				$user->contact_whatsapp_codenumber=$exitsUser->contact_whatsapp_codenumber;
+				$user->contact_whatsapp_number=$exitsUser->contact_whatsapp_number;
+				$user->ministry_name=$exitsUser->ministry_name;
+				$user->ministry_address=$exitsUser->ministry_address;
+				$user->ministry_zip_code=$exitsUser->ministry_zip_code;
+				$user->ministry_country_id=$exitsUser->ministry_country_id;
+				$user->ministry_state_id=$exitsUser->ministry_state_id;
+				$user->ministry_city_id=$exitsUser->ministry_city_id;
+				$user->ministry_pastor_trainer=$exitsUser->ministry_pastor_trainer;
+				$user->ministry_pastor_trainer_detail=$exitsUser->ministry_pastor_trainer_detail;
+				$user->doyouseek_postoral=$exitsUser->doyouseek_postoral;
+				$user->doyouseek_postoralcomment=$user->doyouseek_postoralcomment;
+				$user->stage=$exitsUser->stage;
+				$user->designation_id=$exitsUser->designation_id;
+				$user->profile_update=$exitsUser->profile_update;
+				$user->profile_updated_at=$exitsUser->profile_updated_at;
+				$user->terms_and_condition=$exitsUser->terms_and_condition;
+				$user->amount=$exitsUser->amount;
+				$user->payment_status=$exitsUser->payment_status;
+				$user->social_id=$exitsUser->social_id;
+				$user->room=$exitsUser->room;
+				$user->system_generated_password=$exitsUser->system_generated_password;
+				$user->change_room_type=$exitsUser->change_room_type;
+				$user->upgrade_category=$exitsUser->upgrade_category;
+				$user->early_bird=$exitsUser->early_bird;
+				$user->offer_id=$exitsUser->offer_id;
+				$user->remember_token=$exitsUser->remember_token;
+				$user->created_at=$exitsUser->created_at;
+				$user->updated_at=$exitsUser->updated_at;
+				$user->deleted_at=$exitsUser->deleted_at;
+				$user->qrcode=$exitsUser->qrcode;
+				$user->ministry_city_name=$exitsUser->ministry_city_name;
+				$user->ministry_state_name=$exitsUser->ministry_state_name;
+				$user->contact_city_name=$exitsUser->contact_city_name;
+				$user->profile_submit_type=$exitsUser->profile_submit_type;
+				$user->spouse_confirm_token=$exitsUser->spouse_confirm_token;
+				$user->spouse_confirm_status=$exitsUser->spouse_confirm_status;
+				$user->willing_to_commit=$exitsUser->willing_to_commit;
+				$user->comment=$exitsUser->comment;
+				$user->envision_training=$exitsUser->envision_training;
+				$user->spouse_confirm_reminder_email=$exitsUser->spouse_confirm_reminder_email;
+				$user->share_your_room_with=$exitsUser->share_your_room_with;
+				$user->language=$exitsUser->language;
+				$user->cash_payment_option=$exitsUser->cash_payment_option;
+				$user->spouse_id=$exitsUser->spouse_id;
+
+				$user->save();
+				
+
+			if ($exitsUser) {
+
+				\App\Models\User::where('id',$id)->delete();
+				$request->session()->flash('5fernsadminsuccess','User deleted successfully.');
+			}else{
+				$request->session()->flash('5fernsadminerror','Something went wrong. Please try again.');
+			}
+				
+				return redirect()->back();
+				
+			
+		}catch (\Exception $e){
+			
+			return response(array("error"=>true, "message" => $e->getMessage()),200); 
+			
+		}
+	}
 	
 	
 }

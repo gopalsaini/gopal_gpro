@@ -152,6 +152,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		});
 
 		Route::get('user-profile/{id}', 'Admin\UserController@userProfile')->name('profile');
+		Route::get('archive-user/{id}', 'Admin\UserController@archiveUser')->name('archiveUserDelete');
 		Route::get('payment-history/{id}', 'Admin\UserController@paymentHistory')->name('payment.history');
 		Route::get('sponsored-payment-history/{id}', 'Admin\UserController@sponsoredPaymentHistory')->name('sponsored.Payment.History');
 		Route::get('donate-payment-history/{id}', 'Admin\UserController@donatePaymentHistory')->name('donate.Payment.History');
