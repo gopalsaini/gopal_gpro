@@ -854,6 +854,7 @@ class PreLoginController extends Controller {
 
 	public function help(Request $request){
 		
+		
 		$lang = 'en';
 		if(isset($_GET['lang']) && $_GET['lang'] != ''){
 
@@ -879,7 +880,7 @@ class PreLoginController extends Controller {
 
 		);
 
-		$validator = \Validator::make($request->json()->all(), $rules, $messages);
+		$validator = \Validator::make($request->all(), $rules, $messages);
 		 
 		if ($validator->fails()) {
 			$message = [];
@@ -896,13 +897,24 @@ class PreLoginController extends Controller {
 			try{
 				
 				$message = new \App\Models\Message;
-				$message->name = $request->json()->get('name');
-				$message->email = $request->json()->get('email');
-				$message->mobile =  $request->json()->get('phonecode').$request->json()->get('mobile');
-				$message->message = $request->json()->get('message');
+				$message->name = $request->post('name');
+				$message->email = $request->post('email');
+				$message->mobile =  $request->post('phonecode').$request->post('mobile');
+				$message->message = $request->post('message');
+				
+
+				if($request->hasFile('attachment')){
+					$imageData = $request->file('attachment');
+					$image = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+					$destinationPath = public_path('/uploads/attachment');
+					$imageData->move($destinationPath, $image);
+
+					$message->file = $image;
+				}
+
 				$message->save();
 
-				return response(array('message'=>'Your submission has been sent successfully.',"error" => false), 200);
+				return response(array('message'=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($lang,'Your_submission_has_been_sent'),"error" => false), 200);
 				
 			}catch (\Exception $e){
 				
@@ -2010,7 +2022,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
 	public function getApprovedUserSendEmail(Request $request){
 		
 		try {
@@ -2064,8 +2075,6 @@ class PreLoginController extends Controller {
 		}
 
     }
-
-	
 
 	public function paypalWebhookResponse(Request $request){ 
 
@@ -2223,6 +2232,150 @@ class PreLoginController extends Controller {
 		echo 'done';
 	}
 
+	public function userEmailUpdateData(Request $request){
+		
+		try {
+			
+			$emailData = [
+				'henrylitala24@gmail.com',
+				'abraham_getachew@yahoo.com',
+				'suneera@msn.com',
+				'german@gprocommission.org',
+				'wanyamajoe@yahoo.com',
+				'hakizajean1982@gmail.com',
+				'benjaminnkusi@gmail.com',
+				'ecmesiah@yahoo.fr',
+				'akhillare399@gmail.com',
+				'larry@leadershipvistas.org',
+				'napohaggai@gmail.com',
+				'jjprovider@gmail.com',
+				'josueestrada243@gmail.com',
+				'jfmadeira@yahoo.com.br',
+				'sorchansim@yahoo.com',
+				'mukeshvkumar@gmail.com',
+				'dawdenkabo6@gmail.com',
+				'pradeep4js@gmail.com',
+				'georgeoncall@gmail.com',
+				'dburke@christcollege.edu.au',
+				'juancito538@hotmail.com',
+				'manandaye@yahoo.fr',
+				'bickson18@gmail.com',
+				'praveen@gcin.in',
+				'samson.jlife@gmail.com',
+				'gamolik@yahoo.fr',
+				'presleydimina13@gmail.com',
+				'calistusosuru220@gmail.com',
+				'oikosindia2050@gmail.com',
+				'potchurch@gmail.com',
+				'rayneu@spoken.org',
+				'jccwaruigeorge@gmail.com',
+				'vengoor@gmail.com',
+				'dieudo.irambona@gmail.com',
+				'julianakavitha@gmail.com',
+				'paul@re-forma.global',
+				'reubenvanrensburg1@gmail.com',
+				'manfred@overseas.org',
+				'ministerjohnson@ymail.com',
+				'balibangakatambu@gmail.com',
+				'elishainfo@gmail.com',
+				'titusketer@gmail.com',
+				'mathewmaiyo@yahoo.com',
+				'hounkpecodjogeorges@gmail.com',
+				'agadifred@gmail.com',
+				'rudenulpe@gmail.com',
+				'kiokomwangangi@gmail.com',
+				'pmbandi@yahoo.com',
+				'shadracksm.sm@gmail.com',
+				'musaudaniel724@gmail.com',
+				'mbuvi4@yahoo.com',
+				'dawpeterje@gmail.com',
+				'nchassim@yahoo.com',
+				'sammycarino74@gmail.com',
+				'kishorebendukuri@gmail.com',
+				'kounmahervedossa@gmail.com',
+				'pastordanish@gmail.com',
+				'delvinforde@yahoo.com',
+				'ricardoivan79@gmail.com',
+				'jenson_jj2021@outlook.com',
+				'bothniella@gmail.comm',
+				'nathanaelmatary@gmail.com',
+				'versecr@gmail.com',
+				'hiheko31@gmail.com',
+				'kcj1980@hotmail.com',
+				'amanyudza@gmail.com',
+				'jndiformumbe@gmail.com',
+				'anishag4j@gmail.com',
+				'kadek.badeng@gmail.com',
+				'mhdumitrascu@gmail.com',
+				'derejegete@gmail.com',
+				'nnaqash97@yahoo.com',
+				'haroonmassey@gmail.com',
+				'alenbala50@yahoo.com',
+				'masih_hidayat@yahoo.com',
+				'samuelwilliam.pak@gmail.com',
+				'wohu3@yahoo.com',
+				'nkolofanga@fateb.net',
+				'maniesron@gmail.com',
+				'jacquesbadjam@gmail.com',
+				'kanjojuliusnformi@gmail.com',
+				'esauds@yahoo.com',
+				'jay2xbarza@gmail.com',
+				'zifusjames@hotmail.com',
+				'mmaguero@gmail.com',
+				'romainkomia@gmail.com',
+				'mreano2@gmail.com',
+				'gnanaprakashmula@gmail.com',
+				'ericroberts888@yahoo.com',
+				'pixandkay@yahoo.com',
+				'augustinedee@gmail.com',
+				'albertokinyash@gmail.com',
+				'monenjd@gmail.com',
+				'emmanuelchess@gmail.com',
+				'pclaverhayo@yahoo.fr',
+				'cbtspresident@gmail.com',
+				'ao74yankee@gmail.com',
+				'nbbc13@gmail.com',
+				'meyuba@gmail.com',
+				'Comidosh@gmail.com',
+				'kwamesika2012@gmail.com',
+				'chogslg@gmail.com',
+				'jachinvictor@yahoo.com',
+				'bantsimba.anath@gmail.com',
+				'rencombatz@yahoo.com',
+				'venuforchrist@gmail.com',
+				'tanigolden54@gmail.com',
+				'musilicapetown@gmail.com',
+				'aadgministry@gmail.com',
+				'tbbaisanrafaeloriente@gmail.com',
+				'Jyzkwilliams@yahoo.com',
+
+			];
+
+			
+			if(count($emailData) > 0){
+
+				foreach ($emailData as $key => $email) {
+				
+					$results = \App\Models\User::where('email',$email)->first();
+					if($results){
+						$results->profile_status = 'Review';
+						$results->stage ='1';
+						$results->save();
+					}
+					
+					
+				}
+				
+				return response(array('message'=>' update success.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
 
 
 }

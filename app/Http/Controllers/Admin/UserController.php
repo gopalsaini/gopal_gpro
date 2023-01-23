@@ -346,11 +346,20 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' || \Auth::user()->designation_id == '12') {
-					return '<a class="btn btn-sm btn-dark px-3 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
+				$msg = "' Are you sure to delete this User ?'";
+
+				if (\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11') {
+					return '<div style="display:flex"><a class="btn btn-sm btn-dark px-3 m-1 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
 					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></a>
-					<a href="'.route('admin.user.archiveUserDelete', ['id' => $data->id] ).'" title="user delete" class="btn btn-sm btn-danger px-3 m-1 text-white" ><i class="fas fa-trash"></i></a></a>
-					';
+					</div>';
+
+				}elseif(\Auth::user()->designation_id == '12'){
+
+					return '<div style="display:flex"><a class="btn btn-sm btn-dark px-3 m-1 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
+						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></a>
+						<a href="'.route('admin.user.archiveUserDelete', ['id' => $data->id] ).'" title="user delete" class="btn btn-sm btn-danger px-3 m-1 text-white" onclick="return confirm('.$msg.')"><i class="fas fa-trash"></i></a></a>
+						</div>';
+
 				}
 			})
 
@@ -3180,12 +3189,20 @@ class UserController extends Controller {
         
     }
 
-    
 	public function archiveUser(Request $request,$id){
 	
 		try{
 
-				$exitsUser = \App\Models\User::find($id);
+			$exitsUser = \App\Models\User::find($id);
+
+			$userSpouse = \App\Models\User::where('parent_id',$id)->get();
+
+			if(!empty($userSpouse) && count($userSpouse)>0){
+
+				$request->session()->flash('5fernsadminerror','User not delete! this user comming with spouse/ group');
+				return redirect()->back();
+
+			}else{
 
 				$user = new \App\Models\ArchiveUser();
 
@@ -3266,16 +3283,20 @@ class UserController extends Controller {
 
 				$user->save();
 				
+				if ($exitsUser) {
 
-			if ($exitsUser) {
+					\App\Models\User::where('id',$id)->delete();
+					$request->session()->flash('5fernsadminsuccess','User deleted successfully.');
 
-				\App\Models\User::where('id',$id)->delete();
-				$request->session()->flash('5fernsadminsuccess','User deleted successfully.');
-			}else{
-				$request->session()->flash('5fernsadminerror','Something went wrong. Please try again.');
-			}
-				
+				}else{
+
+					$request->session()->flash('5fernsadminerror','Something went wrong. Please try again.');
+				}
+					
 				return redirect()->back();
+				
+			}
+			
 				
 			
 		}catch (\Exception $e){
@@ -3284,6 +3305,8 @@ class UserController extends Controller {
 			
 		}
 	}
+
+    
 	
 	
 }

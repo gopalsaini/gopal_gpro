@@ -951,6 +951,10 @@ class commonHelper{
 
 			$category = ['Twin Sharing Deluxe Room'=>$base_price,'Upgrade to Club Floor'=>300,'Upgrade to Suite'=>600,'Day pass'=>600];
 			$basePrice = $base_price+400;
+			if($basePrice <= 1075){
+
+				$basePrice = 1075;
+			}
 
 			
 		}
@@ -973,6 +977,10 @@ class commonHelper{
 
 			$category = ['Twin Sharing Deluxe Room'=>$base_price,'Upgrade to Club Floor'=>300,'Upgrade to Suite'=>600,'Day pass'=>600];
 			$basePrice = $base_price+400;
+			if($basePrice <= 1075){
+
+				$basePrice = 1075;
+			}
 			
 		}
 
@@ -1360,6 +1368,8 @@ class commonHelper{
 			'Facilitator' => 'Facilitator',
 			'Strategist' => 'Strategist',
 			'Partner' => 'Donor',
+			'Donor' => 'Partner',
+
 			'Praticien' => 'Practitioner',
 			'Facilitateur' => 'Facilitator',
 			'Stratège' => 'Strategist',

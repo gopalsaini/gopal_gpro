@@ -20,5 +20,6 @@ return [
     'message' => 'Mensaje',
     'submit' => 'Enviar',
     'enter' => 'Entrar',
+    'attachment' => 'Add Attachment (Optional)',
 
 ];

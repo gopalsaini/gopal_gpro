@@ -227,15 +227,18 @@ class HomeController extends Controller
 
         if($request->ajax()){
 
+           
             $data=array(
                 'name'=>$request->post('name'),
                 'email'=>$request->post('email'),
                 'mobile'=>$request->post('mobile'),
                 'phonecode'=>$request->post('phonecode'),
-                'message'=>$request->post('message')
+                'message'=>$request->post('message'),
+                'attachment'=>$request->file('attachment'),
             );
     
-            $result=\App\Helpers\commonHelper::callAPI('POST', '/help?lang='.\Session::get('lang'), json_encode($data));
+            $result=\App\Helpers\commonHelper::callAPI('POST', '/help?lang='.\Session::get('lang'), $data);
+            
             $resultData=json_decode($result->content,true);
 
             if($result->status==200){
@@ -357,7 +360,7 @@ class HomeController extends Controller
 	
 				}else{
 
-					return response(array("error"=>true, "message"=>'Please select amount lesser than maximum payment'), 403);
+					return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'amount_lesser_than')), 403);
 	
 				}
 				

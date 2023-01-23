@@ -59,6 +59,12 @@
                         <label for="">@lang('web/help.message')<span>*</span></label>
                         <textarea name="message" class="form-control active-input mt-2" cols="30" rows="5" placeholder="@lang('web/app.enter') @lang('web/help.message')" required></textarea>
                     </div>
+
+                    
+                    <div class="col-lg-12">
+                        <label for="">@lang('web/help.attachment')<span>*</span></label>
+                        <input type="file" name="attachment" placeholder="@lang('web/help.attachment')" class="active-input mt-2" >
+                    </div>
                     <div class="col-lg-6">
                         <div class="step-next">
                             <button type="submit" class="main-btn" form="form">@lang('web/help.submit')</button>

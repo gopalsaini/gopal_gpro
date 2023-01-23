@@ -152,10 +152,6 @@
 
                 finAmount=parseInt(amount);
 
-                if(finAmount <= 1075){
-                    finAmount = 1075;
-                }
-                
                
             }else if(this.value == 'Upgrade to Club Floor'){
                 
@@ -256,7 +252,6 @@
 
                 }else{
 
-                    
                     @if($trainer == 'Yes')
 
                         finAmount = (parseInt(finAmount)-parseInt(200));

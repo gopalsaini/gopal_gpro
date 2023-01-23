@@ -479,6 +479,12 @@
 
 
     <script>
+
+    document.getElementById('Name').addEventListener('change', (e)=> {
+      let tValue = e.target.value.replace(/<[^>]+>/gim, '');
+      e.target.value = tValue;
+   });
+
     $(document).ready(function() {
         @if(Session::has('gpro_error'))
         showMsg('error', "{{ Session::get('gpro_error') }}");
