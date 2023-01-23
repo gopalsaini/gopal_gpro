@@ -66,5 +66,18 @@ return [
     'enter' => "Introduzir", 
     'payment-method'=>'Pagamento Método',
     'upload-payment-image'=>'Upload Payment Image',
-    
+
+    'payment-method'=>'Payment Method',
+    'online-payment'=>'Online Payment',
+    'online-payment_description'=>'Pay your fees online, please use one of the following payment options:',
+    'Pay-Pal'=>'PayPal',
+    'PayPal_description'=>'Please send your funds to david@rreach.org.  This is RREACH’s account.  In the transfer, it should note the name of the registrant.',
+    'credit-card' => 'Credit Card',
+    'credit-card_description' => 'Pay your fees online by using a credit card.',
+    'Offline-Payment'=>'Offline Payment',
+    'Offline-Payment_description'=>'If you cannot pay online using your credit card, then please use one of the following payment options:',
+    'bank-transfer_description'=>'If you want to make a wire transfer, please email david@rreach.org.  You will receive wiring instructions via reply email.',
+    'western-union_description'=>'Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the information requested by Western Union.',
+    'money-gram_description'=>'Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the information requested by Money Gram.',
+
 ];

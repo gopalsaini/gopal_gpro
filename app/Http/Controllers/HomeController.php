@@ -227,30 +227,70 @@ class HomeController extends Controller
 
         if($request->ajax()){
 
-           
-            $data=array(
-                'name'=>$request->post('name'),
-                'email'=>$request->post('email'),
-                'mobile'=>$request->post('mobile'),
-                'phonecode'=>$request->post('phonecode'),
-                'message'=>$request->post('message'),
-                'attachment'=>$request->file('attachment'),
-            );
-    
-            $result=\App\Helpers\commonHelper::callAPI('POST', '/help?lang='.\Session::get('lang'), $data);
-            
-            $resultData=json_decode($result->content,true);
+            $rules = [
+                'name' => 'required',
+                'email' => 'required|email',
+                'mobile' => 'required|numeric',
+                'message' => 'required',
+                'phonecode' => 'required',
+            ];
 
-            if($result->status==200){
+            $messages = array(
+                'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'email_required'),
+                'email.email' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'email_email'),			
+                'mobile.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'mobile_required'), 
+                'mobile.numeric' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'mobile_numeric'), 
+                'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'name_required'), 
+                'phonecode.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'phonecode_required'), 
+                'message.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'message_required'), 
+
+            );
+
+            $validator = \Validator::make($request->all(), $rules, $messages);
+            
+            if ($validator->fails()) {
+                $message = [];
+                $messages_l = json_decode(json_encode($validator->messages()), true);
+                foreach ($messages_l as $msg) {
+                    $message= $msg[0];
+                    break;
+                }
                 
-                return response(array('reset'=>true, 'message'=>$resultData['message']), $result->status);
-    
+                return response(array('message'=>$message,"error" => true),403);
+                
             }else{
 
-                return response(array('message'=>$resultData['message']), $result->status);
+                try{
+                    
+                    $message = new \App\Models\Message;
+                    $message->name = $request->post('name');
+                    $message->email = $request->post('email');
+                    $message->mobile =  $request->post('phonecode').$request->post('mobile');
+                    $message->message = $request->post('message');
+                    
+
+                    if($request->hasFile('attachment')){
+                        $imageData = $request->file('attachment');
+                        $image = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+                        $destinationPath = public_path('/uploads/attachment');
+                        $imageData->move($destinationPath, $image);
+
+                        $message->file = $image;
+
+                    }
+
+                    
+                    $message->save();
+
+                    return response(array('message'=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Your_submission_has_been_sent'),"error" => false), 200);
+                    
+                }catch (\Exception $e){
+                    
+                    return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Something-went-wrongPlease-try-again')), 403);
+                
+                }
 
             }
-
         }
 
         $country=\App\Models\Country::select('id','name','phonecode')->get();
