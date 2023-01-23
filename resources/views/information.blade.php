@@ -6,7 +6,15 @@
 @endsection
 
 @section('content')
-
+<style>
+    .MsoNormal span,.MsoNormal,p{
+        margin: 0cm !important;
+        font-size: 12px !important;
+        font-family: Calibri, sans-serif !important;
+        color: rgb(0, 0, 0) !important;
+        letter-spacing: normal !important;
+    }
+</style>
    
     <div class="inner-banner-wrapper">
         <div class="container">
