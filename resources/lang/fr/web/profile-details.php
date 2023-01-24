@@ -23,7 +23,7 @@ return [
     'male' => 'Homme',
     'female' => 'Femme',
     'dob' => 'Date de naissance',
-    'citizenship' => 'Citoyenneté',
+    'citizenship' => 'Nationalité',
     'maritalstatus' => 'État civil',
     'stay-in-twin-or-single' => 'Souhaitez-vous séjourner en chambre double en partage à deux ou en Chambre individuelle?',
     'single-room' => 'Chambre individuelle',
