@@ -62,7 +62,7 @@
 
                     
                     <div class="col-lg-12">
-                        <label for="">@lang('web/help.attachment')<span>*</span></label>
+                        <label for="">@lang('web/help.attachment')</label>
                         <input type="file" name="attachment" placeholder="@lang('web/help.attachment')" class="active-input mt-2" >
                     </div>
                     <div class="col-lg-6">

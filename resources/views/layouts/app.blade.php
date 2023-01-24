@@ -235,7 +235,7 @@
                                 <div class="form-check">
                                     <label class="form-check-label">@lang('web/app.last_name_label') <b>*</b> </label>
                                     <div class="input-box">
-                                        <input type="text" onkeypress="return /[a-z A-Z ]/i.test(event.key)"  name="last_name" placeholder=" @lang('web/app.last_name')" required>
+                                        <input type="text" onkeypress="return /[a-z A-Z ]/i.test(event.key)"  name="last_name" id="LastName" placeholder=" @lang('web/app.last_name')" required>
                                        
                                     </div>
                                 </div>
@@ -1031,6 +1031,11 @@
         var input = $('#firstName');
         input.val(
             $('#firstName').val().replace(/https?:\/\//gi,'')
+        );
+
+        var inputLast = $('#LastName');
+        inputLast.val(
+            $('#LastName').val().replace(/https?:\/\//gi,'')
         );
     });
 </script>

@@ -346,14 +346,14 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				$msg = "' Are you sure to delete this User ?'";
+				$msg = "' Are you sure you want to delete this user? ?'";
 
-				if (\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11') {
+				if (\Auth::user()->designation_id == '11') {
 					return '<div style="display:flex"><a class="btn btn-sm btn-dark px-3 m-1 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
 					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></a>
 					</div>';
 
-				}elseif(\Auth::user()->designation_id == '12'){
+				}elseif(\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '12'){
 
 					return '<div style="display:flex"><a class="btn btn-sm btn-dark px-3 m-1 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
 						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></a>
