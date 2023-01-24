@@ -9,7 +9,7 @@
 <style>
     .MsoNormal span,.MsoNormal,p{
         margin: 0cm !important;
-        font-size: 12px !important;
+        font-size: 15px !important;
         font-family: Calibri, sans-serif !important;
         color: rgb(0, 0, 0) !important;
         letter-spacing: normal !important;
