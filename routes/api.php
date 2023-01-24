@@ -89,3 +89,4 @@ Route::get("spouse-confirmation-first-reminder","API\PreLoginController@spouseCo
 Route::get("spouse-confirmation-2-reminder","API\PreLoginController@spouseConfirmation2Reminder");
 Route::get("spouse-confirmation-3-reminder","API\PreLoginController@spouseConfirmation3Reminder");
 Route::post("getAllLanguageFolderFile","API\PreLoginController@getAllLanguageFolderFile");
+Route::get("getApprovedUserSendEmail","API\PreLoginController@getApprovedUserSendEmail");
