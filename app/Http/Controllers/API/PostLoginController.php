@@ -2645,6 +2645,7 @@ class PostLoginController extends Controller {
 		
 			$rules = [
 				'amount' => 'required|numeric|gt:0',
+				'type' => 'required|in:stripe,mobile_paypal',
 			];
 
 			$messages = array(
@@ -2671,17 +2672,32 @@ class PostLoginController extends Controller {
 				$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($request->user()->id, false); 
 				if($request->json()->get('amount') <= $totalPendingAmount){
 					
-					$data = \App\Helpers\commonHelper::paymentGateway($request->user()->id,$request->json()->get('amount'),1);
+					$data = \App\Helpers\commonHelper::paymentGateway($request->user()->id,$request->json()->get('amount'),1,$request->json()->get('type'));
 					
-					$client_secret = $data['intent'];
-					$order_id = $data['order_id'];
-					$payment_intent = $data['payment_intent'];
-
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'payment-added-successful');
 
-					return response(array("error"=>false, "message"=>$message,'client_secret'=>$client_secret,'order_id'=>$order_id,'payment_intent'=>$payment_intent), 200);
+					if($request->json()->get('type') == 'stripe'){
+
+						$client_secret = $data['intent'];
+						$order_id = $data['order_id'];
+						$payment_intent = $data['payment_intent'];
+
+						return response(array("error"=>false, "message"=>$message,'client_secret'=>$client_secret,'order_id'=>$order_id,'payment_intent'=>$payment_intent), 200);
+
+
+					}elseif($request->json()->get('type') == 'mobile_paypal'){
+
+						$PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID');
+						$PAYPAL_CLIENT_SECRET = env('PAYPAL_CLIENT_SECRET');
+						$response = $data['response'];
+
+						return response(array("error"=>false, "message"=>$message,'PAYPAL_CLIENT_ID'=>$PAYPAL_CLIENT_ID,'PAYPAL_CLIENT_SECRET'=>$PAYPAL_CLIENT_SECRET,'response'=>$response), 200);
+
+					}
+
 				
 				}else{
+
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'No-payment-due');
 					return response(array("error"=>true, "message"=>$message), 403);
 	

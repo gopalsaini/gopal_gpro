@@ -1184,7 +1184,7 @@ class commonHelper{
 
 		if($type == 'mobile_paypal'){
 
-			\Session::put('paypal_order_id',$orderId);
+			
 			$gateway = Omnipay::create('PayPal_Rest');
 			$gateway->setClientId(env('PAYPAL_CLIENT_ID'));
 			$gateway->setSecret(env('PAYPAL_CLIENT_SECRET'));
