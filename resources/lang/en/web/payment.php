@@ -78,6 +78,8 @@ return [
     'western-union_description'=>'Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the information requested by Western Union.',
     'money-gram_description'=>'Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the information requested by Money Gram.',
 
-
+    'YourFullName'=>'Your full name',
+    'CountryOfSender'=>'The country you are sending from',
+    'theAmountSentInUSD'=>'The amount sent in USD',
 
 ];

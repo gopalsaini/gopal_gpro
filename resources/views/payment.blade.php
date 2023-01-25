@@ -638,29 +638,29 @@
                                     </select>
                                 </div>
                                 
-                                <div class="col-lg-12 divShowForOnChangePaymentType" style="display:none" id="showWire">
+                                <!-- <div class="col-lg-12 divShowForOnChangePaymentType" style="display:none" id="showWire">
                                     <label for="">Wire Transfer </label>
-                                </div>
+                                </div> -->
                                 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none" id="showInFullAmount">
-                                    <label for="">Country of sender<span>*</span></label>
-                                    <input type="text" name="country_of_sender"  value="" placeholder="Enter Country of sender" class="mt-2"  id="countryOfSenderRequiredInFullAmount">
+                                    <label for="">@lang('web/payment.CountryOfSender')<span>*</span></label>
+                                    <input type="text" name="country_of_sender"  value="" placeholder="@lang('web/payment.CountryOfSender')" class="mt-2"  id="countryOfSenderRequiredInFullAmount">
                                 </div>
                               
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none">
-                                    <label for="">Sender name<span>*</span></label>
-                                    <input type="text" name="name" value="" placeholder="Enter Name" class="mt-2" id="senderNameRequiredInFullAmount">
+                                    <label for="">@lang('web/payment.YourFullName')<span>*</span></label>
+                                    <input type="text" name="name" value="" placeholder="@lang('web/payment.YourFullName')" class="mt-2" id="senderNameRequiredInFullAmount">
 
                                 </div>
                               
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none">
-                                    <label for="">@lang('web/payment.amount') (USD)<span>*</span></label>
+                                    <label for="">@lang('web/payment.theAmountSentInUSD')<span>*</span></label>
                                     <input type="tel" name="amount" id="AmountRequiredInFullAmount" value="{{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], false)}}"  onkeypress="return /[0-9 ]/i.test(event.key)" maxLength="6" placeholder="@lang('web/payment.amount')" class="mt-2" >
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount" style="display:none">
                                     <label for="">@lang('web/payment.enter-reference-number')<span>*</span></label>
-                                    <input type="test" name="reference_number"  value="" placeholder="Enter Reference Number" class="mt-2"  id="reference_numberRequiredIn_FullAmount">
+                                    <input type="test" name="reference_number"  value="" placeholder="@lang('web/payment.enter-reference-number')" class="mt-2"  id="reference_numberRequiredIn_FullAmount">
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount">
@@ -722,29 +722,29 @@
                                     </select>
                                 </div>
                                 <input type="hidden" name="type" required value="Offline"  >
-                                <div class="col-lg-12 divShowForOnChangePaymentInPartial" style="display:none" id="showInPartialWire">
+                                <!-- <div class="col-lg-12 divShowForOnChangePaymentInPartial" style="display:none" id="showInPartialWire">
                                     <label for="">Wire Transfer </label>
-                                </div>
+                                </div> -->
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none" id="showInPartialWU">
-                                    <label for="">Country of sender<span>*</span></label>
-                                    <input type="text" name="country_of_sender"  value="" placeholder="Enter Country of sender" class="mt-2"  id="countryOfSenderRequired">
+                                    <label for="">@lang('web/payment.CountryOfSender')<span>*</span></label>
+                                    <input type="text" name="country_of_sender"  value="" placeholder="@lang('web/payment.CountryOfSender')" class="mt-2"  id="countryOfSenderRequired">
                                 </div>
                               
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
-                                    <label for="">Sender name<span>*</span></label>
-                                    <input type="text" name="name" value="" placeholder="Enter Name" class="mt-2" id="senderNameRequired">
+                                    <label for="">@lang('web/payment.YourFullName')<span>*</span></label>
+                                    <input type="text" name="name" value="" placeholder="@lang('web/payment.YourFullName')" class="mt-2" id="senderNameRequired">
 
                                 </div>
                               
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
-                                    <label for="">@lang('web/payment.amount') (USD)<span>*</span></label>
+                                    <label for="">@lang('web/payment.theAmountSentInUSD')<span>*</span></label>
                                     <input type="tel" name="amount" id="AmountRequired" value="{{\App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], false)}}"  onkeypress="return /[0-9 ]/i.test(event.key)" maxLength="6" placeholder="@lang('web/payment.amount')" class="mt-2" >
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial" style="display:none">
                                     <label for="">@lang('web/payment.enter-reference-number')<span>*</span></label>
-                                    <input type="test" name="reference_number"  value="" placeholder="Enter Reference Number" class="mt-2"  id="reference_numberRequired">
+                                    <input type="test" name="reference_number"  value="" placeholder="@lang('web/payment.enter-reference-number')" class="mt-2"  id="reference_numberRequired">
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial">
