@@ -29,7 +29,7 @@ return [
     'full-name' => 'Nom complet',
     'gender' => 'Sexe',
     'dob' => 'Date de naissance',
-    'citizenship' => 'Citoyenneté',
+    'citizenship' => 'Nationalité',
     'marital-status' => 'État civil',
     'contact' => 'Contact',
     'postal-address' => 'Adresse postale',

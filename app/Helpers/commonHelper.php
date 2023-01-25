@@ -1181,6 +1181,26 @@ class commonHelper{
 				return ['error'=>true,'message'=>$response->getMessage()];
             }
 		}
+
+		if($type == 'mobile_paypal'){
+
+			\Session::put('paypal_order_id',$orderId);
+			$gateway = Omnipay::create('PayPal_Rest');
+			$gateway->setClientId(env('PAYPAL_CLIENT_ID'));
+			$gateway->setSecret(env('PAYPAL_CLIENT_SECRET'));
+			$gateway->setTestMode(true);
+
+			$response = $gateway->purchase(array(
+                'amount' => $amount,
+                'description' => $orderId,
+                'currency' => 'USD',
+                'returnUrl' => route('paypal-payment-success'),
+                'cancelUrl' => route('paypal-payment-success')
+            ))->send();
+
+            return ['error'=>false,'response'=>$response];
+
+		}
 		
                 
 

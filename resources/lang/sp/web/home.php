@@ -56,7 +56,7 @@ return [
     'pending' => 'Pendiente',
     'please-choose-option' => 'Por favor, elija una opción',
     'wire-transfer' => 'Transferencia bancaria',
-    'money-gram' => 'Pago de Pequeña Cantidad',
+    'money-gram' => 'Money Gram',
     'western-union' => 'Western Union',
     'upload-payment-image' => 'Cargar Imagen de Pago',
     'coming-along-with-spouse' => '¿Viene con su cónyuge al Congreso?',
