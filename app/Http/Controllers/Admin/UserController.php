@@ -342,6 +342,15 @@ class UserController extends Controller {
 			->addColumn('updated_at', function($data){
 				return date('Y-m-d h:i', strtotime($data->updated_at));
 		    })
+			->addColumn('group', function($data){
+				
+				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
+				} else {
+					return "";
+				}
+				
+		    })
 
 
 			->addColumn('action', function($data){
@@ -461,6 +470,15 @@ class UserController extends Controller {
 			// 			</div>';
 		    // })
 
+			->addColumn('group', function($data){
+							
+				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
+				} else {
+					return "";
+				}
+				
+			})
 			->addColumn('action', function($data){
 
 				if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'Review' ) {
@@ -586,6 +604,15 @@ class UserController extends Controller {
 					return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
 				}
 		    })
+			->addColumn('group', function($data){
+							
+				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
+				} else {
+					return "";
+				}
+				
+			})
 
 			->addColumn('action', function($data){
 				
@@ -729,6 +756,15 @@ class UserController extends Controller {
 
 		    })
 
+			->addColumn('group', function($data){
+				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
+				} else {
+					return "";
+				}
+				
+			})
+
 			->addColumn('action', function($data){
 				
 				if (\Auth::user()->designation_id == '1') {
@@ -844,6 +880,14 @@ class UserController extends Controller {
 
 		    })
 
+			->addColumn('group', function($data){
+				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
+				} else {
+					return "";
+				}
+				
+			})
 			->addColumn('action', function($data){
 				
 				if (\Auth::user()->designation_id == '1') {
@@ -946,6 +990,14 @@ class UserController extends Controller {
 				}
 		    })
 
+			->addColumn('group', function($data){
+				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
+				} else {
+					return "";
+				}
+				
+			})
 			->addColumn('action', function($data){
 				$msg = "' Are you sure to delete this user ?'";
 
