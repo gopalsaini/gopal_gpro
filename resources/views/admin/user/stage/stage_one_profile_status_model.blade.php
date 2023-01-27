@@ -1,6 +1,26 @@
 
+    <style>
+        .fs-dropdown {
+            width: 100%;
+        }
 
+    </style>
     <div class="approved-section">
+        <div class="form-group">
+            <div class="form-line">
+                <label for="inputName">Select Payment Country </label>
+                <select name="citizenship" class="form-control test" id="paymentCitizenship">
+                    <option value="">Select</option>
+                    @if(!empty($country))
+                        @foreach($country as $key=>$val)
+                            <option @if($user && $citizenship == $val->country_id) selected @endif value="{{$val->country_id}}" >{{$val->country_name}}</option>
+                        @endforeach
+
+                    @endif
+                    
+                </select>
+            </div>
+        </div>
         <div class="form-group">
             <div class="form-line">
                 <label for="inputName">@lang('admin.amount') <label class="text-danger">*</label></label>
@@ -81,6 +101,7 @@
 
     <script>
 
+    $(document).ready(function() {
         var payable_amount = $('#payable_amount').val();
         var base_amount = "{{$basePrice}}";
         var finAmount = payable_amount;
@@ -370,4 +391,61 @@
             
 
         });
-    </script>
+        
+        
+        $('#paymentCitizenship').change(function(){
+
+            citizenship = $(this).val();
+
+            if(citizenship != '{{$citizenship}}'){
+
+                $.ajax({
+
+                    type: "POST",
+                    dataType: "json",
+                    url: "{{url('admin/user/get-profile-base-price')}}",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        'id': '{{$user->id}}',
+                        'citizenship': citizenship,
+                    },
+                    beforeSend: function() {
+                        $('#preloader').css('display', 'block');
+                    },
+                    error: function(xhr, textStatus) {
+
+                        if (xhr && xhr.responseJSON.message) {
+                            sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                        } else {
+                            sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                        }
+                        $('#preloader').css('display', 'none');
+                    },
+                    success: function(data) {
+                        $('#preloader').css('display', 'none');
+                        $('#ProfileStatusData').html(data.html);
+                    
+                    }
+                });
+
+            }else{
+                
+                $('#payable_amount').val(finAmount);
+            }
+            
+
+        });
+
+        $('.test').fSelect({
+            placeholder: "-- Select -- ",
+            numDisplayed: 5,
+            overflowText: '{n} selected',
+            noResultsText: 'No results found',
+            searchText: 'Search',
+            showSearch: true
+        });
+        
+    });
+</script>

@@ -1830,6 +1830,7 @@ class UserController extends Controller {
 						$result->early_bird = $request->post('early_bird');
 						$result->offer_id = $request->post('offer_id');
 						$result->amount = $request->post('amount');
+						$result->payment_country = $request->post('citizenship');
 						$result->cash_payment_option = $request->post('cash_payment');
 
 						$result->stage = '2';
@@ -1913,6 +1914,7 @@ class UserController extends Controller {
 					$result->early_bird = $request->post('early_bird');
 					$result->offer_id = $request->post('offer_id');
 					$result->amount = $request->post('amount');
+					$result->payment_country = $request->post('citizenship');
 					$result->cash_payment_option = $request->post('cash_payment');
 
 					$result->stage = '2';
@@ -2173,8 +2175,15 @@ class UserController extends Controller {
 
 			if($user){
 
+				$citizenship = $user->citizenship;
 
-				$countryPrice=\App\Models\Pricing::where('country_id',$user->citizenship)->first();
+				if($request->post('citizenship')){
+
+					$citizenship = $request->post('citizenship');
+
+				}
+				
+				$countryPrice=\App\Models\Pricing::where('country_id',$citizenship)->first();
 
 				$Spouse = \App\Models\User::where('parent_id', $request->post('id'))->where('added_as', 'Spouse')->first();
 				
@@ -2208,7 +2217,9 @@ class UserController extends Controller {
 					['end_date','>=',date('Y-m-d')]
 					])->orderBy('id','desc')->get();
 
-				$html=view('admin.user.stage.stage_one_profile_status_model',compact('basePrice','Offers','category','trainer'))->render();
+				$country = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
+
+				$html=view('admin.user.stage.stage_one_profile_status_model',compact('basePrice','Offers','category','trainer','country','user','citizenship'))->render();
 
 				return response()->json(array('html'=>$html));
 				

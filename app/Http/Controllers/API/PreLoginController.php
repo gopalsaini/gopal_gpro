@@ -2080,46 +2080,34 @@ class PreLoginController extends Controller {
 
 	public function paypalWebhookResponse(Request $request){ 
 
+		
 		$payload = file_get_contents('php://input');
+
+		$event = json_decode($payload, true);
 		
 		$console=new \App\Models\PaymentConsole();
 
-		$console->value=file_get_contents('php://input');
-		$console->order_id='test';
+		$console->value=$payload;
+		$console->order_id=$event['resource']['transactions'][0]['description'];
 
 		$console->save();
 
 		try{
 			
-			$gateway = Omnipay::create('PayPal_Rest');
-			$gateway->setClientId(env('PAYPAL_CLIENT_ID'));
-			$gateway->setSecret(env('PAYPAL_CLIENT_SECRET'));
-			$gateway->setTestMode(true);
+			if (isset($event)) {
 
-			if ($request->input('paymentId') && $request->input('PayerID')) {
+				if ($event['event_type'] == 'PAYMENTS.PAYMENT.CREATED') {
 
-				$transaction = $gateway->completePurchase(array(
-					'payer_id' => $request->input('PayerID'),
-					'transactionReference' => $request->input('paymentId')
-				));
+					if(isset($event['resource']['transactions'][0]['description'])){
 
-				$response = $transaction->send();
-
-				if ($response->isSuccessful()) {
-
-					$arr = $response->getData();
-					
-					if(isset($arr['transactions'][0]['description'])){
-
-						$transaction=\App\Models\Transaction::where('order_id',$arr['transactions'][0]['description'])->first();
+						$transaction=\App\Models\Transaction::where('order_id',$event['resource']['transactions'][0]['description'])->first();
 			
 						if($transaction){
 
-							$transaction->razorpay_order_id=$arr['id'];
-							$transaction->razorpay_paymentid=$arr['id'];
-							$transaction->card_id=$arr['cart'];
-							$transaction->bank=$arr['payer']['payment_method'];
-							$transaction->bank_transaction_id=$arr['id'];
+							$transaction->razorpay_order_id=$event['id'];
+							$transaction->razorpay_paymentid=$event['resource']['id'];
+							$transaction->card_id=$event['resource']['cart'];
+							$transaction->bank_transaction_id=$event['resource']['id'];
 							$transaction->payment_status='2';
 							$transaction->status='1';
 							$transaction->method='Online';
@@ -2182,23 +2170,14 @@ class PreLoginController extends Controller {
 
 							}
 
-							\Session::flash('gpro_success', \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-Successful'));
-							return redirect('payment');
-
 						}
 						
-					}else{
-
-						\Session::flash('gpro_error', 'Payment declined!!');
-						return redirect('payment');
 					}
 					
-					
-
 				}else{
 
-					$paymentIntent = \Session::get('paypal_order_id'); 
-						
+					$paymentIntent = $event['resource']['transactions'][0]['description']; 
+					
 					if(isset($paymentIntent)){
 
 						$transaction=\App\Models\Transaction::where('order_id',$paymentIntent)->first();
@@ -2215,11 +2194,7 @@ class PreLoginController extends Controller {
 
 						}
 					}
-					
-					\Session::flash('gpro_error', $response->getMessage());
-					return redirect('payment');
 				}
-
 			}
 
 		}catch (\Exception $e){
@@ -2363,6 +2338,41 @@ class PreLoginController extends Controller {
 						$results->profile_status = 'Review';
 						$results->stage ='1';
 						$results->save();
+					}
+					
+					
+				}
+				
+				return response(array('message'=>' update success.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	
+
+	public function userUpdatePaymentCountry(Request $request){
+		
+		try {
+			
+			$users = \App\Models\User::where('payment_country','0')->get();
+
+			if(count($users) > 0){
+
+				foreach ($users as $key => $user) {
+				
+					$results = \App\Models\User::where('id',$user->id)->first();
+					
+					if($results){
+
+						$results->payment_country = $results->citizenship;
+						$results->save();
+
 					}
 					
 					
