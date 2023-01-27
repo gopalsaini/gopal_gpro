@@ -55,6 +55,7 @@
                                     <th> @lang('admin.email') </th>
                                     <th> @lang('admin.mobile') </th>
                                     <th> Status </th>
+                                    <th> Group </th>
                                     <!-- <th> @lang('admin.status') </th> -->
                                     <th> @lang('admin.action') </th>
                                 </tr>
@@ -73,6 +74,7 @@
                                     <th> @lang('admin.email') </th>
                                     <th> @lang('admin.mobile') </th>
                                     <th> Status </th>
+                                    <th> Group </th>
                                     <!-- <th> @lang('admin.status') </th> -->
                                     <th> @lang('admin.action') </th>
                                 </tr>
@@ -217,7 +219,6 @@
 
 <script>
     $(document).ready(function() {
-        fill_datatable();
         var table = $('#tablelist').DataTable({
             "processing": true,
             "serverSide": true,
@@ -278,6 +279,9 @@
                 //     "data": "status"
                 // },
                 {
+                    "data": "group"
+                },
+                {
                     "data": "action"
                 }
             ]
@@ -286,6 +290,28 @@
         
         $(".searchEmail").keyup(function(){
             table.draw();
+        });
+
+        $('#tablelist tbody').on('click', '.group', function () {
+
+            var email = $(this).data('email');
+
+            var tr = $(this).parents('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+
+                $('#preloader').css('display', 'block');
+                $.post("{{ route('admin.user.group.users.list') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
+                    row.child(data.html).show();
+                    $('#preloader').css('display', 'none');
+                }, "json");
+
+                tr.addClass('shown');
+            }
         });
 
         $('#tablelist1').DataTable({

@@ -9,6 +9,33 @@
             border-color: #ffc107 !important;
         }   
     </style>
+    <style>
+        .odd{
+            position: relative;
+        }
+
+        .group-user-list{
+            position: absolute;
+            left: 87px;
+        }
+        .dataTables_wrapper table.dataTable tbody td:nth-child(2)  { 
+            padding-left: 45px !important;
+        }
+        .btn-outline-primary:focus,.btn-outline-primary:hover, .btn-outline-primary.active { 
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+        } 
+
+        .group-user-list {
+            background: url('{{asset("admin-assets/images/details_open.png")}}') no-repeat center center;
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+        }
+        .shown .group-user-list {
+            background: url('{{asset("admin-assets/images/details_close.png")}}') no-repeat center center;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -49,6 +76,7 @@
                                     <th> @lang('admin.day') & @lang('admin.session') </th>
                                     <th> @lang('admin.session') @lang('admin.info') </th>
                                     <th> @lang('admin.admin') @lang('admin.status') </th>
+                                    <th> Group </th>
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </thead>
@@ -66,6 +94,7 @@
                                     <th> @lang('admin.day') & @lang('admin.session') </th>
                                     <th> @lang('admin.session') @lang('admin.info') </th>
                                     <th> @lang('admin.admin') @lang('admin.status') </th>
+                                    <th> Group </th>
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </tfoot>
@@ -84,7 +113,7 @@
 <script>
 $(document).ready(function() {
     fill_datatable();
-    $('#tablelist').DataTable({
+var table =  $('#tablelist').DataTable({
         "processing": true,
         "serverSide": true,
         "searching": true,
@@ -136,9 +165,34 @@ $(document).ready(function() {
                 "data": "admin_status"
             },
             {
+                "data": "group"
+            },
+            {
                 "data": "action"
             }
         ]
+    });
+
+    $('#tablelist tbody').on('click', '.group', function () {
+
+        var email = $(this).data('email');
+
+        var tr = $(this).parents('tr');
+        var row = table.row(tr);
+
+        if (row.child.isShown()) {
+            row.child.hide();
+            tr.removeClass('shown');
+        } else {
+
+            $('#preloader').css('display', 'block');
+            $.post("{{ route('admin.user.group.users.list') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
+                row.child(data.html).show();
+                $('#preloader').css('display', 'none');
+            }, "json");
+
+            tr.addClass('shown');
+        }
     });
 });
 

@@ -9,6 +9,34 @@
             border-color: #ffc107 !important;
         } 
     </style>
+       
+    <style>
+        .odd{
+            position: relative;
+        }
+
+        .group-user-list{
+            position: absolute;
+            left: 87px;
+        }
+        .dataTables_wrapper table.dataTable tbody td:nth-child(2)  { 
+            padding-left: 45px !important;
+        }
+        .btn-outline-primary:focus,.btn-outline-primary:hover, .btn-outline-primary.active { 
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+        } 
+
+        .group-user-list {
+            background: url('{{asset("admin-assets/images/details_open.png")}}') no-repeat center center;
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+        }
+        .shown .group-user-list {
+            background: url('{{asset("admin-assets/images/details_close.png")}}') no-repeat center center;
+        }
+    </style>
 @endpush
 
 @section('content') 
@@ -51,6 +79,7 @@
                                     <th> Status </th>
                                     <th> Created on </th>
                                     <th> Updated on </th>
+                                    <th> Group </th>
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </thead>
@@ -69,6 +98,7 @@
                                     <th> Status </th>
                                     <th> Created on </th>
                                     <th> Updated on </th>
+                                    <th> Group </th>
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </tfoot>
@@ -80,56 +110,55 @@
     </div>
     
     <div class="col-sm-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Spouse pending confirmation </h5>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="display datatables" id="tablelist1">
-                            <thead>
-                                <tr>
-                                    <th> @lang('admin.id') </th>
-                                    <th> @lang('admin.name') </th>
-                                    <th> @lang('admin.email') </th>
-                                    <th> @lang('admin.mobile') </th>
-                                    <th> Status </th>
-                                    <!-- <th> @lang('admin.status') </th> -->
-                                    <th> @lang('admin.action') </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-center" colspan="7">
-                                        <div id="loader" class="spinner-border" role="status"></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th> @lang('admin.id') </th>
-                                    <th> @lang('admin.name') </th>
-                                    <th> @lang('admin.email') </th>
-                                    <th> @lang('admin.mobile') </th>
-                                    <th> Status</th>
-                                    <!-- <th> @lang('admin.status') </th> -->
-                                    <th> @lang('admin.action') </th>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
+        <div class="card">
+            <div class="card-header">
+                <h5>Spouse pending confirmation </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="display datatables" id="tablelist1">
+                        <thead>
+                            <tr>
+                                <th> @lang('admin.id') </th>
+                                <th> @lang('admin.name') </th>
+                                <th> @lang('admin.email') </th>
+                                <th> @lang('admin.mobile') </th>
+                                <th> Status </th>
+                                <!-- <th> @lang('admin.status') </th> -->
+                                <th> @lang('admin.action') </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-center" colspan="7">
+                                    <div id="loader" class="spinner-border" role="status"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th> @lang('admin.id') </th>
+                                <th> @lang('admin.name') </th>
+                                <th> @lang('admin.email') </th>
+                                <th> @lang('admin.mobile') </th>
+                                <th> Status</th>
+                                <!-- <th> @lang('admin.status') </th> -->
+                                <th> @lang('admin.action') </th>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
+    </div>
 </div>
-
 @endsection
 
 @push('custom_js')
 
 <script>
     $(document).ready(function() {
-        fill_datatable();
+      
         var table = $('#tablelist').DataTable({
             "processing": true,
             "serverSide": true,
@@ -188,6 +217,9 @@
                     "data": "updated_at"
                 },
                 {
+                    "data": "group"
+                },
+                {
                     "data": "action"
                 }
             ]
@@ -196,10 +228,31 @@
         $(".searchEmail").keyup(function(){
             table.draw();
         });
-    });
 
    
+        $('#tablelist tbody').on('click', '.group', function () {
 
+            var email = $(this).data('email');
+
+            var tr = $(this).parents('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+
+                $('#preloader').css('display', 'block');
+                $.post("{{ route('admin.user.group.users.list') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
+                    row.child(data.html).show();
+                    $('#preloader').css('display', 'none');
+                }, "json");
+
+                tr.addClass('shown');
+            }
+        });
+
+    });
 
     function fill_datatable() {
 
@@ -235,6 +288,9 @@
                 }
             });
         });
+
+        
+        
     }
 
     
