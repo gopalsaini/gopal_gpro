@@ -303,7 +303,8 @@ class PostLoginController extends Controller {
 
 
 						$users = \App\Models\User::where([
-							['email', '=', $request->json()->get('email')]
+							['email', '=', $request->json()->get('email')],
+							['id', '!=', $request->user()->id]
 							])->first();
 
 						if(!$users){
