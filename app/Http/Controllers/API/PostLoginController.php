@@ -318,6 +318,13 @@ class PostLoginController extends Controller {
 							return response(array("error"=>true, "message"=>$message), 403);
 						}
 
+						$spouseName = \App\Models\user::where('parent_id', $users->id)->where('added_as','Spouse')->first();
+						if($spouseName){
+
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Spouse-already-associated-withother-user');
+							return response(array("error"=>true, "message"=>$message), 403);
+						}
+
 						$users->parent_id = $request->user()->id;
 						$users->added_as = 'Spouse';
 						$users->save(); 
