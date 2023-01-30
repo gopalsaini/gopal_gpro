@@ -2348,10 +2348,13 @@ class UserController extends Controller {
 		    })
 
 			->addColumn('profile', function($data){
-				if ($data->profile_update) {
-					return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
-				} else {
+				if ($data->spouse_confirm_status == 'Pending') {
+					
 					return '<div class="span badge rounded-pill pill-badge-danger">Pending</div>';
+					
+				} else if ($data->spouse_confirm_status == 'Approve') {
+
+					return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
 				}
 		    })
 

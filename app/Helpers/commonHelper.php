@@ -781,7 +781,7 @@ class commonHelper{
 
 				$to = $admin;
 				\Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
-					$message->from(env('MAIL_USERNAME'), 'GPro');
+					$message->from(env('MAIL_USERNAME'), 'GProCongress II Team');
 					$message->subject($subject);
 					$message->to($to);
 				});
