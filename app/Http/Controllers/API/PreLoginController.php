@@ -507,7 +507,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['profile_update', '=', '0'], ['stage', '=', '0']])
+			$results = \App\Models\User::where([['profile_update', '=', '0'], ['stage', '=', '0']])
 									->whereDate('created_at', '=', now()->subDays(2)->setTime(0, 0, 0)->toDateTimeString())
 									->get();
 									

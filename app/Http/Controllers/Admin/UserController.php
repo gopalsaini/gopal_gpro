@@ -147,7 +147,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::where([['designation_id', $designation_id], ['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
 				$query->where('email', 'like', "%" . request('email') . "%");
@@ -155,7 +155,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['parent_id', NULL], ['added_as', NULL]]);
+			$totalData1 = \App\Models\User::where([['designation_id', $designation_id], ['parent_id', NULL], ['added_as', NULL]]);
 			
 			if (request()->has('email')) {
 				$totalData1->where('email', 'like', "%" . request('email') . "%");
@@ -292,7 +292,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '0']])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '0']])->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
 				$query->where('email', 'like', "%" . request('email') . "%");
@@ -300,7 +300,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '0']]);
+			$totalData1 = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '0']]);
 			
 			
 			if (request()->has('email')) {
@@ -355,7 +355,7 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				$msg = "' Are you sure you want to delete this user? ?'";
+				$msg = "' Are you sure you want to delete this user ??'";
 
 				if (\Auth::user()->designation_id == '11') {
 					return '<div style="display:flex"><a class="btn btn-sm btn-dark px-3 m-1 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
@@ -399,7 +399,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '1'], ['profile_status', $request->input('status')]])
+			$query = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '1'], ['profile_status', $request->input('status')]])
 						->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
@@ -412,7 +412,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '1'], ['profile_status', $request->input('status')]])
+			$totalData1 = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '1'], ['profile_status', $request->input('status')]])
 						->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
@@ -542,7 +542,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '2']])
+			$query = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '2']])
 			->where(function ($query) {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
@@ -550,7 +550,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '2']])
+			$totalData = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '2']])
 			->where(function ($query) {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
@@ -658,14 +658,14 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
+			$query = \App\Models\User::with('TravelInfo')->where([['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
 			})->orderBy('updated_at', 'desc');
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
+			$totalData = \App\Models\User::with('TravelInfo')->where([['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
 			})->count();
@@ -806,11 +806,11 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '4']])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '4']])->orderBy('updated_at', 'desc');
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '4']])->count();
+			$totalData = \App\Models\User::with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '4']])->count();
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));
@@ -928,11 +928,11 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '5']])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '5']])->orderBy('updated_at', 'desc');
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', $designation_id], ['stage', '=', '5']])->count();
+			$totalData = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '5']])->count();
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));
@@ -1226,9 +1226,10 @@ class UserController extends Controller {
 
 	public function userProfile(Request $request, $id) {
 
-		$result = \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['id', '=', $id]])->first();
+		$result = \App\Models\User::with('TravelInfo')->where([['id', '=', $id]])->first();
 		
 		if (!$result) {
+
 			$request->session()->flash('error','Something went wrong.please try again.');
 			return redirect()->back();
 		}
@@ -1241,7 +1242,7 @@ class UserController extends Controller {
 
 	public function travelInfo(Request $request, $id) {
 
-		$result = \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['id', '=', $id]])->first();
+		$result = \App\Models\User::with('TravelInfo')->where([['id', '=', $id]])->first();
 
 		if (!$result) {
 			$request->session()->flash('error','Something went wrong.please try again.');
@@ -1256,7 +1257,7 @@ class UserController extends Controller {
 
 	public function sessionInfo(Request $request, $id) {
 
-		$result = \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['id', '=', $id]])->first();
+		$result = \App\Models\User::with('SessionInfo')->where([['id', '=', $id]])->first();
 
 		if (!$result) {
 			$request->session()->flash('error','Something went wrong.please try again.');
@@ -1682,7 +1683,7 @@ class UserController extends Controller {
 				$msg = 'Your session info has been approved successfully';
 				$msg = '<br>';
 
-				$data = \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['stage', '=', '5'], ['id', '=', $request->post('id')]])->first();
+				$data = \App\Models\User::with('SessionInfo')->where([['stage', '=', '5'], ['id', '=', $request->post('id')]])->first();
 				
 				foreach ($data->SessionInfo as $dayValue) {
 					
@@ -1737,7 +1738,7 @@ class UserController extends Controller {
 
 	public function userDetails(Request $request, $id) {
 		
-		$result = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['id', '=', $id], ['stage', '=', '5']])->first();
+		$result = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['id', '=', $id], ['stage', '=', '5']])->first();
 
 		if (!$result) {
 			$request->session()->flash('error','Something went wrong.please try again.');
@@ -1756,14 +1757,14 @@ class UserController extends Controller {
 		if ($request->ajax()) {
 
 			$id = \App\Models\User::where('email', $request->post('email'))->first()->id;
-			$results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $id]])->get();
+			$results = \App\Models\User::where([['parent_id', $id]])->get();
 
 			$html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"> <thead> <tr> <th class="text-center">'. \Lang::get('admin.id') .'</th> <th class="text-center">'. \Lang::get('admin.addedas') .'</th> <th class="text-center">'. \Lang::get('admin.user') .'</th> <th class="text-center">'. \Lang::get('admin.stage') .' 0 </th> <th class="text-center">'. \Lang::get('admin.stage') .' 1 </th> <th class="text-center">'. \Lang::get('admin.stage') .' 2 </th> <th class="text-center">'. \Lang::get('admin.stage') .' 3 </th> <th class="text-center">'. \Lang::get('admin.stage') .' 4 </th> <th class="text-center">'. \Lang::get('admin.stage') .' 5 </th> <th class="text-center">'. \Lang::get('admin.action') .'</th> </tr> </thead><tbody>';
 			
 			if (count($results) > 0) {
 				foreach ($results as $key=>$result) {
 
-					$spouse = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $result->id]])->first();
+					$spouse = \App\Models\User::where([['parent_id', $result->id]])->first();
 
 					$key += 1;
 					$html .= '<tr>';
@@ -2317,12 +2318,12 @@ class UserController extends Controller {
 			$limit = $request->input('length');
 			$start = $request->input('start');
 			
-			$query = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['spouse_confirm_status', 'Pending'], ['spouse_confirm_token','!=','']])
+			$query = \App\Models\User::where([['designation_id', 2], ['spouse_confirm_status', 'Pending'], ['spouse_confirm_token','!=','']])
 						->orderBy('updated_at', 'desc');
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['spouse_confirm_status', 'Pending'], ['spouse_confirm_token','!=','']])
+			$totalData = \App\Models\User::where([['designation_id', 2], ['spouse_confirm_status', 'Pending'], ['spouse_confirm_token','!=','']])
 						->count();
 
 			$totalFiltered = $query->count();
@@ -2391,7 +2392,7 @@ class UserController extends Controller {
 
 		// try{
 
-			$result = \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc')->get();
+			$result = \App\Models\User::with('TravelInfo')->where([['designation_id', 2], ['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc')->get();
 			
 			if($result->count()==0){
 
@@ -2486,7 +2487,7 @@ class UserController extends Controller {
 							$stage5 = "Pending";
 						} 
 
-						$userSpouse = \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['parent_id', $row['id']], ['added_as', 'Spouse']])->first();
+						$userSpouse = \App\Models\User::with('TravelInfo')->where([['parent_id', $row['id']], ['added_as', 'Spouse']])->first();
 						$spouseName = '';
 						$spouseEmail = '';
 						$arrivalDate = '';
@@ -2543,7 +2544,7 @@ class UserController extends Controller {
 						
 						fputcsv($f, $lineData, $delimiter); 
 						
-						$results = \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['parent_id', $row['id']]])->get();
+						$results = \App\Models\User::with('TravelInfo')->where([['parent_id', $row['id']]])->get();
 						$groupLeaderName = '';
 						$groupLeaderEmail = '';
 						$spouseLeaderName = '';
