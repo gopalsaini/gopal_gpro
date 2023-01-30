@@ -78,7 +78,9 @@
                                     <th>  User Remark </th>
                                     <th> @lang('admin.travel') @lang('admin.info') </th>
                                     <th> Visa Letter </th>
-                                    <th> Group </th>
+                                    <th> User Type </th>
+                                    <th> Group Owner Name </th>
+                                    <th> Spouse Name </th>
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </thead>
@@ -98,7 +100,9 @@
                                     <th>  User Remark</th>
                                     <th> @lang('admin.travel') @lang('admin.info') </th>
                                     <th> Visa Letter </th>
-                                    <th> Group </th>
+                                    <th> User Type </th>
+                                    <th> Group Owner Name </th>
+                                    <th> Spouse Name </th>
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </tfoot>
@@ -291,7 +295,13 @@ $(document).ready(function() {
                 "data": "admin_status"
             },
             {
-                "data": "group"
+                "data": "user_type"
+            },
+            {
+                "data": "group_owner_name"
+            },
+            {
+                "data": "spouse_name"
             },
             {
                 "data": "action"
@@ -299,27 +309,6 @@ $(document).ready(function() {
         ]
     });
 
-    $('#tablelist tbody').on('click', '.group', function () {
-
-        var email = $(this).data('email');
-
-        var tr = $(this).parents('tr');
-        var row = table.row(tr);
-
-        if (row.child.isShown()) {
-            row.child.hide();
-            tr.removeClass('shown');
-        } else {
-
-            $('#preloader').css('display', 'block');
-            $.post("{{ route('admin.user.group.users.list') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
-                row.child(data.html).show();
-                $('#preloader').css('display', 'none');
-            }, "json");
-
-            tr.addClass('shown');
-         }
-    });
 });
 
 function fill_datatable() {

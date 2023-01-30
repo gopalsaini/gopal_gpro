@@ -77,10 +77,12 @@
                                     <th> Name </th>
                                     <th> @lang('admin.email') </th>
                                     <th> Status </th>
+                                    <th> User Type </th>
+                                    <th> Group Owner Name </th>
+                                    <th> Spouse Name </th>
+                                    <th> @lang('admin.action') </th>
                                     <th> Created on </th>
                                     <th> Updated on </th>
-                                    <th> Group </th>
-                                    <th> @lang('admin.action') </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,10 +98,12 @@
                                     <th> Name </th>
                                     <th> @lang('admin.email') </th>
                                     <th> Status </th>
+                                    <th> User Type </th>
+                                    <th> Group Owner Name </th>
+                                    <th> Spouse Name </th>
+                                    <th> @lang('admin.action') </th>
                                     <th> Created on </th>
                                     <th> Updated on </th>
-                                    <th> Group </th>
-                                    <th> @lang('admin.action') </th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -211,45 +215,28 @@
                     "data": "profile"
                 },
                 {
+                    "data": "user_type"
+                },
+                {
+                    "data": "group_owner_name"
+                },
+                {
+                    "data": "spouse_name"
+                },
+                {
+                    "data": "action"
+                },
+                {
                     "data": "created_at"
                 },
                 {
                     "data": "updated_at"
                 },
-                {
-                    "data": "group"
-                },
-                {
-                    "data": "action"
-                }
             ]
         });
 
         $(".searchEmail").keyup(function(){
             table.draw();
-        });
-
-   
-        $('#tablelist tbody').on('click', '.group', function () {
-
-            var email = $(this).data('email');
-
-            var tr = $(this).parents('tr');
-            var row = table.row(tr);
-
-            if (row.child.isShown()) {
-                row.child.hide();
-                tr.removeClass('shown');
-            } else {
-
-                $('#preloader').css('display', 'block');
-                $.post("{{ route('admin.user.group.users.list') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
-                    row.child(data.html).show();
-                    $('#preloader').css('display', 'none');
-                }, "json");
-
-                tr.addClass('shown');
-            }
         });
 
     });

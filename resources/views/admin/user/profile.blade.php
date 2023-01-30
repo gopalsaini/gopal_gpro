@@ -96,19 +96,74 @@
                                                 {{$result->marital_status ?? '-'}}</td>
                                         </tr>
                                         <tr>
-                                            <td colspan="2"><strong>@lang('admin.gender') :</strong> @if($result->gender=='1'){{'Male'}}@elseif($result->gender=='2'){{'Female'}}@else{{'N/A'}}@endif
+                                            <td><strong>@lang('admin.gender') :</strong> @if($result->gender=='1'){{'Male'}}@elseif($result->gender=='2'){{'Female'}}@else{{'N/A'}}@endif
                                         </td> 
+                                            <td><strong>User Type :</strong> 
+                                            @php 
+                                            
+                                                if($result->parent_id != Null){
+
+                                                if($result->added_as == 'Group'){
+
+                                                    echo  '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+                                                    
+                                                }elseif($result->added_as == 'Spouse'){
+
+                                                    echo '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+                                                    
+                                                }
+
+                                                }else {
+
+                                                $groupName = \App\Models\user::where('parent_id', $result->id)->where('added_as','Group')->first();
+                                                $spouseName = \App\Models\user::where('parent_id', $result->id)->where('added_as','Spouse')->first();
+
+                                                if($groupName){
+
+                                                    echo '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+                                                    
+                                                }else if($spouseName){
+
+                                                    echo '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+                                                }else{
+
+                                                    echo '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+                                                }
+                                                    
+
+                                                }
+                                            @endphp
+                                        </td> 
+                                            <td><strong>Group Owner Name :</strong> 
+                                            
+                                            @php
+                                                $groupName = \App\Models\user::where('parent_id', $result->id)->where('added_as','Group')->get();
+
+                                                if($result->parent_id != Null && $result->added_as == 'Group'){
+
+                                                echo \App\Helpers\commonHelper::getUserNameById($result->parent_id);
+
+                                                }else if(count($groupName) > 0) {
+
+                                                echo ucfirst($result->name.' '.$result->last_name);
+
+                                                }else{
+
+                                                    echo  'N/A';
+                                                }
+                                            @endphp
+                                        </td> 
+                                        </tr>
                                        
                                         <tr>
 
-                                            @php $SpouseParent = \App\Models\User::where('id',$result->parent_id)->first(); @endphp
-
-                                            @if($SpouseParent)
+                                            @if($result->parent_id != Null && $result->added_as == 'Spouse')
 
                                                 <td colspan="2"><strong>Are you coming along with your spouse to the Congress? :</strong> Yes
                                                 </td>
-                                                <td>Spouse : <a href="{{url('admin/user/user-profile/'.$SpouseParent->id)}}" >{{$SpouseParent->name}} {{$SpouseParent->last_name}}</a></td>
-                                            @else
+                                                <td>Spouse : <a href="{{url('admin/user/user-profile/'.$result->id)}}" >{{ \App\Helpers\commonHelper::getUserNameById($result->parent_id)}} </a></td>
+                                            @elseif($Spouse) 
                                                 <td colspan="2"><strong>Are you coming along with your spouse to the Congress? :</strong> @if($Spouse) Yes @else No @endif
                                                 </td>
                                                 @if($Spouse)<td>Spouse : <a href="{{url('admin/user/user-profile/'.$Spouse->id)}}" >{{$Spouse->name}} {{$Spouse->last_name}}</a></td>@endif

@@ -246,7 +246,7 @@
                                                         <p>@lang('web/payment.money-gram_description')</p>
                                                     </div>
                                                 </div>
-                                                <div class="card-box dropdown-box">
+                                                <!-- <div class="card-box dropdown-box">
                                                     <div class="card-icon">
                                                         <span>
                                                             <svg width="37" height="37" viewBox="0 0 37 37" fill="none"
@@ -273,7 +273,7 @@
                                                         <h6>@lang('web/payment.Pay-Pal')</h6>
                                                         <p>@lang('web/payment.PayPal_description')</p>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
                                         
@@ -601,13 +601,13 @@
                                     </div>
                                 </li>
                             </ul>
-                            <ul>
+                            <!-- <ul>
                                 <li>
                                     <div class="register-next">
                                         <a href="{{url('online-payment-full/paypal')}}" class="main-btn bg-gray-btn">@lang('web/payment.online') @lang('web/payment.payment') Paypal</a>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul> -->
                             <ul>
                                 <li>
                                     <div class="register-next">
@@ -770,7 +770,7 @@
                                     <select name="payment_type" class="mt-2 form-control " required>
                                         <option value="">--@lang('web/ministry-details.select')--</option>
                                         <option value="stripe">Stripe Payment Gateway</option>
-                                        <option value="paypal">Paypal Payment Gateway</option>
+                                        <!-- <option value="paypal">Paypal Payment Gateway</option> -->
                                     </select>
                                 </div>
                                 <div class="col-lg-12">
