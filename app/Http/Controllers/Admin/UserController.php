@@ -15,13 +15,13 @@ class UserController extends Controller {
 
 				$rules = [
 					'id' => 'numeric|required',
-					'name' => 'required|string',
+					'first_name' => 'required|string',
 					'last_name' => 'required|string',
 					'phone_code' => 'required|numeric',
 					'mobile' => 'required|numeric|digits:10',
 					'gender' => 'required|in:1,2',
 					'dob' => 'required|date',
-					'citizenship' => 'required|string',
+					// 'citizenship' => 'required|string',
 				];
 
 			} else {
@@ -51,17 +51,17 @@ class UserController extends Controller {
 				
 			} else {
 
-				// $dob=date('Y-m-d',strtotime($request->post('dob')));
-				// $date1 = $dob;
-				// $date2 = date('Y-m-d');
-				// $diff = abs(strtotime($date2) - strtotime($date1));
-				// $years = floor($diff / (365*60*60*24));
+				$dob=date('Y-m-d',strtotime($request->post('dob')));
+				$date1 = $dob;
+				$date2 = date('Y-m-d');
+				$diff = abs(strtotime($date2) - strtotime($date1));
+				$years = floor($diff / (365*60*60*24));
 				
-				// if ($years < 18) {
+				if ($years < 18) {
 
-				// 	return response(array("error"=>true, 'message'=>'Birth year must be more than 18 years'), 403);
+					return response(array("error"=>true, 'message'=>'Birth year must be more than 18 years'), 403);
 
-				// } else {
+				} else {
 
 					if ((int) $request->post('id') > 0) {
 						$data=\App\Models\User::find($request->post('id'));
@@ -72,8 +72,8 @@ class UserController extends Controller {
 						$data->phone_code = $request->post('phone_code');
 						$data->mobile = $request->post('mobile');
 						$data->gender = $request->post('gender');
-						// $data->dob = $dob;
-						$data->citizenship = $request->post('citizenship');
+						$data->dob = $dob;
+						// $data->citizenship = $request->post('citizenship');
 	
 					} else {
 
@@ -115,7 +115,7 @@ class UserController extends Controller {
 						return response(array('message'=>'User updated successfully.', 'reset'=>false), 200);
 					}
 
-				// }
+				}
 
 			}
 			return response(array('message'=>'Data not found.'),403);
@@ -335,19 +335,76 @@ class UserController extends Controller {
 				}
 		    })
 
-			->addColumn('created_at', function($data){
-				return date('Y-m-d h:i', strtotime($data->created_at));
+			->addColumn('user_type', function($data){
+				
+				if($data->parent_id != Null){
+
+					if($data->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($data->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
+				}
+				
 		    })
 
-			->addColumn('updated_at', function($data){
-				return date('Y-m-d h:i', strtotime($data->updated_at));
-		    })
-			->addColumn('group', function($data){
+			->addColumn('group_owner_name', function($data){
 				
-				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
-					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
-				} else {
-					return "";
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+				
+				if($data->parent_id != Null && $data->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($data->name.' '.$data->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+				if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
 				}
 				
 		    })
@@ -371,6 +428,14 @@ class UserController extends Controller {
 
 				}
 			})
+
+			->addColumn('created_at', function($data){
+				return date('Y-m-d h:i', strtotime($data->created_at));
+		    })
+
+			->addColumn('updated_at', function($data){
+				return date('Y-m-d h:i', strtotime($data->updated_at));
+		    })
 
 		    ->escapeColumns([])	
 			->setTotalRecords($totalData)
@@ -470,15 +535,80 @@ class UserController extends Controller {
 			// 			</div>';
 		    // })
 
-			->addColumn('group', function($data){
-							
-				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
-					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
-				} else {
-					return "";
+			->addColumn('user_type', function($data){
+				
+				if($data->parent_id != Null){
+
+					if($data->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($data->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
 				}
 				
-			})
+		    })
+
+			->addColumn('group_owner_name', function($data){
+				
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+				
+				if($data->parent_id != Null && $data->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($data->name.' '.$data->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+				if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
+				}
+				
+		    })
+
 			->addColumn('action', function($data){
 
 				if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'Review' ) {
@@ -604,15 +734,80 @@ class UserController extends Controller {
 					return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
 				}
 		    })
-			->addColumn('group', function($data){
-							
-				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
-					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
-				} else {
-					return "";
+
+			->addColumn('user_type', function($data){
+				
+				if($data->parent_id != Null){
+
+					if($data->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($data->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
 				}
 				
-			})
+		    })
+
+			->addColumn('group_owner_name', function($data){
+				
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+				
+				if($data->parent_id != Null && $data->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($data->name.' '.$data->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+				if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
+				}
+				
+		    })
 
 			->addColumn('action', function($data){
 				
@@ -756,14 +951,79 @@ class UserController extends Controller {
 
 		    })
 
-			->addColumn('group', function($data){
-				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
-					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
-				} else {
-					return "";
+			->addColumn('user_type', function($data){
+				
+				if($data->parent_id != Null){
+
+					if($data->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($data->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
 				}
 				
-			})
+		    })
+
+			->addColumn('group_owner_name', function($data){
+				
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+				
+				if($data->parent_id != Null && $data->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($data->name.' '.$data->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+				if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
+				}
+				
+		    })
 
 			->addColumn('action', function($data){
 				
@@ -880,14 +1140,79 @@ class UserController extends Controller {
 
 		    })
 
-			->addColumn('group', function($data){
-				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
-					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
-				} else {
-					return "";
+			->addColumn('user_type', function($data){
+				
+				if($data->parent_id != Null){
+
+					if($data->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($data->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
 				}
 				
-			})
+		    })
+
+			->addColumn('group_owner_name', function($data){
+				
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+				
+				if($data->parent_id != Null && $data->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($data->name.' '.$data->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+				if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
+				}
+				
+		    })
 			->addColumn('action', function($data){
 				
 				if (\Auth::user()->designation_id == '1') {
@@ -990,14 +1315,79 @@ class UserController extends Controller {
 				}
 		    })
 
-			->addColumn('group', function($data){
-				if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
-					return '<a href="javascript:void()" data-email="'.$data->email.'" title="View Group" class="btn btn-sm btn-primary px-3 m-1 text-white group" ><i class="fas fa-eye"></i></a>';
-				} else {
-					return "";
+			->addColumn('user_type', function($data){
+				
+				if($data->parent_id != Null){
+
+					if($data->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($data->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
 				}
 				
-			})
+		    })
+
+			->addColumn('group_owner_name', function($data){
+				
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+				
+				if($data->parent_id != Null && $data->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($data->name.' '.$data->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+				
+				if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
+				}
+				
+		    })
 			->addColumn('action', function($data){
 				$msg = "' Are you sure to delete this user ?'";
 
