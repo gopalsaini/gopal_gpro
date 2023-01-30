@@ -15,13 +15,13 @@ class UserController extends Controller {
 
 				$rules = [
 					'id' => 'numeric|required',
-					'name' => 'required|string',
+					'first_name' => 'required|string',
 					'last_name' => 'required|string',
 					'phone_code' => 'required|numeric',
 					'mobile' => 'required|numeric|digits:10',
 					'gender' => 'required|in:1,2',
 					'dob' => 'required|date',
-					'citizenship' => 'required|string',
+					// 'citizenship' => 'required|string',
 				];
 
 			} else {
@@ -51,17 +51,17 @@ class UserController extends Controller {
 				
 			} else {
 
-				// $dob=date('Y-m-d',strtotime($request->post('dob')));
-				// $date1 = $dob;
-				// $date2 = date('Y-m-d');
-				// $diff = abs(strtotime($date2) - strtotime($date1));
-				// $years = floor($diff / (365*60*60*24));
+				$dob=date('Y-m-d',strtotime($request->post('dob')));
+				$date1 = $dob;
+				$date2 = date('Y-m-d');
+				$diff = abs(strtotime($date2) - strtotime($date1));
+				$years = floor($diff / (365*60*60*24));
 				
-				// if ($years < 18) {
+				if ($years < 18) {
 
-				// 	return response(array("error"=>true, 'message'=>'Birth year must be more than 18 years'), 403);
+					return response(array("error"=>true, 'message'=>'Birth year must be more than 18 years'), 403);
 
-				// } else {
+				} else {
 
 					if ((int) $request->post('id') > 0) {
 						$data=\App\Models\User::find($request->post('id'));
@@ -72,8 +72,8 @@ class UserController extends Controller {
 						$data->phone_code = $request->post('phone_code');
 						$data->mobile = $request->post('mobile');
 						$data->gender = $request->post('gender');
-						// $data->dob = $dob;
-						$data->citizenship = $request->post('citizenship');
+						$data->dob = $dob;
+						// $data->citizenship = $request->post('citizenship');
 	
 					} else {
 
@@ -115,7 +115,7 @@ class UserController extends Controller {
 						return response(array('message'=>'User updated successfully.', 'reset'=>false), 200);
 					}
 
-				// }
+				}
 
 			}
 			return response(array('message'=>'Data not found.'),403);
