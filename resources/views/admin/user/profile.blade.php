@@ -85,9 +85,9 @@
                                             <td><strong>@lang('admin.email') :</strong> {{$result->email ?? '-'}}</td>
                                         </tr>
                                         <tr>
-                                            <td><strong>@lang('admin.registration') @lang('admin.type') :</strong>
-                                                {{$result->reg_type ?? '-'}}</td>
-                                            <td><strong>@lang('admin.dob') :</strong> {{$result->dob ?? '-'}}</td>
+                                            <td><strong>@lang('admin.dob') :</strong>
+                                            {{$result->dob ?? '-'}}</td>
+                                            <td><strong></strong> </td>
                                         </tr>
                                         <tr>
                                             <td><strong>@lang('admin.citizenship') :</strong> {{\App\Helpers\commonHelper::getCountryNameById($result->citizenship) ?? '-'}}
