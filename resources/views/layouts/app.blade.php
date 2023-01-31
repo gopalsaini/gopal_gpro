@@ -1023,21 +1023,15 @@
                 window.location.reload();
             }
         });
-    </script>
+   
+        $(document).ready(function() {
+            $('input').on('input', function() {
+                if (this.value.match(/^https?:\/\//i) || this.value.match(/^www\./i)) {
+                this.value = '';
+                }
+            });
+        });
 
-<script>
-    
-    $('input').change( function() {
-        var input = $('#firstName');
-        input.val(
-            $('#firstName').val().replace(/https?:\/\//gi,'')
-        );
-
-        var inputLast = $('#LastName');
-        inputLast.val(
-            $('#LastName').val().replace(/https?:\/\//gi,'')
-        );
-    });
 </script>
     @stack('custom_js')
 </body>

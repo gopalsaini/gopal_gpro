@@ -200,9 +200,20 @@ class ProfileController extends Controller
    
             return redirect('profile');
              
-        }else if($resultData['result']['profile_status'] =='Approved'){ 
+        }else if($resultData['result']['profile_status'] =='Approved'){
+            
+            $groupName = \App\Models\user::where('parent_id', $resultData['result']['id'])->where('added_as','Group')->first();
 
-            return redirect('group-information');
+            if($groupName){
+                
+                return redirect('group-information');
+
+            }else{
+
+                return redirect('profile-update');
+
+            }
+
 
         }else if($resultData['result']['added_as']!=''){ 
 
