@@ -237,8 +237,6 @@ $('.country').change(function() {
 });
 
 
-
-
 $(document).ready(getCity);
 
 
