@@ -162,7 +162,7 @@
 
                                                 <td colspan="2"><strong>Are you coming along with your spouse to the Congress? :</strong> Yes
                                                 </td>
-                                                <td>Spouse : <a href="{{url('admin/user/user-profile/'.$result->id)}}" >{{ \App\Helpers\commonHelper::getUserNameById($result->parent_id)}} </a></td>
+                                                <td>Spouse : <a href="{{url('admin/user/user-profile/'.$result->parent_id)}}" >{{ \App\Helpers\commonHelper::getUserNameById($result->parent_id)}} </a></td>
                                             @elseif($Spouse) 
                                                 <td colspan="2"><strong>Are you coming along with your spouse to the Congress? :</strong> @if($Spouse) Yes @else No @endif
                                                 </td>
