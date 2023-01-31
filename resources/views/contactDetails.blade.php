@@ -100,7 +100,7 @@
                             </select>
                         </div>
                         
-                        <div style="display: @if($resultData['result']['contact_state_id'] == 0) block  @else none @endif " id="OtherStateDiv">
+                        <div style="display: @if($resultData['result']['contact_state_id'] && $resultData['result']['contact_state_id'] == 0) block  @else none @endif " id="OtherStateDiv">
                             <input type="text" autocomplete="off" placeholder="@lang('web/contact-details.enter') @lang('web/contact-details.state')/@lang('web/contact-details.province')" name="contact_state_name" id="ContactStateName" class="mt-2" value="{{$resultData['result']['contact_state_name']}}">
                         </div>
                     </div>
@@ -112,7 +112,7 @@
                                 
                             </select>
                         </div>
-                        <div style="display:@if($resultData['result']['contact_city_id'] == 0) block  @else none @endif" id="OtherCityDiv">
+                        <div style="display:@if($resultData['result']['contact_city_id'] && $resultData['result']['contact_city_id'] == 0) block  @else none @endif" id="OtherCityDiv">
                             <input type="text" autocomplete="off" placeholder="@lang('web/contact-details.enter') @lang('web/contact-details.city')" name="contact_city_name" class="mt-2" id="ContactCityName" value="{{$resultData['result']['contact_city_name']}}">
                         </div>
                     </div>
@@ -241,30 +241,7 @@
         });
     });
 
-    $(document).ready(function(){
-
-        $('.test').fSelect();
-        
-        $('.statehtml').fSelect({
-            placeholder: "@lang('web/ministry-details.select')",
-            numDisplayed: 3,
-            overflowText: '{n} selected',
-            noResultsText: 'No results found',
-            searchText: 'Search',
-            showSearch: true
-        });
-
-        $('.cityHtml').fSelect({
-            placeholder: "@lang('web/ministry-details.select')",
-            numDisplayed: 3,
-            overflowText: '{n} selected',
-            noResultsText: 'No results found',
-            searchText: 'Search',
-            showSearch: true
-        });
-    });
-
-
+   
     $('.test').fSelect({
         placeholder: "-- @lang('web/ministry-details.select') -- ",
         numDisplayed: 5,
@@ -276,6 +253,7 @@
 
     
     $('.statehtml').on('change', function() {
+
         $("#OtherStateDiv").css('display','none');
 
         if(this.value == '0'){
@@ -286,6 +264,7 @@
             $("#ContactStateName").attr('required',false);
         }
     }); 
+    
     $('.cityHtml').on('change', function() {
         $("#OtherCityDiv").css('display','none');
 
@@ -297,6 +276,8 @@
             $("#ContactCityName").attr('required',false);
         }
     }); 
+
+    
 
 </script>
 @endpush

@@ -192,53 +192,51 @@ $(".cartqty").change(function(e) {
 
 });
 
-$(document).ready(getState);
 
 var stateId = 0;
 var cityId = 0;
 var countryId = 0;
 
-function getState() {
 
-    $('.country').change(function() {
+$('.country').change(function() {
+    
+    stateId = parseInt($(this).data('state_id'));
+    cityId = parseInt($(this).data('city_id'));
+    countryId = $(this).val();
+    
+    $.ajax({
+        url: baseUrl + '/get-state?country_id=' + countryId,
+        dataType: 'json',
+        type: 'get',
+        error: function(xhr, textStatus) {
 
-        stateId = parseInt($(this).data('state_id'));
-        cityId = parseInt($(this).data('city_id'));
-        countryId = $(this).val();
+            if (xhr && xhr.responseJSON.message) {
+                showMsg('error', xhr.responseJSON.message);
+            } else {
+                showMsg('error', xhr.statusText);
+            }
+        },
+        success: function(data) {
+            $('.statehtml').fSelect('destroy')
+            $('.statehtml').html(data.html);
 
-        $.ajax({
-            url: baseUrl + '/get-state?country_id=' + countryId,
-            dataType: 'json',
-            type: 'get',
-            error: function(xhr, textStatus) {
+            $('.statehtml option').each(function() {
+                if (this.value == stateId)
+                $('.statehtml').val(stateId);
+                    
 
-                if (xhr && xhr.responseJSON.message) {
-                    showMsg('error', xhr.responseJSON.message);
-                } else {
-                    showMsg('error', xhr.statusText);
-                }
-            },
-            success: function(data) {
-                $('.statehtml').fSelect('destroy')
-                $('.statehtml').html(data.html);
+            });
 
-                $('.statehtml option').each(function() {
-                    if (this.value == stateId)
-                    $('.statehtml').val(stateId);
-                        
+            $('.statehtml').fSelect('create');
 
-                });
-
-                $('.statehtml').fSelect('create');
-
-            },
-            cache: false,
-            timeout: 5000
-        });
-
+        },
+        cache: false,
+        timeout: 5000
     });
 
-}
+});
+
+
 
 
 $(document).ready(getCity);
@@ -277,6 +275,8 @@ function getCity() {
             timeout: 5000
         });
     });
+
+    
 
 }
 
