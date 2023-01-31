@@ -216,7 +216,9 @@ class HomeController extends Controller
 
 			\Session::forget('intent');
             \App\Helpers\commonHelper::setLocale();
-            return redirect('/')->with('gpro_success', \Lang::get('web/home.Payment-Successful'));
+            \Session::flash('gpro_success', \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-Successful'));
+                
+            return redirect('payment')->with('gpro_success', \Lang::get('web/home.Payment-Successful'));
 			
 			
 		}
