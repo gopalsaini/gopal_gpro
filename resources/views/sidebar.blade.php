@@ -24,7 +24,7 @@
         
         <!-- changes by Gopal -->
         <li>
-            <a href="@if($stage->stage > 1) # @else # @endif" >
+            <a href="@if($stage->stage > 1) {{url('payment')}} @else # @endif" >
                 <span>0@php echo $i++; @endphp</span>@lang('web/profile.payment') 
             </a>
         </li> 

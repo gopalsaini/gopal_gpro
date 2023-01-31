@@ -1615,6 +1615,61 @@ class PreLoginController extends Controller {
 
     }
 
+	
+	public function sendEarlyBirdReminderMail(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '>', '1'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
+			
+			if(count($results) > 0){
+
+				foreach ($results as $key => $user) {
+				
+					$name = '';
+
+					$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+
+					if($user->language == 'sp'){
+						
+						$subject = 'El pago correspondiente al GProCongreso II ha vencido.';
+						$msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Pago mediante Paypal -</i></b> si tiene una cuenta PayPal, puede hacer sus pagos a través de PayPal entrando en nuestra página web (https://www.gprocongress.org).&nbsp; Por favor, envíe sus fondos a: david@rreach.org (esta es la cuenta de RREACH).&nbsp; En la transferencia debe anotar el nombre de la persona inscrita.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org." target="_blank">https://www.gprocongress.org.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org." target="_blank">https://www.gprocongress.org.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>Money Gram:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;Money Gram</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
+					
+					}elseif($user->language == 'fr'){
+					
+						$subject = 'Votre paiement GProCongress II est maintenant dû.';
+						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b.</b> <b><i>Paiement par PayPal -</i></b> si vous avez un compte PayPal, vous pouvez payer vos frais via PayPal en vous rendant sur notre site Web (https://www.gprocongress.org). Veuillez envoyer vos fonds à : david@rreach.org (c’est le compte de RREACH). Dans le transfert, vous devez noter le nom du titulaire.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>Money Gram –</i></b> vous pouvez payer vos frais par Money Gram. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Money Gram.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
+					
+					}elseif($user->language == 'pt'){
+					
+						$subject = 'O seu pagamento para o II CongressoGPro em aberto';
+						$msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Pagamento usando Paypal -</i></b> se tiver uma conta PayPal, pode pagar as suas taxas via PayPal, indo ao nosso site na web (https://www.gprocongress.org).&nbsp; Por favor envie o seu valor para: david@rreach.org (esta é a conta da RREACH).&nbsp; Na transferência, deve anotar o nome do inscrito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>Money Gram -</i></b> pode pagar a sua taxa através do Money Gram. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por Money Gram.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
+					
+					}else{
+					
+						$subject = 'Your GProCongress II payment is now due.';
+						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b. <span style="white-space:pre">	</span>Payment using Paypal - if you have a PayPal account, you can pay your fees via PayPal by going to our website&nbsp; &nbsp; (https://www.gprocongress.org).&nbsp; Please send your funds to: david@rreach.org (this is RREACH’s account).&nbsp;</font><span style="color: rgb(153, 153, 153); letter-spacing: inherit; background-color: transparent;">In</span><span style="letter-spacing: inherit; background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"> the transfer it should note the name of the registrant.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>Money Gram –</i> </b>you can pay your fees via Money Gram. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by Money Gram.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
+					
+					}
+
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
+				
+					
+				}
+				
+				return response(array('message'=>' Reminders has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
 	public function EarlyBird2Aug2023(Request $request){
 		
 		try {
@@ -2214,129 +2269,138 @@ class PreLoginController extends Controller {
 		try {
 			
 			$emailData = [
-				'henrylitala24@gmail.com',
-				'abraham_getachew@yahoo.com',
-				'suneera@msn.com',
-				'german@gprocommission.org',
-				'wanyamajoe@yahoo.com',
-				'hakizajean1982@gmail.com',
-				'benjaminnkusi@gmail.com',
-				'ecmesiah@yahoo.fr',
-				'akhillare399@gmail.com',
-				'larry@leadershipvistas.org',
-				'napohaggai@gmail.com',
-				'jjprovider@gmail.com',
-				'josueestrada243@gmail.com',
-				'jfmadeira@yahoo.com.br',
-				'sorchansim@yahoo.com',
-				'mukeshvkumar@gmail.com',
-				'dawdenkabo6@gmail.com',
-				'pradeep4js@gmail.com',
-				'georgeoncall@gmail.com',
-				'dburke@christcollege.edu.au',
-				'juancito538@hotmail.com',
-				'manandaye@yahoo.fr',
-				'bickson18@gmail.com',
-				'praveen@gcin.in',
-				'samson.jlife@gmail.com',
-				'gamolik@yahoo.fr',
-				'presleydimina13@gmail.com',
-				'calistusosuru220@gmail.com',
-				'oikosindia2050@gmail.com',
-				'potchurch@gmail.com',
-				'rayneu@spoken.org',
-				'jccwaruigeorge@gmail.com',
-				'vengoor@gmail.com',
-				'dieudo.irambona@gmail.com',
-				'julianakavitha@gmail.com',
-				'paul@re-forma.global',
-				'reubenvanrensburg1@gmail.com',
-				'manfred@overseas.org',
-				'ministerjohnson@ymail.com',
-				'balibangakatambu@gmail.com',
-				'elishainfo@gmail.com',
-				'titusketer@gmail.com',
-				'mathewmaiyo@yahoo.com',
-				'hounkpecodjogeorges@gmail.com',
-				'agadifred@gmail.com',
-				'rudenulpe@gmail.com',
-				'kiokomwangangi@gmail.com',
-				'pmbandi@yahoo.com',
-				'shadracksm.sm@gmail.com',
-				'musaudaniel724@gmail.com',
-				'mbuvi4@yahoo.com',
-				'dawpeterje@gmail.com',
-				'nchassim@yahoo.com',
-				'sammycarino74@gmail.com',
-				'kishorebendukuri@gmail.com',
-				'kounmahervedossa@gmail.com',
-				'pastordanish@gmail.com',
-				'delvinforde@yahoo.com',
-				'ricardoivan79@gmail.com',
-				'jenson_jj2021@outlook.com',
-				'bothniella@gmail.comm',
-				'nathanaelmatary@gmail.com',
-				'versecr@gmail.com',
-				'hiheko31@gmail.com',
-				'kcj1980@hotmail.com',
-				'amanyudza@gmail.com',
-				'jndiformumbe@gmail.com',
-				'anishag4j@gmail.com',
-				'kadek.badeng@gmail.com',
-				'mhdumitrascu@gmail.com',
-				'derejegete@gmail.com',
-				'nnaqash97@yahoo.com',
-				'haroonmassey@gmail.com',
-				'alenbala50@yahoo.com',
-				'masih_hidayat@yahoo.com',
-				'samuelwilliam.pak@gmail.com',
-				'wohu3@yahoo.com',
-				'nkolofanga@fateb.net',
-				'maniesron@gmail.com',
-				'jacquesbadjam@gmail.com',
-				'kanjojuliusnformi@gmail.com',
-				'esauds@yahoo.com',
-				'jay2xbarza@gmail.com',
-				'zifusjames@hotmail.com',
-				'mmaguero@gmail.com',
-				'romainkomia@gmail.com',
-				'mreano2@gmail.com',
-				'gnanaprakashmula@gmail.com',
-				'ericroberts888@yahoo.com',
-				'pixandkay@yahoo.com',
-				'augustinedee@gmail.com',
-				'albertokinyash@gmail.com',
-				'monenjd@gmail.com',
-				'emmanuelchess@gmail.com',
-				'pclaverhayo@yahoo.fr',
-				'cbtspresident@gmail.com',
-				'ao74yankee@gmail.com',
-				'nbbc13@gmail.com',
-				'meyuba@gmail.com',
-				'Comidosh@gmail.com',
-				'kwamesika2012@gmail.com',
-				'chogslg@gmail.com',
-				'jachinvictor@yahoo.com',
-				'bantsimba.anath@gmail.com',
-				'rencombatz@yahoo.com',
-				'venuforchrist@gmail.com',
-				'tanigolden54@gmail.com',
-				'musilicapetown@gmail.com',
-				'aadgministry@gmail.com',
-				'tbbaisanrafaeloriente@gmail.com',
-				'Jyzkwilliams@yahoo.com',
+				'henrylitala24@gmail.com'=>'250.00',
+				'abraham_getachew@yahoo.com'=>'1500.00',
+				'suneera@msn.com'=>'1500.00',
+				'german@gprocommission.org'=>'775.00',
+				'wanyamajoe@yahoo.com'=>'250.00',
+				'hakizajean1982@gmail.com'=>'250.00',
+				'benjaminnkusi@gmail.com'=>'650.00',
+				'ecmesiah@yahoo.fr'=>'250.00',
+				'akhillare399@gmail.com'=>'250.00',
+				'larry@leadershipvistas.org'=>'1375.00',
+				'napohaggai@gmail.com'=>'375.00',
+				'jjprovider@gmail.com'=>'250.00',
+				'josueestrada243@gmail.com'=>'250.00',
+				'jfmadeira@yahoo.com.br'=>'250.00',
+				'sorchansim@yahoo.com'=>'650.00',
+				'mukeshvkumar@gmail.com'=>'250.00',
+				'dawdenkabo6@gmail.com'=>'250.00',
+				'pradeep4js@gmail.com'=>'250.00',
+				'georgeoncall@gmail.com'=>'250.00',
+				'dburke@christcollege.edu.au'=>'1375.00',
+				'juancito538@hotmail.com'=>'375.00',
+				'manandaye@yahoo.fr'=>'250.00',
+				'bickson18@gmail.com'=>'650.00',
+				'praveen@gcin.in'=>'250.00',
+				'ajitmose@hotmail.com'=>'250.00',
+				'samson.jlife@gmail.com'=>'650.00',
+				'gamolik@yahoo.fr'=>'975.00',
+				'presleydimina13@gmail.com'=>'650.00',
+				'calistusosuru220@gmail.com'=>'250.00',
+				'oikosindia2050@gmail.com'=>'250.00',
+				'potchurch@gmail.com'=>'250.00',
+				'rayneu@spoken.org'=>'975.00',
+				'jccwaruigeorge@gmail.com'=>'250.00',
+				'vengoor@gmail.com'=>'250.00',
+				'dieudo.irambona@gmail.com'=>'250.00',
+				'julianakavitha@gmail.com'=>'250.00',
+				'paul@re-forma.global'=>'375.00',
+				'reubenvanrensburg1@gmail.com'=>'375.00',
+				'manfred@overseas.org'=>'1375.00',
+				'ministerjohnson@ymail.com'=>'1375.00',
+				'balibangakatambu@gmail.com'=>'250.00',
+				'elishainfo@gmail.com'=>'250.00',
+				'titusketer@gmail.com'=>'250.00',
+				'mathewmaiyo@yahoo.com'=>'650.00',
+				'hounkpecodjogeorges@gmail.com'=>'650.00',
+				'agadifred@gmail.com'=>'250.00',
+				'rudenulpe@gmail.com'=>'250.00',
+				'kiokomwangangi@gmail.com'=>'975.00',
+				'pmbandi@yahoo.com'=>'250.00',
+				'shadracksm.sm@gmail.com'=>'250.00',
+				'musaudaniel724@gmail.com'=>'650.00',
+				'mbuvi4@yahoo.com'=>'650.00',
+				'dawpeterje@gmail.com'=>'250.00',
+				'nchassim@yahoo.com'=>'250.00',
+				'sammycarino74@gmail.com'=>'250.00',
+				'kishorebendukuri@gmail.com'=>'250.00',
+				'kounmahervedossa@gmail.com'=>'250.00',
+				'pastordanish@gmail.com'=>'250.00',
+				'delvinforde@yahoo.com'=>'775.00',
+				'ricardoivan79@gmail.com'=>'250.00',
+				'jenson_jj2021@outlook.com'=>'775.00',
+				'bothniella@gmail.com'=>'250.00',
+				'nathanaelmatary@gmail.com'=>'250.00',
+				'versecr@gmail.com'=>'975.00',
+				'hiheko31@gmail.com'=>'650.00',
+				'kcj1980@hotmail.com'=>'250.00',
+				'amanyudza@gmail.com'=>'650.00',
+				'jndiformumbe@gmail.com'=>'250.00',
+				'anishag4j@gmail.com'=>'650.00',
+				'kadek.badeng@gmail.com'=>'650.00',
+				'mhdumitrascu@gmail.com'=>'975.00',
+				'derejegete@gmail.com'=>'650.00',
+				'nnaqash97@yahoo.com'=>'250.00',
+				'haroonmassey@gmail.com'=>'250.00',
+				'alenbala50@yahoo.com'=>'250.00',
+				'masih_hidayat@yahoo.com'=>'250.00',
+				'samuelwilliam.pak@gmail.com'=>'250.00',
+				'wohu3@yahoo.com'=>'775.00',
+				'nkolofanga@fateb.net'=>'650.00',
+				'maniesron@gmail.com'=>'975.00',
+				'jacquesbadjam@gmail.com'=>'650.00',
+				'kanjojuliusnformi@gmail.com'=>'250.00',
+				'esauds@yahoo.com'=>'375.00',
+				'jay2xbarza@gmail.com'=>'650.00',
+				'zifusjames@hotmail.com'=>'375.00',
+				'mmaguero@gmail.com'=>'575.00',
+				'romainkomia@gmail.com'=>'250.00',
+				'mreano2@gmail.com'=>'775.00',
+				'gnanaprakashmula@gmail.com'=>'975.00',
+				'ericroberts888@yahoo.com'=>'250.00',
+				'pixandkay@yahoo.com'=>'250.00',
+				'augustinedee@gmail.com'=>'250.00',
+				'albertokinyash@gmail.com'=>'650.00',
+				'monenjd@gmail.com'=>'250.00',
+				'emmanuelchess@gmail.com'=>'650.00',
+				'pclaverhayo@yahoo.fr'=>'250.00',
+				'cbtspresident@gmail.com'=>'250.00',
+				'ao74yankee@gmail.com'=>'250.00',
+				'nbbc13@gmail.com'=>'250.00',
+				'meyuba@gmail.com'=>'250.00',
+				'Comidosh@gmail.com'=>'250.00',
+				'kwamesika2012@gmail.com'=>'250.00',
+				'chogslg@gmail.com'=>'250.00',
+				'jachinvictor@yahoo.com'=>'250.00',
+				'bantsimba.anath@gmail.com'=>'975.00',
+				'rencombatz@yahoo.com'=>'250.00',
+				'venuforchrist@gmail.com'=>'250.00',
+				'tanigolden54@gmail.com'=>'250.00',
+				'musilicapetown@gmail.com'=>'250.00',
+				'aadgministry@gmail.com'=>'250.00',
+				'tbbaisanrafaeloriente@gmail.com'=>'375.00',
+				'Jyzkwilliams@yahoo.com'=>'250.00',
+				'dominionkollie1438@gmail.com'=>'975.00',
+				'kaylebdee@gmail.com'=>'975.00',
+				'eburklin@chinapartner.org'=>'1375.00',
+				'atuhangirwea@gmail.com'=>'975.00',
+				'edkirm@gmail.com'=>'975.00',
+				'rajancharles@gmail.com'=>'1375.00',
+				'josuehugofernandez@gmail.com'=>'975.00',
+				'simiyucheri@gmail.com'=>'975.00',
 
 			];
 
-			
 			if(count($emailData) > 0){
 
-				foreach ($emailData as $key => $email) {
+				foreach ($emailData as $key => $val) {
 				
-					$results = \App\Models\User::where('email',$email)->first();
+					$results = \App\Models\User::where('email',$key)->first();
+
 					if($results){
-						$results->profile_status = 'Review';
-						$results->stage ='1';
+						$results->amount = $val;
+						$results->early_bird ='Yes';
 						$results->save();
 					}
 					
@@ -2353,8 +2417,6 @@ class PreLoginController extends Controller {
 		}
 
     }
-
-	
 
 	public function userUpdatePaymentCountry(Request $request){
 		
@@ -2388,6 +2450,8 @@ class PreLoginController extends Controller {
 		}
 
     }
+
+
 
 
 }
