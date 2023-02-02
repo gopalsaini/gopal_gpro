@@ -147,7 +147,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['designation_id', $designation_id], ['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
 				$query->where('email', 'like', "%" . request('email') . "%");
@@ -155,7 +155,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['designation_id', $designation_id], ['parent_id', NULL], ['added_as', NULL]]);
+			$totalData1 = \App\Models\User::orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where('email', 'like', "%" . request('email') . "%");

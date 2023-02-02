@@ -1282,9 +1282,12 @@ class PreLoginController extends Controller {
 					}
 					
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+					$subject='User travel information reminder';
+					$msg='User travel information reminder';
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User travel information reminder');
 				}
 				
-				return response(array('message'=>count($results).' Reminders has been sent successfully.'), 200);
+				return response(array('message'=>count($results).'Reminders has been sent successfully.'), 200);
 			}
 
 			return response(array("message"=>'No results found for reminder.'), 200);
@@ -2222,6 +2225,11 @@ class PreLoginController extends Controller {
 														
 								}
 								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+								$subject='User submit travel information reminder';
+								$msg='User submit  travel information reminder';
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User submit travel information reminder');
+							
 
 							}
 
