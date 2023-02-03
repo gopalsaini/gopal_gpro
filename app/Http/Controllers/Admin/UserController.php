@@ -18,7 +18,7 @@ class UserController extends Controller {
 					'first_name' => 'required|string',
 					'last_name' => 'required|string',
 					'phone_code' => 'required|numeric',
-					'mobile' => 'required|numeric|digits:10',
+					'mobile' => 'required|numeric',
 					'gender' => 'required|in:1,2',
 					'dob' => 'required|date',
 					// 'citizenship' => 'required|string',
