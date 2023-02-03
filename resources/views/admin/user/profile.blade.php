@@ -796,6 +796,56 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="col-sm-12">
+            <div class="card mb-2">
+                <div class="card-body p-2">
+                    <div class="card-header bg-primary p-2 px-1">
+                        <h5 class="mb-0 px-2">
+                            <button class="btn btn-link text-white collapsed" data-bs-toggle="collapse"
+                                data-bs-target="#collapseicon10" aria-expanded="false"
+                                aria-controls="collapse119"><i class="fa fa-history"></i>
+                                User Mail Trigger <span>3</span></button>
+                        </h5>
+                    </div>
+                    <div class="collapse p-3" id="collapseicon10" aria-labelledby="collapseicon10" data-bs-toggle="modal" data-bs-target="#userMailTriggerListModel">
+                        
+                        <div class="row">
+                            <div class="table table-bordered table-hover table-responsive">
+                                <table class="display datatables" id="userMailTriggerList">
+                                    <thead>
+                                        <tr>
+                                            <th> S. N. </th>
+                                            <th> Subject </th>
+                                            <th> Action Date </th>
+                                            <th> Action Time </th>
+                                            <th> Action </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-center" colspan="3">
+                                                <div id="loader" class="spinner-border" role="status"></div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th> S. N. </th>
+                                            <th> Subject </th>
+                                            <th> Action Date </th>
+                                            <th> Action Time </th>
+                                            <th> Action </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -897,6 +947,20 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade " id="userMailTriggerListModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="userMailTriggerListModelLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">User Mail </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <span id="messageMail"></span>
             </div>
         </div>
     </div>
@@ -1342,6 +1406,95 @@ function fill_datatable() {
             processData: false,
         });
 
+    });
+
+    $('#userMailTriggerList').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "searching": true,
+        "ordering": true,
+
+        "ajax": {
+            "url": "{{ route('admin.user.userMailTriggerList') }}",
+            "dataType": "json",
+            "data": {
+                'user_id': "{{$id}}"
+            },
+            "async": false,
+            "type": "get",
+            "error": function(xhr, textStatus) {
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+            },
+        },
+        "fnDrawCallback": function() {
+            fill_datatable();
+        },
+        "order": [0, 'desc'],
+        "columnDefs": [{
+                className: "text-center",
+                targets: "_all"
+            },
+        ],
+        "columns": [{
+                "data": null,
+                render: function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                },
+                className: "text-center font-weight-bold"
+            },
+            {
+                "data": "subject"
+            },
+            {
+                "data": "date"
+            },
+            {
+                "data": "time"
+            },
+            {
+                "data": "action"
+            },
+        ]
+
+    });
+
+    $('.messageGet').click(function() {
+        $('#messageMail').html('');
+        var id = $(this).data('id');
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "{{ route('admin.user.userMailTriggerListModel') }}",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                'id': id
+            },
+            beforeSend: function() {
+                $('#preloader').css('display', 'block');
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+                $('#preloader').css('display', 'none');
+            },
+            success: function(data) {
+                $('#preloader').css('display', 'none');
+                $('#messageMail').html(data.message);
+                $('#userMailTriggerListModel').modal('show');
+
+            }
+        });
     });
 </script>
 @endpush

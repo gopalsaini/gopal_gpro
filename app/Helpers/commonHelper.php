@@ -2264,6 +2264,18 @@ class commonHelper{
 		
 		return $data[$word];
 	}
+
+	public static function userMailTrigger($userId,$message,$subject){
+		
+		$data=new \App\Models\UserMailTrigger();
+		$data->user_id = $userId;
+		$data->subject = $subject;
+		$data->message = $message;
+		$data->save();
+
+		
+	}
+
 }
 
 ?>

@@ -218,6 +218,8 @@ class PostLoginController extends Controller {
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 						\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Add Group');
+						\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+						
 					
 						// \App\Helpers\commonHelper::sendSMS($group['mobile']);
 
@@ -468,7 +470,8 @@ class PostLoginController extends Controller {
 				$msg='User Stay room update';
 
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Stay room update');
-				
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Stay-room-update-successful');
 				return response(array("error"=>true, "message"=>$message), 200);
 
@@ -543,7 +546,8 @@ class PostLoginController extends Controller {
 				}
 
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User change password');
-				
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 				\App\Helpers\commonHelper::emailSendToUser($request->user()->email, $subject, $msg);
 
 				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'NewPassword-update-successful');
@@ -635,7 +639,8 @@ class PostLoginController extends Controller {
 						$msg='User Profile updated';
 
 						\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Profile updated');
-				
+						\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 
 						// if($user->profile_update == '0'){
 
@@ -841,7 +846,8 @@ class PostLoginController extends Controller {
 					$subject='User Contact Details updated';
 					$msg='User Contact Details updated';
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Contact Details updated');
-				
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Contact-Details-updated-successfully');
 					return response(array('message'=>$message), 200);
 						
@@ -981,7 +987,8 @@ class PostLoginController extends Controller {
 					$msg='User Ministry details updated';
 					
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Ministry details updated');
-				
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 
 					if($request->json()->get('type')=='submit'){
 
@@ -1047,7 +1054,8 @@ class PostLoginController extends Controller {
 								}
 
 								\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Add spouse');
-				
+								\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 								\App\Helpers\commonHelper::emailSendToUser($existSpouse->email, $subject, $msg);
 		
 								if($existSpouse->language == 'sp'){
@@ -1073,6 +1081,7 @@ class PostLoginController extends Controller {
 								}
 
 								\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
+								\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
 		
 	
 							}else{
@@ -1117,7 +1126,8 @@ class PostLoginController extends Controller {
 
 
 									\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
-	
+									\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 								}
 		
 							}
@@ -1149,6 +1159,7 @@ class PostLoginController extends Controller {
 						}
 
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, 'profile_update', $user);
+						\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
 
 						$subject = '[GProCongress II Admin] User Profile Updated';
 						$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$name.' has completed registration for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Please review the candidature.</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
@@ -1262,7 +1273,8 @@ class PostLoginController extends Controller {
 				$msg='Ministry Pastor detail updated';
 				
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Ministry Pastor detail updated');
-				
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 
 				$user->save();
 
@@ -1414,7 +1426,8 @@ class PostLoginController extends Controller {
 					$msg = '<p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Travel information completed');
-				
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 					$result = \App\Models\TravelInfo::join('users','users.id','=','travel_infos.user_id')->where('travel_infos.user_id',$request->user()->id)->first();
 		
 					if ($result) {
@@ -1465,6 +1478,8 @@ class PostLoginController extends Controller {
 
 
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+						\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 						// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
 					} 
@@ -1537,7 +1552,8 @@ class PostLoginController extends Controller {
 					$msg = 'Your travel info has been verified successfully';
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Preliminary Visa Letter verified by User');
-				
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 					$subject = '[GProCongress II Admin] Preliminary Visa Letter verified by User';
 					$msg = '<p><span style="font-size: 14px;"><font color="#424242">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#424242">'.$name.' has verified Visa Invitation letter for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#424242">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#424242">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#424242">Please review and take next steps.</font></span></p><p><span style="font-size: 14px;"><font color="#424242"><br></font></span></p><p><span style="font-size: 14px;"><font color="#424242">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#424242">Team GPro</font></span></p>';
 					\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
@@ -1607,7 +1623,8 @@ class PostLoginController extends Controller {
 					$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$request->user()->name.' '.$request->user()->last_name.' has added a remark for travel Info for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$request->user()->name.' '.$request->user()->last_name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$request->user()->email.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Please review and revert.</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Travel Info Remark');
-				
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 					\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
 
 					// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
@@ -1746,7 +1763,8 @@ class PostLoginController extends Controller {
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Session Added');
-					
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 					$subject = '[GProCongress II Admin] Session Info Updated By User';
 					$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$request->user()->name.' '.$request->user()->last_name.' has updated session Info for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$request->user()->name.' '.$request->user()->last_name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$request->user()->email.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Please review and revert.</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
 					\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
@@ -1801,6 +1819,7 @@ class PostLoginController extends Controller {
 				$subject = 'Session Info Verify';
 				$msg = 'Your session info has been verifed successfully';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
 
 				$subject = '[GProCongress II Admin] User Session Info Verify';
 				$msg = 'Session info verified by user on Gpro.';
@@ -1894,7 +1913,8 @@ class PostLoginController extends Controller {
 					});
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Requested Sponsor Payment');
-						
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 					if($request->user()->language == 'sp'){
 
 						$subject = "El enlace de pago de su patrocinador fue enviado con éxito.";
@@ -2033,7 +2053,8 @@ class PostLoginController extends Controller {
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 						\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Offline payment added');
-					
+						\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 						$subject = '[GProCongress II Admin]  Payment Received';
 						$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Refund has been initiated for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Refund Amount : '.$amount.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
 						\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
@@ -2542,7 +2563,8 @@ class PostLoginController extends Controller {
 					$msg = 'User donate payments';
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User donate payments');
-					
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+
 					
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'payment-added-successful');
 					return response(array("error"=>false, "message"=>$message), 200);

@@ -108,7 +108,9 @@ class UserController extends Controller {
 						
 						$msg = '<div>Dear '.$request->post('name').',</div><div><br></div><div>Based on your discussion with '.\Auth::user()->name.' your registration for the GProCongress II has been initiated. Please use this link '.$url.' to edit and complete your application at any time.<br> Your registered email and password are:</div><div><br>Email: '.$to.'<br>Password: '.$password.'<br></div><div>To find out more about the criteria to attend the Congress, '.$faq.'</div><div><br></div><div>'.$request->post('name').', We are here to help! To talk with one of our team members, simply respond to this email.</div><div><br></div><div>Pray with us toward multiplying the quantity and quality of trainers of pastors.</div><div><br></div><div>Warmly,</div><div>GProCongress II Team</div>';
 
+
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 	
 						return response(array('message'=>'User added successfully.', 'reset'=>true), 200);
 					} else {
@@ -1514,9 +1516,11 @@ class UserController extends Controller {
 			if ((int)$request->post('status') === 1) {
 				$result->stage = 2;
 
+				
 				$subject = 'Profile Approved';
 				$msg = 'Your profile has been approved successfully, please pay this amount '.$request->post('amount').' and your offer code is '.$request->post('offer_code');
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
@@ -1540,6 +1544,7 @@ class UserController extends Controller {
 						$subject = 'Profile Approved';
 						$msg = 'Your profile has been approved successfully, please pay this amount '.$request->post('amount').' and your offer code is '.$request->post('offer_code');
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 						// \App\Helpers\commonHelper::sendSMS($resultSpouseFirst->mobile);
 					}
@@ -1551,6 +1556,7 @@ class UserController extends Controller {
 				$subject = 'Profile Rejected';
 				$msg = 'Your profile has been rejected';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
 			}
@@ -1578,6 +1584,7 @@ class UserController extends Controller {
 			$msg = '<div>Dear '.$name.',</div><div><br></div><div>We have not received your completed application to attend the GProCongress II. Please use this link '.$url.' to edit and complete your application at any time. We recommend timely completion to secure a spot.</div><div><br></div><div>As always, to talk with one of our team members, simply respond to this email.</div><div><br></div><div>Pray with us toward multiplying the quantity and quality of trainers of pastors.</div><div>Warmly,</div><div>GProCongress II Team</div>';
 			
 			\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 			// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
@@ -2024,16 +2031,19 @@ class UserController extends Controller {
 				$subject = 'Travel Info Approved';
 				$msg = 'Your travel info has been approved successfully';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+			
 				// \App\Helpers\commonHelper::sendSMS($user->mobile);
 
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Travel Info Approved',\Auth::user()->id);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 					
 				$subject = 'Session information ';
 				$msg = 'Your Travel Information has been approved successfully, Please session information can be updated now';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Session information',\Auth::user()->id);
-					
+				
 
 			} else if ((int)$request->post('status') === 0) {
 
@@ -2041,6 +2051,8 @@ class UserController extends Controller {
 				$msg = 'Your travel info has been rejected';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
 				// \App\Helpers\commonHelper::sendSMS($user->mobile);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
 			}
 
 			return response(array('message'=>'Travel info status changed successfully.'), 200);
@@ -2092,6 +2104,8 @@ class UserController extends Controller {
 			70, array(0,0,0),2,2,-30);
 
 			\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
 			// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
 			return response(array('message'=>'Travel info reminder has been sent successfully.'), 200);
@@ -2138,12 +2152,15 @@ class UserController extends Controller {
 				}
 				
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
 				// \App\Helpers\commonHelper::sendSMS($user->mobile);
 			} else if ((int)$request->post('status') === 0) {
 
 				$subject = 'Session Info Decline';
 				$msg = 'Your session info has been decline';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+
 				// \App\Helpers\commonHelper::sendSMS($user->mobile);
 			}
 
@@ -2164,6 +2181,7 @@ class UserController extends Controller {
 			$msg = 'Please verify your session information';
 
 			\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 			// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
@@ -2351,6 +2369,7 @@ class UserController extends Controller {
 						}
 
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 						// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
@@ -2415,6 +2434,7 @@ class UserController extends Controller {
 					$subject = 'Congratulations, '.$name.', your application has been approved!';
 					$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 					// \App\Helpers\commonHelper::sendSMS($result->mobile);
 				}
@@ -2453,6 +2473,7 @@ class UserController extends Controller {
 				}
 
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
@@ -2483,6 +2504,7 @@ class UserController extends Controller {
 				}
 				
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
 			}
@@ -3207,6 +3229,7 @@ class UserController extends Controller {
 							$subject = 'Payment refund';
 							$msg = 'Your '.$request->post('amount').' Payment refund successfully';
 							\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 		
 							$subject = '[GProCongress II Admin]  Payment refund';
 							$msg = '<p><span style="font-size: 14px;">Hi,&nbsp;</span></p><p><span style="font-size: 14px;">Refund has been initiated for GProCongress II. Here are the candidate details:</span></p><p><span style="font-size: 14px;">Name: '.$name.'</span></p><p><span style="font-size: 14px;">Email: '.$to.'</span></p><p><span style="font-size: 14px;">Refund Amount : '.$amount.'</span></p><p><span style="font-size: 14px;">Regards,</span></p><p><span style="font-size: 14px;">Team GPro</span></p>';
@@ -3308,6 +3331,7 @@ class UserController extends Controller {
 						$subject = 'Payment refund';
 						$msg = 'Your '.$request->post('amount').' Payment refund  successfully';
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 	
 						$subject = '[GProCongress II Admin]  Payment refund';
 						$msg = '<p><span style="font-size: 14px;">Hi,&nbsp;</span></p><p><span style="font-size: 14px;">Refund has been initiated for GProCongress II. Here are the candidate details:</span></p><p><span style="font-size: 14px;">Name: '.$name.'</span></p><p><span style="font-size: 14px;">Email: '.$to.'</span></p><p><span style="font-size: 14px;">Refund Amount : '.$amount.'</span></p><p><span style="font-size: 14px;">Regards,</span></p><p><span style="font-size: 14px;">Team GPro</span></p>';
@@ -3382,6 +3406,7 @@ class UserController extends Controller {
 								$subject = 'Payment refund';
 								$msg = 'Your '.$request->post('amount').' Payment refund  successfully';
 								\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 			
 								$to = $user->email;
 								$name = $user->name.' '.$user->last_name;
@@ -3489,6 +3514,7 @@ class UserController extends Controller {
 					$attachment = public_path('/uploads/file/'.$TravelInfo->draft_file);
 
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, false, $attachment);
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 					
 					return response(array('message'=>'Draft file has been sent successfully.'), 200);
 				}
@@ -3578,6 +3604,7 @@ class UserController extends Controller {
 						$resultSpouse->stage = 4;
 						$resultSpouse->save();
 						\App\Helpers\commonHelper::sendNotificationAndUserHistory($resultSpouse->id,'Travel Info Approved','Travel Info Approved','Travel Info Approved',\Auth::user()->id);
+						\App\Helpers\commonHelper::userMailTrigger($resultSpouse->id,$msg,$subject);
 					
 					}
 
@@ -3587,12 +3614,14 @@ class UserController extends Controller {
 					// \App\Helpers\commonHelper::sendSMS($user->mobile);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Travel Info Approved',\Auth::user()->id);
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 					
 					$subject = 'Session information ';
 					$msg = 'Your Travel Information has been approved successfully, Please session information can be updated now';
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Session information',\Auth::user()->id);
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 					
 					$TravelInfo->admin_status = '1';
 					
@@ -3669,6 +3698,7 @@ class UserController extends Controller {
                         $subject = 'Transaction Complete';
                         $msg = 'Your '.$amount.' transaction has been send successfully';
                         \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
                         $subject = '[GProCongress II Admin] || Payment Received';
                         $msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$name.' has made Payment of&nbsp; '.$amount.' for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Payment Mode: Cash</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
@@ -3812,6 +3842,68 @@ class UserController extends Controller {
 	}
 
     
+	public function userMailTriggerList(Request $request) {
 	
+		$columns = \Schema::getColumnListing('user_mail_triggers');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\UserMailTrigger::where('user_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\UserMailTrigger::where('user_id', $request->input('user_id'))->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+		
+		->addColumn('subject', function($data){
+			return $data->subject;
+		})
+
+		->addColumn('date', function($data){
+			return date('d M Y', strtotime($data->created_at));
+		})
+
+		->addColumn('time', function($data){
+			return date('H:i a', strtotime($data->created_at));
+		})
+
+		->addColumn('action', function($data){
+				
+			if (\Auth::user()->designation_id == '1') {
+				return '<div style="display:flex">
+					<button type="button" style="width:41px" title="View message" class="btn btn-sm btn-primary px-3 m-1 text-white messageGet" data-id="'.$data->id.'" ><i class="fas fa-eye"></i></button>
+				</div>';			
+			}
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
 	
+	}
+	
+	public function userMailTriggerListModel(Request $request) {
+	
+		if($request->ajax()){
+
+			$UserMailTrigger = \App\Models\UserMailTrigger::where('id', $request->id)->first();
+
+			return response(array('message'=>$UserMailTrigger->message), 200);
+
+		}
+
+		
+	
+	}
 }

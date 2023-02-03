@@ -76,7 +76,7 @@ class PreLoginController extends Controller {
 					$subject='Registration Action';
 					$msg='Registration Action';
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Registration Action');
-				
+					
 
 					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp?lang='.$request->json()->get('language'), json_encode(array('email'=>$request->json()->get('email'))));
  
@@ -177,6 +177,8 @@ class PreLoginController extends Controller {
 					$message->to($to);
 				});
 				
+
+				\App\Helpers\commonHelper::userMailTrigger($userData->id,$msg,$subject);
 
 				// $html = view('email_templates.otp', compact('to', 'otp'))->render();
 				// $a = \App\Helpers\commonHelper::sendZeptoEmail($html);
@@ -280,6 +282,7 @@ class PreLoginController extends Controller {
 						
 						}
 
+						\App\Helpers\commonHelper::userMailTrigger($userResult->id,$msg,$subject);
 						
 						
 						$to = $request->json()->get('email');
@@ -395,6 +398,8 @@ class PreLoginController extends Controller {
 						
 						}
 
+						\App\Helpers\commonHelper::userMailTrigger($userResult->id,$msg,$subject);
+
 						$to = $userResult->email;
 						$name = $userResult->name.' '.$userResult->last_name;
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
@@ -493,6 +498,7 @@ class PreLoginController extends Controller {
 					
 				}else{
 
+
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Invalid-Password');
 					return response(array("error"=>true, 'message'=>$message), 403); 
 				}
@@ -550,6 +556,7 @@ class PreLoginController extends Controller {
 						
 					}
 
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,$subject,$msg,'Your GProCongress II application needs to be completed');
@@ -603,6 +610,7 @@ class PreLoginController extends Controller {
 						
 					}
 
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,$subject,$msg,'Your GProCongress II application needs to be completed');
@@ -665,6 +673,8 @@ class PreLoginController extends Controller {
 						$msg = '<p>Dear '.$result->name.',</p><p><br></p><p>Did you know your recent payment to GProCongress II is still pending at this time?</p><p>Here is a current summary of your payment status:</p><p><br></p><p>TOTAL AMOUNT TO BE PAID: '.$totalAcceptedAmount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED: '.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS: '.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE: '.$totalPendingAmount.'</p><p><br></p><p>PLEASE NOTE: If full payment is not received by&nbsp; 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p><p><br></p><p>Do you have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>We will keep you updated about whether your payment has been accepted or declined.</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
 					
 					}
+
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
@@ -831,6 +841,8 @@ class PreLoginController extends Controller {
 							$msg = '<div>Dear '.$name.',</div><div><br></div><div>You have successfully changed your password.&nbsp;</div><div><br></div><div>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</div><div><br></div><div>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</div><div><br></div><div>Warmly,</div><div><br></div><div>The GProCongress II Team</div>';
 							
 						}
+
+						\App\Helpers\commonHelper::userMailTrigger($emailResult->id,$msg,$subject);
 
 						\App\Helpers\commonHelper::sendNotificationAndUserHistory($emailResult->id,$subject,$msg,'User Reset Password');
 					
@@ -1036,6 +1048,7 @@ class PreLoginController extends Controller {
 									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
 														
 								}
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
 							}
@@ -1149,6 +1162,8 @@ class PreLoginController extends Controller {
 									$resultSpouse->save();
 								}
 
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
 								$subject = 'Payment Completed';
 								$msg = 'Your '.$user->amount.'  amount has been accepted and payment has been completed successfully.<p><strong>Accepted Amount</strong> : '.$totalAcceptedAmount.'</p><p><strong>Amount In Process</strong> : '.$totalAmountInProcess.'</p><p><strong>Decline Amount</strong> : '.$totalRejectedAmount.'</p><p><strong>Pending Amount</strong> : '.$totalPendingAmount.'</p>';
 								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
@@ -1222,6 +1237,8 @@ class PreLoginController extends Controller {
 				
 				$pdf = \PDF::loadView('email_templates.travel_info', $travel_info->toArray());
 	
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
 
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,$subject,$msg,'Travel info reminder');
@@ -1280,11 +1297,14 @@ class PreLoginController extends Controller {
 						$msg = '<p>Dear '.$result->name.',&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Thank you for submitting yours.&nbsp;</p><p><br></p><p>Regretfully, the travel information we have received is incomplete.&nbsp;&nbsp;</p><p><br></p><p>Please reply to this email with your complete travel information, so we can assist you.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 										
 					}
-					
+
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+				
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 					$subject='User travel information reminder';
 					$msg='User travel information reminder';
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,$subject,$msg,'User travel information reminder');
+					
 				}
 				
 				return response(array('message'=>count($results).'Reminders has been sent successfully.'), 200);
@@ -1655,6 +1675,8 @@ class PreLoginController extends Controller {
 					
 					}
 
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
 					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
@@ -1758,6 +1780,8 @@ class PreLoginController extends Controller {
 						
 						}
 
+						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
 						\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 	
 						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
@@ -1822,6 +1846,7 @@ class PreLoginController extends Controller {
 						$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email '.$confLink.' to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: If you do not reply to this email, your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>We look forward to seeing, both, you and '.$name.', in Panama City, Panama on November 12-17, 2023!&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
 					
 					}
+					\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
 
 					\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
 					
@@ -1887,6 +1912,8 @@ class PreLoginController extends Controller {
 					
 					}
 
+					\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
+
 					\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
 					
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'Spouse Confirm your registration status- SECOND REMINDER');
@@ -1949,6 +1976,8 @@ class PreLoginController extends Controller {
 						$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email '.$confLink.' to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: THIS IS YOUR THIRD AND FINAL REMINDER. If you do not reply to this email, your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
 					
 					}
+
+					\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
 
 					\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
 					
@@ -2118,6 +2147,8 @@ class PreLoginController extends Controller {
 					
 					}
 
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
 					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
@@ -2224,6 +2255,9 @@ class PreLoginController extends Controller {
 									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
 														
 								}
+
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
 								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
 								$subject='User submit travel information reminder';

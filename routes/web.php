@@ -136,6 +136,8 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::post('profile-status', 'Admin\UserController@profileStatus')->name('profile.status');
 		Route::match(['get', 'post'], 'comment-to-user', 'Admin\UserController@commentToUser')->name('comment.to.user');
 		Route::match(['get'], 'userHistoryList', 'Admin\UserController@userHistoryList')->name('userHistoryList');
+		Route::match(['get'], 'userMailTriggerList', 'Admin\UserController@userMailTriggerList')->name('userMailTriggerList');
+		Route::match(['get','post'],'userMail-TriggerList-Model', 'Admin\UserController@userMailTriggerListModel')->name('userMailTriggerListModel');
 		Route::match(['get'], 'spouse-pending', 'Admin\UserController@spousePending')->name('spouse.pending');
 		Route::match(['get'], 'stage-all-download-excel-file', 'Admin\UserController@stageAllDownloadExcelFile')->name('stage-all-download-excel-file');
 	

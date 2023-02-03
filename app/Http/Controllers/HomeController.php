@@ -397,6 +397,7 @@ class HomeController extends Controller
                     $msg='Sponsor Submitted Payment';
 
                     \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->post('user_id'),$subject,$msg,'Sponsor Submitted Payment');
+					\App\Helpers\commonHelper::userMailTrigger($request->post('user_id'),$msg,$subject);
 					
                     return response(array('message'=>'','urlPage'=>true,'url'=>url('stripe/'.$order_id)), 200);
 	
@@ -467,6 +468,7 @@ class HomeController extends Controller
                 $msg='User Donate Amount Submitted Payment';
                  
                 \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->post('user_id'),$subject,$msg,'User Donate Amount Submitted Payment');
+                \App\Helpers\commonHelper::userMailTrigger($request->post('user_id'),$msg,$subject);
 					
                 return response(array('message'=>'','urlPage'=>true,'url'=>url('stripe/'.$order_id)), 200);
 	
