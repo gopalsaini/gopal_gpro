@@ -89,7 +89,7 @@
                         <source src="{{ asset('images/Gpro-Rr French-1.m4v') }}" type="video/mp4">
                         <source src="{{ asset('images/Gpro-Rr French-1.ogg') }}" type="video/ogg">
                     @else
-                        <source src="{{ asset('assets/images/Gpro-Rr-1.m4v') }}" type="video/mp4">
+                        <source src="{{ asset('assets/images/Gpro-Rr-1.mp4') }}" type="video/mp4">
                         <source src="{{ asset('assets/images/Gpro-Rr-1.ogg') }}" type="video/ogg">
                     @endif
                 </video>
@@ -104,7 +104,7 @@
                         <!-- <source src="{{ asset('images/Gpromobile French-1.m4v') }}" type="video/mp4"> -->
                         <source src="{{ asset('images/Gpromobile-French-1.m4v') }}" type="video/mp4">
                     @else
-                        <source src="{{ asset('assets/images/Gpromobile-1.m4v') }}" type="video/mp4">
+                        <source src="{{ asset('assets/images/Gpromobile-1.mp4') }}" type="video/mp4">
                     @endif
                 </video>
                 <div class="video-img">

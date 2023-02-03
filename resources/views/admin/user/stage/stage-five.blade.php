@@ -67,6 +67,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <input type="text" name="email" class="form-control searchEmail " placeholder="Search ...">
+                    <br>
                     <div class="table-responsive">
                         <table class="display datatables" id="tablelist">
                             <thead>
@@ -122,7 +124,7 @@ $(document).ready(function() {
     var table =   $('#tablelist').DataTable({
         "processing": true,
         "serverSide": true,
-        "searching": true,
+        "searching": false,
         "ordering": false,
 
         "ajax": {
@@ -186,6 +188,10 @@ $(document).ready(function() {
                 "data": "action"
             }
         ]
+    });
+
+    $(".searchEmail").keyup(function(){
+        table.draw();
     });
     
 });

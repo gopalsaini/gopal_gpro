@@ -68,6 +68,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <input type="text" name="email" class="form-control searchEmail " placeholder="Search ...">
+                    <br>
                     <div class="table-responsive">
                         <table class="display datatables" id="tablelist">
                             <thead>
@@ -212,7 +214,7 @@
         var table =  $('#tablelist').DataTable({
             "processing": true,
             "serverSide": true,
-            "searching": true,
+            "searching": false,
             "ordering": false,
 
             "ajax": {
@@ -220,6 +222,10 @@
                 "dataType": "json",
                 "async": false,
                 "type": "get",
+                data: function (d) {
+                    
+                    d.email = $('.searchEmail').val()
+                },
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
                         sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
@@ -293,6 +299,10 @@
         $('#exampleModalCenter').on('hidden.bs.modal', function (e) {
             modalHide();
         })
+
+        $(".searchEmail").keyup(function(){
+            table.draw();
+        });
     });
 
     function fill_datatable() {

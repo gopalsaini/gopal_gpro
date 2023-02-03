@@ -678,13 +678,24 @@ class UserController extends Controller {
 					->orWhere('added_as', '=', 'Group');
 			})->orderBy('updated_at', 'desc');
 
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
+
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '2']])
+			$totalData1 = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '2']])
 			->where(function ($query) {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
-			})->count();
+			});
+
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
+
+			$totalData = $totalData1->count();
+			
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));  
@@ -857,13 +868,26 @@ class UserController extends Controller {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
 			})->orderBy('updated_at', 'desc');
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
+
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::with('TravelInfo')->where([['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
+			$totalData1 = \App\Models\User::with('TravelInfo')->where([['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
-			})->count();
+			});
+
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
+
+			$totalData = $totalData1->count();
 
 			$totalFiltered = $query->count();
 
@@ -1067,10 +1091,22 @@ class UserController extends Controller {
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
 			$query = \App\Models\User::with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '4']])->orderBy('updated_at', 'desc');
+			
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '4']])->count();
+			$totalData1 = \App\Models\User::with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '4']]);
+			
+			if (request()->has('email')) {
+				$totalData1->where('email', 'like', "%" . request('email') . "%");
+			}
+
+			$totalData = $totalData1->count();
+
+
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));
@@ -1255,9 +1291,21 @@ class UserController extends Controller {
 
 			$query = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '5']])->orderBy('updated_at', 'desc');
 
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
+
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '5']])->count();
+			$totalData1 = \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['designation_id', $designation_id], ['stage', '=', '5']]);
+			
+			if (request()->has('email')) {
+				$totalData1->where('email', 'like', "%" . request('email') . "%");
+			}
+
+			$totalData = $totalData1->count();
+
+
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));

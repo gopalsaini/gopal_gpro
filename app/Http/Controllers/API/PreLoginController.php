@@ -1284,7 +1284,7 @@ class PreLoginController extends Controller {
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 					$subject='User travel information reminder';
 					$msg='User travel information reminder';
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User travel information reminder');
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,$subject,$msg,'User travel information reminder');
 				}
 				
 				return response(array('message'=>count($results).'Reminders has been sent successfully.'), 200);
@@ -1439,7 +1439,7 @@ class PreLoginController extends Controller {
 			}else{
 
 				$result=[
-					'Video1'=>asset('assets/images/Gpromobile-1.m4v'),
+					'Video1'=>asset('assets/images/Gpromobile-1.mp4'),
 					'Video2'=>asset('assets/images/a_glimpse_of_the_gprocongress.mp4'),
 				];
 			}
@@ -2228,7 +2228,7 @@ class PreLoginController extends Controller {
 
 								$subject='User submit travel information reminder';
 								$msg='User submit  travel information reminder';
-								\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User submit travel information reminder');
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'User submit travel information reminder');
 							
 
 							}
