@@ -809,7 +809,7 @@
                                 User Emails<span>3</span></button>
                         </h5>
                     </div>
-                    <div class="collapse p-3" id="collapseicon10" aria-labelledby="collapseicon10" >
+                    <div class="collapse p-3" id="collapseicon10" aria-labelledby="collapseicon10" data-bs-parent="#accordionoc" style="">
                         
                         <div class="row">
                             <div class="table table-bordered table-hover table-responsive">
@@ -952,11 +952,11 @@
     </div>
 </div>
 
-<div class="modal fade " id="userMailTriggerListModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="userMailTriggerListModelLabel" aria-hidden="true">
+<div class="modal fade " id="userMailTriggerListModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="userMailTriggerListModel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">User Mail </h5>
+                <h5 class="modal-title" id="userMailTriggerListModel">User Mail </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

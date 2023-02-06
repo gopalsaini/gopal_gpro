@@ -86,10 +86,24 @@ class FaqController extends Controller {
 			$order = $columns[$request->input('order.0.column')];
 			$dir = $request->input('order.0.dir');
 
+
 			$query = \App\Models\Faq::orderBy($order,$dir);
+
+			if (request()->has('question')) {
+				$query->where('question', 'like', "%" . request('question') . "%");
+			}
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
+			$totalData1 = \App\Models\Faq::orderBy('id', 'desc');
+			
+			
+			if (request()->has('question')) {
+				$totalData1->where('question', 'like', "%" . request('question') . "%");
+			}
+
+			$totalData = $totalData1->count();
+
 			$totalData = \App\Models\Faq::count();
 			$totalFiltered = $query->count();
 

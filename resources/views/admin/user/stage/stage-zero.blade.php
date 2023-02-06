@@ -119,6 +119,8 @@
                 <h5>Spouse pending confirmation </h5>
             </div>
             <div class="card-body">
+                <input type="text" name="email" class="form-control searchEmailSpousePending " placeholder="Search ...">
+                <br>
                 <div class="table-responsive">
                     <table class="display datatables" id="tablelist1">
                         <thead>
@@ -282,20 +284,23 @@
 
     
 
-        $('#tablelist1').DataTable({
+    var table = $('#tablelist1').DataTable({
             "processing": true,
             "serverSide": true,
-            "searching": true,
+            "searching": false,
             "ordering": false,
 
             "ajax": {
                 "url": "{{ route('admin.user.spouse.pending')}}",
                 "dataType": "json",
-                "data": {
-                    status: 'Waiting'
-                },
+                
                 "async": false,
                 "type": "get",
+                data: function (d) {
+                    
+                    d.email = $('.searchEmailSpousePending').val(),
+                    d.status = 'Waiting'
+                },
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
                         sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
@@ -343,6 +348,14 @@
                     "data": "action"
                 }
             ]
+
+                
+
         });
+
+        $(".searchEmailSpousePending").keyup(function(){
+            table.draw();
+        });
+
 </script>
 @endpush

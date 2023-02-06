@@ -29,6 +29,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <input type="text" name="email" class="form-control searchEmailSubAdmin" placeholder="Search ...">
+                            <br>
                     <div class="table-responsive">
                         <table class="display datatables" id="tablelist">
                             <thead>
@@ -73,10 +75,10 @@
 <script>
 $(document).ready(function() {
     fill_datatable();
-    $('#tablelist').DataTable({
+    var table = $('#tablelist').DataTable({
         "processing": true,
         "serverSide": true,
-        "searching": true,
+        "searching": false,
         "ordering": true,
 
         "ajax": {
@@ -84,6 +86,9 @@ $(document).ready(function() {
             "dataType": "json",
             "async": false,
             "type": "get",
+            data: function (d) {
+                d.email = $('.searchEmailSubAdmin').val()
+            },
             "error": function(xhr, textStatus) {
                 if (xhr && xhr.responseJSON.message) {
                     sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
@@ -124,6 +129,10 @@ $(document).ready(function() {
                 "data": "action"
             },
         ]
+    });
+
+    $(".searchEmailSubAdmin").keyup(function(){
+        table.draw();
     });
 });
 

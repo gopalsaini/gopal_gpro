@@ -870,9 +870,6 @@ class UserController extends Controller {
 				$query->where('added_as',null)
 					->orWhere('added_as', '=', 'Group');
 			})->orderBy('updated_at', 'desc');
-			if (request()->has('email')) {
-				$query->where('email', 'like', "%" . request('email') . "%");
-			}
 
 			if (request()->has('email')) {
 				$query->where('email', 'like', "%" . request('email') . "%");
@@ -886,7 +883,7 @@ class UserController extends Controller {
 			});
 
 			if (request()->has('email')) {
-				$query->where('email', 'like', "%" . request('email') . "%");
+				$totalData1->where('email', 'like', "%" . request('email') . "%");
 			}
 
 			$totalData = $totalData1->count();
@@ -2780,10 +2777,20 @@ class UserController extends Controller {
 			$query = \App\Models\User::where([['designation_id', 2], ['spouse_confirm_status', 'Pending'], ['spouse_confirm_token','!=','']])
 						->orderBy('updated_at', 'desc');
 
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
+
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::where([['designation_id', 2], ['spouse_confirm_status', 'Pending'], ['spouse_confirm_token','!=','']])
-						->count();
+			$totalData1 = \App\Models\User::where([['designation_id', 2], ['spouse_confirm_status', 'Pending'], ['spouse_confirm_token','!=','']]);
+
+
+			if (request()->has('email')) {
+				$totalData1->where('email', 'like', "%" . request('email') . "%");
+			}
+
+			$totalData = $totalData1->count();
 
 			$totalFiltered = $query->count();
 

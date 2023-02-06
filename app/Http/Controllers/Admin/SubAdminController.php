@@ -81,9 +81,21 @@ class SubAdminController extends Controller {
 
 			$query = \App\Models\User::orderBy($order,$dir)->where('user_type','1')->where('id','!=','1');
 
+			if (request()->has('email')) {
+				$query->where('email', 'like', "%" . request('email') . "%");
+			}
+
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\User::where('user_type','1')->where('id','!=','1')->count();
+			$totalData1 = \App\Models\User::where('user_type','1')->where('id','!=','1');
+
+			if (request()->has('email')) {
+				
+				$totalData1->where('email', 'like', "%" . request('email') . "%");
+			}
+
+			$totalData = $totalData1->count();
+
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));  

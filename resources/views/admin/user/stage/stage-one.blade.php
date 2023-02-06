@@ -95,6 +95,8 @@
                     <h5>@lang('admin.waiting')</h5>
                 </div>
                 <div class="card-body">
+                    <input type="text" name="email" class="form-control searchEmailWaiting " placeholder="Search ...">
+                        <br>
                     <div class="table-responsive">
                         <table class="display datatables" id="tablelist1">
                             <thead>
@@ -138,6 +140,8 @@
                     <h5>@lang('admin.rejected')</h5>
                 </div>
                 <div class="card-body">
+                    <input type="text" name="email" class="form-control searchEmailDeclined" placeholder="Search ...">
+                            <br>
                     <div class="table-responsive">
                         <table class="display datatables" id="tablelist2">
                             <thead>
@@ -232,7 +236,6 @@
             "ajax": {
                 "url": "{{ route('admin.user.list.stage.one', ["$type"]) }}",
                 "dataType": "json",
-                
                 data: function (d) {
                     d.email = $('.searchEmail').val(),
                     d.status = 'Review'
@@ -304,17 +307,18 @@
 
 
 
-        $('#tablelist1').DataTable({
+        var table = $('#tablelist1').DataTable({
             "processing": true,
             "serverSide": true,
-            "searching": true,
+            "searching": false,
             "ordering": false,
 
             "ajax": {
                 "url": "{{ route('admin.user.list.stage.one', ["$type"]) }}",
                 "dataType": "json",
-                "data": {
-                    status: 'Waiting'
+                data: function (d) {
+                    d.email = $('.searchEmailWaiting').val(),
+                    d.status = 'Waiting'
                 },
                 "async": false,
                 "type": "get",
@@ -367,17 +371,22 @@
             ]
         });
 
-        $('#tablelist2').DataTable({
+        $(".searchEmailWaiting").keyup(function(){
+            table.draw();
+        });
+
+        var table = $('#tablelist2').DataTable({
             "processing": true,
             "serverSide": true,
-            "searching": true,
+            "searching": false,
             "ordering": false,
 
             "ajax": {
                 "url": "{{ route('admin.user.list.stage.one', ["$type"]) }}",
                 "dataType": "json",
-                "data": {
-                    status: 'Rejected'
+                data: function (d) {
+                    d.email = $('.searchEmailDeclined').val(),
+                    d.status = 'Rejected'
                 },
                 "async": false,
                 "type": "get",
@@ -428,6 +437,10 @@
                     "data": "action"
                 }
             ]
+        });
+
+        $(".searchEmailDeclined").keyup(function(){
+            table.draw();
         });
 
         $('#exampleModalCenter').on('hidden.bs.modal', function (e) {

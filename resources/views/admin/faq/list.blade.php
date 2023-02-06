@@ -30,6 +30,8 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                    <input type="text" name="email" class="form-control searchEmailFAQList" placeholder="Search ...">
+                        <br>
                     <div class="table-responsive">
                         <table class="display datatables" id="tablelist">
                             <thead>
@@ -72,15 +74,18 @@
 <script>
 $(document).ready(function() {
     fill_datatable();
-    $('#tablelist').DataTable({
+    var table = $('#tablelist').DataTable({
         "processing": true,
         "serverSide": true,
-        "searching": true,
+        "searching": false,
         "ordering": true,
 
         "ajax": {
             "url": "{{ route('admin.faq.list') }}",
             "dataType": "json",
+            data: function (d) {
+                d.question = $('.searchEmailFAQList').val()
+            },
             "async": false,
             "type": "get",
             "error": function(xhr, textStatus) {
@@ -124,6 +129,10 @@ $(document).ready(function() {
                 "data": "action"
             }
         ]
+    });
+
+    $(".searchEmailFAQList").keyup(function(){
+        table.draw();
     });
 });
 
