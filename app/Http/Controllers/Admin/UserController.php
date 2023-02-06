@@ -2035,8 +2035,7 @@ class UserController extends Controller {
 				// \App\Helpers\commonHelper::sendSMS($user->mobile);
 
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Travel Info Approved',\Auth::user()->id);
-				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-					
+				
 				$subject = 'Session information ';
 				$msg = 'Your Travel Information has been approved successfully, Please session information can be updated now';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
@@ -3604,8 +3603,7 @@ class UserController extends Controller {
 						$resultSpouse->stage = 4;
 						$resultSpouse->save();
 						\App\Helpers\commonHelper::sendNotificationAndUserHistory($resultSpouse->id,'Travel Info Approved','Travel Info Approved','Travel Info Approved',\Auth::user()->id);
-						\App\Helpers\commonHelper::userMailTrigger($resultSpouse->id,$msg,$subject);
-					
+						
 					}
 
 					$subject = 'Travel Info Approved';
@@ -3880,9 +3878,9 @@ class UserController extends Controller {
 		->addColumn('action', function($data){
 				
 			if (\Auth::user()->designation_id == '1') {
-				return '<div style="display:flex">
-					<button type="button" style="width:41px" title="View message" class="btn btn-sm btn-primary px-3 m-1 text-white messageGet" data-id="'.$data->id.'" ><i class="fas fa-eye"></i></button>
-				</div>';			
+				return '<div >
+							<button type="button" style="width:41px" title="View message" class="btn btn-sm btn-primary px-3 m-1 text-white messageGet" data-id="'.$data->id.'" ><i class="fas fa-eye"></i></button>
+						</div>';			
 			}
 		})
 

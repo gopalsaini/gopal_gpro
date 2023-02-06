@@ -342,7 +342,7 @@
                                             <td colspan="5"><strong>How many pastoral leaders are you involved in strengthening each year :</strong> @if(!empty($ministry_pastor_trainer_detail)){{$ministry_pastor_trainer_detail['howmany_pastoral']}}@endif</td>
                                         </tr>
 										<tr>
-											<td colspan="5"><strong>How many of them can serve as future pastor trainers? :</strong> @if(!empty($ministry_pastor_trainer_detail)){{$ministry_pastor_trainer_detail['howmany_pastoral']}}@endif</td>
+											<td colspan="5"><strong>How many of them can serve as future pastor trainers? :</strong> @if(!empty($ministry_pastor_trainer_detail)){{$ministry_pastor_trainer_detail['howmany_futurepastor']}}@endif</td>
                                       	</tr>
                                     @endif
 
@@ -805,11 +805,11 @@
                         <h5 class="mb-0 px-2">
                             <button class="btn btn-link text-white collapsed" data-bs-toggle="collapse"
                                 data-bs-target="#collapseicon10" aria-expanded="false"
-                                aria-controls="collapse119"><i class="fa fa-history"></i>
-                                User Mail Trigger <span>3</span></button>
+                                aria-controls="collapse120"><i class="fa fa-envelope"></i>
+                                User Emails<span>3</span></button>
                         </h5>
                     </div>
-                    <div class="collapse p-3" id="collapseicon10" aria-labelledby="collapseicon10" data-bs-toggle="modal" data-bs-target="#userMailTriggerListModel">
+                    <div class="collapse p-3" id="collapseicon10" aria-labelledby="collapseicon10" >
                         
                         <div class="row">
                             <div class="table table-bordered table-hover table-responsive">

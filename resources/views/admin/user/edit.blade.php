@@ -76,7 +76,7 @@
 								<div class="col-sm-4">
 									<div class="form-group">
 										<label for="input">@lang('admin.mobile'):</label>
-										<input type="tel" class="form-control" name="mobile" onkeypress="return /[0-9 ]/i.test(event.key)" maxlength="10"  required value="{{$result->mobile}}" autocomplete="off" placeholder="Enter mobile number">
+										<input type="tel" class="form-control" name="mobile" onkeypress="return /[0-9 ]/i.test(event.key)" required value="{{$result->mobile}}" autocomplete="off" placeholder="Enter mobile number">
 									</div>
 								</div>
 							</div>

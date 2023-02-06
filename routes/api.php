@@ -55,6 +55,7 @@ Route::group([
     Route::get("get-userA-all-stage-profile-data","API\PostLoginController@getUserAllStageProfileData");
     Route::get("travel-visa-Letter-file","API\PostLoginController@travelInfoLetter");
     Route::get('notification-list', 'API\PostLoginController@NotificationList');
+    Route::post('change-user-language', 'API\PostLoginController@changeUserLanguage');
 
 });
 
@@ -89,4 +90,9 @@ Route::get("spouse-confirmation-first-reminder","API\PreLoginController@spouseCo
 Route::get("spouse-confirmation-2-reminder","API\PreLoginController@spouseConfirmation2Reminder");
 Route::get("spouse-confirmation-3-reminder","API\PreLoginController@spouseConfirmation3Reminder");
 Route::post("getAllLanguageFolderFile","API\PreLoginController@getAllLanguageFolderFile");
-Route::get("get-approvedUserSendEmail","API\PreLoginController@getApprovedUserSendEmail");
+
+Route::any("paypal-webhook-response","API\PreLoginController@paypalWebhookResponse");
+Route::any("user-email-update-data","API\PreLoginController@userEmailUpdateData");
+Route::any("get-approved-user-send-email","API\PreLoginController@getApprovedUserSendEmail");
+Route::any("user-update-payment-country","API\PreLoginController@userUpdatePaymentCountry");
+Route::any("send-early-bird-reminder-mail","API\PreLoginController@sendEarlyBirdReminderMail");

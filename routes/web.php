@@ -65,7 +65,7 @@ Route::group(['middleware'=>'Userauth'],function(){
 		Route::match(['get','post'],'ministry-details', 'ProfileController@ministryDetails')->name('ministry-details'); 
 		Route::post('pastoral-leaders-detailupdate', 'ProfileController@updatePastoralLeader')->name('pastoral-leaders-detailupdate'); 
 		Route::post('sponsor-payments-submit', 'ProfileController@sponsorPaymentsSubmit')->name('sponsor-payments-submit'); 
-		Route::get('online-payment-full', 'ProfileController@OnlinePaymentFull')->name('online-payment-full'); 
+		Route::get('online-payment-full/{type}', 'ProfileController@OnlinePaymentFull')->name('online-payment-full'); 
 		Route::post('full-payment-offline-submit', 'ProfileController@fullPaymentOfflineSubmit')->name('full-payment-offline-submit'); 
 		Route::post('travel-information-submit', 'ProfileController@travelInformationSubmit')->name('travel-information-submit'); 
 		Route::post('travel-information-remark-submit', 'ProfileController@travelInformationRemarkSubmit')->name('travel-information-remark-submit'); 
@@ -75,6 +75,9 @@ Route::group(['middleware'=>'Userauth'],function(){
 		Route::get('event-day-information', 'ProfileController@EventDayInformation')->name('event-day-information'); 
 		Route::post('session-information-submit', 'ProfileController@SessionInformationSubmit')->name('session-information-submit'); 
 		Route::get('session-information-final-submit', 'ProfileController@SessionInformationFinalSubmit')->name('session-information-final-submit'); 
+
+		Route::get('paypal-payment-success', 'HomeController@PaypalSuccessUrl')->name('paypal-payment-success'); 
+		Route::get('paypal-payment-error', 'HomeController@PaypalErrorUrl')->name('paypal-payment-error'); 
 		
 	});
 });
@@ -153,8 +156,9 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 			Route::get('stage/five', 'Admin\UserController@stageFive')->name('list.stage.five');
 		});
 
-		Route::get('user-profile/{id}', 'Admin\UserController@userProfile')->name('profile');
+		Route::get('user-profile/{id}', 'Admin\UserController@userProfile')->name('profile');		
 		Route::get('archive-user/{id}', 'Admin\UserController@archiveUser')->name('archiveUserDelete');
+
 		Route::get('payment-history/{id}', 'Admin\UserController@paymentHistory')->name('payment.history');
 		Route::get('sponsored-payment-history/{id}', 'Admin\UserController@sponsoredPaymentHistory')->name('sponsored.Payment.History');
 		Route::get('donate-payment-history/{id}', 'Admin\UserController@donatePaymentHistory')->name('donate.Payment.History');
