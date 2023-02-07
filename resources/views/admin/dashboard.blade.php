@@ -72,20 +72,20 @@
         <div class="col-2 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/all')}}">
                 <h2>STAGE ALL </h2>
-                <h4> {{ \App\Models\User::where([['id', '!=', '1']])->count() }} </h4>
+                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count() }} </h4>
             </a>
         </div>
         <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/zero')}}">
                 <h2>STAGE 0 </h2>
-                <h4> {{ \App\Models\User::where([['id', '!=', '1'], ['stage', '=', '0']])->count() }} </h4>
+                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '0']])->count() }} </h4>
             </a>
         </div>
 
         <div class="col-4  box-inner" id="stageOneDiv">
             
             <h2>STAGE 1 </h2>
-            <h4> {{ \App\Models\User::where([['id', '!=', '1'], ['stage', '=', '1']])->where(function ($query) {
+            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1']])->where(function ($query) {
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count() }} </h4>
@@ -95,21 +95,21 @@
                     <a href="{{url('admin/user/attendees/stage/one')}}" class="row" >
                         <div class="col-4 p-0 box-inner">
                             <h2>Pending </h2>
-                            <h4> {{ \App\Models\User::where([['id', '!=', '1'],  ['stage', '=', '1'], ['profile_status', 'Review']])->where(function ($query) {
+                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Review']])->where(function ($query) {
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count() }} </h4>
                         </div>
                         <div class="col-4 p-0 box-inner">
                             <h2>Waiting </h2>
-                            <h4> {{ \App\Models\User::where([['id', '!=', '1'], ['stage', '=', '1'], ['profile_status', 'Waiting']])->where(function ($query) {
+                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Waiting']])->where(function ($query) {
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count() }} </h4>
                         </div>
                         <div class="col-4 p-0 box-inner">
                             <h2>Declined </h2>
-                            <h4> {{ \App\Models\User::where([['id', '!=', '1'], ['stage', '=', '1'], ['profile_status', 'Rejected']])->where(function ($query) {
+                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Rejected']])->where(function ($query) {
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count() }} </h4>
@@ -123,7 +123,7 @@
         <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/two')}}">
                 <h2>STAGE 2 </h2>
-                <h4> {{ \App\Models\User::where([['id', '!=', '1'], ['stage', '=', '2']])
+                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])
                         ->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
@@ -135,7 +135,7 @@
         <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/three')}}">
                 <h2>STAGE 3 </h2>
-                <h4> {{ \App\Models\User::with('TravelInfo')->where([['id', '!=', '1'], ['stage', '=', '3']])->where(function ($query) {
+                <h4> {{ \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
 						})->count() }} </h4>
@@ -146,7 +146,7 @@
         <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/four')}}">
                 <h2>STAGE 4 </h2>
-                <h4> {{ \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['stage', '=', '4']])->count() }} </h4>
+                <h4> {{ \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '4']])->count() }} </h4>
             </a>
         </div>
 
@@ -154,7 +154,7 @@
         <div class="col-2 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/five')}}">
                 <h2>STAGE 5 </h2>
-                <h4> {{ \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['stage', '=', '5']])->count() }} </h4>
+                <h4> {{ \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '5']])->count() }} </h4>
             </a>
         </div>
 
