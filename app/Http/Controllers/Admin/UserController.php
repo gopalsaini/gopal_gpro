@@ -51,75 +51,65 @@ class UserController extends Controller {
 				
 			} else {
 
-				$dob=date('Y-m-d',strtotime($request->post('dob')));
-				$date1 = $dob;
-				$date2 = date('Y-m-d');
-				$diff = abs(strtotime($date2) - strtotime($date1));
-				$years = floor($diff / (365*60*60*24));
+				$password = \Str::random(10);
 				
-				if ($years < 18) {
+				if ((int) $request->post('id') > 0) {
 
-					return response(array("error"=>true, 'message'=>'Birth year must be more than 18 years'), 403);
+					$data=\App\Models\User::find($request->post('id'));
+
+					$data->salutation = $request->post('salutation');
+					$data->name = $request->post('first_name');
+					$data->last_name = $request->post('last_name');
+					$data->phone_code = $request->post('phone_code');
+					$data->mobile = $request->post('mobile');
+					$data->gender = $request->post('gender');
+					$data->dob = $dob;
+					// $data->citizenship = $request->post('citizenship');
 
 				} else {
 
-					if ((int) $request->post('id') > 0) {
-						$data=\App\Models\User::find($request->post('id'));
-	
-						$data->salutation = $request->post('salutation');
-						$data->name = $request->post('first_name');
-						$data->last_name = $request->post('last_name');
-						$data->phone_code = $request->post('phone_code');
-						$data->mobile = $request->post('mobile');
-						$data->gender = $request->post('gender');
-						$data->dob = $dob;
-						// $data->citizenship = $request->post('citizenship');
-	
-					} else {
+					$data=new \App\Models\User();
+					$data->email = $request->post('email');
+					$data->name = $request->post('name');
+					$data->reg_type = 'email';
+					$data->designation_id = $request->post('designation_id');
+					$data->parent_id = null;
+					$data->password = \Hash::make($password);
 
-						$data=new \App\Models\User();
-	
-						$password = \Str::random(10);
-						$data->email = $request->post('email');
-						$data->name = $request->post('name');
-						$data->reg_type = 'email';
-						$data->designation_id = $request->post('designation_id');
-						$data->parent_id = null;
-						$data->password = \Hash::make($password);
-
-
-					}
-	
-					$data->save();
-					
-					if ((int) $request->post('id') == 0) {
-	
-						$UserHistory=new \App\Models\UserHistory();
-						$UserHistory->user_id=$data->id;
-						$UserHistory->action_id = \Auth::user()->id;
-						$UserHistory->action='Your registration for GProCongress II has started!';
-						$UserHistory->save();
-
-						$url = '<a href="'.url('profile-update').'">Click here</a>';
-						$faq = '<a href="'.url('faq').'">Click here</a>';
-
-						$to = $request->post('email');
-						$subject = 'Your registration for GProCongress II has started!';
-						
-						$msg = '<div>Dear '.$request->post('name').',</div><div><br></div><div>Based on your discussion with '.\Auth::user()->name.' your registration for the GProCongress II has been initiated. Please use this link '.$url.' to edit and complete your application at any time.<br> Your registered email and password are:</div><div><br>Email: '.$to.'<br>Password: '.$password.'<br></div><div>To find out more about the criteria to attend the Congress, '.$faq.'</div><div><br></div><div>'.$request->post('name').', We are here to help! To talk with one of our team members, simply respond to this email.</div><div><br></div><div>Pray with us toward multiplying the quantity and quality of trainers of pastors.</div><div><br></div><div>Warmly,</div><div>GProCongress II Team</div>';
-
-
-						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-	
-						return response(array('message'=>'User added successfully.', 'reset'=>true), 200);
-					} else {
-						return response(array('message'=>'User updated successfully.', 'reset'=>false), 200);
-					}
 
 				}
 
+				$data->save();
+				
+				if ((int) $request->post('id') == 0) {
+
+					$UserHistory=new \App\Models\UserHistory();
+					$UserHistory->user_id=$data->id;
+					$UserHistory->action_id = \Auth::user()->id;
+					$UserHistory->action='Your registration for GProCongress II has started!';
+					$UserHistory->save();
+
+					$url = '<a href="'.url('profile-update').'">Click here</a>';
+					$faq = '<a href="'.url('faq').'">Click here</a>';
+
+					$to = $request->post('email');
+					$subject = 'Your registration for GProCongress II has started!';
+					
+					$msg = '<div>Dear '.$request->post('name').',</div><div><br></div><div>Based on your discussion with '.\Auth::user()->name.' your registration for the GProCongress II has been initiated. Please use this link '.$url.' to edit and complete your application at any time.<br> Your registered email and password are:</div><div><br>Email: '.$to.'<br>Password: '.$password.'<br></div><div>To find out more about the criteria to attend the Congress, '.$faq.'</div><div><br></div><div>'.$request->post('name').', We are here to help! To talk with one of our team members, simply respond to this email.</div><div><br></div><div>Pray with us toward multiplying the quantity and quality of trainers of pastors.</div><div><br></div><div>Warmly,</div><div>GProCongress II Team</div>';
+
+
+					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+					\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+
+					return response(array('message'=>'User added successfully.', 'reset'=>true), 200);
+
+				} else {
+
+					return response(array('message'=>'User updated successfully.', 'reset'=>false), 200);
+				}
+
 			}
+
 			return response(array('message'=>'Data not found.'),403);
 		}
 		

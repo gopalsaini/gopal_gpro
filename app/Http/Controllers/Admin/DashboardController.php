@@ -173,12 +173,26 @@ class DashboardController extends Controller
 
       public function getGroupRegisteredChartAjax(){
       
-            $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->count();
+            $totalGroup1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->count();
+            $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->get();
             $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', null]])->count();
+           
+            if(!empty($totalGroup) && count($totalGroup)>0){
+              $array =[];
+
+                foreach($totalGroup as $key=>$Groups){
+
+                  $array[$key]= $Groups->parent_id;
+
+              }
+
+              $array = count(array_unique($array));
+
+            }
 
             $stages = array(
-                  'Group' => $totalGroup,
-                  'Non Group' => $totalUser-$totalGroup,
+                  'Group' => $totalGroup1+$array,
+                  'Non Group' => $totalUser-$array,
             );
 
             return response()->json($stages);
@@ -187,42 +201,9 @@ class DashboardController extends Controller
       
       public function getSingleMarriedWSChartAjax(){
       
-            $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['room', 'Single']])->get();
-            if(!empty($Singles) && count($Singles)>0){
-
-              $singleTotal = 0;
-              foreach($Singles as $Single){
-
-                $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
-
-                if(!$user){
-
-                  $singleTotal++;
-
-                }
-              }
-
-            }
-
-            $TwinSharing = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['room', 'Sharing']])->get();
-            if(!empty($TwinSharing) && count($TwinSharing)>0){
-
-              $TwinSharingTotal = 0;
-              foreach($TwinSharing as $Single){
-
-                $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
-
-                if(!$user){
-
-                  $TwinSharingTotal++;
-
-                }
-              }
-
-            }
             $stages = array(
-                  'Single' => $singleTotal,
-                  'Twin Sharing' => $TwinSharingTotal,
+                  'Single' => \App\Models\User::where([['designation_id', 2], ['room', 'Single']])->count(),
+                  'Twin Sharing' => \App\Models\User::where([['designation_id', 2], ['room', 'Sharing']])->count(),
             );
 
             return response()->json($stages);
@@ -233,58 +214,42 @@ class DashboardController extends Controller
             $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Married']])->get();
             if(!empty($Singles) && count($Singles)>0){
 
-                $singleTotal = 0;
+              $BothTotal = 0; $singleTotal = 0;$nonTrainerCount = 0;
                 foreach($Singles as $Single){
 
                     $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
 
-                    if($user){
+                    if($user && $user->ministry_pastor_trainer == 'Yes' && $Single->ministry_pastor_trainer == 'Yes'){
 
-                        if($user->ministry_pastor_trainer == 'Yes'){
-
-                            $singleTotal++;
-
-                        }
-                      
+                            $BothTotal++;
 
                     }else if($Single->ministry_pastor_trainer == 'Yes'){
 
-                        $singleTotal++;
+                        if($user && $user->ministry_pastor_trainer == 'No' ){
 
-                    }
-                }
+                            $singleTotal++;
+                        }
+                          
+                    }else if($Single->ministry_pastor_trainer == 'No'){
+                      
+                      if($user && $user->ministry_pastor_trainer == 'Yes' ){
 
-            }
+                          $singleTotal++;
+                      }
+                      
 
-            $nonTrainers = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Married']])->get();
-            if(!empty($nonTrainers) && count($nonTrainers)>0){
-
-                $nonTrainerCount = 0;
-                foreach($nonTrainers as $Single){
-
-                    $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
-
-                    if($user){
-
-                        if($user->ministry_pastor_trainer == 'No'){
+                    }else{
 
                             $nonTrainerCount++;
 
-                        }
-                      
-
-                    }else if($Single->ministry_pastor_trainer == 'No'){
-
-                        $nonTrainerCount++;
-
                     }
                 }
 
             }
 
-
             $stages = array(
-                  'Both trainers/One of them is a trainer' => $singleTotal,
+                  'Both trainers' => $BothTotal,
+                  'One of them is a trainer' => $singleTotal,
                   'Both are non trainers' => $nonTrainerCount,
             );
 
@@ -314,4 +279,17 @@ class DashboardController extends Controller
             }
       }
 
+      public function getDoYouSeekPastoralTraining(){
+          
+        $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'],  ['doyouseek_postoral', 'Yes']])->count();
+        
+        $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'], ['doyouseek_postoral', 'No']])->count();
+        
+        $stages = array(
+              'Yes' => $yes,
+              'No' => $no,
+        );
+
+        return response()->json($stages);
+  }
 }

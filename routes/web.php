@@ -112,6 +112,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 	Route::get('get-pastoral-trainers-chart-ajax','Admin\DashboardController@getPastoralTrainersChartAjax');
 	Route::get('get-payment-chart-ajax','Admin\DashboardController@getPaymentChartAjax');
 	Route::get('get-payment-type-chart-ajax','Admin\DashboardController@getPaymentTypeChartAjax');
+	Route::get('get-do-you-seek-pastoral-training-chart-ajax','Admin\DashboardController@getDoYouSeekPastoralTraining');
 
 	// Designation
 	Route::group(['prefix'=>'designation', 'as'=>'designation.'], function() {

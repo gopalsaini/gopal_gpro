@@ -187,7 +187,7 @@
         </div>
 
         
-        <div class="col-md-6 p-0 brl">
+        <div class="col-md-4 p-0 brl">
             <h2>Married with spouse -> Both trainers/One of them is a trainer/Both are non trainers </h2>
             <div class="circle-chart">
 
@@ -196,10 +196,19 @@
             </div>
         </div>
 
-        <div class="col-md-6 p-0 ">
+        <div class="col-md-4 p-0 brl">
             <h2>Pastoral Trainers - Yes/No</h2>
             <div class="circle-chart">
                 <div id="PastoralTrainersChart" style="width: 100%; height: 310px;"></div>
+
+
+            </div>
+        </div>
+
+        <div class="col-md-4 p-0 brl">
+            <h2>Do you seek to add Pastoral Training to your ministry</h2>
+            <div class="circle-chart">
+                <div id="DoYouSeekPastoralTraining" style="width: 100%; height: 310px;"></div>
 
 
             </div>
@@ -706,6 +715,30 @@ function PastoralTrainersChart() {
     
 }
 
+google.charts.setOnLoadCallback(DoYouSeekPastoralTraining);
+
+function DoYouSeekPastoralTraining() {
+
+    $.getJSON(baseUrl+"/admin/get-pastoral-trainers-chart-ajax", function(result){
+
+        var arr = [['Task', 'Pastoral TrainersChart']];
+        $.each(Object.entries(result), function(i, field){
+            arr.push(field);
+        });
+        
+        var options = {
+            pieSliceText: 'value',
+            sliceVisibilityThreshold: 0,
+        };
+        var data = google.visualization.arrayToDataTable(arr);
+        var chart = new google.visualization.PieChart(document.getElementById('DoYouSeekPastoralTraining'));
+
+        chart.draw(data, options);
+
+
+    });
+    
+}
 google.charts.setOnLoadCallback(PaymentChartData);
 
 function PaymentChartData() {
@@ -766,6 +799,9 @@ $(document).ready( function() {
     });
 
 });
+
+
+
 </script>
 
 
