@@ -466,7 +466,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '1'], ['profile_status', $request->input('status')]])
+			$query = \App\Models\User::where([['stage', '=', '1'], ['profile_status', $request->input('status')]])
 						->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
@@ -479,7 +479,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '1'], ['profile_status', $request->input('status')]])
+			$totalData1 = \App\Models\User::where([['stage', '=', '1'], ['profile_status', $request->input('status')]])
 						->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
@@ -2713,7 +2713,7 @@ class UserController extends Controller {
 
 				}else if($user->marital_status == 'Married' && $Spouse){
 
-					$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$countryPrice->base_price);
+					$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$countryPrice->base_price);
 
 					$basePrice = $data ['basePrice'];
 					$category = $data ['category'];
@@ -3825,7 +3825,8 @@ class UserController extends Controller {
 				
 				if ($exitsUser) {
 
-					\App\Models\User::where('id',$id)->delete();
+					\App\Models\User::where('id',$id)->forceDelete();
+					
 					$request->session()->flash('5fernsadminsuccess','User deleted successfully.');
 
 				}else{

@@ -95,7 +95,7 @@
                     <h5>@lang('admin.waiting')</h5>
                 </div>
                 <div class="card-body">
-                    <input type="text" name="email" class="form-control searchEmailWaiting " placeholder="Search ...">
+                    <input type="text" name="email" class="form-control searchEmailWaiting" placeholder="Search ...">
                         <br>
                     <div class="table-responsive">
                         <table class="display datatables" id="tablelist1">
@@ -227,7 +227,7 @@
 
 <script>
     $(document).ready(function() {
-        var table = $('#tablelist').DataTable({
+        var table1 = $('#tablelist').DataTable({
             "processing": true,
             "serverSide": true,
             "searching": false,
@@ -236,12 +236,12 @@
             "ajax": {
                 "url": "{{ route('admin.user.list.stage.one', ["$type"]) }}",
                 "dataType": "json",
+                "async": false,
+                "type": "get",
                 data: function (d) {
                     d.email = $('.searchEmail').val(),
                     d.status = 'Review'
                 },
-                "async": false,
-                "type": "get",
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
                         sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
@@ -302,12 +302,13 @@
 
         
         $(".searchEmail").keyup(function(){
-            table.draw();
+            table1.draw();
+            
         });
 
 
 
-        var table = $('#tablelist1').DataTable({
+        var table12 = $('#tablelist1').DataTable({
             "processing": true,
             "serverSide": true,
             "searching": false,
@@ -316,12 +317,13 @@
             "ajax": {
                 "url": "{{ route('admin.user.list.stage.one', ["$type"]) }}",
                 "dataType": "json",
+                
+                "async": false,
+                "type": "get",
                 data: function (d) {
                     d.email = $('.searchEmailWaiting').val(),
                     d.status = 'Waiting'
                 },
-                "async": false,
-                "type": "get",
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
                         sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
@@ -372,7 +374,7 @@
         });
 
         $(".searchEmailWaiting").keyup(function(){
-            table.draw();
+            table12.draw();
         });
 
         var table = $('#tablelist2').DataTable({

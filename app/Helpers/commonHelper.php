@@ -988,11 +988,17 @@ class commonHelper{
 
 	}
 
-	public static function getBasePriceOfMarriedWSpouse($ministry_pastor_trainer,$SpouseMinistry_pastor_trainer,$base_price) {
+	public static function getBasePriceOfMarriedWSpouse($doyouseek_postoral,$SpouseDoyouseek_postoral,$ministry_pastor_trainer,$SpouseMinistry_pastor_trainer,$base_price) {
 			
 		$category = [];
 
 		if($ministry_pastor_trainer == 'Yes' && $SpouseMinistry_pastor_trainer == 'Yes'){
+
+			$category = ['Upgrade to Club Floor'=>600,'Upgrade to Suite'=>900,'Day pass'=>1000];
+			$basePrice = $base_price*2;
+			$trainer = 'Yes';
+
+		}elseif($doyouseek_postoral == 'Yes' && $SpouseDoyouseek_postoral == 'Yes'){
 
 			$category = ['Upgrade to Club Floor'=>600,'Upgrade to Suite'=>900,'Day pass'=>1000];
 			$basePrice = $base_price*2;
