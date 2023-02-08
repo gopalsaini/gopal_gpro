@@ -149,11 +149,22 @@ class DashboardController extends Controller
 
       public function getPaymentChartAjax(){
       
+        $totalPendingAmount = 0;
+
+        $results = \App\Models\User::where('profile_status','Approved')->where('stage','2')->get(); 
+        if($results){
+
+            foreach($results as $val){
+                $totalPendingAmount +=\App\Helpers\commonHelper::getTotalPendingAmount($val->id);
+            }
+        }
+        
         $stages = array(
+                'Pending' => round($totalPendingAmount),
+                'Declined' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount')),
                 'Process' => round(\App\Models\Transaction::where([['status', '=', Null]])->sum('amount')),
                 'Accepted' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Success']])->sum('amount')),
-                'Declined' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount')),
-                'Pending' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Pending']])->sum('amount')),
+                
         );
 
         return response()->json($stages);

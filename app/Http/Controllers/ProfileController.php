@@ -210,7 +210,7 @@ class ProfileController extends Controller
 
             }else{
 
-                return redirect('profile-update');
+                return redirect('profile');
 
             }
 

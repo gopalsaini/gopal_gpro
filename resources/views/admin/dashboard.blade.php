@@ -206,7 +206,7 @@
         </div>
 
         <div class="col-md-4 p-0 brl">
-            <h2>Do you seek to add Pastoral Training to your ministry</h2>
+            <h2>Do you seek to add Pastoral Training to your ministry - Yes/No</h2>
             <div class="circle-chart">
                 <div id="DoYouSeekPastoralTraining" style="width: 100%; height: 310px;"></div>
 
@@ -217,22 +217,40 @@
 
         <div class="col-md-3 p-0">
             <h2>Amount in Process</h2>
-            <h3 class="counternumber"> {{ \App\Models\Transaction::where([['status', '=', Null]])->sum('amount') }} </h3>
+            <h3 class="counternumber"> {{ number_format(\App\Models\Transaction::where([['status', '=', Null]])->sum('amount'),2) }} </h3>
         </div>
 
         <div class="col-md-3 p-0 brlr">
             <h2>Accepted Amount</h2>
-            <h3 class="counternumber"> {{ \App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Success']])->sum('amount') }} </h3>
+            <h3 class="counternumber"> {{ number_format((\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Success']])->sum('amount')),2) }} </h3>
         </div>
 
         <div class="col-md-3 p-0">
             <h2>Declined Amount</h2>
-            <h3 class="counternumber"> {{ \App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount') }} </h3>
+            <h3 class="counternumber"> {{ number_format((\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount')),2) }} </h3>
         </div>
 
         <div class="col-md-3 p-0">
             <h2>Pending Amount</h2>
-            <h3 class="counternumber"> {{ \App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Pending']])->sum('amount') }} </h3>
+            <h3 class="counternumber"> 
+                
+            @php 
+            
+                $totalPendingAmount = 0;
+
+                $results = \App\Models\User::where('profile_status','Approved')->where('stage','2')->get(); 
+                if($results){
+
+                    foreach($results as $val){
+                        $totalPendingAmount +=\App\Helpers\commonHelper::getTotalPendingAmount($val->id);
+                    }
+                }
+            
+            @endphp
+
+
+                        
+            {{ number_format($totalPendingAmount,2) }} </h3>
         </div>
 
 

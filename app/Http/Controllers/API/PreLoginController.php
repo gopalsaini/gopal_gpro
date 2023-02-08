@@ -2115,7 +2115,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('profile_status','Approved')->get();
+			$results = \App\Models\User::where('profile_status','Approved')->where('stage','2')->get();
 
 			if(count($results) > 0){
 
