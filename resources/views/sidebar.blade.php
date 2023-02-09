@@ -31,7 +31,8 @@
         </li> 
     
         <li>
-            <a href="@if($stage->stage > 2) {{url('travel-information')}} @else # @endif" class="@if($stage->stage > 2) active @endif">
+            <a href="@if($stage->stage > 2) # @else # @endif" class="@if($stage->stage > 2) active @endif">
+            <!-- <a href="@if($stage->stage > 2) {{url('travel-information')}} @else # @endif" class="@if($stage->stage > 2) active @endif"> -->
                 <span>0@php echo $i++; @endphp</span>@lang('web/profile.travel') @lang('web/profile.info')
             </a>
         </li>

@@ -1137,7 +1137,7 @@ class commonHelper{
 
 			$payment_intent = \Stripe\PaymentIntent::create([
 				'customer'  => $customer['id'], 
-				'description' => 'Stripe Test Payment',
+				'description' => 'Gpro Stripe Online Payment',
 				'shipping' => [
 					'name' => $user->name,
 					'address' => [

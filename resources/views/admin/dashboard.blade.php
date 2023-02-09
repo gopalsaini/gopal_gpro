@@ -217,17 +217,17 @@
 
         <div class="col-md-3 p-0">
             <h2>Amount in Process</h2>
-            <h3 class="counternumber"> {{ number_format(\App\Models\Transaction::where([['status', '=', Null]])->sum('amount'),2) }} </h3>
+            <h3 class="counternumber"> ${{ number_format(\App\Models\Transaction::where([['status', '=', Null]])->sum('amount'),2) }} </h3>
         </div>
 
         <div class="col-md-3 p-0 brlr">
             <h2>Accepted Amount</h2>
-            <h3 class="counternumber"> {{ number_format((\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Success']])->sum('amount')),2) }} </h3>
+            <h3 class="counternumber"> ${{ number_format((\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Success']])->sum('amount')),2) }} </h3>
         </div>
 
         <div class="col-md-3 p-0">
             <h2>Declined Amount</h2>
-            <h3 class="counternumber"> {{ number_format((\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount')),2) }} </h3>
+            <h3 class="counternumber"> ${{ number_format((\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount')),2) }} </h3>
         </div>
 
         <div class="col-md-3 p-0">
@@ -250,7 +250,7 @@
 
 
                         
-            {{ number_format($totalPendingAmount,2) }} </h3>
+            ${{ number_format($totalPendingAmount,2) }} </h3>
         </div>
 
 

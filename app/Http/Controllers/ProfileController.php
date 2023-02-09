@@ -202,7 +202,7 @@ class ProfileController extends Controller
              
         }else if($resultData['result']['profile_status'] =='Approved'){
             
-            $groupName = \App\Models\user::where('parent_id', $resultData['result']['id'])->where('added_as','Group')->first();
+            $groupName = \App\Models\User::where('parent_id', $resultData['result']['id'])->where('added_as','Group')->first();
 
             if($groupName){
                 

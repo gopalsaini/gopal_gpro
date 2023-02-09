@@ -238,7 +238,7 @@ class TransactionController extends Controller {
 											
 					}
 					// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
-					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+					// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 
 				}
