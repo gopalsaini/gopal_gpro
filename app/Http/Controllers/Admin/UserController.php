@@ -3937,7 +3937,7 @@ class UserController extends Controller {
 						$usertable->stage= '1';
 						$usertable->save();
 
-						return response(array('message'=>'User stage move successfully'),200);
+						return response(array('message'=>'User stage move successfully','reset'=>true),200);
 
 					}else{
 
@@ -4041,7 +4041,7 @@ class UserController extends Controller {
 
 								\App\Models\ArchiveUser::where('id',$exitsUser->id)->forceDelete();
 								
-								return response(array('message'=>'User Recover successfully.'),200);
+								return response(array('message'=>'User Recover successfully.','reset'=>true),200);
 
 
 							}else{
