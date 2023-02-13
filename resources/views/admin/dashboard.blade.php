@@ -737,7 +737,7 @@ google.charts.setOnLoadCallback(DoYouSeekPastoralTraining);
 
 function DoYouSeekPastoralTraining() {
 
-    $.getJSON(baseUrl+"/admin/get-pastoral-trainers-chart-ajax", function(result){
+    $.getJSON(baseUrl+"/admin/get-do-you-seek-pastoral-training-chart-ajax", function(result){
 
         var arr = [['Task', 'Pastoral TrainersChart']];
         $.each(Object.entries(result), function(i, field){

@@ -147,9 +147,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 	
 		Route::get('{designation}', 'Admin\UserController@list')->name('list');
 
-
 		Route::match(['get', 'post'], 'recover/user', 'Admin\UserController@userRecover')->name('recover');
-
 
 		Route::group(['prefix'=>'{type}'], function() {
 			Route::get('stage/all', 'Admin\UserController@stageAll')->name('list.stage.all');
@@ -161,6 +159,8 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 			Route::get('stage/five', 'Admin\UserController@stageFive')->name('list.stage.five');
 		});
 
+		
+		Route::get('transaction-data/download', 'Admin\UserController@TransationDataExport')->name('transaction-data-download');
 
 		Route::get('user-profile/{id}', 'Admin\UserController@userProfile')->name('profile');		
 		Route::get('archive-user/{id}', 'Admin\UserController@archiveUser')->name('archiveUserDelete');

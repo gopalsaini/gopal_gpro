@@ -826,7 +826,7 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
+				if (\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '13') {
 					return '<div style="display:flex"><a class="btn btn-sm btn-dark m-1 sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope" style="color:#fff"></i></a>
 						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1" ><i class="fas fa-eye" style="color:#fff"></i></a>
 						<a href="'.route('admin.user.payment.history', ['id' => $data->id] ).'" title="User payment history" class="btn btn-sm btn-warning m-1"><i class="fas fa-list" style="color:#fff"></i></a></div>
@@ -841,7 +841,7 @@ class UserController extends Controller {
 
         }
 
-		if(\Auth::user()->designation_id == 1){
+		if(\Auth::user()->designation_id == 1 || \Auth::user()->designation_id == 13){
 
 			\App\Helpers\commonHelper::setLocale();
 			$setting = \App\Models\Designation::With('StageSetting')->where('slug', $type)->first();
@@ -2966,6 +2966,7 @@ class UserController extends Controller {
 						} 
 
 						$userSpouse = \App\Models\User::with('TravelInfo')->where([['parent_id', $row['id']], ['added_as', 'Spouse']])->first();
+						$userGroup = \App\Models\User::where([['parent_id', $row['id']],['added_as', 'Group']])->first();
 						$spouseName = '';
 						$spouseEmail = '';
 						$arrivalDate = '';
@@ -2973,9 +2974,12 @@ class UserController extends Controller {
 						$cabNeededOnArrival = '';
 						$cabNeededOnDeparture = '';
 						$mobile = '';
-						$groupLeaderName= $row['name'].' '.$row['last_name'];
-						$groupLeaderEmail= $row['email'];
-						if($userSpouse){
+						$groupLeaderEmail= '';
+						$groupLeaderName= '';
+						if($userGroup){
+							$groupLeaderName= $row['name'].' '.$row['last_name'];
+							$groupLeaderEmail= $row['email'];
+						}if($userSpouse){
 							$spouseName= $userSpouse->name.' '.$userSpouse->last_name;
 							$spouseEmail= $userSpouse->email;
 						}
@@ -3931,17 +3935,46 @@ class UserController extends Controller {
 				if($request->post('type') == '2'){
 
 					$usertable = \App\Models\User::where('email','=',$request->post('email'))->first();
-					if($usertable && $usertable->stage == '2'){
+					if($usertable){
+
+						if($usertable->stage != '2'){
+
+							return response(array('message'=>'User stage moved not allowed'),403);
+						}
+
+						$userSpouse = \App\Models\User::where('parent_id',$usertable->id)->where('added_as','Spouse')->first();
+
+						if($userSpouse){
+
+							$userSpouse->profile_status='Review';
+							$userSpouse->stage= '1';
+							$userSpouse->amount= '0';
+							$userSpouse->save();
+
+						}
+
+						
+						$userHus = \App\Models\User::where('id',$usertable->parent_id)->first();
+
+						if($userHus){
+
+							$userHus->profile_status='Review';
+							$userHus->stage= '1';
+							$userHus->amount= '0';
+							$userHus->save();
+
+						}
 
 						$usertable->profile_status='Review';
 						$usertable->stage= '1';
+						$usertable->amount= '0';
 						$usertable->save();
 
 						return response(array('message'=>'User stage move successfully'),200);
 
 					}else{
 
-						return response(array('message'=>'User stage already exist'),403);
+						return response(array('message'=>'User does not exist'),403);
 					}
 
 				}elseif($request->post('type') == '1'){
@@ -4064,8 +4097,53 @@ class UserController extends Controller {
 			return response(array("error"=>true, "message" => $e->getMessage()),200); 
 		}
 
-		$result=[];
-        return view('admin.user.user_recover',compact('result'));
+		if(\Auth::user()->email ==  'german@gprocongress.org' || \Auth::user()->email == 'admin@gmail.com'){
+
+			$result=[];
+        	return view('admin.user.user_recover',compact('result'));
+		}else{
+			return redirect()->back()->with(['5fernsadminerror'=>"Access Denied"]);
+
+		}
+		
+
+	}
+
+	public function TransationDataExport(Request $request){
+	
+		try{
+			
+			$delimiter = ","; 
+			$filename = "transactiondata-data_" . date('Y-m-d') . ".csv"; 
+			
+			$f = fopen('php://memory', 'w'); 
+			
+			$fields = array('ID', 'Name', 'Email Address', 'Mobile Number', 'Total Amount', 'Amount In Process', 'Accepted Amount', 'Declined Amount', 'Pending Amount', 'Payment Status'); 
+			fputcsv($f, $fields, $delimiter); 
+			
+			$query = \App\Models\Transaction::orderBy('id','desc');
+
+			$data = $query->get();
+			foreach($data as $key=>$data){
+				
+
+				$lineData = array($key+1, \App\Helpers\commonHelper::getUserNameById($data->user_id), $data->bank, $data->country_of_sender, $data->method, $data->order_id, $data->bank_transaction_id, $data->amount,\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status)); 
+				fputcsv($f, $lineData, $delimiter); 
+			}
+			
+			fseek($f, 0); 
+			
+			header('Content-Type: text/csv'); 
+			header('Content-Disposition: attachment; filename="' . $filename . '";'); 
+			
+			fpassthru($f); 
+
+									
+		}catch (\Exception $e){
+			
+			return response(array("error"=>true, "message" => $e->getMessage()),200); 
+		}
+
 
 	}
 }

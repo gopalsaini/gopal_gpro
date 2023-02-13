@@ -1004,6 +1004,18 @@ class commonHelper{
 			$basePrice = $base_price*2;
 			$trainer = 'Yes';
 
+		}elseif($ministry_pastor_trainer == 'Yes' && $SpouseDoyouseek_postoral == 'Yes'){
+
+			$category = ['Upgrade to Club Floor'=>600,'Upgrade to Suite'=>900,'Day pass'=>1000];
+			$basePrice = $base_price*2;
+			$trainer = 'Yes';
+
+		}elseif($doyouseek_postoral == 'Yes' && $SpouseMinistry_pastor_trainer == 'Yes'){
+
+			$category = ['Upgrade to Club Floor'=>600,'Upgrade to Suite'=>900,'Day pass'=>1000];
+			$basePrice = $base_price*2;
+			$trainer = 'Yes';
+
 		}else{
 
 			$category = ['Upgrade to Club Floor'=>700,'Upgrade to Suite'=>1000,'Day pass'=>1000];

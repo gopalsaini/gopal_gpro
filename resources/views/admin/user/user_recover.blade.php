@@ -1,17 +1,17 @@
 @extends('layouts/master')
 
 @section('title')
-    User Recover
+User Database Management
 @section('content')
 
 <div class="container-fluid">
 	<div class="page-header">
 		<div class="row">
 			<div class="col-sm-6">
-				<h3>User Recover</h3>
+				<h3>User Database Management</h3>
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-					<li class="breadcrumb-item" aria-current="page">User Recover</li>
+					<li class="breadcrumb-item" aria-current="page">User Database Management</li>
 				</ol>
 			</div>
 		</div>
@@ -29,8 +29,8 @@
                                 <label for="input">Type <span style="color:red">*</span></label>
                                 <select class="form-select" name="type" required aria-label="Default select example">
                                     <option selected>Select Type </option>
-                                    <option value="1">User Recover</option>
-                                    <option value="2">User Stage Move</option>
+                                    <option value="1">Recover Deleted user</option>
+                                    <option value="2">Move user from Stage2 to Stage-1</option>
                                 </select>
 							</div>
 

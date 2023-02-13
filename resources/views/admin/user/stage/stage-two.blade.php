@@ -54,10 +54,19 @@
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.two')</li>
                 </ol>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-3">
                 <div class="bookmark">
                     <ul>
                         <a href="{{ route('admin.user.add') }}" class="btn btn-outline-primary"><i class="fas fa-plus me-2"></i>Send Invitation</a>
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="col-sm-3">
+                
+                <div class="bookmark">
+                    <ul>
+                        <a href="{{ url('admin/user/transaction-data/download') }}" class="btn btn-outline-primary"><i class="fas fa-plus me-2"></i>Data Download</a>
                     </ul>
                 </div>
             </div>
