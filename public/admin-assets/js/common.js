@@ -175,3 +175,84 @@ function submitButton(formId, btnhtml, disabled){
     }
     $("button[form="+formId+"]").prop('disabled', disabled);
 }
+
+
+$('.country').change(function() {
+    
+    stateId = parseInt($(this).data('state_id'));
+    cityId = parseInt($(this).data('city_id'));
+    countryId = $(this).val();
+    
+    $.ajax({
+        url: baseUrl + '/get-state?country_id=' + countryId,
+        dataType: 'json',
+        type: 'get',
+        error: function(xhr, textStatus) {
+
+            if (xhr && xhr.responseJSON.message) {
+                showMsg('error', xhr.responseJSON.message);
+            } else {
+                showMsg('error', xhr.statusText);
+            }
+        },
+        success: function(data) {
+            $('.statehtml').fSelect('destroy')
+            $('.statehtml').html(data.html);
+
+            $('.statehtml option').each(function() {
+                if (this.value == stateId)
+                $('.statehtml').val(stateId);
+                    
+
+            });
+
+            $('.statehtml').fSelect('create');
+
+        },
+        cache: false,
+        timeout: 5000
+    });
+
+});
+
+
+$(document).ready(getCity);
+
+
+function getCity() {
+
+    $('.statehtml').change(function() {
+
+        $.ajax({
+            url: baseUrl + '/get-city?state_id=' + $(this).val(),
+            dataType: 'json',
+            type: 'get',
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    showMsg('error', xhr.responseJSON.message);
+                } else {
+                    showMsg('error', xhr.statusText);
+                }
+            },
+            success: function(data) {
+
+                $('.cityHtml').fSelect('destroy');
+                $('.cityHtml').html(data.html);
+
+                $('.cityHtml option').each(function() {
+                    if (this.value == cityId)
+                    $('.cityHtml').val(cityId);
+                        
+                });
+
+                $('.cityHtml').fSelect('create');
+            },
+            cache: false,
+            timeout: 5000
+        });
+    });
+
+    
+
+}

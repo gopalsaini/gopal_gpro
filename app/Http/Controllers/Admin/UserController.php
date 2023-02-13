@@ -18,11 +18,45 @@ class UserController extends Controller {
 					'first_name' => 'required|string',
 					'last_name' => 'required|string',
 					'phone_code' => 'required',
+					'email' => 'required|email',
 					'mobile' => 'required|numeric',
+					'contact_business_number' => 'required|numeric',
+					'contact_whatsapp_number' => 'required|numeric',
+					'contact_zip_code' => 'required',
 					'gender' => 'required|in:1,2',
 					'dob' => 'required|date',
-					// 'citizenship' => 'required|string',
+					'contact_country_id' => 'required',
+					'contact_state_id' => 'required',
+					'contact_city_id' => 'required',
+					'ministry_name' => 'required',
+					'ministry_zip_code' => 'required',
+					'ministry_address' => 'required',
+					'ministry_country_id' => 'required',
+					'ministry_state_id' => 'required',
+					'ministry_state_name' => 'required',
+					'ministry_city_name' => 'required',
+					'ministry_city_id' => 'required',
+					'ministry_pastor_trainer' => 'required',
 				];
+
+
+				if($request->json()->get('ministry_pastor_trainer')=='Yes'){
+
+					$rules = [
+						'ministry_pastor_trainer' => 'required|in:Yes,No',
+						'non_formal_trainor' => 'required', 
+						'informal_personal' => 'required', 
+						'howmany_pastoral' => 'required', 
+						'howmany_futurepastor' => 'required',
+						'willing_to_commit' => 'required',
+					];
+				}else{
+
+                    $rules = [
+						'ministry_pastor_trainer' => 'required|in:Yes,No',
+						'pastorno' => 'required|in:Yes,No',
+					];
+                }
 
 			} else {
 
@@ -70,13 +104,41 @@ class UserController extends Controller {
 					$data=\App\Models\User::find($request->post('id'));
 
 					$data->salutation = $request->post('salutation');
+					$data->email = $request->post('email');
 					$data->name = $request->post('first_name');
 					$data->last_name = $request->post('last_name');
 					$data->phone_code = $request->post('phone_code');
-					$data->mobile = $request->post('mobile');
 					$data->gender = $request->post('gender');
 					$data->dob = $dob;
-					// $data->citizenship = $request->post('citizenship');
+					$data->mobile = $request->post('mobile');
+					$data->contact_business_number = $request->post('contact_business_number');
+					$data->contact_whatsapp_number = $request->post('contact_whatsapp_number');
+					$data->contact_zip_code = $request->post('contact_zip_code');
+					$data->contact_country_id = $request->post('contact_country_id');
+					$data->contact_state_id = $request->post('contact_state_id');
+					$data->contact_city_id = $request->post('contact_city_id');
+					$data->contact_city_name = $request->post('contact_city_name');
+					$data->ministry_name = $request->post('ministry_name');
+					$data->ministry_zip_code = $request->post('ministry_zip_code');
+					$data->ministry_address = $request->post('ministry_address');
+					$data->ministry_country_id = $request->post('ministry_country_id');
+					$data->ministry_state_id = $request->post('ministry_state_id');
+					$data->ministry_state_name = $request->post('ministry_state_name');
+					$data->ministry_city_id = $request->post('ministry_city_id');
+					$data->ministry_city_name = $request->post('ministry_city_name');
+					$data->ministry_pastor_trainer = $request->post('ministry_pastor_trainer');
+					
+					$dataMin=array(
+						'non_formal_trainor'=>$request->post('non_formal_trainor'),
+						'formal_theological'=>$request->post('formal_theological'),
+						'informal_personal'=>$request->post('informal_personal'),
+						'howmany_pastoral'=>$request->post('howmany_pastoral'),
+						'howmany_futurepastor'=>$request->post('howmany_futurepastor'), 
+						'comment'=>$request->post('comment') ?? '', 
+						'willing_to_commit'=>$request->post('willing_to_commit') ?? '', 
+					);
+
+					$data->ministry_pastor_trainer_detail = json_encode($dataMin); 
 
 				} else {
 
@@ -127,9 +189,11 @@ class UserController extends Controller {
 		
         \App\Helpers\commonHelper::setLocale();
 		$designations = \App\Models\Designation::where('slug', '!=', 'admin')->get();
+
+		$country=\App\Models\Country::get();
 		
 		$result = array();
-        return view('admin.user.add', compact('result', 'designations'));
+        return view('admin.user.add', compact('result', 'designations','country'));
 
     }
 
@@ -1476,9 +1540,10 @@ class UserController extends Controller {
 
         \App\Helpers\commonHelper::setLocale();
 		$designations = \App\Models\Designation::where('slug', '!=', 'admin')->get();
-		$countries = \App\Models\Country::get();
-
-		return view('admin.user.edit', compact('result', 'designations', 'countries'));
+		$country  = \App\Models\Country::get();
+		// echo "<pre>";
+		// print_r($result); die;
+		return view('admin.user.edit', compact('result', 'designations','country'));
 
 	}
 
