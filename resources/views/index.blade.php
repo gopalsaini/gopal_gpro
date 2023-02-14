@@ -389,7 +389,7 @@
     <!-- counter-end -->
 
     <!-- speaker-start -->
-    <!-- <div class="speaker-wrapper">
+    <div class="speaker-wrapper">
         <div class="container-fluid custom-container">
             <div class="row">
                 <div class="col-lg-4">
@@ -403,10 +403,12 @@
                 <div class="col-lg-8">
                     <div class="speaker-slider">
                         <div class="owl-carousel owl-theme">
+                        @if(!empty($speakers))
+                            @foreach($speakers as $key=>$speaker)
                             <div class="item">
                                 <div class="speaker-box">
                                     <div class="speaker-img">
-                                        <img src="{{ asset('assets/images/speaker-img-01.png') }}" alt="img">
+                                        <img src="{{ asset('/uploads/speaker/'.$speaker->image) }}" alt="img">
                                         <div class="main-share">
                                             <a class="click-me" href="javascript:;"><i class="fas fa-share-alt"></i></a>
                                             <ul class="group-icon">
@@ -423,76 +425,22 @@
                                         </div>
                                     </div>
                                     <div class="speaker-content">    
-                                        <h2>01</h2>
+                                        <h2>0 {{ $key+1}}</h2>
                                         <div>
-                                            <h5>Katayma Fumiki</h5>
+                                            <h5>{{ ucfirst($speaker->name) }}</h5>
                                             <span>Speaker</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="item">
-                                <div class="speaker-box">
-                                    <div class="speaker-img">
-                                        <img src="{{ asset('assets/images/speaker-img-02.png') }}" alt="img">
-                                        <div class="main-share">
-                                            <a class="click-me" href="javascript:;"><i class="fas fa-share-alt"></i></a>
-                                            <ul class="group-icon">
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-facebook-f"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-twitter"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-instagram"></i></a>
-                                               </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="speaker-content">
-                                        <h2>02</h2>
-                                        <div>
-                                            <h5>Solvina D Naliz</h5>
-                                            <span>Speaker</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="speaker-box">
-                                    <div class="speaker-img">
-                                        <img src="{{ asset('assets/images/speaker-img-03.png') }}" alt="img">
-                                        <div class="main-share">
-                                            <a class="click-me" href="javascript:;"><i class="fas fa-share-alt"></i></a>
-                                            <ul class="group-icon">
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-facebook-f"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-twitter"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-instagram"></i></a>
-                                               </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="speaker-content">
-                                        <h2>03</h2>
-                                        <div>
-                                            <h5>Michel Jain</h5>
-                                            <span>Speaker</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforeach
+                        @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div> -->
+    </div>
     <!-- speaker-end -->
 
     

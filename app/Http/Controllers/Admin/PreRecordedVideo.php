@@ -15,7 +15,6 @@ class PreRecordedVideo extends Controller
 			$rules = [
 				'id' => 'numeric|required',
 				'name'=>'required',
-				'description'=>'required',
 			];
 
             if((int) $request->post('id')==0){
@@ -45,7 +44,7 @@ class PreRecordedVideo extends Controller
                 
                 if($request->hasFile('video')){
                     $videoData = $request->file('video');
-                    $file = 'video_'.strtotime(date('Y-m-d H:i:s')).'.'.$videoData->getClientOriginalExtension();
+                    $file = strtotime(date('Y-m-d H:i:s')).'.'.$videoData->getClientOriginalExtension();
                     $destinationPath = public_path('/uploads/pre-recorded-video');
                     $videoData->move($destinationPath, $file);
 
@@ -53,7 +52,6 @@ class PreRecordedVideo extends Controller
                 }
 
                 $preRecordedVideo->name = $request->post('name');
-                $preRecordedVideo->description = $request->post('description');
 
                 $preRecordedVideo->save();
                 
@@ -106,10 +104,6 @@ class PreRecordedVideo extends Controller
 			->addColumn('video', function($data){
 				return '<video width="100" height="100" controls> <source src="'.asset('/uploads/pre-recorded-video/'.$data->video).'"> </video>';
                   
-		    })
-
-			->addColumn('description', function($data){
-				return $data->description;
 		    })
 
 			->addColumn('status', function($data){

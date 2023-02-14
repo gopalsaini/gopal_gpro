@@ -35,7 +35,6 @@
                                     <th> #ID </th>
                                     <th> Name </th>
                                     <th> Video </th>
-                                    <th> Description </th>
                                     <th> Status </th>
                                     <th> Action </th>
                                 </tr>
@@ -52,7 +51,6 @@
                                     <th> #ID </th>
                                     <th> Name </th>
                                     <th> Video </th>
-                                    <th> Description</th>
                                     <th> Status </th>
                                     <th> Action </th>
                                 </tr>
@@ -116,9 +114,6 @@ $(document).ready(function() {
             },
             {
                 "data": "video"
-            },
-            {
-                "data": "description"
             },
             {
                 "data": "status"

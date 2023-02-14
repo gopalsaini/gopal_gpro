@@ -43,8 +43,10 @@ class HomeController extends Controller
             })->get();
         
         }
+
+        $speakers = \App\Models\Speaker::where('status', '1')->inRandomOrder()->limit(3)->get();
         
-        return view('index', compact('testimonials'));
+        return view('index', compact('testimonials','speakers'));
     } 
 
     public function Registration() {

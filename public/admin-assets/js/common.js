@@ -179,8 +179,10 @@ function submitButton(formId, btnhtml, disabled){
 
 $('.country').change(function() {
     
+    
     stateId = parseInt($(this).data('state_id'));
     cityId = parseInt($(this).data('city_id'));
+   
     countryId = $(this).val();
     
     $.ajax({
@@ -200,7 +202,7 @@ $('.country').change(function() {
             $('.statehtml').html(data.html);
 
             $('.statehtml option').each(function() {
-                if (this.value == stateId)
+               
                 $('.statehtml').val(stateId);
                     
 

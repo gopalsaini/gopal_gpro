@@ -44,7 +44,7 @@ class SpeakerController extends Controller
                 
                 if($request->hasFile('image')){
                     $imageData = $request->file('image');
-                    $file = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+                    $file = strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
                     $destinationPath = public_path('/uploads/speaker');
                     $imageData->move($destinationPath, $file);
 

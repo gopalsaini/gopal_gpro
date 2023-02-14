@@ -59,15 +59,6 @@
 									@endif  
 								</div>
 							</div>
-							
-							<div class="col-sm-12">
-								<div class="form-group">
-									<label for="input"> Description:</label>
-									<textarea class="form-control" name="description" placeholder="Enter description" cols="30" rows="5">@if($result){{ $result->description }}@endif</textarea>
-								</div>
-							</div>
-
-
 						</div>
 						<div class="btn-showcase text-center">
 							@if(!$result)

@@ -63,7 +63,7 @@
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="input"> Description:</label>
-									<textarea class="form-control" name="description" placeholder="Enter description" cols="30" rows="5">@if($result){{ $result->description }}@endif</textarea>
+									<textarea class="form-control summernote" name="description" placeholder="Enter description" cols="30" rows="5">@if($result){{ $result->description }}@endif</textarea>
 								</div>
 							</div>
 
@@ -83,3 +83,16 @@
 </div>
 
 @endsection
+@push('custom_js')
+
+	<script>
+
+		$('.summernote').summernote({
+			placeholder: 'Enter Description',
+			tabsize: 2,
+			height: 200,
+		});
+
+		
+	</script>
+@endpush
