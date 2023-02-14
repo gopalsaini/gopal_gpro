@@ -1541,8 +1541,7 @@ class UserController extends Controller {
         \App\Helpers\commonHelper::setLocale();
 		$designations = \App\Models\Designation::where('slug', '!=', 'admin')->get();
 		$country  = \App\Models\Country::get();
-		// echo "<pre>";
-		// print_r($result); die;
+		
 		return view('admin.user.edit', compact('result', 'designations','country'));
 
 	}

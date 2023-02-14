@@ -216,7 +216,7 @@
 													<div class="col-lg-4">
 														<label for="country">Ministry Country: <span>*</span></label>
 														<div class="common-select">
-															<select id="country" placeholder="--select country--" data-state_id="{{$result['ministry_state_id']}}" data-city_id="{{$result['ministry_city_id']}}" class="mt-2 country selectbox test" name="ministry_country_id">
+															<select id="country" placeholder="--select country--" data-state_id="{{$result['ministry_state_id']}}" data-city_id="{{$result['ministry_city_id']}}" class="mt-2 MinistryCountry selectbox test" name="ministry_country_id">
 															
 																<option value="">--select country--</option>
 																@foreach($country as $con)
@@ -232,7 +232,7 @@
 																						
 															</select>
 														</div>
-														<div style="display: @if($result['ministry_state_id'] == 0) none  @else block @endif" id="OtherStateDiv">
+														<div style="display: @if($result['ministry_state_id'] && $result['ministry_state_id'] == 0) block  @else none @endif " id="OtherStateDiv">
 															<input type="text" autocomplete="off" placeholder="Enter State" name="ministry_state_name" id="ministryStateName" class="mt-2" value="{{$result['ministry_state_name']}}">
 														</div>
 													</div>
@@ -243,7 +243,7 @@
 															
 															</select>
 														</div>
-														<div style="display: @if($result['ministry_city_id'] == 0) none  @else block @endif" id="OtherCityDiv">
+														<div style="display: @if($result['ministry_city_id'] && $result['ministry_city_id'] == 0) block  @else none @endif " id="OtherCityDiv">
 															<input type="text" autocomplete="off" placeholder="Enter city" name="ministry_city_name" id="ministryCityName" class="mt-2" value="{{$result['ministry_city_name']}}">
 														</div>
 
@@ -273,23 +273,23 @@
 																<div class="input-box">
 																	<ul class="unstyled centered" style="justify-content: space-between;display: flex;">
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox" type="radio" value="@lang('web/ministry-details.practitioner')"  name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif >
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox" type="radio" value="@lang('web/ministry-details.practitioner')"  name="non_formal_trainor" @if(isset($result['non_formal_trainor']) && $result['non_formal_trainor']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif >
 																			<label for="styled-checkbox" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.practitioner-tooltip')">@lang('web/ministry-details.practitioner')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-2" type="radio" value="@lang('web/ministry-details.facilitator')"  name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-2" type="radio" value="@lang('web/ministry-details.facilitator')"  name="non_formal_trainor" @if(isset($result['non_formal_trainor']) && $result['non_formal_trainor']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
 																			<label for="styled-checkbox-2" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.facilitator-tooltip')">@lang('web/ministry-details.facilitator')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-3" type="radio" value="@lang('web/ministry-details.strategist')"  name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-3" type="radio" value="@lang('web/ministry-details.strategist')"  name="non_formal_trainor" @if(isset($result['non_formal_trainor']) && $result['non_formal_trainor']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
 																			<label for="styled-checkbox-3" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.strategist-tooltip')">@lang('web/ministry-details.strategist')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-4" type="radio" value="@lang('web/ministry-details.donor')"  name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-4" type="radio" value="@lang('web/ministry-details.donor')"  name="non_formal_trainor" @if(isset($result['non_formal_trainor']) && $result['non_formal_trainor']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
 																			<label for="styled-checkbox-4" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.donor-tooltip')">@lang('web/ministry-details.donor')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-na1" type="radio" value="N/A"  name="non_formal_trainor" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']=='N/A'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-na1" type="radio" value="N/A"  name="non_formal_trainor" @if(isset($result['non_formal_trainor']) && $result['non_formal_trainor']=='N/A'){{'checked'}}@endif>
 																			<label for="styled-na1" data-bs-toggle="tooltip" data-bs-placement="top" title="Not Applicable">N/A </label>
 																		</li>
 																	</ul>
@@ -302,24 +302,24 @@
 																<div class="input-box">
 																	<ul class="unstyled centered" style="justify-content: space-between;display: flex;">
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox5" type="radio" value="{{Lang::get('web/ministry-details.practitioner')}}"   name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox5" type="radio" value="{{Lang::get('web/ministry-details.practitioner')}}"   name="formal_theological" @if(isset($result['formal_theological']) && $result['formal_theological']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif>
 																			<label for="styled-checkbox5" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.practitioner-tooltip')">@lang('web/ministry-details.practitioner')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-6" type="radio" value="{{Lang::get('web/ministry-details.facilitator')}}"   name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-6" type="radio" value="{{Lang::get('web/ministry-details.facilitator')}}"   name="formal_theological" @if(isset($result['formal_theological']) && $result['formal_theological']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
 																			<label for="styled-checkbox-6" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.facilitator-tooltip')">@lang('web/ministry-details.facilitator')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-7" type="radio" value="{{Lang::get('web/ministry-details.strategist')}}"   name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-7" type="radio" value="{{Lang::get('web/ministry-details.strategist')}}"   name="formal_theological" @if(isset($result['formal_theological']) && $result['formal_theological']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
 																			<label for="styled-checkbox-7" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.strategist-tooltip')">@lang('web/ministry-details.strategist')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-8" type="radio" value="{{Lang::get('web/ministry-details.donor')}}"  name="formal_theological" @if(isset($ministryPastorDetail['formal_theological']) && $ministryPastorDetail['formal_theological']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-8" type="radio" value="{{Lang::get('web/ministry-details.donor')}}"  name="formal_theological" @if(isset($result['formal_theological']) && $result['formal_theological']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
 																			<label for="styled-checkbox-8" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.donor-tooltip')">@lang('web/ministry-details.donor')</label>
 																		</li>
 																		
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-na2" type="radio" value="N/A"  name="formal_theological" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']=='N/A'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-na2" type="radio" value="N/A"  name="formal_theological" @if(isset($result['non_formal_trainor']) && $result['non_formal_trainor']=='N/A'){{'checked'}}@endif>
 																			<label for="styled-na2" data-bs-toggle="tooltip" data-bs-placement="top" title="Not Applicable">N/A </label>
 																		</li>
 																	</ul>
@@ -332,24 +332,24 @@
 																<div class="input-box">
 																	<ul class="unstyled centered" style="justify-content: space-between;display: flex;">
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox9" type="radio" value="{{Lang::get('web/ministry-details.practitioner')}}" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox9" type="radio" value="{{Lang::get('web/ministry-details.practitioner')}}" name="informal_personal" @if(isset($result['informal_personal']) && $result['informal_personal']==Lang::get('web/ministry-details.practitioner')){{'checked'}}@endif>
 																			<label for="styled-checkbox9" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.practitioner-tooltip')">@lang('web/ministry-details.practitioner')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-10" type="radio" value="{{Lang::get('web/ministry-details.facilitator')}}" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-10" type="radio" value="{{Lang::get('web/ministry-details.facilitator')}}" name="informal_personal" @if(isset($result['informal_personal']) && $result['informal_personal']==Lang::get('web/ministry-details.facilitator')){{'checked'}}@endif>
 																			<label for="styled-checkbox-10" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.facilitator-tooltip')">@lang('web/ministry-details.facilitator')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-11" type="radio" value="{{Lang::get('web/ministry-details.strategist')}}" name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-11" type="radio" value="{{Lang::get('web/ministry-details.strategist')}}" name="informal_personal" @if(isset($result['informal_personal']) && $result['informal_personal']==Lang::get('web/ministry-details.strategist')){{'checked'}}@endif>
 																			<label for="styled-checkbox-11" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.strategist-tooltip')">@lang('web/ministry-details.strategist')</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-12" type="radio" value="{{Lang::get('web/ministry-details.donor')}}"  name="informal_personal" @if(isset($ministryPastorDetail['informal_personal']) && $ministryPastorDetail['informal_personal']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-12" type="radio" value="{{Lang::get('web/ministry-details.donor')}}"  name="informal_personal" @if(isset($result['informal_personal']) && $result['informal_personal']==Lang::get('web/ministry-details.donor')){{'checked'}}@endif>
 																			<label for="styled-checkbox-12" data-bs-toggle="tooltip" data-bs-placement="top" title="@lang('web/ministry-details.donor-tooltip')">@lang('web/ministry-details.donor')</label>
 																		</li>
 																		
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-na3" type="radio" value="N/A"  name="informal_personal" @if(isset($ministryPastorDetail['non_formal_trainor']) && $ministryPastorDetail['non_formal_trainor']=='N/A'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-na3" type="radio" value="N/A"  name="informal_personal" @if(isset($result['non_formal_trainor']) && $result['non_formal_trainor']=='N/A'){{'checked'}}@endif>
 																			<label for="styled-na3" data-bs-toggle="tooltip" data-bs-placement="top" title="Not Applicable">N/A </label>
 																		</li>
 																	</ul>
@@ -362,17 +362,17 @@
 																<div class="input-box">
 																	<ul class="unstyled centered" style="justify-content: space-between;display: flex;">
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="commit-yes" type="radio"  value="Yes" name="willing_to_commit" @if(isset($ministryPastorDetail['willing_to_commit']) && $ministryPastorDetail['willing_to_commit']=='Yes'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="commit-yes" type="radio"  value="Yes" name="willing_to_commit" @if(isset($result['willing_to_commit']) && $result['willing_to_commit']=='Yes'){{'checked'}}@endif>
 																			<label for="commit-yes" data-bs-toggle="tooltip" data-bs-placement="top" title="Yes">@lang('web/ministry-details.yes')</label>
 																			&nbsp;&nbsp;&nbsp;&nbsp;
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="commit-no" type="radio"  value="No" name="willing_to_commit" @if(isset($ministryPastorDetail['willing_to_commit']) && $ministryPastorDetail['willing_to_commit']=='No'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="commit-no" type="radio"  value="No" name="willing_to_commit" @if(isset($result['willing_to_commit']) && $result['willing_to_commit']=='No'){{'checked'}}@endif>
 																			<label for="commit-no" data-bs-toggle="tooltip" data-bs-placement="top" title="No">@lang('web/ministry-details.no')</label>
 																			
 																		</li>
 																	</ul>
-																	<textarea autocomplete="text" placeholder="@lang('web/ministry-details.enter-comments')" name="comment"  class="mt-2 field field_Yes form-control" >@if(isset($ministryPastorDetail['comment'])) {{$ministryPastorDetail['comment']}} @endif</textarea>
+																	<textarea autocomplete="text" placeholder="@lang('web/ministry-details.enter-comments')" name="comment"  class="mt-2 field field_Yes form-control" >@if(isset($result['comment'])) {{$result['comment']}} @endif</textarea>
 																	
 																</div>
 															</div>
@@ -383,15 +383,15 @@
 																<div class="input-box">
 																	<ul class="unstyled centered" style="justify-content: space-between;display: flex;">
 																		<li> 
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox13" type="radio" value="1-10"  name="howmany_pastoral" @if(isset($ministryPastorDetail['howmany_pastoral']) && $ministryPastorDetail['howmany_pastoral']=='1-10'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox13" type="radio" value="1-10"  name="howmany_pastoral" @if(isset($result['howmany_pastoral']) && $result['howmany_pastoral']=='1-10'){{'checked'}}@endif>
 																			<label for="styled-checkbox13">1-10</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-14" type="radio" value="10-100"  name="howmany_pastoral" @if(isset($ministryPastorDetail['howmany_pastoral']) && $ministryPastorDetail['howmany_pastoral']=='10-100'){{'checked'}}@endif> 
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-14" type="radio" value="10-100"  name="howmany_pastoral" @if(isset($result['howmany_pastoral']) && $result['howmany_pastoral']=='10-100'){{'checked'}}@endif> 
 																			<label for="styled-checkbox-14">10-100</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-15" type="radio" value="100+"  name="howmany_pastoral" @if(isset($ministryPastorDetail['howmany_pastoral']) && $ministryPastorDetail['howmany_pastoral']=='100+'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-15" type="radio" value="100+"  name="howmany_pastoral" @if(isset($result['howmany_pastoral']) && $result['howmany_pastoral']=='100+'){{'checked'}}@endif>
 																			<label for="styled-checkbox-15">100+</label>
 																		</li>
 																	</ul>
@@ -404,15 +404,15 @@
 																<div class="input-box">
 																	<ul class="unstyled centered" style="justify-content: space-between;display: flex;">
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox16" type="radio" value="1-10"  name="howmany_futurepastor" @if(isset($ministryPastorDetail['howmany_futurepastor']) && $ministryPastorDetail['howmany_futurepastor']=='1-10'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox16" type="radio" value="1-10"  name="howmany_futurepastor" @if(isset($result['howmany_futurepastor']) && $result['howmany_futurepastor']=='1-10'){{'checked'}}@endif>
 																			<label for="styled-checkbox16">1-10</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-17" type="radio" value="10-100"  name="howmany_futurepastor" @if(isset($ministryPastorDetail['howmany_futurepastor']) && $ministryPastorDetail['howmany_futurepastor']=='10-100'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-17" type="radio" value="10-100"  name="howmany_futurepastor" @if(isset($result['howmany_futurepastor']) && $result['howmany_futurepastor']=='10-100'){{'checked'}}@endif>
 																			<label for="styled-checkbox-17">10-100</label>
 																		</li>
 																		<li>
-																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-18" type="radio" value="100+"  name="howmany_futurepastor" @if(isset($ministryPastorDetail['howmany_futurepastor']) && $ministryPastorDetail['howmany_futurepastor']=='100+'){{'checked'}}@endif>
+																			<input class="styled-checkbox field field_Yes" id="styled-checkbox-18" type="radio" value="100+"  name="howmany_futurepastor" @if(isset($result['howmany_futurepastor']) && $result['howmany_futurepastor']=='100+'){{'checked'}}@endif>
 																			<label for="styled-checkbox-18">100+</label>
 																		</li>
 																	</ul>
@@ -439,7 +439,7 @@
 																<label for="" style="display: @if($result['doyouseek_postoral']=='Yes') block @else none @endif" id="envision_training_div">@lang('web/ministry-details.envision-training-pastors') </label>
 																<label for="" style="display: @if($result['doyouseek_postoral']=='Yes') none @else block @endif" id="Comment_Div">@lang('web/ministry-details.comment') </label>
 
-																<textarea placeholder="Write Here" class="mt-2 field field_No form-control"  id="pastoryes_comment" name="comment">{{$result['doyouseek_postoralcomment']}}</textarea>
+																<textarea placeholder="Write Here"  class="mt-2 field field_No form-control"  id="pastoryes_comment" name="comment">{{$result['doyouseek_postoralcomment']}}</textarea>
 															</div> 
 														</div>
 													</div>		
@@ -542,7 +542,7 @@
 
 		
 
-$('.country').change(function() {
+$('.MinistryCountry').change(function() {
     
     stateId = parseInt($(this).data('state_id'));
     cityId = parseInt($(this).data('city_id'));
