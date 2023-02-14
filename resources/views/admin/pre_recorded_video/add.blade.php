@@ -36,7 +36,6 @@
 						@csrf
 						<input type="hidden" value="@if($result){{ $result->id }} @else 0 @endif" name="id" required />
 						<div class="row">
-							<label for="input">Speaker:</label><br>
 							<div class="col-sm-6">
 								<div class="form-group">
 									<label for="input">Name:</label>

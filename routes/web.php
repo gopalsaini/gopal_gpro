@@ -301,6 +301,24 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('delete/{id}', 'Admin\PreRecordedVideo@delete')->name('delete'); 
 		Route::post('status', 'Admin\PreRecordedVideo@status')->name('status');
 	});
+
+	// Community
+	Route::group(['prefix'=>'community', 'as'=>'community.'], function() {
+		Route::match(['get','post'], 'add', 'Admin\CommunityController@add')->name('add');
+		Route::get('list', 'Admin\CommunityController@list')->name('list');
+		Route::get('edit/{id}', 'Admin\CommunityController@edit')->name('edit');
+		Route::get('delete/{id}', 'Admin\CommunityController@delete')->name('delete'); 
+		Route::post('status', 'Admin\CommunityController@status')->name('status');
+	});
+	
+	// Community
+	Route::group(['prefix'=>'post', 'as'=>'post.'], function() {
+		Route::match(['get','post'], 'add', 'Admin\PostController@add')->name('add');
+		Route::get('list', 'Admin\PostController@list')->name('list');
+		Route::get('edit/{id}', 'Admin\PostController@edit')->name('edit');
+		Route::get('delete/{id}', 'Admin\PostController@delete')->name('delete'); 
+		Route::post('status', 'Admin\PostController@status')->name('status');
+	});
 }); 
 
 Route::get('createsnapshot-cronjob','CronjobController@index');

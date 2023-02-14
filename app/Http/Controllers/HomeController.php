@@ -45,8 +45,9 @@ class HomeController extends Controller
         }
 
         $speakers = \App\Models\Speaker::where('status', '1')->inRandomOrder()->limit(3)->get();
-        
-        return view('index', compact('testimonials','speakers'));
+        $preRecordedVideo = \App\Models\PreRecordedVideo::where('status', '1')->inRandomOrder()->limit(3)->get();
+
+        return view('index', compact('testimonials','speakers','preRecordedVideo'));
     } 
 
     public function Registration() {

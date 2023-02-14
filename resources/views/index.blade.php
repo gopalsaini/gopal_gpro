@@ -219,6 +219,29 @@
     </div>
     <!-- attend-end -->
 
+    <div class="attend-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <h2 class="main-head">@lang('web/home.PreRecordedVideo')</h2>
+                <div class="attend-slider">
+                    <div class="owl-carousel owl-theme">
+                        @if(!empty($preRecordedVideo))
+                            @foreach($preRecordedVideo as $key=>$preRecorded)
+                        <div class="item">
+                            <!-- <h2 class="" style="font-size: 38px;">{{$preRecorded->name}}</h2> -->
+                            <div class="attend-box-wrap">
+                                <video width="320" height="240"  controls autoplay>
+                                    <source src="{{ asset('/uploads/pre-recorded-video/'.$preRecorded->video) }}" type="video/mp4">
+                                </video>
+                            </div>
+                        </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- counter-start -->
     <!-- <div class="counter-wrapper">
         <div class="container-fluid custom-container">
