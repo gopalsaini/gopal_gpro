@@ -30,8 +30,6 @@ class UserController extends Controller {
 					'ministry_address' => 'required',
 					'ministry_country_id' => 'required',
 					'ministry_state_id' => 'required',
-					'ministry_state_name' => 'required',
-					'ministry_city_name' => 'required',
 					'ministry_city_id' => 'required',
 				];
 
