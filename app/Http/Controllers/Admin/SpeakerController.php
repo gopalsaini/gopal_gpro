@@ -19,7 +19,7 @@ class SpeakerController extends Controller
 
             if((int) $request->post('id')==0){
 						
-				$rules['image']='required|image|mimes:jpeg,png,jpg,gif,svg';
+				$rules['image']='required|image|mimes:jpeg,png,jpg,gif,svg|dimensions:width=350,height=352';
 			}
 
 			$validator = \Validator::make($request->all(), $rules);
