@@ -170,9 +170,8 @@ class PreLoginController extends Controller {
 
 				}
 				
-				
 				\Mail::send('email_templates.otp', compact('to', 'msg'), function($message) use ($to, $subject) {
-					$message->from(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
+					$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 					$message->subject($subject);
 					$message->to($to);
 				});
@@ -634,7 +633,7 @@ class PreLoginController extends Controller {
 		try {
 			
 			$results = \App\Models\User::where([['user_type', '=', '2'], ['profile_status','=','Approved'], ['stage', '=', '2']])
-									->whereDate('updated_at', '=', now()->subDays(5)->setTime(0, 0, 0)->toDateTimeString())
+									->whereDate('status_change_at', '=', now()->subDays(5)->setTime(0, 0, 0)->toDateTimeString())
 									->get();
 
 			if(count($results) > 0){
@@ -648,13 +647,7 @@ class PreLoginController extends Controller {
 					$to = $result->email;
 
 					$userData = \App\Models\User::where('id',$result->id)->first();
-					if($userData){
-
-						$userData->status_change_at = $userData->updated_at;
-						$userData->save();
-					}
-
-
+					
 					$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($result->id, true);
 					$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($result->id, true);
 					$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($result->id, true);
@@ -1015,6 +1008,7 @@ class PreLoginController extends Controller {
 
 								$user = \App\Models\User::find($transaction->user_id);
 								$user->stage = 3;
+								$user->status_change_at = date('Y-m-d H:i:s');
 								$user->save();
 
 								$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
@@ -1023,6 +1017,7 @@ class PreLoginController extends Controller {
 
 									$resultSpouse->stage = 3;
 									$resultSpouse->payment_status = '2';
+									$resultSpouse->status_change_at = date('Y-m-d H:i:s');
 									$resultSpouse->save();
 								}
 
@@ -1157,6 +1152,7 @@ class PreLoginController extends Controller {
 
 								$user = \App\Models\User::find($transaction->user_id);
 								$user->stage = 3;
+								$user->status_change_at = date('Y-m-d H:i:s');
 								$user->save();
 
 								$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
@@ -1165,6 +1161,7 @@ class PreLoginController extends Controller {
 
 									$resultSpouse->stage = 3;
 									$resultSpouse->payment_status = '2';
+									$resultSpouse->status_change_at = date('Y-m-d H:i:s');
 									$resultSpouse->save();
 								}
 
@@ -1816,89 +1813,106 @@ class PreLoginController extends Controller {
 
     }
 
+	
 	public function spouseConfirmationFirstReminder(Request $request){
 		
 		try {
 			
-			$results = \App\Models\User::where('spouse_confirm_token','!=',null)->where('spouse_confirm_reminder_email','0')->get();
+			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
 
 			if(count($results) > 0){
+
 				foreach ($results as $key => $existSpouse) {
 				
-					$name = '';
+					$reminder = json_decode($existSpouse->spouse_confirm_reminder_email);
+					
+					if($existSpouse->spouse_confirm_token && $reminder->reminder == 0){
+						 
+						if($reminder->date == date('Y-m-d', strtotime('-1 day', strtotime(date('Y-m-d'))))){
 
-					$user = \App\Models\User::where('id',$existSpouse->parent_id)->first();
-					if($user){
+							$name = '';
 
-						$name = $user->salutation.' '.$user->name.' '.$user->last_name;
-						
-						if($user->language == 'sp'){
+							$user = \App\Models\User::where('id',$existSpouse->parent_id)->first();
+							if($user){
 
-							$subject = "El estado de inscripción de su cónyuge no está confirmado";
-							$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge.&nbsp;&nbsp;</p><p><br></p><p>Estamos escribiendo para informarle que nuestro equipo ha hecho varios intentos para conectarse con su cónyuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', vía correo electrónico a '.$existSpouse->email.', para solicitar confirmación de su asistencia, pero no hemos tenido respuesta alguna.&nbsp;&nbsp;</p><p>Si desea que actualicemos la información de contacto de su cónyuge, responda a este correo electrónico y conéctese con nuestro equipo.</p><p><br></p><p>Por el momento, estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-						
-						}elseif($user->language == 'fr'){
-						
-							$subject = "Le statut d’inscription de votre conjoint/e n’est pas confirmé";
-							$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama, avec votre conjoint/e.&nbsp;&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous informer que notre équipe a tenté à plusieurs reprises de joindre votre conjoint/e, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', par courriel à '.$existSpouse->email.', pour demander une confirmation de sa présence, mais en vain.</p><p><br></p><p>Si vous souhaitez que nous mettions à jour les coordonnées de votre conjoint/e, veuillez répondre à ce courriel et communiquer avec notre équipe.&nbsp;</p><p><br></p><p>Pour le moment, nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.&nbsp;</p><p><br></p><p><br></p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-						
-						}elseif($user->language == 'pt'){
-						
-							$subject = "O estado da inscrição do seu cônjuge não está confirmado";
-							$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge.&nbsp;</p><p><br></p><p>Estamos a escrever para lhe informar que nossa equipe fez várias tentativas para alcançar o seu cônjuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via e-mail pelo '.$existSpouse->email.', para pedir confirmação da participação dele/a, mas sem sucesso.&nbsp;</p><p><br></p><p>Se você gostaria que nós atualizássemos as informações de contato de seu cônjuge, por favor responda este e-mail, e se conecte com nossa equipe.</p><p><br></p><p>Por agora, estamos a mudar os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p><br></p><p>Tem perguntas? Simplesmente responda este e-mail e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-						
-						}else{
-						
-							$subject = 'Your spouse’s registration status is unconfirmed';
-							$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama, with your spouse.&nbsp;&nbsp;</p><p><br></p><p>We are writing to inform you that our team has made several attempts to reach your spouse, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via email at '.$existSpouse->email.', to request confirmation of their attendance, but to no avail.</p><p><br></p><p>If you would like us to update your spouse’s contact information, please reply to this email, and connect with our team.&nbsp;</p><p><br></p><p>For the moment, we are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.&nbsp;</p><p><br></p><p>Have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
-						
+								$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+								
+								if($user->language == 'sp'){
+
+									$subject = "El estado de inscripción de su cónyuge no está confirmado";
+									$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge.&nbsp;&nbsp;</p><p><br></p><p>Estamos escribiendo para informarle que nuestro equipo ha hecho varios intentos para conectarse con su cónyuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', vía correo electrónico a '.$existSpouse->email.', para solicitar confirmación de su asistencia, pero no hemos tenido respuesta alguna.&nbsp;&nbsp;</p><p>Si desea que actualicemos la información de contacto de su cónyuge, responda a este correo electrónico y conéctese con nuestro equipo.</p><p><br></p><p>Por el momento, estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+								
+								}elseif($user->language == 'fr'){
+								
+									$subject = "Le statut d’inscription de votre conjoint/e n’est pas confirmé";
+									$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama, avec votre conjoint/e.&nbsp;&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous informer que notre équipe a tenté à plusieurs reprises de joindre votre conjoint/e, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', par courriel à '.$existSpouse->email.', pour demander une confirmation de sa présence, mais en vain.</p><p><br></p><p>Si vous souhaitez que nous mettions à jour les coordonnées de votre conjoint/e, veuillez répondre à ce courriel et communiquer avec notre équipe.&nbsp;</p><p><br></p><p>Pour le moment, nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.&nbsp;</p><p><br></p><p><br></p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+								
+								}elseif($user->language == 'pt'){
+								
+									$subject = "O estado da inscrição do seu cônjuge não está confirmado";
+									$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge.&nbsp;</p><p><br></p><p>Estamos a escrever para lhe informar que nossa equipe fez várias tentativas para alcançar o seu cônjuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via e-mail pelo '.$existSpouse->email.', para pedir confirmação da participação dele/a, mas sem sucesso.&nbsp;</p><p><br></p><p>Se você gostaria que nós atualizássemos as informações de contato de seu cônjuge, por favor responda este e-mail, e se conecte com nossa equipe.</p><p><br></p><p>Por agora, estamos a mudar os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p><br></p><p>Tem perguntas? Simplesmente responda este e-mail e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+								
+								}else{
+								
+									$subject = 'Your spouse’s registration status is unconfirmed';
+									$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama, with your spouse.&nbsp;&nbsp;</p><p><br></p><p>We are writing to inform you that our team has made several attempts to reach your spouse, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via email at '.$existSpouse->email.', to request confirmation of their attendance, but to no avail.</p><p><br></p><p>If you would like us to update your spouse’s contact information, please reply to this email, and connect with our team.&nbsp;</p><p><br></p><p>For the moment, we are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.&nbsp;</p><p><br></p><p>Have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+								
+								}
+
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+			
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
+								
+							}
+
+							$userData = \App\Models\User::where('id',$existSpouse->id)->first();
+							if($userData){
+
+								$reminderData = [
+									'type'=>'spouse_reminder',
+									'date'=>$reminder->date,
+									'reminder'=>'1',
+		
+								];
+
+								$userData->spouse_confirm_reminder_email = json_encode($reminderData);
+								$userData->save();
+							}
+
+							$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
+
+							if($existSpouse->language == 'sp'){
+
+								$subject = "IMPORTANTE: Por favor, confirme el estado de su registro. (PRIMER RECORDATORIO)";
+								$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p><br></p><p><br></p><p>Hemos recibido '.$name.' una solicitud&nbsp; para el GproCongress II</p><p><br></p><p>'.$name.' ha indicado que asistirán juntos al Congreso. También hemos recibido su solicitud, pero para seguir procesando su registro, necesitamos verificar cierta información.</p><p>Por favor, reponda este correo '.$confLink.' para confirmer que usted y '.$name.' estan casados y que asistirán al GproCongress II juntos.&nbsp;&nbsp;</p><p><br></p><p>TOME NOTA: Si no responde a este correo electrónico, su inscripción NO se habrá completado y NO podrá participar en el Congreso.</p><p><br></p><p>Los esperamos a usted y a '.$name.' en Ciudad de Panamá, Panamá, del 12 al 17 de noviembre de 2023.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							
+							}elseif($existSpouse->language == 'fr'){
+							
+								$subject = "IMPORTANT: Veuillez confirmer votre statut d’inscription. (PREMIER RAPPEL)";
+								$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Nous avons reçu la demande de '.$name.' pour le GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' a indiqué que vous assisterez au Congrès ensemble.&nbsp; Votre demande a également été reçue, mais pour poursuivre le processus de votre inscription, nous devons vérifier certaines informations.</p><p><br></p><p>Veuillez répondre à cet e-mail '.$confLink.' pour confirmer que vous et '.$name.' êtes mariés et que vous assisterez ensemble au GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>VEUILLEZ NOTER: Si vous ne répondez pas à ce courriel, votre inscription ne sera PAS complétée et vous ne serez PAS admissible à participer au Congrès.</p><p><br></p><p>Nous avons hâte de vous voir, vous et '.$name.', à Panama City, au Panama du 12 au 17 novembre 2023!&nbsp;</p><p><br></p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>&nbsp;L’équipe GProCongrès II</p>';
+							
+							}elseif($existSpouse->language == 'pt'){
+							
+								$subject = "IMPORTANTE: Por favor confirme o estado da sua inscrição. (PRIMEIRO LEMBRETE)";
+								$msg = '<p>Prezado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p><br></p><p>Recebemos o pedido de '.$name.' para o II CongressoGPro.&nbsp;</p><p><br></p><p>'.$name.' afirmou que vocês iriam participar o Congresso juntos.&nbsp;</p><p>Seu pedido também foi recebido, mas para dar seguimento ao processo da sua inscrição, nós precisamos de verificar algumas informações.&nbsp;</p><p><br></p><p>Por favor responda a este e-mail '.$confLink.' para confirmar que você e '.$name.' estão casados, e que vocês irão participar do II CongressoGPro juntos.</p><p><br></p><p>POR FAVOR NOTE: Se você não responder a este e-mail, sua inscrição NÃO estará completa, e você NÃO será elegível a participar do Congresso.</p><p>Esperamos vos ver, ambos, você e '.$name.', na Cidade de Panamá, Panamá, de 12 a 17 de Novembro de 2023!</p><p><br></p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = 'IMPORTANT: Please confirm your registration status. (FIRST REMINDER)';
+								$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email '.$confLink.' to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: If you do not reply to this email, your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>We look forward to seeing, both, you and '.$name.', in Panama City, Panama on November 12-17, 2023!&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
+							
+							}
+							\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
+
+							\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
+							
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'Spouse Confirm your registration status- FIRST REMINDER');
+							
 						}
-
-						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-
-						\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-	
-						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
 						
-					}
-
-					$userData = \App\Models\User::where('id',$existSpouse->id)->first();
-					if($userData){
-
-						$userData->spouse_confirm_reminder_email = '1';
-						$userData->save();
-					}
-
-					$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
-
-					if($existSpouse->language == 'sp'){
-
-						$subject = "IMPORTANTE: Por favor, confirme el estado de su registro. (PRIMER RECORDATORIO)";
-						$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p><br></p><p><br></p><p>Hemos recibido '.$name.' una solicitud&nbsp; para el GproCongress II</p><p><br></p><p>'.$name.' ha indicado que asistirán juntos al Congreso. También hemos recibido su solicitud, pero para seguir procesando su registro, necesitamos verificar cierta información.</p><p>Por favor, reponda este correo '.$confLink.' para confirmer que usted y '.$name.' estan casados y que asistirán al GproCongress II juntos.&nbsp;&nbsp;</p><p><br></p><p>TOME NOTA: Si no responde a este correo electrónico, su inscripción NO se habrá completado y NO podrá participar en el Congreso.</p><p><br></p><p>Los esperamos a usted y a '.$name.' en Ciudad de Panamá, Panamá, del 12 al 17 de noviembre de 2023.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-					
-					}elseif($existSpouse->language == 'fr'){
-					
-						$subject = "IMPORTANT: Veuillez confirmer votre statut d’inscription. (PREMIER RAPPEL)";
-						$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Nous avons reçu la demande de '.$name.' pour le GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' a indiqué que vous assisterez au Congrès ensemble.&nbsp; Votre demande a également été reçue, mais pour poursuivre le processus de votre inscription, nous devons vérifier certaines informations.</p><p><br></p><p>Veuillez répondre à cet e-mail '.$confLink.' pour confirmer que vous et '.$name.' êtes mariés et que vous assisterez ensemble au GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>VEUILLEZ NOTER: Si vous ne répondez pas à ce courriel, votre inscription ne sera PAS complétée et vous ne serez PAS admissible à participer au Congrès.</p><p><br></p><p>Nous avons hâte de vous voir, vous et '.$name.', à Panama City, au Panama du 12 au 17 novembre 2023!&nbsp;</p><p><br></p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>&nbsp;L’équipe GProCongrès II</p>';
-					
-					}elseif($existSpouse->language == 'pt'){
-					
-						$subject = "IMPORTANTE: Por favor confirme o estado da sua inscrição. (PRIMEIRO LEMBRETE)";
-						$msg = '<p>Prezado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p><br></p><p>Recebemos o pedido de '.$name.' para o II CongressoGPro.&nbsp;</p><p><br></p><p>'.$name.' afirmou que vocês iriam participar o Congresso juntos.&nbsp;</p><p>Seu pedido também foi recebido, mas para dar seguimento ao processo da sua inscrição, nós precisamos de verificar algumas informações.&nbsp;</p><p><br></p><p>Por favor responda a este e-mail '.$confLink.' para confirmar que você e '.$name.' estão casados, e que vocês irão participar do II CongressoGPro juntos.</p><p><br></p><p>POR FAVOR NOTE: Se você não responder a este e-mail, sua inscrição NÃO estará completa, e você NÃO será elegível a participar do Congresso.</p><p>Esperamos vos ver, ambos, você e '.$name.', na Cidade de Panamá, Panamá, de 12 a 17 de Novembro de 2023!</p><p><br></p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-					
-					}else{
-					
-						$subject = 'IMPORTANT: Please confirm your registration status. (FIRST REMINDER)';
-						$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email '.$confLink.' to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: If you do not reply to this email, your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>We look forward to seeing, both, you and '.$name.', in Panama City, Panama on November 12-17, 2023!&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
-					
-					}
-					\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
-
-					\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
-					
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'Spouse Confirm your registration status- FIRST REMINDER');
-					
-					
+					}	
 				}
 				
 				return response(array('message'=>count($results).' Reminders has been sent successfully.'), 200);
@@ -1916,89 +1930,102 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('spouse_confirm_token','!=',null)->where('spouse_confirm_reminder_email','1')->get();
+			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
 
 			if(count($results) > 0){
 				foreach ($results as $key => $existSpouse) {
 				
-					$name = '';
+					$reminder = json_decode($existSpouse->spouse_confirm_reminder_email);
 
-					$user = \App\Models\User::where('id',$existSpouse->parent_id)->first();
-					if($user){
+					if($existSpouse->spouse_confirm_token && $reminder->reminder == 1){
+						 
+						if($reminder->date == date('Y-m-d', strtotime('-2 day', strtotime(date('Y-m-d'))))){
 
-						$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+							$name = '';
 
-						
-						if($user->language == 'sp'){
+							$user = \App\Models\User::where('id',$existSpouse->parent_id)->first();
+							if($user){
 
-							$subject = "El estado de inscripción de su cónyuge no está confirmado";
-							$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge.&nbsp;&nbsp;</p><p><br></p><p>Estamos escribiendo para informarle que nuestro equipo ha hecho varios intentos para conectarse con su cónyuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', vía correo electrónico a '.$existSpouse->email.', para solicitar confirmación de su asistencia, pero no hemos tenido respuesta alguna.&nbsp;&nbsp;</p><p>Si desea que actualicemos la información de contacto de su cónyuge, responda a este correo electrónico y conéctese con nuestro equipo.</p><p><br></p><p>Por el momento, estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-						
-						}elseif($user->language == 'fr'){
-						
-							$subject = "Le statut d’inscription de votre conjoint/e n’est pas confirmé";
-							$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama, avec votre conjoint/e.&nbsp;&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous informer que notre équipe a tenté à plusieurs reprises de joindre votre conjoint/e, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', par courriel à '.$existSpouse->email.', pour demander une confirmation de sa présence, mais en vain.</p><p><br></p><p>Si vous souhaitez que nous mettions à jour les coordonnées de votre conjoint/e, veuillez répondre à ce courriel et communiquer avec notre équipe.&nbsp;</p><p><br></p><p>Pour le moment, nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.&nbsp;</p><p><br></p><p><br></p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-						
-						}elseif($user->language == 'pt'){
-						
-							$subject = "O estado da inscrição do seu cônjuge não está confirmado";
-							$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge.&nbsp;</p><p><br></p><p>Estamos a escrever para lhe informar que nossa equipe fez várias tentativas para alcançar o seu cônjuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via e-mail pelo '.$existSpouse->email.', para pedir confirmação da participação dele/a, mas sem sucesso.&nbsp;</p><p><br></p><p>Se você gostaria que nós atualizássemos as informações de contato de seu cônjuge, por favor responda este e-mail, e se conecte com nossa equipe.</p><p><br></p><p>Por agora, estamos a mudar os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p><br></p><p>Tem perguntas? Simplesmente responda este e-mail e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-						
-						}else{
-						
-							$subject = 'Your spouse’s registration status is unconfirmed';
-							$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama, with your spouse.&nbsp;&nbsp;</p><p><br></p><p>We are writing to inform you that our team has made several attempts to reach your spouse, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via email at '.$existSpouse->email.', to request confirmation of their attendance, but to no avail.</p><p><br></p><p>If you would like us to update your spouse’s contact information, please reply to this email, and connect with our team.&nbsp;</p><p><br></p><p>For the moment, we are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.&nbsp;</p><p><br></p><p>Have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
-						
+								$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+
+								
+								if($user->language == 'sp'){
+
+									$subject = "El estado de inscripción de su cónyuge no está confirmado";
+									$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge.&nbsp;&nbsp;</p><p><br></p><p>Estamos escribiendo para informarle que nuestro equipo ha hecho varios intentos para conectarse con su cónyuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', vía correo electrónico a '.$existSpouse->email.', para solicitar confirmación de su asistencia, pero no hemos tenido respuesta alguna.&nbsp;&nbsp;</p><p>Si desea que actualicemos la información de contacto de su cónyuge, responda a este correo electrónico y conéctese con nuestro equipo.</p><p><br></p><p>Por el momento, estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+								
+								}elseif($user->language == 'fr'){
+								
+									$subject = "Le statut d’inscription de votre conjoint/e n’est pas confirmé";
+									$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama, avec votre conjoint/e.&nbsp;&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous informer que notre équipe a tenté à plusieurs reprises de joindre votre conjoint/e, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', par courriel à '.$existSpouse->email.', pour demander une confirmation de sa présence, mais en vain.</p><p><br></p><p>Si vous souhaitez que nous mettions à jour les coordonnées de votre conjoint/e, veuillez répondre à ce courriel et communiquer avec notre équipe.&nbsp;</p><p><br></p><p>Pour le moment, nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.&nbsp;</p><p><br></p><p><br></p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+								
+								}elseif($user->language == 'pt'){
+								
+									$subject = "O estado da inscrição do seu cônjuge não está confirmado";
+									$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge.&nbsp;</p><p><br></p><p>Estamos a escrever para lhe informar que nossa equipe fez várias tentativas para alcançar o seu cônjuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via e-mail pelo '.$existSpouse->email.', para pedir confirmação da participação dele/a, mas sem sucesso.&nbsp;</p><p><br></p><p>Se você gostaria que nós atualizássemos as informações de contato de seu cônjuge, por favor responda este e-mail, e se conecte com nossa equipe.</p><p><br></p><p>Por agora, estamos a mudar os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p><br></p><p>Tem perguntas? Simplesmente responda este e-mail e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+								
+								}else{
+								
+									$subject = 'Your spouse’s registration status is unconfirmed';
+									$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama, with your spouse.&nbsp;&nbsp;</p><p><br></p><p>We are writing to inform you that our team has made several attempts to reach your spouse, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via email at '.$existSpouse->email.', to request confirmation of their attendance, but to no avail.</p><p><br></p><p>If you would like us to update your spouse’s contact information, please reply to this email, and connect with our team.&nbsp;</p><p><br></p><p>For the moment, we are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.&nbsp;</p><p><br></p><p>Have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+								
+								}
+
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+			
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
+								
+							}
+
+							
+							$userData = \App\Models\User::where('id',$existSpouse->id)->first();
+							if($userData){
+
+								$reminderData = [
+									'type'=>'spouse_reminder',
+									'date'=>$reminder->date,
+									'reminder'=>'2',
+		
+								];
+
+								$userData->spouse_confirm_reminder_email = json_encode($reminderData);
+								$userData->save();
+							}
+							
+							
+							$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
+
+							if($existSpouse->language == 'sp'){
+
+								$subject = "URGENTE: Por favor, confirme su estado de inscripción. (SEGUNDO RECORDATORIO)";
+								$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p><br></p><p>Hemos recibido la solicitud de '.$name.' para participar en el GProCongress II.</p><p><br></p><p>'.$name.' ha indicado que asistirán juntos al Congreso. También hemos recibido su solicitud, pero para seguir procesando su inscripción, necesitamos verificar cierta información.</p><p><br></p><p>Por favor responda a este correo para confirmar que usted y '.$name.' están casados, y que asistirán al GproCongress juntos.&nbsp;</p><p><br></p><p>TOME NOTA: Si no responde a este correo electrónico '.$confLink.', su inscripción NO se habrá completado y NO podrá participar en el Congreso.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							
+							}elseif($existSpouse->language == 'fr'){
+							
+								$subject = "URGENT: Veuillez confirmer votre statut d’inscription. (DEUXIÈME RAPPEL)";
+								$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Nous avons reçu la demande de '.$name.' pour le GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' a indiqué que vous assisterez au Congrès ensemble.&nbsp; Votre demande a également été reçue, mais pour poursuivre le processus de votre inscription, nous devons vérifier certaines informations.</p><p><br></p><p>Veuillez répondre à cet e-mail pour confirmer que vous et '.$name.' êtes mariés et que vous assisterez ensemble au GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>VEUILLEZ NOTER: Si vous ne répondez pas à ce courriel '.$confLink.', votre inscription ne sera PAS complétée et vous ne serez PAS admissible à participer au Congrès.</p><p><br></p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe GProCongrès II</p>';
+							
+							}elseif($existSpouse->language == 'pt'){
+							
+								$subject = "URGENTE: Por favor confirme o estado da sua inscrição. (SEGUNDO LEMBRETE)";
+								$msg = '<p>Prezado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p><br></p><p><br></p><p>Recebemos o pedido de '.$name.' para o II CongressoGPro.&nbsp;</p><p><br></p><p>'.$name.' afirmou que vocês iriam participar o Congresso juntos.&nbsp;</p><p>Seu pedido também foi recebido, mas para dar seguimento ao processo da sua inscrição, nós precisamos de verificar algumas informações.</p><p><br></p><p>Por favor responda a este e-mail para confirmar que você e '.$name.' estão casados, e que vocês irão participar do II CongressoGPro juntos.</p><p><br></p><p>POR FAVOR NOTE: Se você não responder a este e-mail '.$confLink.', sua inscrição NÃO estará completa, e você NÃO será elegível a participar do Congresso.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = 'URGENT: Please confirm your registration status. (SECOND REMINDER)';
+								$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: If you do not reply to this email '.$confLink.', your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
+							
+							}
+
+							\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
+
+							\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
+							
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'Spouse Confirm your registration status- SECOND REMINDER');
 						}
-
-						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-
-						\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-	
-						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
-						
 					}
-
-					
-					$userData = \App\Models\User::where('id',$existSpouse->id)->first();
-					if($userData){
-
-						$userData->spouse_confirm_reminder_email = '2';
-						$userData->save();
-					}
-					
-					
-					$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
-
-					if($existSpouse->language == 'sp'){
-
-						$subject = "URGENTE: Por favor, confirme su estado de inscripción. (SEGUNDO RECORDATORIO)";
-						$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.'</p><p><br></p><p>Hemos recibido la solicitud de '.$name.' para participar en el GProCongress II.</p><p><br></p><p>'.$name.' ha indicado que asistirán juntos al Congreso. También hemos recibido su solicitud, pero para seguir procesando su inscripción, necesitamos verificar cierta información.</p><p><br></p><p>Por favor responda a este correo para confirmar que usted y '.$name.' están casados, y que asistirán al GproCongress juntos.&nbsp;</p><p><br></p><p>TOME NOTA: Si no responde a este correo electrónico '.$confLink.', su inscripción NO se habrá completado y NO podrá participar en el Congreso.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-					
-					}elseif($existSpouse->language == 'fr'){
-					
-						$subject = "URGENT: Veuillez confirmer votre statut d’inscription. (DEUXIÈME RAPPEL)";
-						$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Nous avons reçu la demande de '.$name.' pour le GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' a indiqué que vous assisterez au Congrès ensemble.&nbsp; Votre demande a également été reçue, mais pour poursuivre le processus de votre inscription, nous devons vérifier certaines informations.</p><p><br></p><p>Veuillez répondre à cet e-mail pour confirmer que vous et '.$name.' êtes mariés et que vous assisterez ensemble au GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>VEUILLEZ NOTER: Si vous ne répondez pas à ce courriel '.$confLink.', votre inscription ne sera PAS complétée et vous ne serez PAS admissible à participer au Congrès.</p><p><br></p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe GProCongrès II</p>';
-					
-					}elseif($existSpouse->language == 'pt'){
-					
-						$subject = "URGENTE: Por favor confirme o estado da sua inscrição. (SEGUNDO LEMBRETE)";
-						$msg = '<p>Prezado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p><br></p><p><br></p><p>Recebemos o pedido de '.$name.' para o II CongressoGPro.&nbsp;</p><p><br></p><p>'.$name.' afirmou que vocês iriam participar o Congresso juntos.&nbsp;</p><p>Seu pedido também foi recebido, mas para dar seguimento ao processo da sua inscrição, nós precisamos de verificar algumas informações.</p><p><br></p><p>Por favor responda a este e-mail para confirmar que você e '.$name.' estão casados, e que vocês irão participar do II CongressoGPro juntos.</p><p><br></p><p>POR FAVOR NOTE: Se você não responder a este e-mail '.$confLink.', sua inscrição NÃO estará completa, e você NÃO será elegível a participar do Congresso.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-					
-					}else{
-					
-						$subject = 'URGENT: Please confirm your registration status. (SECOND REMINDER)';
-						$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: If you do not reply to this email '.$confLink.', your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
-					
-					}
-
-					\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
-
-					\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
-					
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'Spouse Confirm your registration status- SECOND REMINDER');
-					
-					
 				}
 				
 				return response(array('message'=>count($results).' Reminders has been sent successfully.'), 200);
@@ -2016,86 +2043,102 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('spouse_confirm_token','!=',null)->where('spouse_confirm_reminder_email','2')->get();
+			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
 
 			if(count($results) > 0){
+
 				foreach ($results as $key => $existSpouse) {
 				
-					$name = '';
+					$reminder = json_decode($existSpouse->spouse_confirm_reminder_email);
 
-					$user = \App\Models\User::where('id',$existSpouse->parent_id)->first();
-					if($user){
+					if($existSpouse->spouse_confirm_token && $reminder->reminder == 2){
+						 
+						if($reminder->date == date('Y-m-d', strtotime('-3 day', strtotime(date('Y-m-d'))))){
 
-						$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+							$name = '';
 
-						
-						if($user->language == 'sp'){
+							$user = \App\Models\User::where('id',$existSpouse->parent_id)->first();
+							if($user){
 
-							$subject = "El estado de inscripción de su cónyuge no está confirmado";
-							$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge.&nbsp;&nbsp;</p><p><br></p><p>Estamos escribiendo para informarle que nuestro equipo ha hecho varios intentos para conectarse con su cónyuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', vía correo electrónico a '.$existSpouse->email.', para solicitar confirmación de su asistencia, pero no hemos tenido respuesta alguna.&nbsp;&nbsp;</p><p>Si desea que actualicemos la información de contacto de su cónyuge, responda a este correo electrónico y conéctese con nuestro equipo.</p><p><br></p><p>Por el momento, estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-						
-						}elseif($user->language == 'fr'){
-						
-							$subject = "Le statut d’inscription de votre conjoint/e n’est pas confirmé";
-							$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama, avec votre conjoint/e.&nbsp;&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous informer que notre équipe a tenté à plusieurs reprises de joindre votre conjoint/e, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', par courriel à '.$existSpouse->email.', pour demander une confirmation de sa présence, mais en vain.</p><p><br></p><p>Si vous souhaitez que nous mettions à jour les coordonnées de votre conjoint/e, veuillez répondre à ce courriel et communiquer avec notre équipe.&nbsp;</p><p><br></p><p>Pour le moment, nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.&nbsp;</p><p><br></p><p><br></p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-						
-						}elseif($user->language == 'pt'){
-						
-							$subject = "O estado da inscrição do seu cônjuge não está confirmado";
-							$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge.&nbsp;</p><p><br></p><p>Estamos a escrever para lhe informar que nossa equipe fez várias tentativas para alcançar o seu cônjuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via e-mail pelo '.$existSpouse->email.', para pedir confirmação da participação dele/a, mas sem sucesso.&nbsp;</p><p><br></p><p>Se você gostaria que nós atualizássemos as informações de contato de seu cônjuge, por favor responda este e-mail, e se conecte com nossa equipe.</p><p><br></p><p>Por agora, estamos a mudar os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p><br></p><p>Tem perguntas? Simplesmente responda este e-mail e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-						
-						}else{
-						
-							$subject = 'Your spouse’s registration status is unconfirmed';
-							$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama, with your spouse.&nbsp;&nbsp;</p><p><br></p><p>We are writing to inform you that our team has made several attempts to reach your spouse, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via email at '.$existSpouse->email.', to request confirmation of their attendance, but to no avail.</p><p><br></p><p>If you would like us to update your spouse’s contact information, please reply to this email, and connect with our team.&nbsp;</p><p><br></p><p>For the moment, we are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.&nbsp;</p><p><br></p><p>Have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
-						
+								$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+
+								
+								if($user->language == 'sp'){
+
+									$subject = "El estado de inscripción de su cónyuge no está confirmado";
+									$msg = '<p>Estimado '.$name.'</p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge.&nbsp;&nbsp;</p><p><br></p><p>Estamos escribiendo para informarle que nuestro equipo ha hecho varios intentos para conectarse con su cónyuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', vía correo electrónico a '.$existSpouse->email.', para solicitar confirmación de su asistencia, pero no hemos tenido respuesta alguna.&nbsp;&nbsp;</p><p>Si desea que actualicemos la información de contacto de su cónyuge, responda a este correo electrónico y conéctese con nuestro equipo.</p><p><br></p><p>Por el momento, estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+								
+								}elseif($user->language == 'fr'){
+								
+									$subject = "Le statut d’inscription de votre conjoint/e n’est pas confirmé";
+									$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama, avec votre conjoint/e.&nbsp;&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous informer que notre équipe a tenté à plusieurs reprises de joindre votre conjoint/e, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', par courriel à '.$existSpouse->email.', pour demander une confirmation de sa présence, mais en vain.</p><p><br></p><p>Si vous souhaitez que nous mettions à jour les coordonnées de votre conjoint/e, veuillez répondre à ce courriel et communiquer avec notre équipe.&nbsp;</p><p><br></p><p>Pour le moment, nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.&nbsp;</p><p><br></p><p><br></p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+								
+								}elseif($user->language == 'pt'){
+								
+									$subject = "O estado da inscrição do seu cônjuge não está confirmado";
+									$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge.&nbsp;</p><p><br></p><p>Estamos a escrever para lhe informar que nossa equipe fez várias tentativas para alcançar o seu cônjuge, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via e-mail pelo '.$existSpouse->email.', para pedir confirmação da participação dele/a, mas sem sucesso.&nbsp;</p><p><br></p><p>Se você gostaria que nós atualizássemos as informações de contato de seu cônjuge, por favor responda este e-mail, e se conecte com nossa equipe.</p><p><br></p><p>Por agora, estamos a mudar os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p><br></p><p>Tem perguntas? Simplesmente responda este e-mail e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+								
+								}else{
+								
+									$subject = 'Your spouse’s registration status is unconfirmed';
+									$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama, with your spouse.&nbsp;&nbsp;</p><p><br></p><p>We are writing to inform you that our team has made several attempts to reach your spouse, '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.', via email at '.$existSpouse->email.', to request confirmation of their attendance, but to no avail.</p><p><br></p><p>If you would like us to update your spouse’s contact information, please reply to this email, and connect with our team.&nbsp;</p><p><br></p><p>For the moment, we are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.&nbsp;</p><p><br></p><p>Have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+								
+								}
+
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+			
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
+								
+							}
+
+							$userData = \App\Models\User::where('id',$existSpouse->id)->first();
+							if($userData){
+
+								$reminderData = [
+									'type'=>'spouse_reminder',
+									'date'=>$reminder->date,
+									'reminder'=>'3',
+		
+								];
+
+								$userData->spouse_confirm_reminder_email = json_encode($reminderData);
+								$userData->save();
+							}
+
+							$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
+
+							if($user->language == 'sp'){
+
+								$subject = "MUY URGENTE: Por favor, confirme su estado de inscripción. (TERCER RECORDATORIO)";
+								$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Hemos recibido la solicitud de '.$name.' para participar en el GProCongress II.</p><p><br></p><p>'.$name.' ha indicado que asistirán juntos al Congreso. También hemos recibido su solicitud, pero para seguir procesando su inscripción, necesitamos verificar cierta información.</p><p><br></p><p>Por favor responda a este '.$confLink.' correo para confirmar que usted y '.$name.' están casados, y que asistirán al GproCongress juntos.&nbsp;</p><p><br></p><p>TENGA EN CUENTA QUE ESTE ES EL TERCER Y ÚLTIMO RECORDATORIO. Si no responde a este correo electrónico, su inscripción NO se completará y NO podrá participar en el Congreso.Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							
+							}elseif($user->language == 'fr'){
+							
+								$subject = "TRÈS URGENT: Veuillez confirmer votre statut d’inscription. (TROISIÈME RAPPEL)";
+								$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',&nbsp;</p><p>Nous avons reçu la demande de '.$name.' pour le GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p><br></p><p><br></p><p>'.$name.' a indiqué que vous assisterez au Congrès ensemble.&nbsp; Votre demande a également été reçue, mais pour poursuivre le processus de votre inscription, nous devons vérifier certaines informations.&nbsp;</p><p><br></p><p>Veuillez répondre à cet e-mail '.$confLink.' pour confirmer que vous et '.$name.' êtes mariés et que vous assisterez ensemble au GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>VEUILLEZ NOTER QU’IL S’AGIT DE VOTRE TROISIÈME ET DERNIER RAPPEL.&nbsp; Si vous ne répondez pas à ce courriel, votre inscription ne sera PAS complétée et vous ne serez PAS admissible à participer au Congrès.</p><p><br></p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe GProCongrès II</p>';
+							
+							}elseif($user->language == 'pt'){
+							
+								$subject = "MUITO URGENTE: Por favor confirme o estado da sua inscrição. (TERCEIRO LEMBRETE)";
+								$msg = '<p>Prezado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Recebemos o pedido de '.$name.' para o II CongressoGPro.&nbsp;</p><p><br></p><p>'.$name.' afirmou que vocês iriam participar o Congresso juntos.&nbsp;</p><p>Seu pedido também foi recebido, mas para dar seguimento ao processo da sua inscrição, nós precisamos de verificar algumas informações.</p><p><br></p><p>Por favor responda a este e-mail '.$confLink.' para confirmar que você e '.$name.' estão casados, e que vocês irão participar do II CongressoGPro juntos.</p><p><br></p><p>POR FAVOR NOTE: ESTE É O SEU TERCEIRO E ÚLTIMO LEMBRETE. Se você não responder a este e-mail, sua inscrição NÃO estará completa, e você NÃO será elegível a participar do Congresso.</p><p><br></p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = 'VERY URGENT: Please confirm your registration status. (THIRD REMINDER)';
+								$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email '.$confLink.' to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: THIS IS YOUR THIRD AND FINAL REMINDER. If you do not reply to this email, your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
+							
+							}
+
+							\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
+
+							\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
+							
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'Spouse Confirm your registration status- THIRD REMINDER');
+							
 						}
-
-						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-
-						\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-	
-						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'No response confirmation of their attendance');
-						
 					}
-
-					$userData = \App\Models\User::where('id',$existSpouse->id)->first();
-					if($userData){
-
-						$userData->spouse_confirm_reminder_email = '3';
-						$userData->save();
-					}
-					
-					$confLink = '<a href="'.url('spouse-confirm-registration/'.$existSpouse->spouse_confirm_token).'">Click here</a>';
-
-					if($user->language == 'sp'){
-
-						$subject = "MUY URGENTE: Por favor, confirme su estado de inscripción. (TERCER RECORDATORIO)";
-						$msg = '<p>Estimado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Hemos recibido la solicitud de '.$name.' para participar en el GProCongress II.</p><p><br></p><p>'.$name.' ha indicado que asistirán juntos al Congreso. También hemos recibido su solicitud, pero para seguir procesando su inscripción, necesitamos verificar cierta información.</p><p><br></p><p>Por favor responda a este '.$confLink.' correo para confirmar que usted y '.$name.' están casados, y que asistirán al GproCongress juntos.&nbsp;</p><p><br></p><p>TENGA EN CUENTA QUE ESTE ES EL TERCER Y ÚLTIMO RECORDATORIO. Si no responde a este correo electrónico, su inscripción NO se completará y NO podrá participar en el Congreso.Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-					
-					}elseif($user->language == 'fr'){
-					
-						$subject = "TRÈS URGENT: Veuillez confirmer votre statut d’inscription. (TROISIÈME RAPPEL)";
-						$msg = '<p>Cher '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',&nbsp;</p><p>Nous avons reçu la demande de '.$name.' pour le GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p><br></p><p><br></p><p>'.$name.' a indiqué que vous assisterez au Congrès ensemble.&nbsp; Votre demande a également été reçue, mais pour poursuivre le processus de votre inscription, nous devons vérifier certaines informations.&nbsp;</p><p><br></p><p>Veuillez répondre à cet e-mail '.$confLink.' pour confirmer que vous et '.$name.' êtes mariés et que vous assisterez ensemble au GProCongrès II.&nbsp;&nbsp;</p><p><br></p><p>VEUILLEZ NOTER QU’IL S’AGIT DE VOTRE TROISIÈME ET DERNIER RAPPEL.&nbsp; Si vous ne répondez pas à ce courriel, votre inscription ne sera PAS complétée et vous ne serez PAS admissible à participer au Congrès.</p><p><br></p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe GProCongrès II</p>';
-					
-					}elseif($user->language == 'pt'){
-					
-						$subject = "MUITO URGENTE: Por favor confirme o estado da sua inscrição. (TERCEIRO LEMBRETE)";
-						$msg = '<p>Prezado '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>Recebemos o pedido de '.$name.' para o II CongressoGPro.&nbsp;</p><p><br></p><p>'.$name.' afirmou que vocês iriam participar o Congresso juntos.&nbsp;</p><p>Seu pedido também foi recebido, mas para dar seguimento ao processo da sua inscrição, nós precisamos de verificar algumas informações.</p><p><br></p><p>Por favor responda a este e-mail '.$confLink.' para confirmar que você e '.$name.' estão casados, e que vocês irão participar do II CongressoGPro juntos.</p><p><br></p><p>POR FAVOR NOTE: ESTE É O SEU TERCEIRO E ÚLTIMO LEMBRETE. Se você não responder a este e-mail, sua inscrição NÃO estará completa, e você NÃO será elegível a participar do Congresso.</p><p><br></p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-					
-					}else{
-					
-						$subject = 'VERY URGENT: Please confirm your registration status. (THIRD REMINDER)';
-						$msg = '<p>Dear '.$existSpouse->salutation.' '.$existSpouse->name.' '.$existSpouse->last_name.',</p><p><br></p><p>We have received '.$name.'’s application for GProCongress II.&nbsp;&nbsp;</p><p><br></p><p>'.$name.' has indicated that you will be attending the Congress, together.&nbsp; Your application has also been received, but to further process your registration, we need to verify some information.</p><p><br></p><p>Please reply to this email '.$confLink.' to confirm that you and '.$name.' are married, and that you will be attending GProCongress II, together.&nbsp;&nbsp;</p><p><br></p><p>PLEASE NOTE: THIS IS YOUR THIRD AND FINAL REMINDER. If you do not reply to this email, your registration will NOT be completed, and you will NOT be eligible to participate in the Congress.</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
-					
-					}
-
-					\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
-
-					\App\Helpers\commonHelper::emailSendToUser($existSpouse->email,$subject, $msg);
-					
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'Spouse Confirm your registration status- THIRD REMINDER');
-					
 					
 				}
 				
@@ -2107,6 +2150,89 @@ class PreLoginController extends Controller {
 		} catch (\Exception $e) {
 			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
 		}
+
+    }
+
+    public function SpouseRejectActionCron(Request $request){
+
+        $existSpouse = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
+
+		if(count($existSpouse) > 0){
+
+			foreach ($existSpouse as $key => $linkPayment) {
+
+				$reminder = json_decode($existSpouse->spouse_confirm_reminder_email);
+
+				if($existSpouse->spouse_confirm_token && $reminder->reminder == 3){
+						 
+					if($reminder->date == date('Y-m-d', strtotime('-4 day', strtotime(date('Y-m-d'))))){
+									
+						$history = new \App\Models\SpouseStatusHistory;
+						$history->spouse_id = $linkPayment->id;
+						$history->parent_id = $linkPayment->parent_id;
+
+						$history->remark = "Your spouse's application has been declined.";
+						$history->status = 'Reject';
+
+						$user = \App\Models\User::where('id',$linkPayment->parent_id)->first();
+						if($user){
+
+							$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+							$nameSpouse = $linkPayment->salutation.' '.$linkPayment->name.' '.$linkPayment->last_name;
+							$faq = '<a href="'.url('faq').'">Click here</a>';
+
+							if($user->language == 'sp'){
+
+								$subject = "La solicitud de su cónyuge ha sido rechazada";
+								$msg = '<p>Estimado '.$name.',&nbsp;</p><p><br></p><p><br></p><p>Gracias por registrarse para asistir al GProCongress II 2023 en Ciudad de Panamá, Panamá con su cónyuge '.$nameSpouse.'. Lamentablemente, esta vez, su solicitud ha sido rechazada</p><p><br></p><p>Estamos cambiando nuestro registro para que su estado de inscripción diga "Persona casada que asiste sin cónyuge".</p><p>La tarifa de su habitación se ajustará en consecuencia.</p><p><br></p><p>Sin embargo, esto no significa el fin de nuestra relación.&nbsp;</p><p><br></p><p>Animamos a su cónyuge y a usted a que se mantengan conectados con la comunidad GProCommission haciendo clic aquí: &lt;enlace&gt;. Recibirá aliento continuo, ideas, apoyo en oración y mucho más mientras usted forma líderes pastorales.</p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							
+							}elseif($user->language == 'fr'){
+							
+								$subject = "La demande de votre conjoint/e a été refusée.";
+								$msg = '<p>Cher '.$name.',</p><p><br></p><p>Merci de vous être inscrit pour assister au GProCongrès II l’année prochaine à Panama City, au Panama avec votre conjoint/e '.$nameSpouse.'. Malheureusement, cette fois, leur demande a été refusée.</p><p><br></p><p>Nous modifions notre dossier afin que votre statut d’inscription indique « Personne mariée participant sans conjoint/e ».&nbsp;</p><p>Le tarif de votre chambre sera ajusté en conséquence.</p><p><br></p><p>Cependant, ce n’est pas la fin de notre relation.&nbsp;</p><p>Nous encourageons votre conjoint/e et vous à rester en contact avec la communauté GProCommission en cliquant ici: &lt;link&gt;. Vous recevrez des encouragements continus, des idées, un soutien à la prière et autre alors que vous préparez les responsables pastoraux.&nbsp;</p><p><br></p><p>Vous avez d’autres questions? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe GProCongrès II</p>';
+							
+							}elseif($user->language == 'pt'){
+							
+								$subject = "O pedido do seu cônjuge foi declinado.";
+								$msg = '<p>Prezado '.$name.',</p><p><br></p><p><br></p><p>Agradecemos pela sua inscrição para participar no II CongressoGPro no próximo ano na Cidade de Panamá, Panamá, junto com seu cônjuge '.$nameSpouse.'. Infelizmente, desta vez, o pedido dela/e foi declinado.</p><p><br></p><p>Estamos mudando os nossos registos e assim, o estado da sua inscrição aparecerá “Pessoa Casada Participará Sem Cônjuge”.</p><p>A tarifa do seu quarto será ajustada de acordo.</p><p><br></p><p>Contudo, este não é o fim do nosso relacionamento.</p><p>&nbsp;</p><p>Encorajamos seu cônjuge e você a se manter conectado a nossa ComunidadeGPro clicando aqui: &lt;link&gt;. Você continuará recebendo encorajamento contínuo, ideias, suporte em oração e muito mais, à medida que prepara os líderes pastorais.</p><p><br></p><p>Ainda tem perguntas? Simplesmente responda este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = "Your spouse's application has been declined.";
+								$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for registering to attend GProCongress II next year in Panama City, Panama with your spouse '.$nameSpouse.'. Regretfully, this time, their application has been declined.</p><p><br></p><p>We are changing our record so your registration status reads “Married Person Attending Without Spouse.”&nbsp;</p><p>Your room rate will be adjusted accordingly.</p><p><br></p><p>However, this is not the end of our relationship.&nbsp;</p><p>We encourage your spouse and you to stay connected to the GProCommission community by clicking here: '.$faq.'. You will receive ongoing encouragement, ideas, prayer support, and more as you prepare pastoral leaders.&nbsp;</p><p><br></p><p>Still have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p><div><br></div>';
+							
+							}
+							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
+							\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your spouse application has been declined.');
+
+
+						}
+
+						$spouseUser = \App\Models\User::where('id',$linkPayment->id)->first();
+						$spouseUser->parent_id = null;
+						$spouseUser->added_as = null;
+						$spouseUser->spouse_confirm_status = 'Decline';
+						$spouseUser->spouse_confirm_token = '';
+						$spouseUser->room = 'Sharing';
+						$spouseUser->save();
+
+						$user->room = 'Sharing';
+						$user->save();
+					
+						$history->save();
+					}
+				}
+			}
+
+			return response(array('message'=>'Reminders has been sent successfully.'), 200);
+
+        }else{
+
+			return response(array('message'=>'Data not found.'), 403);
+
+        }
 
     }
 
@@ -2229,6 +2355,7 @@ class PreLoginController extends Controller {
 		try {
 			
 			$results = \App\Models\User::where('profile_status','Approved')->where('stage','2')->get();
+			// $results = \App\Models\User::where('email','gopalsaini.img@gmail.com')->get();
 
 			if(count($results) > 0){
 
@@ -2268,9 +2395,9 @@ class PreLoginController extends Controller {
 
 					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
-					// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
-					// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your GProCongress II payment is now due.');
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your GProCongress II payment is now due.');
 				
 					
 				}
@@ -2602,6 +2729,44 @@ class PreLoginController extends Controller {
 				}
 				
 				return response(array('message'=>' update success.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	public function setdateandSpouseReminder(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
+
+			if(count($results) > 0){
+
+				foreach ($results as $key => $existSpouse) {
+				
+					$userData = \App\Models\User::where('id',$existSpouse->id)->first();
+					if($userData){
+
+						$reminderData = [
+							'type'=>'spouse_reminder',
+							'date'=>date('Y-m-d'),
+							'reminder'=>'0',
+
+						];
+
+						$userData->spouse_confirm_reminder_email = json_encode($reminderData);
+						$userData->save();
+					}
+
+						
+				}
+				
+				return response(array('message'=>count($results).'Data update successfully.'), 200);
 			}
 
 			return response(array("message"=>'No results found for reminder.'), 200);

@@ -2383,7 +2383,7 @@ class UserController extends Controller {
 						$result->amount = $request->post('amount');
 						$result->payment_country = $request->post('citizenship');
 						$result->cash_payment_option = $request->post('cash_payment');
-
+						$result->status_change_at = date('Y-m-d H:i:s');
 						$result->stage = '2';
 						$result->profile_update = '1';
 						$name= $result->name.' '.$result->last_name;
@@ -2468,7 +2468,7 @@ class UserController extends Controller {
 					$result->amount = $request->post('amount');
 					$result->payment_country = $request->post('citizenship');
 					$result->cash_payment_option = $request->post('cash_payment');
-
+					$result->status_change_at = date('Y-m-d H:i:s');
 					$result->stage = '2';
 					$result->profile_update = '1';
 

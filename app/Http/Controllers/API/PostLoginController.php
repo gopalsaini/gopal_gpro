@@ -327,8 +327,15 @@ class PostLoginController extends Controller {
 							return response(array("error"=>true, "message"=>$message), 403);
 						}
 
+						$reminderData = [
+							'type'=>'spouse_reminder',
+							'date'=>date('Y-m-d'),
+							'reminder'=>'0',
+						];
 						$users->parent_id = $request->user()->id;
 						$users->added_as = 'Spouse';
+						$users->spouse_confirm_reminder_email =json_encode($reminderData);
+						
 						$users->save(); 
 
 						$spouse_id = $users->id;
@@ -369,6 +376,13 @@ class PostLoginController extends Controller {
 								
 								
 								$token = md5(rand(1111,4444));
+								$reminderData = [
+									'type'=>'spouse_reminder',
+									'date'=>date('Y-m-d'),
+									'reminder'=>'0',
+		
+								];
+								
 								$users = array(
 									'parent_id'=> $request->user()->id,
 									'added_as'=>'Spouse',
@@ -384,6 +398,7 @@ class PostLoginController extends Controller {
 									'otp_verified'=>'No',
 									'system_generated_password'=>'1',
 									'spouse_confirm_token'=>$token,
+									'spouse_confirm_reminder_email'=>json_encode($reminderData),
 								);
 			
 								$user =  \App\Models\User::insert($users);
@@ -1897,7 +1912,7 @@ class PostLoginController extends Controller {
 					
 					
 					\Mail::send('email_templates.sponsor_payments', compact('to', 'token', 'subject','name','userName'), function($message) use ($to, $subject) {
-						$message->from(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
+						$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 						$message->subject($subject);
 						$message->to($to);
 					});
@@ -1928,7 +1943,7 @@ class PostLoginController extends Controller {
 					}
 
 					\Mail::send('email_templates.mail', compact('to', 'token', 'subject','msg'), function($message) use ($userEmail, $subject) {
-						$message->from(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
+						$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 						$message->subject($subject);
 						$message->to($userEmail);
 					});

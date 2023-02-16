@@ -733,7 +733,7 @@ class commonHelper{
 		}
 
 		\Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject, $pdf,$attachment) {
-			$message->from(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
+			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 			$message->subject($subject);
 			$message->to($to);
 			if ($pdf) {
@@ -767,7 +767,7 @@ class commonHelper{
 
 		// 		$to = $admin->email;
 		// 		\Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
-		// 			$message->from(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
+		// 			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 		// 			$message->subject($subject);
 		// 			$message->to($to);
 		// 		});
@@ -781,7 +781,7 @@ class commonHelper{
 
 				$to = $admin;
 				\Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
-					$message->from(env('MAIL_USERNAME'), 'GProCongress II Team');
+					$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
 					$message->subject($subject);
 					$message->to($to);
 				});
@@ -789,7 +789,7 @@ class commonHelper{
 
 		// $to = env('ADMIN_EMAIL');
 		// \Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
-		// 	$message->from(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
+		// 	$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 		// 	$message->subject($subject);
 		// 	$message->to($to);
 		// });

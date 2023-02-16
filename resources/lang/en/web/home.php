@@ -121,6 +121,6 @@ return [
     'Offline-payment-successful' => 'Offline payment successful',
     'TravelInformation-approved-successful' => 'Travel Information approved successful',
     'Email-already-verifiedPlease-Login' => 'Email already verified. Please Login',	
-    'PreRecordedVideo'=>'Pre Recorded Video',
+
 
 ];

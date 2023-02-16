@@ -43,11 +43,8 @@ class HomeController extends Controller
             })->get();
         
         }
-
-        $speakers = \App\Models\Speaker::where('status', '1')->inRandomOrder()->limit(3)->get();
-        $preRecordedVideo = \App\Models\PreRecordedVideo::where('status', '1')->inRandomOrder()->limit(3)->get();
-
-        return view('index', compact('testimonials','speakers','preRecordedVideo'));
+        
+        return view('index', compact('testimonials'));
     } 
 
     public function Registration() {
@@ -519,18 +516,22 @@ class HomeController extends Controller
 
             if($type == 'confirm'){
 
-                $history->remark = 'Your  is Approve!';
+                $history->remark = 'Your spouse confirmation is Approved';
                 $history->status = 'Approve';
 
+                $subject = 'Spouse confirmation approved';
+                
+                \App\Helpers\commonHelper::sendNotificationAndUserHistory($linkPayment->id,$subject,'Spouse confirmation is Approved','Spouse confirmation is Approved');
 
                 $user = \App\Models\User::where('id',$linkPayment->parent_id)->first();
                
                 $name = $user->salutation.' '.$user->name.' '.$user->last_name;
 
-                $subject = 'Your spouse confirmation is Approve  !';
+                $subject = 'Your spouse confirmation is Approved';
                 $msg = '<div>Dear '.$user->salutation.' '.$user->name.' '.$user->last_name.',</div><div><br></div><div>has begun your registration for the GProCongress II! Please use this link </div>';
                 
-                \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+                // \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+                \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,'Your spouse confirmation is Approved','Your spouse confirmation is Approved');
 
                 if(date('Y-m-d',strtotime($linkPayment->created_at)) < date('Y-m-d',strtotime($user->created_at))){
 
@@ -548,12 +549,17 @@ class HomeController extends Controller
                 }
 
                 $linkPayment->room = null;
+                $linkPayment->spouse_confirm_reminder_email = null;
                 $linkPayment->save();
 
             }else{
 
-                $history->remark = 'Your Spouse Confirmation is Rejected!';
+                $history->remark = 'Your Spouse Confirmation is Declined!';
                 $history->status = 'Reject';
+
+                $subject = 'Spouse confirmation declined';
+                
+                \App\Helpers\commonHelper::sendNotificationAndUserHistory($linkPayment->id,$subject,'Spouse confirmation declined','Spouse confirmation declined');
 
                 $user = \App\Models\User::where('id',$linkPayment->parent_id)->first();
                 if($user){
@@ -585,17 +591,22 @@ class HomeController extends Controller
                     }
 
                     \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+                    \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your spouse application has been declined.');
+
 
                 }
 
                 $linkPayment->parent_id = null;
                 $linkPayment->added_as = null;
                 $linkPayment->spouse_confirm_status = 'Decline';
-                $linkPayment->spouse_confirm_token = null;
+                $linkPayment->spouse_confirm_token = '';
+                $linkPayment->spouse_confirm_reminder_email = null;
+                $linkPayment->room = 'Sharing';
                 $linkPayment->save();
 
                 $user->room = 'Sharing';
                 $user->save();
+                
             }
 
             $history->save();

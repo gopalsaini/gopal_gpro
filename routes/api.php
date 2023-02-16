@@ -93,6 +93,8 @@ Route::post("getAllLanguageFolderFile","API\PreLoginController@getAllLanguageFol
 
 Route::any("paypal-webhook-response","API\PreLoginController@paypalWebhookResponse");
 Route::any("user-email-update-data","API\PreLoginController@userEmailUpdateData");
-Route::any("get-approved-user-send-email","API\PreLoginController@getApprovedUserSendEmail");
+// Route::any("get-approved-user-send-email","API\PreLoginController@getApprovedUserSendEmail");
 Route::any("user-update-payment-country","API\PreLoginController@userUpdatePaymentCountry");
 Route::any("send-early-bird-reminder-mail","API\PreLoginController@sendEarlyBirdReminderMail");
+Route::any("spouse-reject-action-cron","API\PreLoginController@SpouseRejectActionCron");
+Route::any("setdateandSpouseReminder","API\PreLoginController@setdateandSpouseReminder");

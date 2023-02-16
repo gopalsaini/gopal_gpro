@@ -103,15 +103,15 @@
                                             
                                                 if($result->parent_id != Null){
 
-                                                if($result->added_as == 'Group'){
+                                                    if($result->added_as == 'Group'){
 
-                                                    echo  '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
-                                                    
-                                                }elseif($result->added_as == 'Spouse'){
+                                                        echo  '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+                                                        
+                                                    }elseif($result->added_as == 'Spouse'){
 
-                                                    echo '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
-                                                    
-                                                }
+                                                        echo '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+                                                        
+                                                    }
 
                                                 }else {
 
@@ -142,11 +142,11 @@
 
                                                 if($result->parent_id != Null && $result->added_as == 'Group'){
 
-                                                echo \App\Helpers\commonHelper::getUserNameById($result->parent_id);
+                                                    echo \App\Helpers\commonHelper::getUserNameById($result->parent_id);
 
                                                 }else if(count($groupName) > 0) {
 
-                                                echo ucfirst($result->name.' '.$result->last_name);
+                                                    echo ucfirst($result->name.' '.$result->last_name);
 
                                                 }else{
 

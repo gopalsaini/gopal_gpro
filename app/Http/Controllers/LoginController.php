@@ -227,7 +227,7 @@ class LoginController extends Controller
                 }
 
                 \Mail::send('email_templates.forgot-password', compact('to', 'token', 'subject','name','msg'), function($message) use ($to, $subject) {
-					$message->from(env('MAIL_USERNAME'), env('MAIL_FROM_NAME'));
+					$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 					$message->subject($subject);
 					$message->to($to);
 				});

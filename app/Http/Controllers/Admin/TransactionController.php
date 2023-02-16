@@ -136,6 +136,7 @@ class TransactionController extends Controller {
 			$to = $result->User->email;
 			if ((int)$request->post('status') === 1) {
 
+				
 				$result->status = $request->post('status');
 				$result->payment_status = '2';
 				$result->save();
@@ -180,6 +181,7 @@ class TransactionController extends Controller {
 
 					$user = \App\Models\User::find($result->User->id);
 					$user->stage = 3;
+					$user->status_change_at = date('Y-m-d H:i:s');
 					$user->save();
 
 					$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
@@ -188,6 +190,7 @@ class TransactionController extends Controller {
 
 						$resultSpouse->stage = 3;
 						$resultSpouse->payment_status = '2';
+						$resultSpouse->status_change_at = date('Y-m-d H:i:s');
 						$resultSpouse->save();
 					}
 
