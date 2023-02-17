@@ -44,7 +44,7 @@ User Database Management
 							<br><br>
 							<div class="btn-showcase text-center">
 								@if(!$result)
-								<button class="btn btn-light" type="reset">@lang('admin.reset')</button>
+								<button class="btn btn-light" type="reset" id="DataReset">@lang('admin.reset')</button>
 								@endif
 								<button class="btn btn-primary" type="submit" form="form">@lang('admin.submit')</button>
 							</div>
@@ -60,6 +60,11 @@ User Database Management
 @push('custom_js')
 
 <script>
+
+	$('#DataReset').click(function(){
+		$('#MinistryHtml').html("");
+	});
+
 	$('.ministryUpdate').change( function() {
 
 		$('#MinistryHtml').html("");

@@ -4276,7 +4276,7 @@ class UserController extends Controller {
 								$data->ministry_pastor_trainer_detail = Null;
 								$data->doyouseek_postoral = $request->post('pastorno');
 								$data->doyouseek_postoralcomment = $request->post('doyouseek_postoral_comment'); 
-								
+
 							}else{
 
 								$dataMin=array(
@@ -4364,8 +4364,9 @@ class UserController extends Controller {
 		
 		if($request->ajax()){
 			
-			$result = \App\Models\User::where('email',$request->get('emailId'))->where('stage','<','2')->first();
+			$result = \App\Models\User::where('email',$request->get('emailId'))->where('stage','1')->first();
 			if($result){
+
 				$country  = \App\Models\Country::get();
 
 				$html = view('admin.user.ministery_update_render', compact('result','country'))->render();
@@ -4374,7 +4375,7 @@ class UserController extends Controller {
 	
 			}else{
 
-				return response(array("error"=>true, 'message'=>'Data not found','html'=>''), 403);
+				return response(array("error"=>true, 'message'=>'Candidate not found in Stage-1','html'=>''), 403);
 	
 			}
 
