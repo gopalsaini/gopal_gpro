@@ -172,18 +172,35 @@
                                             
                                            
                                         <tr>
+
+                                        @php $spouseGetBySpouse = \App\Models\user::where('id', $result->parent_id)->first(); @endphp
+
                                         @if(!$Spouse && $result->room !=null)
                                             <tr>
                                                 <td colspan="2"><strong>Stay in Twin sharing room or Single Room :</strong> {{$result->room}}
                                                 </td> 
                                             <tr>
+                                        @elseif($Spouse)
+
+                                            <tr>
+                                                <td colspan="2"><strong>Room Type :</strong> {{$result->room ?? 'Deluxe Room'}}
+                                                </td> 
+                                            <tr>
+                                        @elseif($spouseGetBySpouse)
+
+                                            <tr>
+                                                <td colspan="2"><strong>Room Type :</strong> {{$spouseGetBySpouse->room ?? 'Deluxe Room'}}
+                                                </td> 
+                                            <tr>
 
                                         @endif
                                         
+
+                                      
                                         @if($Spouse && $Spouse->spouse_confirm_status=='Approve')
 
                                             <tr>
-                                                <td colspan="2"><strong>Spouse confirmation received :</strong> {{$Spouse->spouse_confirm_status}}
+                                                <td colspan="2"><strong>Spouse confirmation received :</strong> Approved
                                                 </td> 
                                             <tr>
                                           
@@ -192,6 +209,7 @@
                                                 <td colspan="2"><strong style="color:red">Spouse confirmation received : {{$Spouse->spouse_confirm_status}}</strong>
                                                 </td> 
                                             <tr>
+                                        
                                         @endif
 
                                         @php $history = \App\Models\SpouseStatusHistory::where([['spouse_id', $result->spouse_id], ['parent_id', $result->id]])->first(); @endphp

@@ -2758,15 +2758,28 @@ class PreLoginController extends Controller {
 							'reminder'=>'0',
 
 						];
-
+						
 						$userData->spouse_confirm_reminder_email = json_encode($reminderData);
 						$userData->save();
 					}
 
 						
 				}
+
+				$results = \App\Models\User::orderBy('id','desc')->get();
+
+				foreach ($results as $key => $existSpouse) {
 				
-				return response(array('message'=>count($results).'Data update successfully.'), 200);
+					$userData = \App\Models\User::where('id',$existSpouse->id)->first();
+					if($userData){
+
+						$userData->status_change_at = date('Y-m-d H:i:s');
+						$userData->save();
+					}
+	
+				}
+				
+				return response(array('message'=>'Data update successfully.'), 200);
 			}
 
 			return response(array("message"=>'No results found for reminder.'), 200);

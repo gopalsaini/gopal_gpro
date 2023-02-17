@@ -148,6 +148,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('{designation}', 'Admin\UserController@list')->name('list');
 
 		Route::match(['get', 'post'], 'recover/user', 'Admin\UserController@userRecover')->name('recover');
+		Route::match(['get', 'post'], 'get-ministry-data/user', 'Admin\UserController@getMinistryData')->name('get-ministry-data');
 
 		Route::group(['prefix'=>'{type}'], function() {
 			Route::get('stage/all', 'Admin\UserController@stageAll')->name('list.stage.all');

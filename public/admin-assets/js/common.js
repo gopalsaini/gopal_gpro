@@ -28,8 +28,13 @@ $("form#form").submit(function(e) {
                 sweetAlertMsg('error', data.message);
             } else {
 
+                if(data.ministryUpdate){
+                    $('#' + formId)[0].reset();
+                    $('#MinistryHtml').html("");
+                }
                 if (data.reset) {
                     $('#' + formId)[0].reset();
+                    $('#MinistryHtml').html("");
 
                     if($('.previewimages').length > 0) {
                         $('.previewimages').html('');
@@ -179,10 +184,8 @@ function submitButton(formId, btnhtml, disabled){
 
 $('.country').change(function() {
     
-    
     stateId = parseInt($(this).data('state_id'));
     cityId = parseInt($(this).data('city_id'));
-   
     countryId = $(this).val();
     
     $.ajax({
@@ -202,7 +205,7 @@ $('.country').change(function() {
             $('.statehtml').html(data.html);
 
             $('.statehtml option').each(function() {
-               
+                if (this.value == stateId)
                 $('.statehtml').val(stateId);
                     
 
@@ -258,29 +261,3 @@ function getCity() {
     
 
 }
-
-$(function() {   
-    $("file[video]").change(function() {      
-        var uploadType = $(this).data('type');        
-        var dvPreview = $("#" + $(this).data('video-preview'));        
-        var isUpdate = $(this).data('isupdate');
-
-                 
-        if (typeof(FileReader) != "undefined") {            
-            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(ogg|ogv|avi|mpe?g|mov|wmv|flv|mp4)$/;             
-            $($(this)[0].files).each(function() {               
-                var file = $(this);               
-                if (regex.test(file[0].name.toLowerCase())) {                  
-                    var reader = new FileReader();                  
-                    reader.onload = function(e) {                     
-                        var video = $("<video />");                     
-                        video.attr("style", "width: 100px;border:1px solid #222;margin-right: 13px");                     
-                        video.attr("src", e.target.result);                                          
-                        if (uploadType == 'multiple') {                         dvPreview.append(video);                      } else {                         dvPreview.html(img);                      }                  
-                    }                  
-                    reader.readAsDataURL(file[0]);               
-                } else {                   alert(file[0].name + " is not a valid video file.");                   return false;                }            
-            });         
-        } else {             alert("This browser does not support HTML5 FileReader.");          }      
-    });   
-});

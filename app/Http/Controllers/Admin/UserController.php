@@ -195,7 +195,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::where([['parent_id', NULL], ['added_as', NULL] , ['id', '!=', '1']])->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
 				$query->where('email', 'like', "%" . request('email') . "%");
@@ -203,7 +203,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc');
+			$totalData1 = \App\Models\User::where([['parent_id', NULL], ['added_as', NULL], ['id', '!=', '1']])->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where('email', 'like', "%" . request('email') . "%");
@@ -1525,6 +1525,7 @@ class UserController extends Controller {
 		return view('admin.user.edit', compact('result', 'designations','country'));
 
 	}
+
 
     public function delete(Request $request, $id) {
 
@@ -4133,6 +4134,173 @@ class UserController extends Controller {
 						}
 						
 					}
+				}elseif($request->post('type') == '3'){
+
+					$usertable = \App\Models\User::where('email','=',$request->post('email'))->first();
+					if($usertable){
+
+						if($usertable->stage > '1'){
+
+							return response(array('message'=>'User shall be in Stage 1'),403);
+						}
+
+						$userSpouse = \App\Models\User::where('parent_id',$usertable->id)->where('added_as','Spouse')->first();
+
+						if($userSpouse){
+
+							$userSpouse->parent_id=null;
+							$userSpouse->added_as= null;
+							$userSpouse->room= 'Sharing';
+							$userSpouse->spouse_confirm_token= null;
+							$userSpouse->spouse_confirm_status= 'Pending';
+							$userSpouse->spouse_confirm_reminder_email= '';
+							$userSpouse->save();
+
+							$usertable->parent_id=null;
+							$usertable->added_as= null;
+							$usertable->room= 'Sharing';
+							$usertable->spouse_confirm_token= null;
+							$usertable->spouse_confirm_status= 'Pending';
+							$usertable->spouse_confirm_reminder_email= '';
+							$usertable->save();
+							
+						}
+
+						$userHus = \App\Models\User::where('id',$usertable->parent_id)->first();
+
+						if($userHus){
+
+							$userHus->parent_id=null;
+							$userHus->added_as= null;
+							$userHus->room= 'Sharing';
+							$userHus->spouse_confirm_token= null;
+							$userHus->spouse_confirm_status= 'Pending';
+							$userHus->spouse_confirm_reminder_email= '';
+							$userHus->save();
+
+							$usertable->parent_id=null;
+							$usertable->added_as= null;
+							$usertable->room= 'Sharing';
+							$usertable->spouse_confirm_token= null;
+							$usertable->spouse_confirm_status= 'Pending';
+							$usertable->spouse_confirm_reminder_email= '';
+							$usertable->save();
+						
+						}
+
+						return response(array('message'=>'User update successfully','reset'=>true),200);
+
+					}else{
+
+						return response(array('message'=>'User does not exist'),403);
+					}
+
+				}elseif($request->post('type') == '4'){
+
+					if($request->isMethod('post')){
+
+						$rules = [
+							'ministry_name' => 'required',
+							'ministry_zip_code' => 'required',
+							'ministry_address' => 'required',
+							'ministry_country_id' => 'required',
+							'ministry_state_id' => 'required',
+							'ministry_city_id' => 'required',
+							'ministry_pastor_trainer' => 'required|in:Yes,No',
+						];
+
+						if($request->post('ministry_state_id')=='0'){
+	
+							$rules['ministry_state_name'] = 'required|string';
+			
+						}
+						if($request->post('ministry_city_id')=='0'){
+			
+							$rules['ministry_city_name'] = 'required|string';
+			
+						}
+
+						if($request->post('ministry_pastor_trainer')=='Yes'){
+
+							$rules['non_formal_trainor'] = 'required';
+							$rules['formal_theological'] = 'required|string';
+							$rules['informal_personal'] = 'required|string';
+							$rules['howmany_pastoral'] = 'required|string';
+
+						}else{
+
+							$rules['pastorno'] = 'required|in:Yes,No';
+						}
+
+						$validator = \Validator::make($request->all(), $rules);
+						
+						if ($validator->fails()){
+							$message = "";
+							$messages_l = json_decode(json_encode($validator->messages()), true);
+							foreach ($messages_l as $msg) {
+								$message= $msg[0];
+								break;
+							}
+							
+							return response(array('message'=>$message),403);
+							
+						} else {
+		
+							$data=\App\Models\User::where('email','=',$request->post('email'))->first();
+		
+							if(!$data){
+
+								return response(array('message'=>'User not found.'),403);
+							}
+							$data->ministry_name = $request->post('ministry_name');
+							$data->ministry_zip_code = $request->post('ministry_zip_code');
+							$data->ministry_address = $request->post('ministry_address');
+							$data->ministry_country_id = $request->post('ministry_country_id');
+							$data->ministry_state_id = $request->post('ministry_state_id');
+							$data->ministry_city_id = $request->post('ministry_city_id');
+							$data->ministry_pastor_trainer = $request->post('ministry_pastor_trainer');
+							
+							if($request->post('ministry_state_id')=='0'){
+
+								$data->ministry_state_name = $request->post('ministry_state_name');
+				
+							}
+							if($request->post('ministry_city_id')=='0'){
+	
+								$data->ministry_city_name = $request->post('ministry_city_name');
+				
+							}
+
+							if($request->post('ministry_pastor_trainer')=='No'){
+
+								$data->ministry_pastor_trainer_detail = Null;
+								$data->doyouseek_postoral = $request->post('pastorno');
+								$data->doyouseek_postoralcomment = $request->post('doyouseek_postoral_comment'); 
+								
+							}else{
+
+								$dataMin=array(
+									'non_formal_trainor'=>$request->post('non_formal_trainor'),
+									'formal_theological'=>$request->post('formal_theological'),
+									'informal_personal'=>$request->post('informal_personal'),
+									'howmany_pastoral'=>$request->post('howmany_pastoral'),
+									'howmany_futurepastor'=>$request->post('howmany_futurepastor'), 
+									'comment'=>$request->post('comment') ?? '', 
+									'willing_to_commit'=>$request->post('willing_to_commit') ?? '', 
+								);
+			
+								$data->ministry_pastor_trainer_detail = json_encode($dataMin); 
+
+							}
+
+							$data->save();
+
+							
+							return response(array('message'=>'Ministry details upadted successfull.','ministryUpdate'=>true),200);
+						}
+			
+					}
+					
 				}
 
 			}
@@ -4188,6 +4356,31 @@ class UserController extends Controller {
 			return response(array("error"=>true, "message" => $e->getMessage()),200); 
 		}
 
+
+	}
+
+
+    public function getMinistryData(Request $request) {
+		
+		if($request->ajax()){
+			
+			$result = \App\Models\User::where('email',$request->get('emailId'))->where('stage','<','2')->first();
+			if($result){
+				$country  = \App\Models\Country::get();
+
+				$html = view('admin.user.ministery_update_render', compact('result','country'))->render();
+				
+				return response(array("error"=>false, 'message'=>'Data fetch success','html'=>$html), 200);
+	
+			}else{
+
+				return response(array("error"=>true, 'message'=>'Data not found','html'=>''), 403);
+	
+			}
+
+
+		}
+		
 
 	}
 }
