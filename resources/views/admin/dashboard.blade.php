@@ -187,7 +187,7 @@
         </div>
 
         
-        <div class="col-md-4 p-0 brl">
+        <div class="col-md-6 p-0 brl">
             <h2>Married with spouse -> Both trainers/One of them is a trainer/Both are non trainers </h2>
             <div class="circle-chart">
 
@@ -196,7 +196,7 @@
             </div>
         </div>
 
-        <div class="col-md-4 p-0 brl">
+        <div class="col-md-6 p-0 brl">
             <h2>Pastoral Trainers - Yes/No</h2>
             <div class="circle-chart">
                 <div id="PastoralTrainersChart" style="width: 100%; height: 310px;"></div>
@@ -205,14 +205,14 @@
             </div>
         </div>
 
-        <div class="col-md-4 p-0 brl">
+        <!-- <div class="col-md-4 p-0 brl">
             <h2>Do you seek to add Pastoral Training to your ministry - Yes/No</h2>
             <div class="circle-chart">
                 <div id="DoYouSeekPastoralTraining" style="width: 100%; height: 310px;"></div>
 
 
             </div>
-        </div>
+        </div> -->
 
 
         <div class="col-md-3 p-0">
@@ -293,11 +293,78 @@
         @php $country = \App\Models\User::select('users.*','countries.name as cname','countries.id as cId')->where([['users.user_type', '!=', '1'], ['users.designation_id', 2]])->join('countries','users.citizenship','=','countries.id')->groupBy('countries.id')->get(); @endphp
             <h2>Countries (Total Attendees: {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count() }} Form {{count($country)}} Countries)</h2>
             <div class="circle-chart">
-                <div id="countries_chart" style="width: 100%; height: 500px;"></div>
+                <section class="content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12 col-sm-12">
+                                <div class="card">
+                                    <div class="body">
+                                        <div class="table-">
+                                            <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper dt-bootstrap4">
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+                                                    <table class="table table-hover js-basic-example contact_list dataTable" id="tableSearchData" role="grid" aria-describedby="DataTables_Table_0_info">
+                                                        <thead>
+                                                            <tr role="row">
+                                                                <th class="center sorting sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1"
+                                                                    colspan="1" style="width: 48.4167px;" aria-sort="ascending"
+                                                                    aria-label="#: activate to sort column descending"># ID</th>
+                                                                <th class="center sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                                                    style="width: 126.333px;" aria-label=" Name : activate to sort column ascending">Region
+                                                                </th>
+                                                                <th class="center sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                                                    style="width: 126.333px;" aria-label=" Name : activate to sort column ascending"> Country Name
+                                                                </th>
+                                                                <th class="center sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                                                    style="width: 193.017px;" aria-label=" Email : activate to sort column ascending"> Count of Candidates
+                                                                </th>
+                                                                <th class="center sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1"
+                                                                    style="width: 193.017px;" aria-label=" Email : activate to sort column ascending"> % of Candidates
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @php
+
+                                                                $userCountry = \App\Models\User::select('users.*','countries.name as cname','countries.id as cId','countries.region as region')->where([['users.user_type', '!=', '1'], ['users.designation_id', 2]])->join('countries','users.citizenship','=','countries.id')->groupBy('countries.id')->get();
+                                                                $totalC = count($userCountry);
+                                                            @endphp
+                                                            @if(!empty($userCountry))
+                                                                @foreach($userCountry as $key=>$countryData)
+                                                                    <tr class="gradeX odd">
+                                                                        <td class="center">{{$key+1}}</td>
+                                                                        <td class="center">{{$countryData->region}}</td>
+                                                                        <td class="center">{{ $countryData->cname }}</td>
+                                                                        <td class="center">{{\App\Models\User::where([['user_type', '!=', '1'],['citizenship', $countryData->cId]])->count()}}</td>
+                                                                        @php $total = ((\App\Models\User::where([['user_type', '!=', '1'],['citizenship', $countryData->cId]])->count()) / 100) * $totalC; @endphp
+                                                                        <td class="center">{{$total}}</td>
+
+                                                                    </tr>
+                                                                @endforeach
+                                                            @endif
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th class="center" rowspan="1" colspan="1">#</th>
+                                                                <th class="center" rowspan="1" colspan="1"> Region</th>
+                                                                <th class="center" rowspan="1" colspan="1"> Country Name </th>
+                                                                <th class="center" rowspan="1" colspan="1"> Count of Candidates </th>
+                                                                <th class="center" rowspan="1" colspan="1"> % of Candidates </th>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </div>
-
-        
     </div>
 </div>
 @endsection
@@ -733,30 +800,30 @@ function PastoralTrainersChart() {
     
 }
 
-google.charts.setOnLoadCallback(DoYouSeekPastoralTraining);
+// google.charts.setOnLoadCallback(DoYouSeekPastoralTraining);
 
-function DoYouSeekPastoralTraining() {
+// function DoYouSeekPastoralTraining() {
 
-    $.getJSON(baseUrl+"/admin/get-do-you-seek-pastoral-training-chart-ajax", function(result){
+//     $.getJSON(baseUrl+"/admin/get-do-you-seek-pastoral-training-chart-ajax", function(result){
 
-        var arr = [['Task', 'Pastoral TrainersChart']];
-        $.each(Object.entries(result), function(i, field){
-            arr.push(field);
-        });
+//         var arr = [['Task', 'Pastoral TrainersChart']];
+//         $.each(Object.entries(result), function(i, field){
+//             arr.push(field);
+//         });
         
-        var options = {
-            pieSliceText: 'value',
-            sliceVisibilityThreshold: 0,
-        };
-        var data = google.visualization.arrayToDataTable(arr);
-        var chart = new google.visualization.PieChart(document.getElementById('DoYouSeekPastoralTraining'));
+//         var options = {
+//             pieSliceText: 'value',
+//             sliceVisibilityThreshold: 0,
+//         };
+//         var data = google.visualization.arrayToDataTable(arr);
+//         var chart = new google.visualization.PieChart(document.getElementById('DoYouSeekPastoralTraining'));
 
-        chart.draw(data, options);
+//         chart.draw(data, options);
 
 
-    });
+//     });
     
-}
+// }
 google.charts.setOnLoadCallback(PaymentChartData);
 
 function PaymentChartData() {
@@ -818,7 +885,17 @@ $(document).ready( function() {
 
 });
 
+$(document).ready(function() {
+   
+    $('#tableSearchData').DataTable({
+        "processing": false,
+        "serverSide": false,
+        "searching": true,
+        "ordering": true,
 
+    });
+
+});
 
 </script>
 

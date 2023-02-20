@@ -162,7 +162,7 @@ class DashboardController extends Controller
         $stages = array(
                 'Pending' => round($totalPendingAmount),
                 'Declined' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount')),
-                'Process' => round(\App\Models\Transaction::where([['status', '=', Null]])->sum('amount')),
+                'In Process' => round(\App\Models\Transaction::where([['status', '=', Null]])->sum('amount')),
                 'Accepted' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Success']])->sum('amount')),
                 
         );
@@ -184,9 +184,9 @@ class DashboardController extends Controller
 
       public function getGroupRegisteredChartAjax(){
       
-            $totalGroup1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->count();
+            $totalGroup1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->groupBy('parent_id')->count();
             $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->get();
-            $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', null]])->count();
+            $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->count();
            
             if(!empty($totalGroup) && count($totalGroup)>0){
               $array =[];
@@ -202,8 +202,8 @@ class DashboardController extends Controller
             }
 
             $stages = array(
-                  'Group' => $totalGroup1+$array,
-                  'Non Group' => $totalUser-$array,
+                  'Total Group' => $array,
+                  'Total Group candidates' => $totalUser+$array,
             );
 
             return response()->json($stages);
@@ -214,7 +214,10 @@ class DashboardController extends Controller
       
             $stages = array(
                   'Single' => \App\Models\User::where([['designation_id', 2], ['room', 'Single']])->count(),
-                  'Twin Sharing' => \App\Models\User::where([['designation_id', 2], ['room', 'Sharing']])->count(),
+                  'Twin Sharing' => \App\Models\User::where([['designation_id', 2], ['room', 'Sharing']])->orWhere('room','Twin Sharing Deluxe Room')->count(),
+                  'Suite' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Suite']])->count(),
+                  'Club Floor' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Club Floor']])->count(),
+                  'Double Deluxe' => \App\Models\User::where([['designation_id', 2],['added_as', 'Spouse'], ['room', null]])->count(),
             );
 
             return response()->json($stages);
@@ -259,9 +262,12 @@ class DashboardController extends Controller
             }
 
             $stages = array(
-                  'Both trainers' => $BothTotal,
-                  'One of them is a trainer' => $singleTotal,
-                  'Both are non trainers' => $nonTrainerCount,
+                  'Pastoral Trainer - Both' => $BothTotal,
+                  'Aspirational Trainer- Both' => $singleTotal,
+                  'Pastoral Trainer and Aspirational Trainer' => $nonTrainerCount,
+                  'Pastoral Trainer and Not a Trainer' => $nonTrainerCount,
+                  'Aspirational Trainer and Not a Trainer' => $nonTrainerCount,
+                  'Not Trainers - Both' => $nonTrainerCount,
             );
 
             return response()->json($stages);
@@ -270,13 +276,16 @@ class DashboardController extends Controller
       
       public function getPastoralTrainersChartAjax(){
           
-            $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'Yes']])->count();
+            $Pastoral = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'Yes']])->count();
             
-            $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No']])->count();
+            $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'Yes']])->count();
+            
+            $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'No']])->count();
             
             $stages = array(
-                  'Yes' => $yes,
-                  'No' => $no,
+                  'Pastoral Trainer' => $Pastoral,
+                  'Aspirational trainer' => $yes,
+                  'Not a Trainer' => $no,
             );
 
             return response()->json($stages);
@@ -290,17 +299,17 @@ class DashboardController extends Controller
             }
       }
 
-      public function getDoYouSeekPastoralTraining(){
+    //   public function getDoYouSeekPastoralTraining(){
           
-        $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'],  ['doyouseek_postoral', 'Yes']])->count();
+    //     $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'],  ['doyouseek_postoral', 'Yes']])->count();
         
-        $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'], ['doyouseek_postoral', 'No']])->count();
+    //     $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'], ['doyouseek_postoral', 'No']])->count();
         
-        $stages = array(
-              'Yes' => $yes,
-              'No' => $no,
-        );
+    //     $stages = array(
+    //           'Yes' => $yes,
+    //           'No' => $no,
+    //     );
 
-        return response()->json($stages);
-  }
+    //     return response()->json($stages);
+    // }
 }

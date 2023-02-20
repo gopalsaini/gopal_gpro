@@ -195,18 +195,27 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['parent_id', NULL], ['added_as', NULL] , ['id', '!=', '1']])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::where([['id', '!=', '1']])->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
-				$query->where('email', 'like', "%" . request('email') . "%");
+				$query->where(function ($query1) {
+					$query1->where('email', 'like', "%" . request('email') . "%")
+						  ->orWhere('name', 'like', "%" . request('email') . "%");
+				});
+				
 			}
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['parent_id', NULL], ['added_as', NULL], ['id', '!=', '1']])->orderBy('updated_at', 'desc');
+			$totalData1 = \App\Models\User::where([['id', '!=', '1']])->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
-				$totalData1->where('email', 'like', "%" . request('email') . "%");
+
+				$totalData1->where(function ($query) {
+					$query->where('email', 'like', "%" . request('email') . "%")
+						  ->orWhere('name', 'like', "%" . request('email') . "%");
+				});
+
 			}
 
 			$totalData = $totalData1->count();
