@@ -160,6 +160,31 @@
 
 
         <div class="col-md-4 p-0 brl">
+            <h2>Total Groups/Total Group candidates</h2>
+            <div class="circle-chart">
+                <div id="totalGroupAndCandidate" style="width: 100%; height: 310px;"></div>
+            </div>
+        </div>
+
+        <div class="col-md-4 p-0 brl">
+            <h2>Total Married Candidates/Total Married couples</h2>
+            <div class="circle-chart">
+
+                <div id="totalMarried" style="width: 100%; height: 310px;"></div>
+
+            </div>
+        </div>
+
+        <div class="col-md-4 p-0 ">
+            <h2>Single/Married coming without Spouse</h2>
+            <div class="circle-chart">
+            <div id="totalMarriedSpouse" style="width: 100%; height: 310px;"></div>
+
+
+            </div>
+        </div>
+
+        <div class="col-md-4 p-0 brl">
             <h2>Group Registration /Non Group Registration</h2>
             <div class="circle-chart">
 
@@ -896,6 +921,73 @@ $(document).ready(function() {
     });
 
 });
+
+
+
+google.charts.load('current', {'packages':['bar']});
+    google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales', 'Expenses', 'Profit'],
+          ['2014', 1000, 400, 200],
+        ]);
+
+        var options = {
+          chart: {
+            title: 'Company Performance',
+            subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('totalGroupAndCandidate'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+
+google.charts.load('current', {'packages':['bar']});
+
+    google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales', 'Expenses', 'Profit'],
+          ['2014', 1000, 400, 200],
+        ]);
+
+        var options = {
+          chart: {
+            title: 'Company Performance',
+            subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('totalMarried'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
+
+
+google.charts.load('current', {'packages':['bar']});
+    google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Sales', 'Expenses', 'Profit'],
+          ['2014', 1000, 400, 200],
+        ]);
+
+        var options = {
+          chart: {
+            title: 'Company Performance',
+            subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+          }
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('totalMarriedSpouse'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+      }
 
 </script>
 
