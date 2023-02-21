@@ -27,6 +27,24 @@
             background-color: #ffcd34;
             border-color: #ffcd34;
         }
+        .blink {
+            text-decoration: blink;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            animation: Color 1.5s linear infinite;
+            }
+
+            @keyframes Color {
+            0% {
+                color: red;
+            }
+
+           
+
+            100% {
+                color: green;
+            }
+            }
     </style>
 @endpush
 @section('content')
@@ -362,8 +380,8 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action active" id="list-home-list1" data-bs-toggle="list" href="#list-home1" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
-                                            <a class="list-group-item list-group-item-action" id="list-profile-list1" data-bs-toggle="list" href="#list-profile1" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
+                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list1" data-bs-toggle="list" href="#list-home1" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
+                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list1" data-bs-toggle="list" href="#list-profile1" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
                                         </div>
                                     </div>
                                     <div class="col-sm-12">

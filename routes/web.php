@@ -98,6 +98,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 
 	Route::match(['get','post'],'/change-password', 'Admin\AdminController@changePassword')->name('changepassword');
 	Route::get('dashboard', 'Admin\DashboardController@index')->name('dashboard');
+	Route::get('dashboard-2', 'Admin\Dashboard2Controller@index2')->name('dashboard2');
 	Route::post('language','Admin\DashboardController@localization')->name('language');
 	Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
@@ -113,6 +114,19 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 	Route::get('get-payment-chart-ajax','Admin\DashboardController@getPaymentChartAjax');
 	Route::get('get-payment-type-chart-ajax','Admin\DashboardController@getPaymentTypeChartAjax');
 	Route::get('get-do-you-seek-pastoral-training-chart-ajax','Admin\DashboardController@getDoYouSeekPastoralTraining');
+
+	// Dashboard 2
+	Route::get('get-payments-2','Admin\Dashboard2Controller@getPayments');
+	Route::get('get-users-by-country-2','Admin\Dashboard2Controller@getUserByCountry');
+	Route::get('get-users-by-continents-2','Admin\Dashboard2Controller@getUserByContinents');
+	Route::get('get-users-by-user-age-2','Admin\Dashboard2Controller@getUserByUserAge');
+	Route::get('get-group-registered-chart-ajax-2','Admin\Dashboard2Controller@getGroupRegisteredChartAjax');
+	Route::get('get-single-married-ws-chart-ajax-2','Admin\Dashboard2Controller@getSingleMarriedWSChartAjax');
+	Route::get('get-married-ws-chart-ajax-2','Admin\Dashboard2Controller@getMarriedWSChartAjax');
+	Route::get('get-pastoral-trainers-chart-ajax-2','Admin\Dashboard2Controller@getPastoralTrainersChartAjax');
+	Route::get('get-payment-chart-ajax-2','Admin\Dashboard2Controller@getPaymentChartAjax');
+	Route::get('get-payment-type-chart-ajax-2','Admin\Dashboard2Controller@getPaymentTypeChartAjax');
+	Route::get('get-do-you-seek-pastoral-training-chart-ajax-2','Admin\Dashboard2Controller@getDoYouSeekPastoralTraining');
 
 	// Designation
 	Route::group(['prefix'=>'designation', 'as'=>'designation.'], function() {
