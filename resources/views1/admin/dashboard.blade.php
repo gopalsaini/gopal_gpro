@@ -320,6 +320,7 @@ function drawChart1() {
         ['PayPal', 2],
         ['Western Union', 2],
         ['Money Gram', 2],
+        ['RAI', 2],
         ['Bank Wire Transfer', 7]
     ]);
 

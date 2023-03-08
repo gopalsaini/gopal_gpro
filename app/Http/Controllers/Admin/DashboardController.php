@@ -42,35 +42,34 @@ class DashboardController extends Controller
         }
 
         public function getPayments(){
-      
-        $prices = array(
-          'Fully Paid' => \App\Models\User::where([['user_type', '!=', '1'], ['payment_status', '1']])->count() ?? 0,
-          'Partially Paid' => \App\Models\User::where([['user_type', '!=', '1'], ['payment_status', '0']])->count() ?? 0
-        );
+          
+            $prices = array(
+              'Fully Paid' => \App\Models\User::where([['user_type', '!=', '1'], ['payment_status', '1']])->count() ?? 0,
+              'Partially Paid' => \App\Models\User::where([['user_type', '!=', '1'], ['payment_status', '0']])->count() ?? 0
+            );
 
-        return response()->json($prices);
-      }
+            return response()->json($prices);
+        }
 
-      public function getUserByCountry(){
+      // public function getUserByCountry(){
     
       
-          $country = [];
+      //     $country = [];
 
-          $userCountry = \App\Models\User::select('users.*','countries.name as cname','countries.id as cId')->where([['users.user_type', '!=', '1'], ['users.designation_id', 2]])->join('countries','users.citizenship','=','countries.id')->groupBy('countries.id')->get();
+      //     $userCountry = \App\Models\User::select('users.*','countries.name as cname','countries.id as cId')->where([['users.user_type', '!=', '1'], ['users.designation_id', 2]])->join('countries','users.citizenship','=','countries.id')->groupBy('countries.id')->get();
           
-          if(!empty($userCountry)){
+      //     if(!empty($userCountry)){
 
-            foreach($userCountry as $countryData){
+      //       foreach($userCountry as $countryData){
 
-                  $country[$countryData->cname] = \App\Models\User::where([['user_type', '!=', '1'],['citizenship', $countryData->cId]])->count();
+      //             $country[$countryData->cname] = \App\Models\User::where([['user_type', '!=', '1'],['citizenship', $countryData->cId]])->count();
 
-            }
+      //       }
 
-          }
-          
-
-          return response()->json($country);
-      }
+      //     }
+      //     return response()->json($country);
+      // }
+      
 
       public function getUserByUserAge(){
     
@@ -92,35 +91,34 @@ class DashboardController extends Controller
         );
         $stages[] = array(
           
-          '50+ years Age',\App\Models\User::whereDate('dob', '<=', date('Y-m-d', strtotime('-51 years')))->where([['user_type', '!=', '1'], ['designation_id', 2]])->count(),
+          '50+ years Age',\App\Models\User::whereDate('dob', '<=', date('Y-m-d', strtotime('-50 years')))->where([['user_type', '!=', '1'], ['designation_id', 2]])->count(),
           
         );
 
         return response()->json($stages);
       }
 
-      public function getUserByContinents(){
-    
-      
+        public function getUserByContinents(){
+
           $country = [["Element", "No. of Users" ]];
-
-          $userCountry = \App\Models\User::select('users.*','countries.region as cname','countries.id as cId')->where([['users.user_type', '!=', '1'], ['users.designation_id', 2]])->join('countries','users.citizenship','=','countries.id')->orderBy('countries.region','Asc')->groupBy('countries.region')->get();
           
+          $userCountry = \App\Models\User::selectRaw('count(*) as count, region')
+              ->where([['users.user_type', '!=', '1'], ['users.designation_id', 2]])
+              ->join('countries','users.citizenship','=','countries.id')
+              ->groupBy('countries.region')
+              ->orderBy('countries.region', 'ASC')
+              ->get();
+      
           if(!empty($userCountry)){
-
-            foreach($userCountry as $countryData){
-
-                  
-                  $country[]=[$countryData->cname,
-                              \App\Models\User::where([['user_type', '!=', '1'],['citizenship', $countryData->cId], ['designation_id', 2]])->count()
-                            ];
-            }
-
-
+              foreach($userCountry as $countryData){
+                  $totalCon = $countryData->count;
+                  $country[] = [$countryData->region, $totalCon];
+              }
           }
           
           return response()->json($country);
       }
+    
 
       public function getStages(){
       
@@ -175,7 +173,8 @@ class DashboardController extends Controller
         $stages = array(
                 'Credit/Debit Card' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Card']])->count(),
                 'Western Union' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'WU']])->count(),
-                'Money Gram' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'MG']])->count(),
+                'MG' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'MG']])->count(),
+                'RAI' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'RAI']])->count(),
                 'Bank Wire Transfer' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Wire']])->count(),
         );
 
@@ -203,7 +202,7 @@ class DashboardController extends Controller
 
             $stages = array(
                   'Total Group' => $array,
-                  'Total Group candidates' => $totalUser+$array,
+                  'Total Group Candidates' => $totalUser+$array,
             );
 
             return response()->json($stages);
@@ -228,7 +227,7 @@ class DashboardController extends Controller
             $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Married']])->get();
             if(!empty($Singles) && count($Singles)>0){
 
-              $BothTotal = 0; $singleTotal = 0;$nonTrainerCount = 0;
+              $BothTotal = 0; $singleTotal = 0;$nonTrainerCount = 0; $AspirationalBothTotal = 0;  $PastoralAndAspirational = 0; $singleAspirationalTotal=0;
                 foreach($Singles as $Single){
 
                     $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
@@ -237,9 +236,21 @@ class DashboardController extends Controller
 
                             $BothTotal++;
 
+                    }else if($user && $user->doyouseek_postoral == 'Yes' && $Single->doyouseek_postoral == 'Yes'){
+
+                        $AspirationalBothTotal++;
+
+                    }else if($user && $user->ministry_pastor_trainer == 'Yes' && $Single->doyouseek_postoral == 'No'){
+
+                        $PastoralAndAspirational++;
+
+                    }else if($user && $Single->ministry_pastor_trainer == 'No' && $user->doyouseek_postoral == 'Yes'){
+
+                        $PastoralAndAspirational++;
+
                     }else if($Single->ministry_pastor_trainer == 'Yes'){
 
-                        if($user && $user->ministry_pastor_trainer == 'No' ){
+                        if($user && $user->ministry_pastor_trainer == 'No'){
 
                             $singleTotal++;
                         }
@@ -249,6 +260,22 @@ class DashboardController extends Controller
                       if($user && $user->ministry_pastor_trainer == 'Yes' ){
 
                           $singleTotal++;
+
+                      }
+                      
+
+                    }else if($Single->doyouseek_postoral == 'Yes'){
+
+                        if($user && $user->doyouseek_postoral == 'No' ){
+
+                            $singleAspirationalTotal++;
+                        }
+                          
+                    }else if($Single->doyouseek_postoral == 'No'){
+                      
+                      if($user && $user->doyouseek_postoral == 'Yes' ){
+
+                          $singleAspirationalTotal++;
                       }
                       
 
@@ -263,10 +290,10 @@ class DashboardController extends Controller
 
             $stages = array(
                   'Pastoral Trainer - Both' => $BothTotal,
-                  'Aspirational Trainer- Both' => $singleTotal,
-                  'Pastoral Trainer and Aspirational Trainer' => $nonTrainerCount,
-                  'Pastoral Trainer and Not a Trainer' => $nonTrainerCount,
-                  'Aspirational Trainer and Not a Trainer' => $nonTrainerCount,
+                  'Aspirational Trainer- Both' => $AspirationalBothTotal,
+                  'Pastoral Trainer and Aspirational Trainer' => $PastoralAndAspirational,
+                  'Pastoral Trainer and Not a Trainer' => $singleTotal,
+                  'Aspirational Trainer and Not a Trainer' => $singleAspirationalTotal,
                   'Not Trainers - Both' => $nonTrainerCount,
             );
 
@@ -276,16 +303,37 @@ class DashboardController extends Controller
       
       public function getPastoralTrainersChartAjax(){
           
-            $Pastoral = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'Yes']])->count();
-            
-            $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'Yes']])->count();
-            
-            $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'No']])->count();
-            
+            $Pastoral = 0; $Aspirational = 0; $Not = 0;
+            $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->get();
+            if(!empty($Singles) && count($Singles)>0){
+
+                foreach($Singles as $Single){
+
+                    $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
+                    
+                    if(!$user && $Single->ministry_pastor_trainer == 'Yes'){
+
+                        $Pastoral++;
+
+                    }else if(!$user && $Single->doyouseek_postoral == 'Yes'){
+                      
+                        $Aspirational++;
+
+                    }else if(!$user &&  $Single->doyouseek_postoral == 'No'){
+
+                        $Not++;
+                    }else if($Single->ministry_pastor_trainer == 'No'){
+
+                      $Not++;
+                  }
+                }
+
+            }
+          
             $stages = array(
                   'Pastoral Trainer' => $Pastoral,
-                  'Aspirational trainer' => $yes,
-                  'Not a Trainer' => $no,
+                  'Aspirational trainer' => $Aspirational,
+                  'Not a Trainer' => $Not,
             );
 
             return response()->json($stages);
@@ -312,4 +360,75 @@ class DashboardController extends Controller
 
     //     return response()->json($stages);
     // }
+
+    
+    public function TotalGroupRegistration(){
+          
+          $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->get();
+          $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->count();
+        
+          if(!empty($totalGroup) && count($totalGroup)>0){
+            $array =[];
+
+              foreach($totalGroup as $key=>$Groups){
+
+                $array[$key]= $Groups->parent_id;
+
+            }
+
+            $array = count(array_unique($array));
+
+          }
+
+          $stages = array(
+                'Total Group' => $array,
+                'Total Group Candidates' => $totalUser+$array,
+          );
+
+          return response()->json($stages);
+    }
+
+
+      public function TotalMarriedCouples(){
+        
+        
+        $stages = array(
+              'Total Married couples' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse']])->count(),
+              'Total Married Candidates' => (\App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse']])->count())*2,
+        );
+
+        return response()->json($stages);
+      }
+
+      public function SingleMarriedComing(){
+        
+          $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Married']])->get();
+          if(!empty($Singles) && count($Singles)>0){
+
+            $MarriedTotal = 0; $singleTotal = 0;
+              foreach($Singles as $Single){
+
+                  $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
+                  
+                  if(!$user){
+
+                      $singleTotal++;
+
+                  }
+              }
+
+          }
+
+          $stages = array(
+                'Single' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Unmarried']])->count(),
+                'Married coming without Spouse' => $singleTotal,
+          );
+
+          return response()->json($stages);
+      }
+
+    
+
+    
+
 }

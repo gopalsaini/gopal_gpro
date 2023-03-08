@@ -15,6 +15,15 @@
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.list')</li>
                 </ol>
             </div>
+            @if(\Auth::user()->designation_id == '1')
+            <div class="col-sm-3">
+                <div class="bookmark">
+                    <ul>
+                        <a href="{{ url('admin/user/transaction-data/download') }}" class="btn btn-outline-primary"><i class="fas fa-file me-2"></i>Download </a>
+                    </ul>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
     <div class="row">

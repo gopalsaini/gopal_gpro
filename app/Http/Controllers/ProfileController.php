@@ -29,14 +29,15 @@ class ProfileController extends Controller
  
     public function index(Request $request){
 
-        
+       
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
        
         $resultData=json_decode($result->content, true); 
         $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
  
         if($resultData['result']['profile_submit_type'] == 'submit' || $resultData['result']['profile_submit_type'] == 'preview'  ){
-
+            
+           
             \App\Helpers\commonHelper::setLocale();
             return view('profile',compact('resultData','groupInfoResult'));
 
@@ -186,7 +187,6 @@ class ProfileController extends Controller
         
     }
 
-    
     public function groupInfo(Request $request){
 
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
@@ -651,7 +651,6 @@ class ProfileController extends Controller
 
     }
 
-    
     public function OnlinePaymentFull(Request $request,$type = ''){
 
         $user = \App\Models\User::where('id',\Session::get('gpro_result')['id'])->first();
@@ -706,6 +705,7 @@ class ProfileController extends Controller
                     'reference_number' => 'required',
                     'amount' => 'required|numeric',
                     'name' => 'required',
+                    'file' => 'required',
                     'type' => 'required|in:Offline,Online',
                 ];
 
@@ -791,7 +791,8 @@ class ProfileController extends Controller
                                 $subject = 'Transaction Complete';
                                 $msg = 'Your '.$request->post('amount').' transaction has been send successfully';
                                 \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-            
+                                \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
                                 $type = $request->post('type');
                                 
                                 $name = $user->name.' '.$user->last_name;
@@ -919,6 +920,7 @@ class ProfileController extends Controller
                         $subject = 'Transaction Complete';
                         $msg = 'Your '.$request->post('amount').' transaction has been send successfully';
                         \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+                        \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
                         $type = 'Cash';
                                 
@@ -1035,7 +1037,6 @@ class ProfileController extends Controller
         
     }
 
-
     public function travelInformationVerify(Request $request){
  
         $data=array(
@@ -1099,6 +1100,48 @@ class ProfileController extends Controller
         }
         
     }
+
+    public function sponsorshipPassportInfo(Request $request){
+
+        if($request->ajax()){
+            
+            $data=array(
+                'name'=>$request->post('name'),
+                'passport_no'=>$request->post('passport_no'),
+                'dob'=>$request->post('dob'),
+                'citizenship'=>$request->post('citizenship'),
+                'country_id'=>$request->post('country_id'),
+            );
+           
+            $resultPassport=\App\Helpers\commonHelper::callAPI('userTokenpost','/sponsorship-passport-info',json_encode($data));
+            $resultDataPassport=json_decode($resultPassport->content,true); 
+            
+            return response(array('message'=>$resultDataPassport['message']),$resultPassport->status);
+
+        }
+
+        $country=\App\Models\Country::select('id','name','phonecode')->get();
+        $citizenship = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
+    
+        $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        $resultData=json_decode($result->content, true); 
+    
+        \App\Helpers\commonHelper::setLocale();
+        $passportInfo = \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->first();
+
+        if($passportInfo){
+            return redirect('/');
+        }
+        return view('passport_info', compact('country','resultData','citizenship'));
+
+	}
+	
+
+    public function sponsorshipLetterApprove(){
+
+		return view('sponsorship_letter_approve');
+	}
+
 
 	
 }

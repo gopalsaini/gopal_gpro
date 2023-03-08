@@ -3,7 +3,7 @@
     @php
         $i=1;
 
-        $SpouseInfoResult=\App\Models\User::where('id',$userId)->where('added_as','Spouse')->first();
+        $SpouseInfoResult=\App\Models\User::where('id',$userId)->where('added_as','Spouse')->where('parent_spouse_stage','=',null)->first();
         $stage=\App\Models\User::where('id',$userId)->first();
  
     @endphp

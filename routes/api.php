@@ -57,7 +57,13 @@ Route::group([
     Route::get('notification-list', 'API\PostLoginController@NotificationList');
     Route::post('change-user-language', 'API\PostLoginController@changeUserLanguage');
 
+        
+    Route::post('sponsorship-passport-info', "API\PostLoginController@passportInfo");
+    Route::post('sponsorship-letter-approve', "API\PostLoginController@sponsorshipLetterApprove");
+
+
 });
+
 
 Route::post('login', 'API\PreLoginController@login');
 Route::post('registration', 'API\PreLoginController@registration');
@@ -98,3 +104,7 @@ Route::any("user-update-payment-country","API\PreLoginController@userUpdatePayme
 Route::any("send-early-bird-reminder-mail","API\PreLoginController@sendEarlyBirdReminderMail");
 Route::any("spouse-reject-action-cron","API\PreLoginController@SpouseRejectActionCron");
 Route::any("setdateandSpouseReminder","API\PreLoginController@setdateandSpouseReminder");
+
+
+// Route::any("appologies-letter","API\PreLoginController@AppologiesLetter");
+

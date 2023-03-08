@@ -35,6 +35,12 @@ class NotificationController extends Controller {
 
 					foreach($request->post('user_id') as $user){
 
+						$messData = array(
+							'title'=>$request->post('title'),
+							'body'=>$request->post('message')
+						);
+						\App\Helpers\commonHelper::send($user->device_token,$messData);
+
 						$data=new \App\Models\Notification();
 						$data->user_id = $user;
 						$data->title = $request->post('title');

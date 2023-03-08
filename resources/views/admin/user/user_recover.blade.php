@@ -38,6 +38,7 @@ User Database Management
                                     <option value="2">Move user from Stage2 to Stage-1</option>
                                     <option value="3">Separating Couples</option>
                                     <option value="4">Ministry Update</option>
+                                    <option value="5">Approved Not Coming</option>
                                 </select>
 							</div>
 							<div id="MinistryHtml"></div>

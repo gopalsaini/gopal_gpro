@@ -178,6 +178,51 @@
                 </div>
             </div>
         </div>
+        
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Approved Not Coming</h5>
+                </div>
+                <div class="card-body">
+                    <input type="text" name="email" class="form-control searchEmailApprovedNotComing" placeholder="Search ...">
+                            <br>
+                    <div class="table-responsive">
+                        <table class="display datatables" id="tablelist3">
+                            <thead>
+                                <tr>
+                                    <th> @lang('admin.id') </th>
+                                    <th> @lang('admin.name') </th>
+                                    <th> @lang('admin.email') </th>
+                                    <th> @lang('admin.mobile') </th>
+                                    <th> Status </th>
+                                    <!-- <th> @lang('admin.status') </th> -->
+                                    <th> @lang('admin.action') </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center" colspan="7">
+                                        <div id="loader" class="spinner-border" role="status"></div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th> @lang('admin.id') </th>
+                                    <th> @lang('admin.name') </th>
+                                    <th> @lang('admin.email') </th>
+                                    <th> @lang('admin.mobile') </th>
+                                    <th> Status </th>
+                                    <!-- <th> @lang('admin.status') </th> -->
+                                    <th> @lang('admin.action') </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -509,7 +554,73 @@
     }
 
     
+    var table = $('#tablelist3').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
 
+            "ajax": {
+                "url": "{{ route('admin.user.list.stage.one', ["$type"]) }}",
+                "dataType": "json",
+                data: function (d) {
+                    d.email = $('.searchEmailApprovedNotComing').val(),
+                    d.status = 'ApprovedNotComing'
+                },
+                "async": false,
+                "type": "get",
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-center",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1, -2]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "email"
+                },
+                {
+                    "data": "mobile"
+                },
+                {
+                    "data": "profile"
+                },
+                // {
+                //     "data": "status"
+                // },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+        $(".searchEmailApprovedNotComing").keyup(function(){
+            table.draw();
+        });
     
 </script>
 @endpush

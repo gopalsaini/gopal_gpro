@@ -120,6 +120,20 @@
 															<input type="date" value="{{$result->dob}}" placeholder="DD/ MM/ YYYY" class="form-control" name="dob" >
 														</div>
 													</div>
+													<div class="col-lg-4">
+														<div class="form-check">
+															<label class="form-check-label">@lang('web/app.Languages') <b>*</b> </label>
+															<div class="input-box">
+																<select name="language" id="language" required class="selectLanguage form-control">
+																	<option @if($result && $result->language=='en'){{'selected'}}@endif value="en">English</option>
+																	<option @if($result && $result->language=='sp'){{'selected'}}@endif value="sp">Spanish</option>
+																	<option @if($result && $result->language=='fr'){{'selected'}}@endif value="fr">French</option>
+																	<option @if($result && $result->language=='pt'){{'selected'}}@endif value="pt">Portuguese</option>
+																</select>
+																
+															</div>
+														</div>
+													</div>
 												</div>
 											</div>
 										<div class="tab-pane fade" id="contact-details" role="tabpanel" aria-labelledby="list-profile-list">

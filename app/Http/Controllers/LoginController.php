@@ -225,6 +225,7 @@ class LoginController extends Controller
                     $msg = '<div><div><div><span style="font-size: 14px;">Dear '.$user->name.' '.$user->last_name.',</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">We received notification that you have forgotten your password.&nbsp; Here’s a link you can use to reset your password: '.$link.'.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Didn’t ask to reset your password? Have any other questions? Simply reply to this email to speak with one of our team members.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Warmly,</span></div><div><span style="font-size: 14px;">GProCongress II Team&nbsp;</span></div></div></div>';
                                     
                 }
+                \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
                 \Mail::send('email_templates.forgot-password', compact('to', 'token', 'subject','name','msg'), function($message) use ($to, $subject) {
 					$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
@@ -232,6 +233,7 @@ class LoginController extends Controller
 					$message->to($to);
 				});
                 
+
                 \App\Helpers\commonHelper::setLocale();
                 return response(array('reset'=>true, 'message'=> \Lang::get('web/home.WeHave-sentPassword-resetLinkOn-yourEmail-address')), $result->status);
     
@@ -277,14 +279,11 @@ class LoginController extends Controller
 
         if(!$tokenResult){
 
-            $tokenResult=\DB::table('password_resets')->where([
-                ['email','=',$email],
-                ])->first();
-
-			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($tokenResult->language,'Resetpassword-linkhasbeen-expired');
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Resetpassword-linkhasbeen-expired');
             \Session::flash('gpro_error', $message);
             return redirect()->route('home');
-        } else {
+
+        }else {
 
             \App\Helpers\commonHelper::setLocale();
             return view('reset-password', compact('email', 'token'));

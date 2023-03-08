@@ -61,7 +61,7 @@ return [
     'Status' => 'Estado',
     'cah' => 'Pago en efectivo',
     'pay-cash-payment' => 'Pago en efectivo',
-    'pay-using-money-gram' => 'Si no puede pagar con tarjeta de crédito, pague por Pago de MoneyGram',
+    'pay-using-money-gram' => 'Si no puede pagar con tarjeta de crédito, pague por Pago de RAI',
     'enter' => 'Entrar', 
     'payment-method'=>'Pago Método',
     'upload-payment-image'=>'Upload Payment Image',
@@ -78,7 +78,7 @@ return [
     'bank-transfer' => 'Transferencia bancaria',
     'bank-transfer_description'=>"Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org.  Recibirá instrucciones para realizar la transferencia por correo electrónico.",
     'western-union_description'=>'Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.  Junto con los fondos, envíe la información solicitada por Western Union.',
-    'money-gram_description'=>'Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.  Junto con los fondos, envíe la información solicitada por Money Gram.',
+    'money-gram_description'=>'Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.  Junto con los fondos, envíe la información solicitada por RAI.',
 
     'YourFullName'=>'O seu nome completo',
     'CountryOfSender'=>'País de procedencia del envío',

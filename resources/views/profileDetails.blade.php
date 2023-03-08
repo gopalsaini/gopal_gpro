@@ -31,19 +31,19 @@
             text-decoration: blink;
             font-weight: 600;
             letter-spacing: 0.5px;
-            animation: Color 1.5s linear infinite;
+            animation: Color 1s linear infinite;
             }
 
             @keyframes Color {
-            0% {
-                color: red;
-            }
+                0% {
+                    color: red;
+                }
 
-           
+            
 
-            100% {
-                color: green;
-            }
+                100% {
+                    color: blue;
+                }
             }
     </style>
 @endpush
@@ -186,8 +186,8 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
-                                            <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
+                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
+                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
@@ -196,14 +196,14 @@
                                                 <ul>
                                                     <li>
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB">0.00</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB blink">0.00</span></span>
                                                     </li>
                                                     <li>
                                                         <!-- //Vineet - 080123 -->
                                                         <!-- <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single-room')</p> -->
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
                                                         <!-- //Vineet - 080123 -->
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB">0.00</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB blink">0.00</span></span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -211,14 +211,14 @@
                                                 <ul>
                                                     <li>
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB">0.00</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB blink">0.00</span></span>
                                                     </li>
                                                     <li>
                                                         <!-- //Vineet - 080123 -->
                                                         <!-- <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single-room')</p> -->
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
                                                         <!-- //Vineet - 080123 -->
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB">0.00</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB blink">0.00</span></span>
                                                     </li>
                                                 </ul>
                                             </div>

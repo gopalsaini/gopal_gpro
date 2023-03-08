@@ -70,7 +70,15 @@
                 <div class="card-body">
                 
                     <div class="table-responsive">
-                        <input type="text" name="email" class="form-control searchEmail " placeholder="Search ...">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="text" name="email" class="form-control searchEmail " placeholder="Search ...">
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{{ url('admin/user/attendees/stage/all') }}" class="btn btn-outline-primary"><i class="fas fa-filter"></i>Reset Filter</a>
+
+                            </div>
+                        </div>
                         <br>
                         <table class="display datatables" id="tablelist">
                             <thead>

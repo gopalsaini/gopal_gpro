@@ -31,6 +31,7 @@ class UserController extends Controller {
 					'ministry_country_id' => 'required',
 					'ministry_state_id' => 'required',
 					'ministry_city_id' => 'required',
+					'language' => 'required|in:en,sp,fr,pt',
 				];
 
 
@@ -107,6 +108,7 @@ class UserController extends Controller {
 					$data->ministry_city_id = $request->post('ministry_city_id');
 					$data->ministry_city_name = $request->post('ministry_city_name');
 					$data->doyouseek_postoralcomment = $request->post('doyouseek_postoral_comment');
+					$data->language = $request->post('language');
 					
 					$dataMin=array(
 						'non_formal_trainor'=>$request->post('non_formal_trainor'),
@@ -200,7 +202,8 @@ class UserController extends Controller {
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
 					$query1->where('email', 'like', "%" . request('email') . "%")
-						  ->orWhere('name', 'like', "%" . request('email') . "%");
+						  ->orWhere('name', 'like', "%" . request('email') . "%")
+						  ->orWhere('last_name', 'like', "%" . request('email') . "%");
 				});
 				
 			}
@@ -213,7 +216,8 @@ class UserController extends Controller {
 
 				$totalData1->where(function ($query) {
 					$query->where('email', 'like', "%" . request('email') . "%")
-						  ->orWhere('name', 'like', "%" . request('email') . "%");
+						  ->orWhere('name', 'like', "%" . request('email') . "%")
+						  ->orWhere('last_name', 'like', "%" . request('email') . "%");
 				});
 
 			}
@@ -524,12 +528,14 @@ class UserController extends Controller {
 			$query = \App\Models\User::where([['stage', '=', '1'], ['profile_status', $request->input('status')]])
 						->where(function ($query) {
 							$query->where('added_as',null)
-								->orWhere('added_as', '=', 'Group');
+								->orWhere('added_as', '=', 'Group')
+								->orWhere('parent_spouse_stage', '>=', '2');
 						})->orderBy('updated_at', 'desc');
 
-						
+			
+
 			if (request()->has('email')) {
-				$query->where('email', 'like', "%" . request('email') . "%");
+				$query->where('users.email', 'like', "%" . request('email') . "%");
 			}
 
 			$data = $query->offset($start)->limit($limit)->get();
@@ -698,6 +704,20 @@ class UserController extends Controller {
 					
 					return '<div style="display:flex"><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 				
+				}else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'ApprovedNotComing' ) {
+					
+					if (\Auth::user()->designation_id == '11' ) {
+
+						return '<div style="display:flex"><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+
+					}
+					
+					return '<div style="display:flex">
+					<a href="javascript:void(0)" title="Approve Profile" data-id="'.$data->id.'" data-status="Approved" class="btn btn-sm btn-success px-3 m-1 text-white profile-status"><i class="fas fa-check"></i></a>
+					<a href="javascript:void(0)" title="Decline Profile" data-id="'.$data->id.'" data-status="Decline" class="btn btn-sm btn-danger px-3 m-1 text-white profile-status"><i class="fas fa-ban"></i></a>
+					<a href="javascript:void(0)" title="Waiting Profile" data-id="'.$data->id.'" data-status="Waiting" class="btn btn-sm btn-warning px-3 m-1 text-white profile-status"><i class="fas fa-pause"></i></a>
+					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+				
 				}
 			})
 
@@ -732,7 +752,8 @@ class UserController extends Controller {
 			$query = \App\Models\User::where([['designation_id', $designation_id], ['stage', '=', '2']])
 			->where(function ($query) {
 				$query->where('added_as',null)
-					->orWhere('added_as', '=', 'Group');
+					->orWhere('added_as', '=', 'Group')
+					->orWhere('parent_spouse_stage', '>=', '2');
 			})->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
@@ -923,7 +944,8 @@ class UserController extends Controller {
 
 			$query = \App\Models\User::with('TravelInfo')->where([['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
 				$query->where('added_as',null)
-					->orWhere('added_as', '=', 'Group');
+					->orWhere('added_as', '=', 'Group')
+					->orWhere('parent_spouse_stage', '>=', '2');
 			})->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
@@ -1535,7 +1557,6 @@ class UserController extends Controller {
 
 	}
 
-
     public function delete(Request $request, $id) {
 
 		
@@ -1832,16 +1853,16 @@ class UserController extends Controller {
 
 			->addColumn('payment_status', function($data){
 
-				if($data->status == '0'){
+				if($data->payment_status == '0'){
 
 					return "Pending";
 
-				}elseif($data->status == '1'){
+				}elseif($data->payment_status == '2'){
 
 					return "Accepted";
 					
 				}else{
-					return "decline";
+					return "Failed";
 				}
 				
 		    })
@@ -2211,7 +2232,7 @@ class UserController extends Controller {
 				$subject = 'Session Info Decline';
 				$msg = 'Your session info has been decline';
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-				\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
 				// \App\Helpers\commonHelper::sendSMS($user->mobile);
 			}
@@ -2259,7 +2280,6 @@ class UserController extends Controller {
 
 	}
 	
-
 	public function groupUsersList(Request $request) {
 
 		if ($request->ajax()) {
@@ -2365,7 +2385,6 @@ class UserController extends Controller {
 
 	public function profileStatus(Request $request) {
 		
-		
 		$result = \App\Models\User::find($request->post('user_id'));
 		
 		if ($result) {
@@ -2419,6 +2438,77 @@ class UserController extends Controller {
 							$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
 						
 						}
+						
+						// if($result->language == 'sp'){
+
+						// 	$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+						// 	$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
+						// 	<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
+						// 	<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a Apple Store (LINK) o a Google Play (LINK) y ¡descárguelo hoy!</p><p><br></p><p>
+						// 	<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (link) usando cualquiera de los distintos métodos de pago:</p><p>
+						// 	<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+						// 	<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+						// 	<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
+						// 	<br></p><p>4. RAI: Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
+						// 	<br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31st August 2023 </p><p>
+						// 	<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31st August 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
+						// 	<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
+						// 	<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
+						
+						// }elseif($result->language == 'fr'){
+						
+						// 	$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+						// 	$msg = '<p>Cher '.$name.',&nbsp;</p><p>
+						// 	<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
+						// 	<br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’Apple Store (LIEN) ou sur Google Play (LIEN) et de la télécharger dès aujourd’hui!</p><p>
+						// 	<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
+						// 	<br></p><p>Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN) en utilisant l’un des différents modes de paiement:</p><p>
+						// 	<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
+						// 	<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
+						// 	<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par Western Union.</p><p>
+						// 	<br></p><p>4. RAI – vous pouvez payer vos frais par RAI en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par RAI.</p><p>
+						// 	<br></p><p>VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31st August 2023 </p><p>
+						// 	<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
+						// 	<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
+						// 	<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+						
+						// }elseif($result->language == 'pt'){
+						
+						// 	$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+						// 	$msg = '<p>Prezado '.$name.',</p><p>
+						// 	<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
+						// 	<br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na Apple Store (LINK) ou ao Google Play (LINK) e fazer o download hoje mesmo!</p><p>
+						// 	<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
+						// 	<br></p><p>Você pode pagar suas taxas em nosso site (https://www.gprocongress.org/payment) ou em nosso aplicativo (LINK) usando qualquer um dos vários métodos de pagamento:</p><p>
+						// 	<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
+						// 	<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
+						// 	<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela Western Union.</p><p>
+						// 	<br></p><p>4. RAI – você pode pagar suas taxas via RAI acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela RAI.</p><p>
+						// 	<br></p><p>OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31st August 2023 </p><p>
+						// 	<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
+						// 	<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
+						// 	<br></p><p>Calorosamente,</p><p>
+						// 	<br></p><p>Equipe do II CongressoGPro</p>';
+						
+						// }else{
+						
+						// 	$subject = 'Congratulations, '.$name.', your application has been approved!';
+						// 	$msg = '<p>Dear '.$name.',</p><p><br></p>
+						// 	<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
+						// 	<p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the Apple Store (LINK) or to Google Play (LINK) and download it today!</p><p>
+						// 	<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
+						// 	<br></p><p>You may pay your fees on our website (https://www.gprocongress.org/payment) or on our app (LINK) using any of several payment methods:</p><p><br>
+						// 	</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
+						// 	</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
+						// 	</p><p>3. Western Union – you can pay your fees via Western Union by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by Western Union. </p><p><br>
+						// 	</p><p>4. RAI – you can pay your fees via RAI by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by RAI.</p><p><br>
+						// 	</p><p>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before 31st August 2023 </p><p><br>
+						// 	</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
+						// 	</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
+						// 	<br></p><p>Warmly,</p><p>
+						// 	<br></p><p>The GProCongress II Team</p>';	
+						
+						// }
 
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 						\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
@@ -2453,11 +2543,135 @@ class UserController extends Controller {
 						
 						}
 
+						// if($resultSpouse->language == 'sp'){
+
+						// 	$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+						// 	$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
+						// 	<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
+						// 	<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a Apple Store (LINK) o a Google Play (LINK) y ¡descárguelo hoy!</p><p><br></p><p>
+						// 	<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (link) usando cualquiera de los distintos métodos de pago:</p><p>
+						// 	<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+						// 	<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+						// 	<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
+						// 	<br></p><p>4. RAI: Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
+						// 	<br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31st August 2023 </p><p>
+						// 	<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31st August 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
+						// 	<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
+						// 	<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
+						
+						// }elseif($resultSpouse->language == 'fr'){
+						
+						// 	$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+						// 	$msg = '<p>Cher '.$name.',&nbsp;</p><p>
+						// 	<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
+						// 	<br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’Apple Store (LIEN) ou sur Google Play (LIEN) et de la télécharger dès aujourd’hui!</p><p>
+						// 	<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
+						// 	<br></p><p>Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN) en utilisant l’un des différents modes de paiement:</p><p>
+						// 	<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
+						// 	<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
+						// 	<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par Western Union.</p><p>
+						// 	<br></p><p>4. RAI – vous pouvez payer vos frais par RAI en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par RAI.</p><p>
+						// 	<br></p><p>VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31st August 2023 </p><p>
+						// 	<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
+						// 	<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
+						// 	<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+						
+						// }elseif($resultSpouse->language == 'pt'){
+						
+						// 	$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+						// 	$msg = '<p>Prezado '.$name.',</p><p>
+						// 	<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
+						// 	<br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na Apple Store (LINK) ou ao Google Play (LINK) e fazer o download hoje mesmo!</p><p>
+						// 	<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
+						// 	<br></p><p>Você pode pagar suas taxas em nosso site (https://www.gprocongress.org/payment) ou em nosso aplicativo (LINK) usando qualquer um dos vários métodos de pagamento:</p><p>
+						// 	<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
+						// 	<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
+						// 	<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela Western Union.</p><p>
+						// 	<br></p><p>4. RAI – você pode pagar suas taxas via RAI acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela RAI.</p><p>
+						// 	<br></p><p>OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31st August 2023 </p><p>
+						// 	<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
+						// 	<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
+						// 	<br></p><p>Calorosamente,</p><p>
+						// 	<br></p><p>Equipe do II CongressoGPro</p>';
+						
+						// }else{
+						
+						// 	$subject = 'Congratulations, '.$name.', your application has been approved!';
+						// 	$msg = '<p>Dear '.$name.',</p><p><br></p>
+						// 	<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
+						// 	<p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the Apple Store (LINK) or to Google Play (LINK) and download it today!</p><p>
+						// 	<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
+						// 	<br></p><p>You may pay your fees on our website (https://www.gprocongress.org/payment) or on our app (LINK) using any of several payment methods:</p><p><br>
+						// 	</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
+						// 	</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
+						// 	</p><p>3. Western Union – you can pay your fees via Western Union by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by Western Union. </p><p><br>
+						// 	</p><p>4. RAI – you can pay your fees via RAI by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by RAI.</p><p><br>
+						// 	</p><p>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before 31st August 2023 </p><p><br>
+						// 	</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
+						// 	</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
+						// 	<br></p><p>Warmly,</p><p>
+						// 	<br></p><p>The GProCongress II Team</p>';	
+						
+						// }
+
 						$to = $resultSpouse->email;
 						
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($resultSpouse->id,$msg,$subject);
 
 						// \App\Helpers\commonHelper::sendSMS($resultSpouse->mobile);
+
+					}elseif($resultSpouse->profile_status == 'Approved'){
+
+						if($resultSpouse->spouse_confirm_token){
+
+							return response(array('error'=>false, 'reload'=>true, 'message'=>'Spouse confirmation pending'), 403);
+
+						}else{
+
+							if($request->post('room_type') == 'Yes'  && $request->post('category') != ''){
+								$result->room = $request->post('category');
+							}
+							$result->change_room_type = $request->post('room_type');
+		
+							$result->upgrade_category = $request->post('category');
+							$result->early_bird = $request->post('early_bird');
+							$result->offer_id = $request->post('offer_id');
+							$result->amount = $request->post('amount');
+							$result->payment_country = $request->post('citizenship');
+							$result->cash_payment_option = $request->post('cash_payment');
+							$result->status_change_at = date('Y-m-d H:i:s');
+							$result->stage = '2';
+							$result->profile_update = '1';
+							
+							$name= $result->name.' '.$result->last_name;
+							
+							
+							if($result->language == 'sp'){
+		
+								$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+								$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							
+							}elseif($result->language == 'fr'){
+							
+								$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+								$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+							
+							}elseif($result->language == 'pt'){
+							
+								$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+								$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = 'Congratulations, '.$name.', your application has been approved!';
+								$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
+							
+							}
+		
+							\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+							\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+						}
 
 					}else{
 
@@ -2483,8 +2697,106 @@ class UserController extends Controller {
 					$result->profile_update = '1';
 
 					$name= $result->name.' '.$result->last_name;
-					$subject = 'Congratulations, '.$name.', your application has been approved!';
-					$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+					
+					
+					if($result->language == 'sp'){
+
+						$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+						$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+					
+					}elseif($result->language == 'fr'){
+					
+						$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+						$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+					
+					}elseif($result->language == 'pt'){
+					
+						$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+						$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+					
+					}else{
+					
+						$subject = 'Congratulations, '.$name.', your application has been approved!';
+						$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
+					
+					}
+
+					// if($result->language == 'sp'){
+
+					// 	$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+					// 	$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
+					// 	<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
+					// 	<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a Apple Store (LINK) o a Google Play (LINK) y ¡descárguelo hoy!</p><p><br></p><p>
+					// 	<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (link) usando cualquiera de los distintos métodos de pago:</p><p>
+					// 	<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+					// 	<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+					// 	<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
+					// 	<br></p><p>4. RAI: Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
+					// 	<br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31st August 2023 </p><p>
+					// 	<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31st August 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
+					// 	<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
+					// 	<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
+					
+					// }elseif($result->language == 'fr'){
+					
+					// 	$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+					// 	$msg = '<p>Cher '.$name.',&nbsp;</p><p>
+					// 	<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
+					// 	<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
+					// 	<br></p><p>Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN) en utilisant l’un des différents modes de paiement:</p><p>
+					// 	<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
+					// 	<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
+					// 	<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par Western Union.</p><p>
+					// 	<br></p><p>4. RAI – vous pouvez payer vos frais par RAI en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par RAI.</p><p>
+					// 	<br></p><p>VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31st August 2023 </p><p>
+					// 	<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
+					// 	<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
+					// 	<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+					
+					// }elseif($result->language == 'pt'){
+					
+					// 	$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+					// 	$msg = '<p>Prezado '.$name.',</p><p>
+					// 	<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
+					// 	<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
+					// 	<br></p><p>Você pode pagar suas taxas em nosso site (https://www.gprocongress.org/payment) ou em nosso aplicativo (LINK) usando qualquer um dos vários métodos de pagamento:</p><p>
+					// 	<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
+					// 	<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
+					// 	<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela Western Union.</p><p>
+					// 	<br></p><p>4. RAI – você pode pagar suas taxas via RAI acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela RAI.</p><p>
+					// 	<br></p><p>OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31st August 2023 </p><p>
+					// 	<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
+					// 	<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
+					// 	<br></p><p>Calorosamente,</p><p>
+					// 	<br></p><p>Equipe do II CongressoGPro</p>';
+					
+					// }else{
+					
+					// 	$subject = 'Congratulations, '.$name.', your application has been approved!';
+					// 	$msg = '<p>Dear '.$name.',</p><p><br></p>
+					// 	<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
+					// 	<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
+					// 	<br></p><p>You may pay your fees on our website (https://www.gprocongress.org/payment) or on our app (LINK) using any of several payment methods:</p><p><br>
+					// 	</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
+					// 	</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
+					// 	</p><p>3. Western Union – you can pay your fees via Western Union by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by Western Union. </p><p><br>
+					// 	</p><p>4. RAI – you can pay your fees via RAI by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by RAI.</p><p><br>
+					// 	</p><p>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before 31st August 2023 </p><p><br>
+					// 	</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
+					// 	</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
+					// 	<br></p><p>Warmly,</p><p>
+					// 	<br></p><p>The GProCongress II Team</p>';	
+					
+					// }
+					// En - </p><p>5. PayPal – if you have a PayPal account, you can pay your fees via PayPal by going to our website (https://www.gprocongress.org/payment), or to our app (LINK).  Please send your funds to: david@rreach.org (this is RREACH’s account).  In the transfer it should note the name of the registrant.</p><p><br>
+					// Pt - <br></p><p>5. PayPal – se você tiver uma conta PayPal, você pode pagar suas taxas via PayPal acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para: david@rreach.org (esta é a conta de RREACH). Na transferência deve anotar o nome do registante.</p><p>
+					// Fr-  <br></p><p>5. PayPal – si vous avez un compte PayPal, vous pouvez payer vos frais via PayPal en vous rendant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à: david@rreach.org (c’est le compte de RREACH). Dans le transfert, vous devez noter le nom du titulaire.</p><p>
+					// Sp - <br></p><p>5. PayPal: Si tiene una cuenta de PayPal, puede pagar su inscripción a través de PayPal visitando nuestro sitio web (https://www.gprocongress.org/payment) o nuestra aplicación (ENLACE). Envíe sus fondos a: david@rreach.org (esta es la cuenta de RREACH). En la transferencia se debe hacer constar el nombre del registrante.</p><p><br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día de 31st August 2023,</p><p>
+					
+					// En - <p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the Apple Store (LINK) or to Google Play (LINK) and download it today!</p><p>
+					// pt - <br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na Apple Store (LINK) ou ao Google Play (LINK) e fazer o download hoje mesmo!</p><p>
+					// fr - <br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’Apple Store (LIEN) ou sur Google Play (LIEN) et de la télécharger dès aujourd’hui!</p><p>
+						
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 
@@ -2743,7 +3055,7 @@ class UserController extends Controller {
 
 			$basePrice = 0; $Spouse = []; $category = []; $trainer = '';
 
-			$user = \App\Models\User::where('id', $request->post('id'))->first();
+			$user = \App\Models\User::where('id', $request->post('id'))->where('stage','1')->first();
 
 			if($user){
 
@@ -2776,11 +3088,21 @@ class UserController extends Controller {
 
 				}else if($user->marital_status == 'Married' && $Spouse){
 
-					$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$countryPrice->base_price);
+					if($user->parent_spouse_stage >= 2){
 
-					$basePrice = $data ['basePrice'];
-					$category = $data ['category'];
-					$trainer = $data ['trainer'];
+						$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWOSpouse($user->room,$countryPrice->base_price);
+						$basePrice = $data ['basePrice'];
+						$category = $data ['category'];
+
+					}else{
+
+						$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$countryPrice->base_price);
+
+						$basePrice = $data ['basePrice'];
+						$category = $data ['category'];
+						$trainer = $data ['trainer'];
+					}
+					
 				}
 
 				$Offers = \App\Models\Offer::where([
@@ -2943,6 +3265,8 @@ class UserController extends Controller {
 										'Candidate Name', 
 										'Candidate email Address', 
 										'Candidate Mobile Number', 
+										'Country', 
+										'Citizenship', 
 										'Spouse Name', 
 										'Spouse Email Address', 
 										'Group Leader Name', 
@@ -3058,6 +3382,8 @@ class UserController extends Controller {
 						$row['name'].' '.$row['last_name'], 
 						$row['email'], 
 						$mobile, 
+						\App\Helpers\commonHelper::getCountryNameById($row['contact_country_id']), 
+						\App\Helpers\commonHelper::getCountryNameById($row['citizenship']), 
 						$spouseName,
 						$spouseEmail,
 						$groupLeaderName,
@@ -3176,6 +3502,8 @@ class UserController extends Controller {
 									$val['name'].' '.$val['last_name'], 
 									$val['email'], 
 									$mobile, 
+									\App\Helpers\commonHelper::getCountryNameById($val['contact_country_id']), 
+									\App\Helpers\commonHelper::getCountryNameById($val['citizenship']), 
 									$spouseLeaderName,
 									$spouseLeaderEmail,
 									$groupLeaderName,
@@ -3914,7 +4242,6 @@ class UserController extends Controller {
 		}
 	}
 
-    
 	public function userMailTriggerList(Request $request) {
 	
 		$columns = \Schema::getColumnListing('user_mail_triggers');
@@ -4005,6 +4332,9 @@ class UserController extends Controller {
 							$userSpouse->amount= '0';
 							$userSpouse->save();
 
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($userSpouse->id,'Move user from Stage2 to Stage-1','Move user from Stage2 to Stage-1','Move user from Stage2 to Stage-1');
+
+
 						}
 
 						
@@ -4017,12 +4347,17 @@ class UserController extends Controller {
 							$userHus->amount= '0';
 							$userHus->save();
 
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($userHus->id,'Move user from Stage2 to Stage-1','Move user from Stage2 to Stage-1','Move user from Stage2 to Stage-1');
+
+
 						}
 
 						$usertable->profile_status='Review';
 						$usertable->stage= '1';
 						$usertable->amount= '0';
 						$usertable->save();
+
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($usertable->id,'Move user from Stage2 to Stage-1','Move user from Stage2 to Stage-1','Move user from Stage2 to Stage-1');
 
 						return response(array('message'=>'User stage move successfully','reset'=>true),200);
 
@@ -4165,6 +4500,9 @@ class UserController extends Controller {
 							$userSpouse->spouse_confirm_reminder_email= '';
 							$userSpouse->save();
 
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($userSpouse->id,'Separating Couples','Separating Couples','Separating Couples');
+
+
 							$usertable->parent_id=null;
 							$usertable->added_as= null;
 							$usertable->room= 'Sharing';
@@ -4172,6 +4510,9 @@ class UserController extends Controller {
 							$usertable->spouse_confirm_status= 'Pending';
 							$usertable->spouse_confirm_reminder_email= '';
 							$usertable->save();
+
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($usertable->id,'Separating Couples','Separating Couples','Separating Couples');
+
 							
 						}
 
@@ -4186,6 +4527,7 @@ class UserController extends Controller {
 							$userHus->spouse_confirm_status= 'Pending';
 							$userHus->spouse_confirm_reminder_email= '';
 							$userHus->save();
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($userHus->id,'Separating Couples','Separating Couples','Separating Couples');
 
 							$usertable->parent_id=null;
 							$usertable->added_as= null;
@@ -4194,7 +4536,8 @@ class UserController extends Controller {
 							$usertable->spouse_confirm_status= 'Pending';
 							$usertable->spouse_confirm_reminder_email= '';
 							$usertable->save();
-						
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($usertable->id,'Separating Couples','Separating Couples','Separating Couples');
+
 						}
 
 						return response(array('message'=>'User update successfully','reset'=>true),200);
@@ -4303,6 +4646,7 @@ class UserController extends Controller {
 							}
 
 							$data->save();
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,'Ministry details upadted by admin ','Ministry details upadted by admin','Ministry details upadted by admin');
 
 							
 							return response(array('message'=>'Ministry details upadted successfull.','ministryUpdate'=>true),200);
@@ -4310,6 +4654,85 @@ class UserController extends Controller {
 			
 					}
 					
+				}elseif($request->post('type') == '5'){
+
+					$approvedNotComing = \App\Models\User::where('email','=',$request->post('email'))->first();
+
+					
+					if(!$approvedNotComing){
+
+						return response(array('message'=>'User not found.'),403);
+					}
+
+					$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($approvedNotComing->id, true);
+					
+					if($totalAcceptedAmount>0){
+
+						return response(array('message'=>'Not Allowed this process .'),403);
+					}
+
+					$userSpouse = \App\Models\User::where('parent_id',$approvedNotComing->id)->where('added_as','Spouse')->first();
+
+					if($userSpouse){
+						
+						$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($userSpouse->id, true);
+					
+						if($totalAcceptedAmount>0){
+
+							return response(array('message'=>'Not Allowed this process .'),403);
+						}
+						$userSpouse->parent_id=null;
+						$userSpouse->added_as= null;
+						$userSpouse->room= 'Sharing';
+						$userSpouse->spouse_confirm_token= null;
+						$userSpouse->spouse_confirm_status= 'Pending';
+						$userSpouse->spouse_confirm_reminder_email= '';
+						$userSpouse->profile_status='ApprovedNotComing';
+						$userSpouse->stage='1';
+						$userSpouse->save();
+
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($userSpouse->id,'Approved Not Coming','Approved Not Coming','Approved Not Coming');
+
+					}
+
+					$userHus = \App\Models\User::where('id',$approvedNotComing->parent_id)->first();
+
+					if($userHus){
+						
+						$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($userHus->id, true);
+					
+						if($totalAcceptedAmount>0){
+
+							return response(array('message'=>'Not Allowed this process .'),403);
+						}
+						$userHus->parent_id=null;
+						$userHus->added_as= null;
+						$userHus->room= 'Sharing';
+						$userHus->spouse_confirm_token= null;
+						$userHus->spouse_confirm_status= 'Pending';
+						$userHus->spouse_confirm_reminder_email= '';
+						$userHus->profile_status='ApprovedNotComing';
+						$userHus->stage='1';
+						$userHus->save();
+
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($userHus->id,'Approved Not Coming','Approved Not Coming','Approved Not Coming');
+
+					}
+
+					$approvedNotComing->parent_id=null;
+					$approvedNotComing->added_as= null;
+					$approvedNotComing->room= 'Sharing';
+					$approvedNotComing->spouse_confirm_token= null;
+					$approvedNotComing->spouse_confirm_status= 'Pending';
+					$approvedNotComing->spouse_confirm_reminder_email= '';
+					$approvedNotComing->profile_status='ApprovedNotComing';
+					$approvedNotComing->stage='1';
+					$approvedNotComing->save();
+
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($approvedNotComing->id,'Approved Not Coming','Approved Not Coming','Approved Not Coming');
+
+					return response(array('message'=>'Approved Not Coming status chnage successfull.','ministryUpdate'=>true),200);
+
 				}
 
 			}
@@ -4339,7 +4762,7 @@ class UserController extends Controller {
 			
 			$f = fopen('php://memory', 'w'); 
 			
-			$fields = array('ID', 'Name', 'Email Address', 'Mobile Number', 'Total Amount', 'Amount In Process', 'Accepted Amount', 'Declined Amount', 'Pending Amount', 'Payment Status'); 
+			$fields = array('ID', 'Name', 'Payment By', 'Country of Sender', 'Payment Type', 'Transaction Id', 'UTR No', 'Amount' , 'Payment Status','Date & Time','Decline Remark'); 
 			fputcsv($f, $fields, $delimiter); 
 			
 			$query = \App\Models\Transaction::orderBy('id','desc');
@@ -4347,8 +4770,7 @@ class UserController extends Controller {
 			$data = $query->get();
 			foreach($data as $key=>$data){
 				
-
-				$lineData = array($key+1, \App\Helpers\commonHelper::getUserNameById($data->user_id), $data->bank, $data->country_of_sender, $data->method, $data->order_id, $data->bank_transaction_id, $data->amount,\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status)); 
+				$lineData = array($key+1, \App\Helpers\commonHelper::getUserNameById($data->user_id), $data->bank, $data->country_of_sender, $data->method, $data->order_id, $data->bank_transaction_id, $data->amount,\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status),$data->created_at,$data->decline_remark); 
 				fputcsv($f, $lineData, $delimiter); 
 			}
 			
@@ -4367,7 +4789,6 @@ class UserController extends Controller {
 
 
 	}
-
 
     public function getMinistryData(Request $request) {
 		

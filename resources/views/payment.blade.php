@@ -633,7 +633,7 @@
                                     <select name="mode" class="mt-2 form-control addInFullAmountPaymentField" required>
                                         <option value="">--@lang('web/payment.transfer-type')--</option>
                                         <option value="Wire">Wire Transfer</option>
-                                        <option value="MG">MoneyGram</option>
+                                        <option value="RAI">RAI</option>
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
@@ -664,8 +664,8 @@
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInFullAmount">
-                                    <label for="">@lang('web/payment.upload-payment-image') </label>
-                                    <input type="file" name="file"  value="" class="mt-2" >
+                                    <label for="">@lang('web/payment.upload-payment-image') <span>*</span> </label>
+                                    <input type="file" name="file"  value="" class="mt-2" required>
                                 </div>
                                 <div class="col-lg-12">
                                     <div class="step-next">
@@ -717,7 +717,7 @@
                                     <select name="mode" class="mt-2 form-control addPaymentTypeInPartial" required>
                                         <option value="">--@lang('web/ministry-details.select')--</option>
                                         <option value="Wire">Wire Transfer</option>
-                                        <option value="MG">MoneyGram</option>
+                                        <option value="RAI">RAI</option>
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
@@ -748,8 +748,8 @@
                                 </div>
 
                                 <div class="col-lg-12 ExtraFieldOnChangePaymentInPartial">
-                                    <label for="">Upload Payment Image </label>
-                                    <input type="file" name="file"  value="" class="mt-2" >
+                                    <label for="">@lang('web/payment.upload-payment-image') <span>*</span></label>
+                                    <input type="file" name="file"  value="" class="mt-2" required>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="step-next">
@@ -1244,7 +1244,7 @@
                     $("#countryOfSenderRequiredInFullAmount").attr('required',false);
 
                     
-                }else if ( this.value == 'MG'){
+                }else if ( this.value == 'RAI'){
                     $("#countryOfSenderRequired").attr('required',true);
                     $("#senderNameRequiredInFullAmount").attr('required',true);
                     $("#AmountRequiredInFullAmount").attr('required',true);
@@ -1270,7 +1270,7 @@
                     $("#reference_numberRequired").attr('required',true);
                     $("#countryOfSenderRequired").attr('required',false);
                     
-                }else if ( this.value == 'MG'){
+                }else if ( this.value == 'RAI'){
                     $("#showInPartialMG").show();
                     $("#countryOfSenderRequired").attr('required',true);
                     $("#senderNameRequired").attr('required',true);

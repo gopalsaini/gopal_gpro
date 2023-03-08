@@ -1054,7 +1054,6 @@ class commonHelper{
 		
 		$result = \App\Models\User::where('id',$id)->first();
 
-
 		$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($id, true);
 		$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($id, true);
 		$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($id, true);
@@ -1065,26 +1064,30 @@ class commonHelper{
 		if($result->language == 'sp'){
 
 			$subject = "PENDIENTE: Pago de saldo para GProCongress II";
-			$msg = '<p>Estimado '.$result->name.' '.$result->last_name.',</p><p><br></p><p>Le escribimos para recordarle que tiene pagos pendientes para saldar el balance adeudado en su cuenta de GProCongress II.</p><p><br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p><br></p><p>IMPORTE TOTAL A PAGAR: '.$totalAcceptedAmount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p>Por favor, pague el saldo a más tardar en 31st August 2023.</p><p><br></p><p>POR FAVOR, TENGA EN CUENTA: Si no se recibe el pago completo antes de 31st August 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p><p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo estará encantado de comunicarse con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p><div><br></div>';
+			$msg = '<p>Estimado '.$result->name.' '.$result->last_name.',</p><p><br></p><p>Le escribimos para recordarle que tiene pagos pendientes para saldar el balance adeudado en su cuenta de GProCongress II.</p><p><br></p><p>Aquí tiene un resumen actual del estado de su pago: '.$result->amount.'</p><p><br></p><p>IMPORTE TOTAL A PAGAR: '.$totalAcceptedAmount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p>Por favor, pague el saldo a más tardar en 31st August 2023.</p><p><br></p><p>POR FAVOR, TENGA EN CUENTA: Si no se recibe el pago completo antes de 31st August 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p><p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo estará encantado de comunicarse con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Para realizar el pago ingrese a <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>Para mayor información vea el siguiente tutorial https://youtu.be/xSV96xW_Dx0 </p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p><div><br></div>';
 		
 		}elseif($result->language == 'fr'){
 		
 			$subject = "Paiement du solde GProCongrès II: EN ATTENTE";
-			$msg = "<p>Cher ".$result->name." ".$result->last_name.",&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous rappeler que vous avez des paiements en attente pour régler le solde dû sur votre compte GProCongrès II.&nbsp;&nbsp;</p><p>Voici un résumé de l’état de votre paiement :</p><p><br></p><p>MONTANT TOTAL À PAYER : ".$totalAcceptedAmount."</p><p>PAIEMENTS EFFECTUÉS ANTÉRIEUREMENT ET ACCEPTÉS : ".$totalAcceptedAmount."</p><p>PAIEMENTS EN COURS DE TRAITEMENT : ".$totalAmountInProcess."</p><p>SOLDE RESTANT DÛ : ".$totalPendingAmount."</p><p><br></p><p>Veuillez payer le solde au plus tard le&nbsp; 31st August 2023.&nbsp;</p><p><br></p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous des questions ? Répondez simplement à cet e-mail et notre équipe sera heureuse d'entrer en contact avec vous.</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier le nombre et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><div><br></div>";
+			$msg = "<p>Cher ".$result->name." ".$result->last_name.",&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous rappeler que vous avez des paiements en attente pour régler le solde dû sur votre compte GProCongrès II.&nbsp;&nbsp;</p><p>Voici un résumé de l’état de votre paiement : '.$result->amount.'</p><p><br></p><p>MONTANT TOTAL À PAYER : ".$totalAcceptedAmount."</p><p>PAIEMENTS EFFECTUÉS ANTÉRIEUREMENT ET ACCEPTÉS : ".$totalAcceptedAmount."</p><p>PAIEMENTS EN COURS DE TRAITEMENT : ".$totalAmountInProcess."</p><p>SOLDE RESTANT DÛ : ".$totalPendingAmount."</p><p><br></p><p>Veuillez payer le solde au plus tard le&nbsp; 31st August 2023.&nbsp;</p><p><br></p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous des questions ? Répondez simplement à cet e-mail et notre équipe sera heureuse d'entrer en contact avec vous.</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier le nombre et de renforcer les capacités des formateurs de pasteurs.</p><p><br><p><br></p><p>Pour effectuer le paiement, veuillez vous rendre sur <a href='https://www.gprocongress.org/payment' traget='blank'> www.gprocongress.org/payment </a> </p><p>Pour plus d` informations, regardez le tutoriel https://youtu.be/xSV96xW_Dx0 </p> </p><p>Cordialement,</p><div><br></div>";
 
 		}elseif($result->language == 'pt'){
 		
 			$subject = "Pagamento do Saldo PENDENTE para o II CongressoGPro";
-			$msg = '<p>Prezado '.$result->name.'  '.$result->last_name.',&nbsp;</p><p><br></p><p>Estamos escrevendo para lhe lembrar que tem pagamentos pendentes para regularizar o seu saldo em dívida na sua conta para o II CongressoGPro.&nbsp;&nbsp;</p><p><br></p><p>Aqui está o resumo do estado atual do seu pagamento:</p><p><br></p><p>VALOR TOTAL A SER PAGO: '.$totalAcceptedAmount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITO : '.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM ABERTO: '.$totalPendingAmount.'</p><p><br></p><p>Por favor pague o saldo até o dia ou antes de 31st August 2023.</p><p><br></p><p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p><p>Alguma dúvida? Simplesmente responda a este e-mail, e nossa equipe estará muito feliz para entrar em contacto com você.&nbsp;</p><p><br></p><p>Ore conosco a medida em que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+			$msg = '<p>Prezado '.$result->name.'  '.$result->last_name.',&nbsp;</p><p><br></p><p>Estamos escrevendo para lhe lembrar que tem pagamentos pendentes para regularizar o seu saldo em dívida na sua conta para o II CongressoGPro.&nbsp;&nbsp;</p><p><br></p><p>Aqui está o resumo do estado atual do seu pagamento: '.$result->amount.'</p><p><br></p><p>VALOR TOTAL A SER PAGO: '.$totalAcceptedAmount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITO : '.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM ABERTO: '.$totalPendingAmount.'</p><p><br></p><p>Por favor pague o saldo até o dia ou antes de 31st August 2023.</p><p><br></p><p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p><p>Alguma dúvida? Simplesmente responda a este e-mail, e nossa equipe estará muito feliz para entrar em contacto com você.&nbsp;</p><p><br></p><p>Ore conosco a medida em que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.&nbsp;</p><p><p><br></p><p>Para fazer o pagamento, favor ir par <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>Para mais informações, veja o tutorial https://youtu.be/xSV96xW_Dx0 </p></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
 		
 		}else{
 		
 			$subject = 'PENDING: Balance payment for GProCongress II';
-			$msg = '<div>Dear '.$name.',&nbsp;</div><div><br></div><div>We are writing to remind you that you have pending payments to settle the balance due on your GProCongress II account.&nbsp;&nbsp;</div><div><br></div><div>Here is a summary of your payment status:</div><div><br></div><div>TOTAL AMOUNT TO BE PAID:</div><div>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</div><div>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</div><div>REMAINING BALANCE DUE:'.$totalPendingAmount.'</div><div><br></div><div>Please pay the balance on or before 31st August 2023.&nbsp;</div><div><br></div><div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div><div>Do you have questions? Simply respond to this email, and our team will be happy to connect with you.&nbsp;</div><div><br></div><div>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</div><div><br></div><div>Warmly,</div><div>&nbsp;The GProCongress II Team</div>';
+			$msg = '<div>Dear '.$name.',&nbsp;</div><div><br></div><div>We are writing to remind you that you have pending payments to settle the balance due on your GProCongress II account.&nbsp;&nbsp;</div><div><br></div><div>Here is a summary of your payment status:</div><div><br></div><div>TOTAL AMOUNT TO BE PAID: '.$result->amount.'</div><div>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</div><div>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</div><div>REMAINING BALANCE DUE:'.$totalPendingAmount.'</div><div><br></div><div>Please pay the balance on or before 31st August 2023.&nbsp;</div><div><br></div><div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div><div>Do you have questions? Simply respond to this email, and our team will be happy to connect with you.&nbsp;</div><div><br></div><div> Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</div><div><p>To make the payment please go to <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>For more information watch the tutorial https://youtu.be/xSV96xW_Dx0 </p></div><div>Warmly,</div><div>&nbsp;The GProCongress II Team</div>';
 			
 		}
 
 		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+
+		\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg, 'PENDING: Balance payment for GProCongress II');
+					
 
 	}
 
@@ -1523,7 +1526,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Pago en efectivo agregado con éxito',	
 				'TravelInformation-approved-successful' => 'Información de viaje aprobada con éxito',	
 				'Travel-Information-notApproved' => 'Información de viaje no aprobada',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si no puede pagar con su tarjeta de crédito, entonces pague con MoneyGram",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si no puede pagar con su tarjeta de crédito, entonces pague con RAI",	
 				'Payyour-registrationfee-usinga-sponsorship' => 'Pague su matricula de inscripción utilizando un patrocinio',	
 				'Done' =>'realizado',	
 				'Youhave-madethe-full-payment' => 'Has realizado el pago completo',	
@@ -1731,7 +1734,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Paiement en espèces ajouté avec succès',	
 				'TravelInformation-approved-successful' => 'Informations de voyage approuvées réussies',	
 				'Travel-Information-notApproved' => 'Informations de voyage non approuvées',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si vous ne parvenez pas à payer avec votre carte de crédit, payez avec MoneyGram",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si vous ne parvenez pas à payer avec votre carte de crédit, payez avec RAI",	
 				'Payyour-registrationfee-usinga-sponsorship' => "Payez vos frais d'inscription en utilisant un parrainage",	
 				'Done' =>'Terminé',	
 				'Youhave-madethe-full-payment' => 'Vous avez effectué le paiement complet',	
@@ -1941,7 +1944,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Pagamento em especie adicionado com sucesso',	
 				'TravelInformation-approved-successful' => 'Informações de viagem aprovada com sucesso',	
 				'Travel-Information-notApproved' => 'Informações de viagem não aprovadas',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Se você não puder pagar com seu cartão de crédito, pague usando MoneyGram",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Se você não puder pagar com seu cartão de crédito, pague usando RAI",	
 				'Payyour-registrationfee-usinga-sponsorship' => 'Pague sua taxa de inscrição usando um patrocínio',	
 				'Done' =>'Feito',	
 				'Youhave-madethe-full-payment' => 'Você fez o pagamento integral',	
@@ -2148,7 +2151,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Cash payment added successful',	
 				'TravelInformation-approved-successful' => 'Travel Information approved successful',	
 				'Travel-Information-notApproved' => 'Travel Information not approved',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using MoneyGram",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using RAI",	
 				'Payyour-registrationfee-usinga-sponsorship' => 'Pay your registration fee using a sponsorship',	
 				'Done' =>'Done',	
 				'Youhave-madethe-full-payment' => 'You have made the full payment',	
@@ -2292,6 +2295,33 @@ class commonHelper{
 		$data->save();
 
 		
+	}
+
+	
+	public static function send($to,$data){
+
+		$api_key=env('FIREBASE_TOKEN');
+		$url="https://fcm.googleapis.com/fcm/send";
+		$fields=json_encode(array('to'=>$to,'notification'=>$data));
+	
+		// Generated by curl-to-PHP: http://incarnate.github.io/curl-to-php/
+		$ch = curl_init();
+	
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, ($fields));
+	
+		$headers = array();
+		$headers[] = 'Authorization: key ='.$api_key;
+		$headers[] = 'Content-Type: application/json';
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	
+		$result = curl_exec($ch);
+		if (curl_errno($ch)) {
+			echo 'Error:' . curl_error($ch);
+		}
+		curl_close($ch);
 	}
 
 }

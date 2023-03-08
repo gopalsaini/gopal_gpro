@@ -79,6 +79,12 @@ Route::group(['middleware'=>'Userauth'],function(){
 		Route::get('paypal-payment-success', 'HomeController@PaypalSuccessUrl')->name('paypal-payment-success'); 
 		Route::get('paypal-payment-error', 'HomeController@PaypalErrorUrl')->name('paypal-payment-error'); 
 		
+		Route::match(['get','post'], 'passport-info', "ProfileController@sponsorshipPassportInfo")->name('passport.info');
+		Route::match(['get','post'], 'sponsorship-letter-approve', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetterApprove');
+		Route::get('sponsorship-confirm/confirm/{id}', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetterApprove');
+		Route::post('sponsorship-confirm/decline/', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetterApprove');
+
+
 	});
 });
 
@@ -98,7 +104,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 
 	Route::match(['get','post'],'/change-password', 'Admin\AdminController@changePassword')->name('changepassword');
 	Route::get('dashboard', 'Admin\DashboardController@index')->name('dashboard');
-	Route::get('dashboard-2', 'Admin\Dashboard2Controller@index2')->name('dashboard2');
+	Route::get('dashboard-2', 'Admin\Dashboard2Controller@index')->name('dashboard2');
 	Route::post('language','Admin\DashboardController@localization')->name('language');
 	Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
@@ -114,6 +120,10 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 	Route::get('get-payment-chart-ajax','Admin\DashboardController@getPaymentChartAjax');
 	Route::get('get-payment-type-chart-ajax','Admin\DashboardController@getPaymentTypeChartAjax');
 	Route::get('get-do-you-seek-pastoral-training-chart-ajax','Admin\DashboardController@getDoYouSeekPastoralTraining');
+	
+	Route::get('get-total-group-registration','Admin\DashboardController@TotalGroupRegistration');
+	Route::get('get-single-married-coming','Admin\DashboardController@TotalMarriedCouples');
+	Route::get('get-total-married-couples','Admin\DashboardController@SingleMarriedComing');
 
 	// Dashboard 2
 	Route::get('get-payments-2','Admin\Dashboard2Controller@getPayments');
@@ -127,6 +137,10 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 	Route::get('get-payment-chart-ajax-2','Admin\Dashboard2Controller@getPaymentChartAjax');
 	Route::get('get-payment-type-chart-ajax-2','Admin\Dashboard2Controller@getPaymentTypeChartAjax');
 	Route::get('get-do-you-seek-pastoral-training-chart-ajax-2','Admin\Dashboard2Controller@getDoYouSeekPastoralTraining');
+	Route::get('get-total-group-registration-2','Admin\Dashboard2Controller@TotalGroupRegistration');
+	Route::get('get-single-married-coming-2','Admin\Dashboard2Controller@TotalMarriedCouples');
+	Route::get('get-total-married-couples-2','Admin\Dashboard2Controller@SingleMarriedComing');
+
 
 	// Designation
 	Route::group(['prefix'=>'designation', 'as'=>'designation.'], function() {

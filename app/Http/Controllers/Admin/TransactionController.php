@@ -33,7 +33,8 @@ class TransactionController extends Controller {
 			->setOffset($start)
 
 			->addColumn('user_name', function($data){
-				return \App\Helpers\commonHelper::getUserNameById($data->user_id);
+				return '<a style="color: blue !important;" href="'.url('admin/user/user-profile/'.$data->user_id).'" target="_blank" title="User Profile">'.\App\Helpers\commonHelper::getUserNameById($data->user_id).'</a>';
+				
 		    })
 
 			->addColumn('payment_by', function($data){
@@ -70,7 +71,7 @@ class TransactionController extends Controller {
 
 			->addColumn('image', function($data){
 				if($data->file){
-					return '<a href="'.asset('uploads/transaction/'.$data->file).'" target="_blank">Open</a>';
+					return '<a style="color: blue !important;" href="'.asset('uploads/transaction/'.$data->file).'" target="_blank">Open</a>';
 				}else{
 					return "-";
 				}
@@ -101,16 +102,17 @@ class TransactionController extends Controller {
 			->addColumn('action', function($data){
 				$msg = "' Are you sure to delete this transaction ?'";
 
-				if ($data->status == '1') {
-					return '<div class="badge rounded-pill pill-badge-success">Approved</div>';
-				} else if ($data->status == '2') {
-					return '<div class="badge rounded-pill pill-badge-danger">Decline</div>';
-				} else if ($data->status == '0' && $data->method != 'Online') {
+				if (\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '13') {
+					if ($data->status == '1') {
+						return '<div class="badge rounded-pill pill-badge-success">Approved</div>';
+					} else if ($data->status == '2') {
+						return '<div class="badge rounded-pill pill-badge-danger">Decline</div>';
+					} else if ($data->status == '0' && $data->method != 'Online') {
 
-					return '<div style="display:flex"><a data-id="'.$data->id.'" data-type="1" title="Transaction Approve" class="btn btn-sm btn-outline-success m-1 -change">Approve</a>
-					<a data-id="'.$data->id.'" data-type="2" title="Transaction Decline" class="btn btn-sm btn-outline-danger m-1 declineRemark">Decline</a></div>';
+						return '<div style="display:flex"><a data-id="'.$data->id.'" data-type="1" title="Transaction Approve" class="btn btn-sm btn-outline-success m-1 -change">Approve</a>
+						<a data-id="'.$data->id.'" data-type="2" title="Transaction Decline" class="btn btn-sm btn-outline-danger m-1 declineRemark">Decline</a></div>';
+					}
 				}
-
 		    })
 
 		    ->escapeColumns([])	
@@ -175,6 +177,7 @@ class TransactionController extends Controller {
 					}
 					
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+					\App\Helpers\commonHelper::userMailTrigger($result->User->id,$msg,$subject);
 
 					// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
 				} else {
@@ -218,7 +221,7 @@ class TransactionController extends Controller {
 					
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
-
+					
 					if($user->language == 'sp'){
 
 						$subject = "Por favor, envíe su información de viaje.";
@@ -242,6 +245,7 @@ class TransactionController extends Controller {
 					}
 					// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
 					// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
 
 				}
@@ -286,6 +290,7 @@ class TransactionController extends Controller {
 				}
 
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->User->id,$msg,$subject);
 
 				// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
 			}
