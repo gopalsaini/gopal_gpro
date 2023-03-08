@@ -25,12 +25,12 @@
                             <div class="row">
                                 <div class="col-lg-6">
                                     <div class="step-next">
-                                        <a class="main-btn bg-gray-btn" href="{{url('sponsorship-confirm/confirm/'.$linkPayment->spouse_confirm_token)}}">Confirm</a>
+                                        <a class="main-btn bg-gray-btn" href="{{url('sponsorship-confirm/confirm/'.$passportInfo->id)}}">Confirm</a>
                                     </div>
                                 </div>
                                 <div class="col-lg-6">
                                     <div class="step-next">
-                                        <a class="main-btn bg-gray-btn" href="{{url('sponsorship-confirm/decline/'.$linkPayment->spouse_confirm_token)}}">Decline</a>
+                                        <a class="main-btn bg-gray-btn -change" data-id="{{$passportInfo->id}}" href="javascript:void(0);">Decline</a>
                                     </div>
                                 </div>
                             </div>
@@ -45,6 +45,41 @@
     <br>
 <br>
 <br>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header px-3">
+                <h5 class="modal-title" id="exampleModalLongTitle">Passport Info</h5>
+                <button type="button" class="close" onclick="modalHide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <hr class="m-0">
+            <div class="modal-body px-3">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="form-line">
+                                <label for="inputName">Remark <label class="text-danger">*</label></label>
+                                <form id="PassportInfoReject" action="{{ route('sponsorshipLetterReject') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                                    @csrf
+                                    <textarea name="remark" id="" cols="30" rows="10" class="form-control" required></textarea>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger px-4 mx-2" onclick="modalHide()">Close</button>
+                <button type="button" class="btn btn-dark px-4 mx-2" onclick="clickOnStatusChangeBtn()">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 
@@ -110,5 +145,85 @@
             processData: false,
         });
     });
+
+    $("form#PassportInfoReject").submit(function(e) {
+
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+
+        $.ajax({
+            url: formAction,
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            async: false,
+            beforeSend: function() {
+                $('#preloader').css('display', 'block');
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+
+                $('#preloader').css('display', 'none');
+            },
+            success: function(data) {
+
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+                sweetAlertMsg('success', data.message);
+                $('#preloader').css('display', 'none');
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+            timeout: 5000
+        });
+
+});
+
+    function clickOnStatusChangeBtn() {
+        var id = $('#row_id').val();
+        var url = $('#url').val();
+        if (id !== 0 && url != '') {
+            $('form#PassportInfoReject').trigger('submit');
+            modalHide();
+        } else if (url == '') {
+            sweetAlertMsg('error', '403 : Remark field is required');
+        } else {
+            sweetAlertMsg('error', '403 : Something went wrong');
+        }
+    }
+
+$(document).ready(function() {
+
+$('#exampleModalCenter').on('hidden.bs.modal', function (e) {
+    modalHide();
+})
+
+$('.-change').click(function() {
+    var id = $(this).data('id');
+
+    $('#exampleModalCenter').modal('show');
+    $('#row_id').val(id);
+    $('#url').val(null);
+
+});
+
+function modalHide() {
+    $('#exampleModalCenter').modal('hide');
+    $('#row_id').val(0);
+    $('#url').val(null);
+}
+});
+
+
+		
 </script>
 @endpush

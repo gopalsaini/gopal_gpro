@@ -80,9 +80,9 @@ Route::group(['middleware'=>'Userauth'],function(){
 		Route::get('paypal-payment-error', 'HomeController@PaypalErrorUrl')->name('paypal-payment-error'); 
 		
 		Route::match(['get','post'], 'passport-info', "ProfileController@sponsorshipPassportInfo")->name('passport.info');
-		Route::match(['get','post'], 'sponsorship-letter-approve', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetterApprove');
-		Route::get('sponsorship-confirm/confirm/{id}', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetterApprove');
-		Route::post('sponsorship-confirm/decline/', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetterApprove');
+		Route::match(['get','post'], 'sponsorship-letter-approve', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetter');
+		Route::get('sponsorship-confirm/confirm/{id}', "ProfileController@PassportInfoApprove")->name('sponsorshipLetterApprove');
+		Route::post('sponsorship-confirm/decline/', "ProfileController@PassportInfoReject")->name('sponsorshipLetterReject');
 
 
 	});

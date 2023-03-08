@@ -3455,9 +3455,67 @@ class PostLoginController extends Controller {
 
 	}
 
-	public function sponsorshipLetterApprove(){
+    
 
-		return view('sponsorship_letter_approve');
+	public function PassportInfoApprove(Request $request){
+	
+		try{
+			$passportApprove= \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
+
+			$passportApprove->status='Approve';
+			
+			$passportApprove->save();
+			
+			return response(array('message'=>'Status Approved Successfully.'),200);
+				
+			
+		}catch (\Exception $e){
+			
+			return response(array("error"=>true, "message" => $e->getMessage()),200); 
+			
+		}
 	}
 
+	public function PassportInfoReject(Request $request){
+	
+		$rules = [
+			'remark' => 'required',
+			
+		];
+
+		$validator = \Validator::make($request->json()->all(), $rules);
+            
+		if ($validator->fails()) {
+		$message = [];
+		$messages_l = json_decode(json_encode($validator->messages()), true);
+		foreach ($messages_l as $msg) {
+			$message= $msg[0];
+			break;
+		}
+		
+		return response(array('message'=>$message,"error" => true),403);
+		
+	
+	}else{
+
+		try{
+
+			$passportReject= \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
+
+			$passportReject->status='Reject';
+			$passportReject->remark=$request->json()->get('remark');
+			
+			$passportReject->save();
+			
+			return response(array('message'=>'PassportInfo status changed successfully'),200);
+				
+			
+		}catch (\Exception $e){
+			
+			return response(array("error"=>true, "message" => $e->getMessage()),200); 
+			
+			}
+		}
+	
+	}
 }

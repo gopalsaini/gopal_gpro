@@ -1137,11 +1137,43 @@ class ProfileController extends Controller
 	}
 	
 
-    public function sponsorshipLetterApprove(){
+    public function sponsorshipLetterApprove(Request $request){
 
-		return view('sponsorship_letter_approve');
+
+        $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        $resultData=json_decode($result->content, true); 
+    
+        \App\Helpers\commonHelper::setLocale();
+        $passportInfo = \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->first();
+
+		return view('sponsorship_letter_approve',compact('passportInfo'));
 	}
 
 
-	
+    public function PassportInfoApprove(Request $request,$id){
+
+        $resultPassport=\App\Helpers\commonHelper::callAPI('userTokenget','/sponsorship-info-approve',array());
+        $resultDataPassport=json_decode($resultPassport->content,true); 
+        
+        return response(array('message'=>$resultDataPassport['message']),$resultPassport->status);
+
+    }
+
+    public function PassportInfoReject(Request $request){
+
+        if($request->ajax()){
+            
+            $data=array(
+                'remark'=>$request->post('remark'),
+            );
+           
+            $resultPassport=\App\Helpers\commonHelper::callAPI('userTokenpost','/sponsorship-info-reject',json_encode($data));
+            $resultDataPassport=json_decode($resultPassport->content,true); 
+            
+            return response(array('message'=>$resultDataPassport['message']),$resultPassport->status);
+
+        }
+		
+	}
+
 }

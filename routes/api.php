@@ -61,6 +61,9 @@ Route::group([
     Route::post('sponsorship-passport-info', "API\PostLoginController@passportInfo");
     Route::post('sponsorship-letter-approve', "API\PostLoginController@sponsorshipLetterApprove");
 
+    Route::post('sponsorship-info-approve', "API\PostLoginController@PassportInfoApprove");
+    Route::post('sponsorship-info-reject', "API\PostLoginController@PassportInfoReject");
+
 
 });
 
