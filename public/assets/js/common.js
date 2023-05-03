@@ -122,7 +122,7 @@ $(function() {   
 
                  
         if (typeof(FileReader) != "undefined") {            
-            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp|.xlsx)$/;             
+            var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.jpg|.jpeg|.gif|.png|.bmp|.xlsx|.pdf)$/;             
             $($(this)[0].files).each(function() {               
                 var file = $(this);               
                 if (regex.test(file[0].name.toLowerCase())) {                  

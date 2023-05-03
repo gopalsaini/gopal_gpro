@@ -23,12 +23,14 @@
    @if(!$SpouseInfoResult)
         
         <!-- changes by Gopal -->
-        <li>
-            <a href="@if($stage->stage > 1) {{url('payment')}} @else # @endif" >
-            <!-- <a href="@if($stage->stage > 1) # @else # @endif" > -->
-                <span>0@php echo $i++; @endphp</span>@lang('web/profile.payment') 
-            </a>
-        </li> 
+        @if($stage['amount'] >0)
+            <li>
+                <a href="@if($stage->stage > 1) {{url('payment')}} @else # @endif" >
+                <!-- <a href="@if($stage->stage > 1) # @else # @endif" > -->
+                    <span>0@php echo $i++; @endphp</span>@lang('web/profile.payment') 
+                </a>
+            </li> 
+        @endif
     
         <li>
             <a href="@if($stage->stage > 2) # @else # @endif" class="@if($stage->stage > 2) active @endif">

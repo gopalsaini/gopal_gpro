@@ -42,6 +42,7 @@ Route::group([
     
     Route::get("get-contact-details","API\PostLoginController@getContactDetails");
     Route::get("get-ministry-details","API\PostLoginController@getMinistryDetails");
+    Route::get("get-country-list","API\PreLoginController@getCountryList");
 
     Route::get("logout","API\PostLoginController@logout");
     Route::get("stage-zero","API\PostLoginController@stageZero");
@@ -59,10 +60,12 @@ Route::group([
 
         
     Route::post('sponsorship-passport-info', "API\PostLoginController@passportInfo");
+    Route::get('sponsorship-passport-details', "API\PostLoginController@passportInfoDetails");
     Route::post('sponsorship-letter-approve', "API\PostLoginController@sponsorshipLetterApprove");
 
-    Route::post('sponsorship-info-approve', "API\PostLoginController@PassportInfoApprove");
+    Route::get('sponsorship-info-approve', "API\PostLoginController@PassportInfoApprove");
     Route::post('sponsorship-info-reject', "API\PostLoginController@PassportInfoReject");
+    Route::post("invite-user","API\PostLoginController@InviteUser");
 
 
 });
@@ -105,8 +108,23 @@ Route::any("user-email-update-data","API\PreLoginController@userEmailUpdateData"
 // Route::any("get-approved-user-send-email","API\PreLoginController@getApprovedUserSendEmail");
 Route::any("user-update-payment-country","API\PreLoginController@userUpdatePaymentCountry");
 Route::any("send-early-bird-reminder-mail","API\PreLoginController@sendEarlyBirdReminderMail");
+
 Route::any("spouse-reject-action-cron","API\PreLoginController@SpouseRejectActionCron");
 Route::any("setdateandSpouseReminder","API\PreLoginController@setdateandSpouseReminder");
+
+// Route::any("send-early-bird-reminder-first-mail","API\PreLoginController@sendEarlyBirdReminderFirstMail");
+
+
+
+// Route::any("appologies-letter","API\PreLoginController@AppologiesLetter");
+// Route::any("payment-reminder-time-set","API\PreLoginController@paymentReminderTimeSet");
+// Route::any("Send-Emails-To-Apps-Available","API\PreLoginController@SendEmailsToAppsAvailable");
+Route::get("speaker-list","API\PreLoginController@speakerList");
+Route::get("pre-recorded-video-list","API\PreLoginController@PreRecordedVideoList");
+Route::get('get-popup-model', 'API\PostLoginController@popUpModelList');
+Route::get('get-site-setting', 'API\PostLoginController@SiteSettingList');
+Route::get('get-user-profile', 'API\PreLoginController@userProfile');
+
 
 
 // Route::any("appologies-letter","API\PreLoginController@AppologiesLetter");

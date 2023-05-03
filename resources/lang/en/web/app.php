@@ -19,6 +19,8 @@ return [
     'myprofile' => 'My Profile',
     'contactus' => 'Contact Us',
     'pricing' => 'Cost',
+    'donate' => 'Donate',
+    'donate_now' => 'Donate Now',
     'help' => 'Help',
     'login' => 'Login',
     'logout' => 'Logout',

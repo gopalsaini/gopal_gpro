@@ -119,10 +119,10 @@
                 @if($resultData['result']['profile_status']=='Approved' || $resultData['result']['profile_status']=='Rejected')
                     <p class="@if($resultData['result']['profile_status']=='Approved') text-success @else text-danger @endif">{{$resultData['result']['remark']}}</p>
                 @endif
-                <!-- //Vineet - 080123 -->
-                <!-- <h4 class="inner-head">@lang('web/profile.personal') @lang('web/profile.details')</h4> -->
-                <h4 class="inner-head">@lang('web/profile-details.personal-details-combined')</h4>
-                <!-- //Vineet - 080123 -->
+                <h4 class="inner-head" style="display: flex;justify-content: space-between;">
+                    <p>@lang('web/profile-details.personal-details-combined')</p>
+                    <a href="{{url('invite-user')}}" class="main-btn bg-gray-btn m-1" >Send Invitation</a>
+                </h4>
                 <div class="detail-wrap">
                     <ul>
                         <li>
@@ -283,148 +283,151 @@
                         @endif
                     </ul>
                 </div> 
-                <!-- //Vineet - 080123 -->
-                <!-- <h4 class="inner-head section-gap">@lang('web/profile.ministry') @lang('web/profile.details')</h4> -->
-                <h4 class="inner-head section-gap">@lang('web/ministry-details.ministry-details-combined')</h4>
-                <!-- //Vineet - 080123 -->
-                <div class="detail-wrap">
-                    <ul>
-                        <li>
-                            <p>@lang('web/ministry-details.ministry-name')</p>
-                            <span>:&nbsp; &nbsp; &nbsp;  @if($resultData['result']['ministry_name'] == '') Independent @else {{ucfirst($resultData['result']['ministry_name'])}} @endif </span>
-                        </li>
-                        <li>
-                            <p>@lang('web/profile.ministry') @lang('web/profile.postal-address')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; {{$resultData['result']['ministry_address']}} </span>
-                        </li>
-                        <li>
-                            <p>@lang('web/profile.zip-code')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; {{$resultData['result']['ministry_zip_code']}}</span>
-                        </li>
-                    </ul>
-                    <ul>
-                        <li>
-                            <p>@lang('web/profile.country')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; @if((int) $resultData['result']['ministry_country_id']>0){{\App\Helpers\commonHelper::getCountryNameById($resultData['result']['ministry_country_id'])}}@endif</span>
-                        </li>
-                        <li>
-                            <p>@lang('web/profile.state')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; @if($resultData['result']['ministry_state_id'] == 0) {{$resultData['result']['ministry_state_name']}} @else {{\App\Helpers\commonHelper::getStateNameById($resultData['result']['ministry_state_id'])}} @endif  </span>
-                        </li>
-                        <li>
-                            <p>@lang('web/profile.city')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; @if($resultData['result']['ministry_city_id'] == 0) {{$resultData['result']['ministry_city_name']}} @else {{\App\Helpers\commonHelper::getCityNameById($resultData['result']['ministry_city_id'])}} @endif</span>
-                        </li>
-                    </ul>
-                </div>
-                <div class="preview-form">
-                    <label for="" class="d-block">@lang('web/profile.pastor-trainer')</label>
-                    <div class="radio-wrap">
-                        <div class="form__radio-group">
-                        @if($resultData['result']['ministry_pastor_trainer']=='Yes')@lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif
-                        </div> 
-                    </div>
-                </div>
-                @if($resultData['result']['ministry_pastor_trainer']=='Yes')
-                    @php
-                        $ministryYesDetail=json_decode($resultData['result']['ministry_pastor_trainer_detail'],true);
-    
-                    @endphp
-                    <h4 class="section-gap">@lang('web/profile.involved-in-training-pastoral-leaders')</h4>
-                    <div class="detail-wrap minister-gap">
+
+                @if($resultData['result']['designation_id'] != '3' && $resultData['result']['designation_id'] != '4' && $resultData['result']['designation_id'] != '15')
+                    <!-- //Vineet - 080123 -->
+                    <!-- <h4 class="inner-head section-gap">@lang('web/profile.ministry') @lang('web/profile.details')</h4> -->
+                    <h4 class="inner-head section-gap">@lang('web/ministry-details.ministry-details-combined')</h4>
+                    <!-- //Vineet - 080123 -->
+                    <div class="detail-wrap">
                         <ul>
                             <li>
-                                <p>@lang('web/profile.non-formal-pastoral-training')</p>
-                                <span>:&nbsp; &nbsp; &nbsp;  
-                                    
-                                @if(!empty($ministryYesDetail))
-
-                                    @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['non_formal_trainor'])))  
-                                    
-                                @endif </span>
+                                <p>@lang('web/ministry-details.ministry-name')</p>
+                                <span>:&nbsp; &nbsp; &nbsp;  @if($resultData['result']['ministry_name'] == '') Independent @else {{ucfirst($resultData['result']['ministry_name'])}} @endif </span>
                             </li>
                             <li>
-                                <p>@lang('web/profile.formal-theological-education')</p>
-                                <span>:&nbsp; &nbsp; &nbsp; 
-                                    @if(!empty($ministryYesDetail))
-
-                                        @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['formal_theological'])))  
-                                        
-                                    @endif 
-                                </span>
+                                <p>@lang('web/profile.ministry') @lang('web/profile.postal-address')</p>
+                                <span>:&nbsp; &nbsp; &nbsp; {{$resultData['result']['ministry_address']}} </span>
                             </li>
                             <li>
-                                <p>@lang('web/profile.informal-personal-mentoring')</p>
-                                <span>:&nbsp; &nbsp; &nbsp; 
-                                    @if(!empty($ministryYesDetail))
-                                        
-                                        @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['informal_personal'])))  
-                                        
-                                    @endif
-                                </span>
+                                <p>@lang('web/profile.zip-code')</p>
+                                <span>:&nbsp; &nbsp; &nbsp; {{$resultData['result']['ministry_zip_code']}}</span>
                             </li>
-                            <li>@lang('web/home.willing-to-commit-to-trainer-of-pastors') : <strong> &nbsp;@if(!empty($ministryYesDetail) && isset($ministryYesDetail['willing_to_commit']))@if($ministryYesDetail['willing_to_commit'] == 'Yes') @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif @endif</strong></li>
-                            <li>@lang('web/home.comment') : <strong> &nbsp;@if(!empty($ministryYesDetail) && isset($ministryYesDetail['comment'])){{$ministryYesDetail['comment']}}@endif</strong></li>
-
                         </ul>
-                    </div>
-                    <h4 class="section-gap">@lang('web/profile.involved-in-strengthening')</h4>
-                    <div class="detail-wrap minister-gap">
                         <ul>
-                            <span>@if(!empty($ministryYesDetail)){{$ministryYesDetail['howmany_pastoral']}}@endif </span>
+                            <li>
+                                <p>@lang('web/profile.country')</p>
+                                <span>:&nbsp; &nbsp; &nbsp; @if((int) $resultData['result']['ministry_country_id']>0){{\App\Helpers\commonHelper::getCountryNameById($resultData['result']['ministry_country_id'])}}@endif</span>
+                            </li>
+                            <li>
+                                <p>@lang('web/profile.state')</p>
+                                <span>:&nbsp; &nbsp; &nbsp; @if($resultData['result']['ministry_state_id'] == 0) {{$resultData['result']['ministry_state_name']}} @else {{\App\Helpers\commonHelper::getStateNameById($resultData['result']['ministry_state_id'])}} @endif  </span>
+                            </li>
+                            <li>
+                                <p>@lang('web/profile.city')</p>
+                                <span>:&nbsp; &nbsp; &nbsp; @if($resultData['result']['ministry_city_id'] == 0) {{$resultData['result']['ministry_city_name']}} @else {{\App\Helpers\commonHelper::getCityNameById($resultData['result']['ministry_city_id'])}} @endif</span>
+                            </li>
                         </ul>
                     </div>
-                    <h4 class="section-gap">@lang('web/profile.future-pastor-trainers')</h4>
-                    <div class="detail-wrap minister-gap">
-                        <ul>
-                            <span>@if(!empty($ministryYesDetail)){{$ministryYesDetail['howmany_futurepastor']}}@endif</span>
-                        </ul>
-                    </div>
-                @else
-
-                        <label for="" class="d-block">@lang('web/profile.Training-to-your-ministry')</label>
+                    <div class="preview-form">
+                        <label for="" class="d-block">@lang('web/profile.pastor-trainer')</label>
                         <div class="radio-wrap">
                             <div class="form__radio-group">
-                            @if(!empty($resultData['result']['doyouseek_postoral'])) @if($resultData['result']['doyouseek_postoral'] == 'Yes') @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif @endif 
+                            @if($resultData['result']['ministry_pastor_trainer']=='Yes')@lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif
                             </div> 
                         </div>
-                    @if($resultData['result']['doyouseek_postoral'] == 'Yes')
+                    </div>
+                    @if($resultData['result']['ministry_pastor_trainer']=='Yes')
+                        @php
+                            $ministryYesDetail=json_decode($resultData['result']['ministry_pastor_trainer_detail'],true);
+        
+                        @endphp
+                        <h4 class="section-gap">@lang('web/profile.involved-in-training-pastoral-leaders')</h4>
+                        <div class="detail-wrap minister-gap">
+                            <ul>
+                                <li>
+                                    <p>@lang('web/profile.non-formal-pastoral-training')</p>
+                                    <span>:&nbsp; &nbsp; &nbsp;  
+                                        
+                                    @if(!empty($ministryYesDetail))
 
-                        <label for="" class="d-block">@lang('web/profile.envision-training')</label>
-                        <div class="radio-wrap">
-                            <div class="form__radio-group">
-                            @if(!empty($resultData['result']['doyouseek_postoralcomment'])){{$resultData['result']['doyouseek_postoralcomment']}}@endif 
-                            </div> 
+                                        @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['non_formal_trainor'])))  
+                                        
+                                    @endif </span>
+                                </li>
+                                <li>
+                                    <p>@lang('web/profile.formal-theological-education')</p>
+                                    <span>:&nbsp; &nbsp; &nbsp; 
+                                        @if(!empty($ministryYesDetail))
+
+                                            @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['formal_theological'])))  
+                                            
+                                        @endif 
+                                    </span>
+                                </li>
+                                <li>
+                                    <p>@lang('web/profile.informal-personal-mentoring')</p>
+                                    <span>:&nbsp; &nbsp; &nbsp; 
+                                        @if(!empty($ministryYesDetail))
+                                            
+                                            @lang('web/ministry-details.'.strtolower(\App\Helpers\commonHelper::ministryPastorTrainerDetail($ministryYesDetail['informal_personal'])))  
+                                            
+                                        @endif
+                                    </span>
+                                </li>
+                                <li>@lang('web/home.willing-to-commit-to-trainer-of-pastors') : <strong> &nbsp;@if(!empty($ministryYesDetail) && isset($ministryYesDetail['willing_to_commit']))@if($ministryYesDetail['willing_to_commit'] == 'Yes') @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif @endif</strong></li>
+                                <li>@lang('web/home.comment') : <strong> &nbsp;@if(!empty($ministryYesDetail) && isset($ministryYesDetail['comment'])){{$ministryYesDetail['comment']}}@endif</strong></li>
+
+                            </ul>
+                        </div>
+                        <h4 class="section-gap">@lang('web/profile.involved-in-strengthening')</h4>
+                        <div class="detail-wrap minister-gap">
+                            <ul>
+                                <span>@if(!empty($ministryYesDetail)){{$ministryYesDetail['howmany_pastoral']}}@endif </span>
+                            </ul>
+                        </div>
+                        <h4 class="section-gap">@lang('web/profile.future-pastor-trainers')</h4>
+                        <div class="detail-wrap minister-gap">
+                            <ul>
+                                <span>@if(!empty($ministryYesDetail)){{$ministryYesDetail['howmany_futurepastor']}}@endif</span>
+                            </ul>
                         </div>
                     @else
 
-                        <label for="" class="d-block">@lang('web/home.comment')</label>
-                        <div class="radio-wrap">
-                            <div class="form__radio-group">
-                            @if(!empty($resultData['result']['doyouseek_postoralcomment'])){{$resultData['result']['doyouseek_postoralcomment']}}@endif 
-                            </div> 
-                        </div>
+                            <label for="" class="d-block">@lang('web/profile.Training-to-your-ministry')</label>
+                            <div class="radio-wrap">
+                                <div class="form__radio-group">
+                                @if(!empty($resultData['result']['doyouseek_postoral'])) @if($resultData['result']['doyouseek_postoral'] == 'Yes') @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif @endif 
+                                </div> 
+                            </div>
+                        @if($resultData['result']['doyouseek_postoral'] == 'Yes')
+
+                            <label for="" class="d-block">@lang('web/profile.envision-training')</label>
+                            <div class="radio-wrap">
+                                <div class="form__radio-group">
+                                @if(!empty($resultData['result']['doyouseek_postoralcomment'])){{$resultData['result']['doyouseek_postoralcomment']}}@endif 
+                                </div> 
+                            </div>
+                        @else
+
+                            <label for="" class="d-block">@lang('web/home.comment')</label>
+                            <div class="radio-wrap">
+                                <div class="form__radio-group">
+                                @if(!empty($resultData['result']['doyouseek_postoralcomment'])){{$resultData['result']['doyouseek_postoralcomment']}}@endif 
+                                </div> 
+                            </div>
+
+                        @endif
 
                     @endif
 
-                @endif
-
-                @if($resultData['result']['profile_submit_type']=='preview')
-                    <div style="display:flex;align-items: center;">
-                        <div class="step-next" style="padding: 81px 0 0;;margin-top: 50px;">
-                            <a href="{{url('profile-update')}}" class="main-btn bg-gray-btn m-1" >@lang('web/home.edit')</a>
+                    @if($resultData['result']['profile_submit_type']=='preview')
+                        <div style="display:flex;align-items: center;">
+                            <div class="step-next" style="padding: 81px 0 0;;margin-top: 50px;">
+                                <a href="{{url('profile-update')}}" class="main-btn bg-gray-btn m-1" >@lang('web/home.edit')</a>
+                            </div>
+                            <div class="register-next">
+                                <form id="formSubmit" action="{{ route('ministry-details') }}" class="" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" name="type" class="active-input mt-2" value="submit">
+                                
+                                    <div class="step-next">
+                                        <button type="submit" class="main-btn" form="formSubmit">@lang('web/home.submit')</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <div class="register-next">
-                            <form id="formSubmit" action="{{ route('ministry-details') }}" class="" enctype="multipart/form-data">
-                                @csrf
-                                <input type="hidden" name="type" class="active-input mt-2" value="submit">
-                            
-                                <div class="step-next">
-                                    <button type="submit" class="main-btn" form="formSubmit">@lang('web/home.submit')</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    @endif
                 @endif
             </div>
         </div>
@@ -454,8 +457,61 @@
                     </div>
                 </div>
             </div>
-        </div>
+    </div>
     
+    <!-- popup model -->
+
+
+
+<div class="modal fade" id="popUpModel" aria-hidden="true" aria-labelledby="popUpModel"
+    tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-block border-0">
+                <h2 class="main-head">
+                    
+                    @if(App::getLocale() == 'pt')
+                        <p>@if(!empty($popUpModel)) {{ $popUpModel->pt_title }}  @endif</p>
+
+                    @elseif(App::getLocale() == 'sp')
+                        <p>@if(!empty($popUpModel)) {{ $popUpModel->sp_title }}  @endif</p>
+
+                    @elseif(App::getLocale() == 'fr')
+                        <p>@if(!empty($popUpModel)) {{ $popUpModel->fr_title }}  @endif</p>
+
+                    @else
+                        <p>@if(!empty($popUpModel)) {{ $popUpModel->en_title }}  @endif</p>
+                    @endif
+                </h2>
+                
+            </div>
+            <div class="modal-body">
+                <div class="thank-popup" style="padding-top: 71px;padding-bottom: 33px;display: flex;justify-content: center;">
+                    
+                    @if(App::getLocale() == 'pt')
+                        <p >@if(!empty($popUpModel)) {!! $popUpModel->pt_description !!}  @endif</p>
+
+                    @elseif(App::getLocale() == 'sp')
+                        <p >@if(!empty($popUpModel)) {!! $popUpModel->sp_description !!}  @endif</p>
+
+                    @elseif(App::getLocale() == 'fr')
+                        <p >@if(!empty($popUpModel)) {!! $popUpModel->fr_description !!}  @endif</p>
+
+                    @else
+                        <p >@if(!empty($popUpModel)) {!! $popUpModel->en_description !!}  @endif</p>
+                    @endif
+
+                   
+                    
+                </div>
+                
+                <h4 class="inner-head" style="display: flex;justify-content: center;">
+                    <a href="javascript:void(0);" class="main-btn bg-gray-btn m-1" data-bs-dismiss="modal">OK</a>
+                </h4>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 
@@ -463,8 +519,6 @@
 
 
 <script>
-
-
     
     $("form#formSubmit").submit(function(e) {
         e.preventDefault();
@@ -517,8 +571,20 @@
         });
     });
 
-    
+</script>
 
-    </script>
+<script>
+    $(document).ready(function() {
 
+        @php $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], true);
+		 
+        @endphp
+        @if($popUpModel && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount > 0)
+
+            $('#popUpModel').modal('show');
+
+        @endif
+});
+
+</script>
 @endpush

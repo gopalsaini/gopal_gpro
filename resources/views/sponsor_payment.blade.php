@@ -51,6 +51,7 @@
                                                         <label for="">@lang('web/sponsor-payment.name') <span>*</span></label>
                                                         <input type="text" name="name" value="{{$linkPayment->name}}" readonly onkeypress="return /[a-z A-Z ]/i.test(event.key)" required placeholder="@lang('web/app.enter') @lang('web/sponsor-payment.name')" class="active-input mt-2" >
                                                         <input type="hidden" name="user_id" required placeholder="@lang('web/app.enter') @lang('web/sponsor-payment.name')" class="active-input mt-2" value="{{$linkPayment->user_id}}" >
+                                                        <input type="hidden" name="id" required value="{{$linkPayment->id}}" >
                                                     </div>
                                                     <div class="col-lg-6">
                                                         <label for="">@lang('web/sponsor-payment.email') <span>*</span></label>

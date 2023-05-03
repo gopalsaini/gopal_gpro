@@ -16,7 +16,12 @@ class commonHelper{
 	}
 	
 	public static function callAPI($method, $url, $data=array(),$files=array()){
- 
+		$token = '';
+		if(Session::has('gpro_user')){
+			$token = Session::get('gpro_user');
+		}elseif(Session::has('gpro_exhibitor')){
+			$token = Session::get('gpro_exhibitor');
+		}
 		$url=env('APP_URL').'/api'.$url;
  
         if($method == 'GET'){
@@ -62,24 +67,25 @@ class commonHelper{
         }elseif($method == 'userTokenpost'){ 
             return $response = Curl::to($url)
                 ->withData($data)
-                ->withBearer(Session::get('gpro_user'))
+                ->withBearer($token)
 				->returnResponseObject()
 				->withHeader('Content-Type: application/json')
                 ->post();
                 
         }elseif($method == 'userTokenget'){
             return $response = Curl::to($url)
-            ->withBearer(Session::get('gpro_user'))
+            ->withBearer($token)
 			->returnResponseObject()
             ->get();
         }elseif($method == 'userTokendelete'){
             return $response = Curl::to($url)
-            ->withBearer(Session::get('gpro_user'))
+            ->withBearer($token)
 			->returnResponseObject()
             ->delete();
         }
         
     }
+
 
 	public static function buildMenu($parent, $menu, $sub = NULL) {
 
@@ -1064,22 +1070,77 @@ class commonHelper{
 		if($result->language == 'sp'){
 
 			$subject = "PENDIENTE: Pago de saldo para GProCongress II";
-			$msg = '<p>Estimado '.$result->name.' '.$result->last_name.',</p><p><br></p><p>Le escribimos para recordarle que tiene pagos pendientes para saldar el balance adeudado en su cuenta de GProCongress II.</p><p><br></p><p>Aquí tiene un resumen actual del estado de su pago: '.$result->amount.'</p><p><br></p><p>IMPORTE TOTAL A PAGAR: '.$totalAcceptedAmount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p>Por favor, pague el saldo a más tardar en 31st August 2023.</p><p><br></p><p>POR FAVOR, TENGA EN CUENTA: Si no se recibe el pago completo antes de 31st August 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p><p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo estará encantado de comunicarse con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Para realizar el pago ingrese a <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>Para mayor información vea el siguiente tutorial https://youtu.be/xSV96xW_Dx0 </p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p><div><br></div>';
+			$msg = '<p>Estimado '.$result->name.' '.$result->last_name.',</p><p><br></p>
+					<p>Le escribimos para recordarle que tiene pagos pendientes para saldar el balance adeudado en su cuenta de GProCongress II.</p><p><br></p>
+					<p>Aquí tiene un resumen actual del estado de su pago: '.$result->amount.'</p><p><br></p>
+					<p>IMPORTE TOTAL A PAGAR: '.$totalAcceptedAmount.'</p>
+					<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p>
+					<p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p>
+					<p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p>
+					<p>Por favor, pague el saldo a más tardar en 31 de Agosto, 2023.</p><p><br></p>
+					<p style="background-color:yellow; display: inline;"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
+					<p>POR FAVOR, TENGA EN CUENTA: Si no se recibe el pago completo antes de 31 de Agosto, 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p>
+					<p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo estará encantado de comunicarse con usted.</p><p><br></p>
+					<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+					<p>Para realizar el pago ingrese a <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
+					<p>Para mayor información vea el siguiente tutorial https://youtu.be/xSV96xW_Dx0 </p><p>Atentamente,</p><p><br></p>
+					<p>El equipo del GProCongress II</p><div><br></div>';
 		
 		}elseif($result->language == 'fr'){
 		
 			$subject = "Paiement du solde GProCongrès II: EN ATTENTE";
-			$msg = "<p>Cher ".$result->name." ".$result->last_name.",&nbsp;</p><p><br></p><p>Nous vous écrivons pour vous rappeler que vous avez des paiements en attente pour régler le solde dû sur votre compte GProCongrès II.&nbsp;&nbsp;</p><p>Voici un résumé de l’état de votre paiement : '.$result->amount.'</p><p><br></p><p>MONTANT TOTAL À PAYER : ".$totalAcceptedAmount."</p><p>PAIEMENTS EFFECTUÉS ANTÉRIEUREMENT ET ACCEPTÉS : ".$totalAcceptedAmount."</p><p>PAIEMENTS EN COURS DE TRAITEMENT : ".$totalAmountInProcess."</p><p>SOLDE RESTANT DÛ : ".$totalPendingAmount."</p><p><br></p><p>Veuillez payer le solde au plus tard le&nbsp; 31st August 2023.&nbsp;</p><p><br></p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous des questions ? Répondez simplement à cet e-mail et notre équipe sera heureuse d'entrer en contact avec vous.</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier le nombre et de renforcer les capacités des formateurs de pasteurs.</p><p><br><p><br></p><p>Pour effectuer le paiement, veuillez vous rendre sur <a href='https://www.gprocongress.org/payment' traget='blank'> www.gprocongress.org/payment </a> </p><p>Pour plus d` informations, regardez le tutoriel https://youtu.be/xSV96xW_Dx0 </p> </p><p>Cordialement,</p><div><br></div>";
+			$msg = "<p>Cher ".$result->name." ".$result->last_name.",&nbsp;</p><p><br></p>
+					<p>Nous vous écrivons pour vous rappeler que vous avez des paiements en attente pour régler le solde dû sur votre compte GProCongrès II.&nbsp;&nbsp;</p>
+					<p>Voici un résumé de l’état de votre paiement : '.$result->amount.'</p><p><br></p>
+					<p>MONTANT TOTAL À PAYER : ".$totalAcceptedAmount."</p>
+					<p>PAIEMENTS EFFECTUÉS ANTÉRIEUREMENT ET ACCEPTÉS : ".$totalAcceptedAmount."</p>
+					<p>PAIEMENTS EN COURS DE TRAITEMENT : ".$totalAmountInProcess."</p>
+					<p>SOLDE RESTANT DÛ : ".$totalPendingAmount."</p><p><br></p>
+					<p>Veuillez payer le solde au plus tard le&nbsp; 31st August 2023.&nbsp;</p><p><br></p>
+					<p style='background-color:yellow; display: inline;'><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
+					<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous des questions ? Répondez simplement à cet e-mail et notre équipe sera heureuse d'entrer en contact avec vous.</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier le nombre et de renforcer les capacités des formateurs de pasteurs.</p><p><br><p><br></p>
+					<p>Pour effectuer le paiement, veuillez vous rendre sur <a href='https://www.gprocongress.org/payment' traget='blank'> www.gprocongress.org/payment </a> </p>
+					<p>Pour plus d` informations, regardez le tutoriel https://youtu.be/xSV96xW_Dx0 </p> </p>
+					<p>Cordialement,</p><div><br></div>";
 
 		}elseif($result->language == 'pt'){
 		
 			$subject = "Pagamento do Saldo PENDENTE para o II CongressoGPro";
-			$msg = '<p>Prezado '.$result->name.'  '.$result->last_name.',&nbsp;</p><p><br></p><p>Estamos escrevendo para lhe lembrar que tem pagamentos pendentes para regularizar o seu saldo em dívida na sua conta para o II CongressoGPro.&nbsp;&nbsp;</p><p><br></p><p>Aqui está o resumo do estado atual do seu pagamento: '.$result->amount.'</p><p><br></p><p>VALOR TOTAL A SER PAGO: '.$totalAcceptedAmount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITO : '.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM ABERTO: '.$totalPendingAmount.'</p><p><br></p><p>Por favor pague o saldo até o dia ou antes de 31st August 2023.</p><p><br></p><p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p><p>Alguma dúvida? Simplesmente responda a este e-mail, e nossa equipe estará muito feliz para entrar em contacto com você.&nbsp;</p><p><br></p><p>Ore conosco a medida em que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.&nbsp;</p><p><p><br></p><p>Para fazer o pagamento, favor ir par <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>Para mais informações, veja o tutorial https://youtu.be/xSV96xW_Dx0 </p></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+			$msg = '<p>Prezado '.$result->name.'  '.$result->last_name.',&nbsp;</p><p><br></p>
+					<p>Estamos escrevendo para lhe lembrar que tem pagamentos pendentes para regularizar o seu saldo em dívida na sua conta para o II CongressoGPro.&nbsp;&nbsp;</p><p><br></p>
+					<p>Aqui está o resumo do estado atual do seu pagamento: '.$result->amount.'</p><p><br></p>
+					<p>VALOR TOTAL A SER PAGO: '.$totalAcceptedAmount.'</p>
+					<p>PAGAMENTO PREVIAMENTE FEITO E ACEITO : '.$totalAcceptedAmount.'</p>
+					<p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p>
+					<p>SALDO REMANESCENTE EM ABERTO: '.$totalPendingAmount.'</p><p><br></p>
+					<p>Por favor pague o saldo até o dia ou antes de 31st August 2023.</p><p><br></p>
+					<p style="background-color:yellow; display: inline;"><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+					<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
+					<p>Alguma dúvida? Simplesmente responda a este e-mail, e nossa equipe estará muito feliz para entrar em contacto com você.&nbsp;</p><p><br></p>
+					<p>Ore conosco a medida em que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.&nbsp;</p><p><p><br></p>
+					<p>Para fazer o pagamento, favor ir par <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
+					<p>Para mais informações, veja o tutorial https://youtu.be/xSV96xW_Dx0 </p></p>
+					<p>Calorosamente,</p>
+					<p>A Equipe do II CongressoGPro</p>';
 		
 		}else{
 		
 			$subject = 'PENDING: Balance payment for GProCongress II';
-			$msg = '<div>Dear '.$name.',&nbsp;</div><div><br></div><div>We are writing to remind you that you have pending payments to settle the balance due on your GProCongress II account.&nbsp;&nbsp;</div><div><br></div><div>Here is a summary of your payment status:</div><div><br></div><div>TOTAL AMOUNT TO BE PAID: '.$result->amount.'</div><div>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</div><div>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</div><div>REMAINING BALANCE DUE:'.$totalPendingAmount.'</div><div><br></div><div>Please pay the balance on or before 31st August 2023.&nbsp;</div><div><br></div><div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div><div>Do you have questions? Simply respond to this email, and our team will be happy to connect with you.&nbsp;</div><div><br></div><div> Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</div><div><p>To make the payment please go to <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>For more information watch the tutorial https://youtu.be/xSV96xW_Dx0 </p></div><div>Warmly,</div><div>&nbsp;The GProCongress II Team</div>';
+			$msg = '<div>Dear '.$name.',&nbsp;</div><div><br></div>
+					<div>We are writing to remind you that you have pending payments to settle the balance due on your GProCongress II account.&nbsp;&nbsp;</div><div><br></div>
+					<div>Here is a summary of your payment status:</div><div><br></div>
+					<div>TOTAL AMOUNT TO BE PAID: '.$result->amount.'</div>
+					<div>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</div>
+					<div>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</div>
+					<div>REMAINING BALANCE DUE:'.$totalPendingAmount.'</div><div><br></div>
+					<div>Please pay the balance on or before 31st August 2023.&nbsp;</div><div><br></div>
+					<p style="background-color:yellow; display: inline;"><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+					<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
+					<div>Do you have questions? Simply respond to this email, and our team will be happy to connect with you.&nbsp;</div><div><br></div><div> Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</div>
+					<div><p>To make the payment please go to <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
+					<p>For more information watch the tutorial https://youtu.be/xSV96xW_Dx0 </p></div>
+					<div>Warmly,</div>
+					<div>&nbsp;The GProCongress II Team</div>';
 			
 		}
 
@@ -1126,6 +1187,11 @@ class commonHelper{
 		$Wallet->status = 'Pending';
 		$Wallet->transaction_id = $payment->id;
 		$Wallet->save();
+
+		if($particular != '2'){
+			\App\Helpers\commonHelper::sendPaymentTriggeredMailSend($user->id,$amount);
+		}
+		
 
 		if($type == 'stripe'){
 
@@ -1433,6 +1499,7 @@ class commonHelper{
 			'Srta.'=> 'Mrs.', // sp
 			'Senhora.'=> 'Mrs.' , // pt
 			'Dr.' => 'Dr.',
+			'Dr' => 'Dr.',
 			'Pasteur' => 'Pastor',
 			'Pastor' => 'Pastor', // sp
 			'Bishop' => 'Bishop', // en
@@ -1526,7 +1593,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Pago en efectivo agregado con éxito',	
 				'TravelInformation-approved-successful' => 'Información de viaje aprobada con éxito',	
 				'Travel-Information-notApproved' => 'Información de viaje no aprobada',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si no puede pagar con su tarjeta de crédito, entonces pague con RAI",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si no puede pagar con su tarjeta de crédito, entonces pague con RIA",	
 				'Payyour-registrationfee-usinga-sponsorship' => 'Pague su matricula de inscripción utilizando un patrocinio',	
 				'Done' =>'realizado',	
 				'Youhave-madethe-full-payment' => 'Has realizado el pago completo',	
@@ -1653,6 +1720,10 @@ class commonHelper{
 				'Your_submission_has_been_sent' => 'Su envío se ha realizado correctamente.',	
 				'howmany_futurepastor'=> 'Por favor, seleccione una opción en "¿Cuántos de ellos pueden servir como futuros capacitadores de pastores?"',
 				'order_required'=> 'order',
+				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
+				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'Passport_Number_already_exists'=> 'Passport Number already exists',
+				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				
 			);
 
@@ -1734,7 +1805,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Paiement en espèces ajouté avec succès',	
 				'TravelInformation-approved-successful' => 'Informations de voyage approuvées réussies',	
 				'Travel-Information-notApproved' => 'Informations de voyage non approuvées',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si vous ne parvenez pas à payer avec votre carte de crédit, payez avec RAI",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Si vous ne parvenez pas à payer avec votre carte de crédit, payez avec RIA",	
 				'Payyour-registrationfee-usinga-sponsorship' => "Payez vos frais d'inscription en utilisant un parrainage",	
 				'Done' =>'Terminé',	
 				'Youhave-madethe-full-payment' => 'Vous avez effectué le paiement complet',	
@@ -1863,6 +1934,10 @@ class commonHelper{
 				'Your_submission_has_been_sent' => 'Votre demande a été envoyée avec succès.',
 				'howmany_futurepastor'=> 'le champ de "combien de pasteurs au futur" est exigé',	
 				'order_required'=> 'order',
+				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
+				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'Passport_Number_already_exists'=> 'Passport Number already exists',
+				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				
 			);
 
@@ -1944,7 +2019,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Pagamento em especie adicionado com sucesso',	
 				'TravelInformation-approved-successful' => 'Informações de viagem aprovada com sucesso',	
 				'Travel-Information-notApproved' => 'Informações de viagem não aprovadas',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Se você não puder pagar com seu cartão de crédito, pague usando RAI",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "Se você não puder pagar com seu cartão de crédito, pague usando RIA",	
 				'Payyour-registrationfee-usinga-sponsorship' => 'Pague sua taxa de inscrição usando um patrocínio',	
 				'Done' =>'Feito',	
 				'Youhave-madethe-full-payment' => 'Você fez o pagamento integral',	
@@ -2070,6 +2145,10 @@ class commonHelper{
 				'Your_submission_has_been_sent' => 'A sua submissão foi realizada com sucesso',	
 				'howmany_futurepastor'=> 'O Campo: quantos futuros pastores é obrigatorio',
 				'order_required'=> 'order',
+				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
+				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'Passport_Number_already_exists'=> 'Passport Number already exists',
+				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 
 				
 			);
@@ -2151,7 +2230,7 @@ class commonHelper{
 				'Cash-Payment-addedSuccessful' => 'Cash payment added successful',	
 				'TravelInformation-approved-successful' => 'Travel Information approved successful',	
 				'Travel-Information-notApproved' => 'Travel Information not approved',	
-				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using RAI",	
+				"Ifyoure-unabletopay-withyourcredit-cardthenpay-usingMoneyGram" => "If you're unable to pay with your credit card then pay using RIA",	
 				'Payyour-registrationfee-usinga-sponsorship' => 'Pay your registration fee using a sponsorship',	
 				'Done' =>'Done',	
 				'Youhave-madethe-full-payment' => 'You have made the full payment',	
@@ -2275,6 +2354,10 @@ class commonHelper{
 				'Your_submission_has_been_sent' => 'Your submission has been sent successfully.',	
 				'howmany_futurepastor'=> 'How many future pastor field is required',
 				'order_required'=> 'order',
+				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
+				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'Passport_Number_already_exists'=> 'Passport Number already exists',
+				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				
 				
 	
@@ -2322,6 +2405,788 @@ class commonHelper{
 			echo 'Error:' . curl_error($ch);
 		}
 		curl_close($ch);
+	}
+
+	public static function sendPaymentTriggeredMailSend($id,$amount) {
+		
+		$result = \App\Models\User::where('id',$id)->first();
+		if($result){
+
+			$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($id, true);
+			$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($id, true);
+			$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($id, true);
+			$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($id, true);
+			
+			if($result->language == 'sp'){
+
+				$subject = 'Pago recibido. ¡Gracias!';
+				$msg = '<p>Estimado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Se ha recibido la cantidad de $'.$result->amount.' en su cuenta.  </p><p><br></p>
+						<p>Gracias por hacer este pago.</p><p> <br></p>
+						<p>Le notificaremos tan pronto como el pago sea aprobado en nuestro sistema. Hasta entonces, este pago se reflejará como Pago en proceso.</p><p> <br></p>
+						<p>Aquí tiene un resumen actual del estado de su pago:</p>
+						<p>IMPORTE TOTAL A PAGAR:'.$result->amount.'</p>
+						<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
+						<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
+						<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+						<p style="color"red"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
+						<p style="color"red"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>
+						<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
+						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+						<p>Atentamente,</p>
+						<p>El equipo del GProCongress II</p>';
+
+			}elseif($result->language == 'fr'){
+			
+				$subject = 'Paiement intégral.  Merci !';
+				$msg = '<p>Cher '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+				<p>Un montant de '.$amount.'$ a été reçu sur votre compte.  </p><p><br></p>
+				<p>Merci d’avoir effectué ce paiement.</p><p> <br></p>
+				<p>Nous vous informerons dès que le paiement sera approuvé dans notre système. Jusqu’à ce moment-là, ce paiement apparaîtra comme un paiement en cours de traitement.</p>
+				<p>Voici un résumé de l’état de votre paiement :</p>
+				<p>MONTANT TOTAL À PAYER:'.$result->amount.'</p>
+				<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
+				<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
+				<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
+				<p style="color"red"><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
+				<p style="color"red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>
+				<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
+				<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
+				<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+			}elseif($result->language == 'pt'){
+			
+				$subject = 'Pagamento recebido. Obrigado!';
+				$msg = '<p>Prezado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Uma quantia de $'.$amount.' foi recebido na sua conta.  </p><p><br></p>
+						<p>Obrigado por ter efetuado esse pagamento.</p><p> <br></p>
+						<p>Iremos notificá-lo assim que o pagamento for aprovado no nosso sistema. Até lá, este pagamento reflectirá como Pagamento em Processo.</p><p> <br></p>
+						<p>Aqui está o resumo do estado do seu pagamento:</p>
+						<p>VALOR TOTAL A SER PAGO:'.$result->amount.'</p>
+						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
+						<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
+						<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+						<p ><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+						<p ><i>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor  previamente pagos por si serão retidos.</i></p><p><br></p>
+						<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
+						<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
+						<p><br></p><p>Calorosamente,</p>
+						<p>A Equipe do II CongressoGPro</p>';
+
+			}else{
+			
+				$subject = 'Payment received. Thank you!';
+				$msg = '<p>Dear '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>An amount of $'.$amount.' has been received on your account.  </p><p><br></p>
+						<p>Thank you for making this payment.</p><p> <br></p>
+						<p>We will notify you as soon as the payment is approved in our system. Until then, this payment will reflect as Payment in Process.</p><p> <br></p>
+						<p>Here is a summary of your payment status:</p>
+						<p>TOTAL AMOUNT TO BE PAID:'.$result->amount.'</p>
+						<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
+						<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
+						<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+						<p ><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+						<p ><i>PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</i></p><p><br></p>
+						<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
+						<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
+						<p>Warmly,</p>
+						<p>GProCongress II Team</p>';
+
+			}
+
+			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg,  $subject,);
+		}		
+
+	}
+
+	public static function sendMailMadeByTheSponsorIsApproved($orderId) {
+		
+		$result = \App\Models\SponsorPayment::where('order_id',$orderId)->first();
+		
+		if($result){
+			$user = \App\Models\User::where('id',$result->user_id)->first();
+
+			$subject = 'Thank you for your payment!';
+			$msg = '<p>Dear '.$result->name.' ,&nbsp;</p><p><br></p>
+					<p>Thank you for sponsoring '.$user->name.' '.$user->last_name.' to attend GProCongress II. </p><p><br></p>
+					<p>A payment has been received from you in the amount of $'.$result->amount.' has been approved.  </p><p> <br></p>
+					<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p><p> <br></p>
+					<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p><p> <br></p>
+					<p>Warmly,</p>
+					<p>GProCongress II Team</p>';
+
+			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+
+		}		
+
+	}
+
+	public static function sendMailMadeByTheSponsorIsDeclined($orderId) {
+		
+		$result = \App\Models\SponsorPayment::where('order_id',$orderId)->first();
+		
+		if($result){
+			$user = \App\Models\User::where('id',$result->user_id)->first();
+
+			$token = md5(rand(1111,4444));
+			$result->token = $token;
+			$result->save();
+			
+			$url = '<a href="'.url('sponsor-payment-link/'.$token) .'" >click here</a>';
+
+			$subject = 'Your payment has been declined.';
+			$msg = '<p>Dear '.$result->name.' ,&nbsp;</p><p><br></p>
+					<p>Thank you for sponsoring '.$user->name.' '.$user->last_name.' to attend GProCongress II. </p><p><br></p>
+					<p>Unfortunately, we could not process your payment.  Please try your payment again, by going to this link : '.$url.'</p><p> <br></p>
+					<p>If you need to speak to one of our team members, simply reply to this email.</p><p> <br></p>
+					<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p><p> <br></p>
+					<p>Warmly,</p>
+					<p>GProCongress II Team</p>';
+
+			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+
+		}		
+
+	}
+
+	
+	public static function sendSponsorPaymentTriggeredToUserMail($id,$amount,$sponsorName) {
+		
+		$result = \App\Models\User::where('id',$id)->first();
+		if($result){
+
+			$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($id, true);
+			$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($id, true);
+			$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($id, true);
+			$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($id, true);
+			
+			if($result->language == 'sp'){
+
+				$subject = 'Pago recibido del patrocinador '.$sponsorName.'. ¡Gracias!';
+				$msg = '<p>Estimado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Se ha recibido una cantidad de $'.$amount.' en su cuenta de su patrocinador '.$sponsorName.'.</p><p><br></p>
+						<p>Le notificaremos tan pronto como el pago sea aprobado en nuestro sistema. Hasta entonces, este pago se reflejará como Pago en proceso.</p><p> <br></p>
+						<p>Aquí tiene un resumen actual del estado de su pago:</p>
+						<p>IMPORTE TOTAL A PAGAR:'.$result->amount.'</p>
+						<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
+						<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
+						<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+						<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
+						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+						<p>Atentamente,</p>
+						<p>El equipo del GProCongress II</p>';
+
+			}elseif($result->language == 'fr'){
+			
+				$subject = 'Paiement reçu du '.$sponsorName.'. Merci !';
+				$msg = '<p>Cher '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Un montant de $'.$amount.' a été reçu sur votre compte de la part de votre '.$sponsorName.' . </p><p><br></p>
+						<p>Nous vous informerons dès que le paiement sera approuvé dans notre système. Jusqu’à ce moment-là, ce paiement apparaîtra comme un paiement en cours de traitement.</p>
+						<p>Voici un résumé de l’état de votre paiement :</p>
+						<p>MONTANT TOTAL À PAYER:'.$result->amount.'</p>
+						<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
+						<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
+						<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
+						<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
+						<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
+						<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+			}elseif($result->language == 'pt'){
+			
+				$subject = 'Pagamento recebido do patrocinador '.$sponsorName.'. Obrigado!';
+				$msg = '<p>Prezado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Um montante de $'.$amount.' foi recebido na sua conta do seu patrocinador '.$sponsorName.'.</p><p><br></p>
+						<p>Iremos notificá-lo assim que o pagamento for aprovado no nosso sistema. Até lá, este pagamento reflectirá como Pagamento em Processo.</p><p> <br></p>
+						<p>Aqui está o resumo do estado do seu pagamento:</p>
+						<p>VALOR TOTAL A SER PAGO:'.$result->amount.'</p>
+						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
+						<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
+						<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+						<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
+						<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
+						<p><br></p><p>Calorosamente,</p>
+						<p>A Equipe do II CongressoGPro</p>';
+
+			}else{
+			
+				$subject = 'Payment received from sponsor '.$sponsorName.'. Thank you!';
+				$msg = '<p>Dear '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>An amount of $'.$amount.' has been received on your account from your sponsor '.$sponsorName.'.  </p><p><br></p>
+						<p>We will notify you as soon as the payment is approved in our system. Until then, this payment will reflect as Payment in Process.</p><p> <br></p>
+						<p>Here is a summary of your payment status:</p>
+						<p>TOTAL AMOUNT TO BE PAID:'.$result->amount.'</p>
+						<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
+						<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
+						<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+						<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
+						<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
+						<p>Warmly,</p>
+						<p>GProCongress II Team</p>';
+
+			}
+
+			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg,  $subject,);
+		}		
+
+	}
+
+	
+	public static function sendSponsorPaymentApprovedToUserMail($id,$amount,$type,$order_id) {
+		
+		$result = \App\Models\User::where('id',$id)->first();
+		if($result){
+
+			$sponsorName='';
+			$SponsorPayment = \App\Models\SponsorPayment::where('order_id',$order_id)->first();
+			if($SponsorPayment){
+				$sponsorName= $SponsorPayment->name;
+			}
+			$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($id, true);
+			$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($id, true);
+			$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($id, true);
+			$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($id, true);
+			
+			if($result->language == 'sp'){
+
+				if($type == 'full'){
+					$paymentType = 'Gracias por hacer este pago.';
+					$EB = '';
+				}else{
+					$paymentType = 'Gracias por hacer este pago parcial.';
+					$EB = '<p style="color"red"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
+					<p style="color"red"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>';
+
+				}
+
+				$subject = 'Se aprueba el pago recibido del patrocinador '.$sponsorName.'. ¡Gracias!';
+				$msg = '<p>Estimado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Se ha aprobado en su cuenta un monto de $'.$amount.' pagado por su patrocinador '.$sponsorName.'.</p><p><br></p>
+						<p>Le notificaremos tan pronto como el pago sea aprobado en nuestro sistema. Hasta entonces, este pago se reflejará como Pago en proceso.</p><p> <br></p>
+						<p>'.$paymentType.'</p><p> <br></p>
+						<p>Aquí tiene un resumen actual del estado de su pago:</p>
+						<p>IMPORTE TOTAL A PAGAR:'.$result->amount.'</p>
+						<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
+						<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
+						<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+						'.$EB.'
+						<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
+						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+						<p>Atentamente,</p>
+						<p>El equipo del GProCongress II</p>';
+
+			}elseif($result->language == 'fr'){
+			
+				if($type == 'full'){
+					$paymentType = 'Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !';
+					$EB = '';
+				}else{
+					$paymentType = 'Merci d’avoir effectué ce paiement partiel.';
+					$EB = '<p style="color"red"><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
+					<p style="color"red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>';
+
+				}
+				$subject = 'Le paiement reçu du '.$sponsorName.' est approuvé. Merci de votre compréhension.';
+				$msg = '<p>Cher '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Un montant de $'.$amount.' payé par votre '.$sponsorName.'  a été approuvé sur votre compte.</p><p><br></p>
+						<p>'.$paymentType.'</p><p> <br></p>
+						<p>Nous vous informerons dès que le paiement sera approuvé dans notre système. Jusqu’à ce moment-là, ce paiement apparaîtra comme un paiement en cours de traitement.</p>
+						<p>Voici un résumé de l’état de votre paiement :</p>
+						<p>MONTANT TOTAL À PAYER:'.$result->amount.'</p>
+						<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
+						<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
+						<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
+						'.$EB.'
+						<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
+						<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
+						<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+			}elseif($result->language == 'pt'){
+			
+				if($type == 'full'){
+					$paymentType = 'Você agora pagou na totalidade para o II CongressoGPro. Obrigado!';
+					$EB = '';
+				}else{
+					$paymentType = 'Obrigado por ter efetuado esse pagamento parcial.';
+					$EB = '<p style="color"red"><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+					<p style="color"red"><i>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor  previamente pagos por si serão retidos.</i></p><p><br></p>';
+
+				}
+
+				$subject = 'Pagamento recebido do patrocinador '.$sponsorName.' está aprovado. Obrigado!.';
+				$msg = '<p>Prezado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Um montante de $'.$amount.' pago pelo seu patrocinador '.$sponsorName.' foi aprovado na sua conta.</p><p><br></p>
+						<p>Iremos notificá-lo assim que o pagamento for aprovado no nosso sistema. Até lá, este pagamento reflectirá como Pagamento em Processo.</p><p> <br></p>
+						<p>'.$paymentType.'</p><p> <br></p>
+						<p>Aqui está o resumo do estado do seu pagamento:</p>
+						<p>VALOR TOTAL A SER PAGO:'.$result->amount.'</p>
+						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
+						<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
+						<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+						'.$EB.'
+						<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
+						<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
+						<p><br></p><p>Calorosamente,</p>
+						<p>A Equipe do II CongressoGPro</p>';
+
+			}else{
+			
+				if($type == 'full'){
+					$paymentType = 'You have now paid in full for GProCongress II.  Thank you!';
+					$EB = ' ';
+				}else{
+					$paymentType = 'Thank you for partial payment.';
+					
+					$EB = '<p style="color"red"><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+					<p style="color"red"><i>PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</i></p><p><br></p>';
+					
+				}
+
+				$subject = 'Payment received from sponsor '.$sponsorName.' is approved. Thank you!';
+				$msg = '<p>Dear '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>An amount of $'.$amount.' paid by your sponsor '.$sponsorName.' has been approved on your account. </p><p><br></p>
+						<p>We will notify you as soon as the payment is approved in our system. Until then, this payment will reflect as Payment in Process.</p><p> <br></p>
+						<p>'.$paymentType.'</p><p> <br></p>
+						<p>Here is a summary of your payment status:</p>
+						<p>TOTAL AMOUNT TO BE PAID:'.$result->amount.'</p>
+						<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
+						<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
+						<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+						'.$EB.'
+						<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
+						<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
+						<p>Warmly,</p>
+						<p>GProCongress II Team</p>';
+
+			}
+
+			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg,  $subject,);
+		}		
+
+	}
+	
+	public static function sendSponsorPaymentDeclinedToUserMail($id,$amount,$order_id) {
+		
+		$result = \App\Models\User::where('id',$id)->first();
+		if($result){
+
+			$sponsorName='';
+			$SponsorPayment = \App\Models\SponsorPayment::where('order_id',$order_id)->first();
+			if($SponsorPayment){
+				$sponsorName= $SponsorPayment->name;
+			}
+			$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($id, true);
+			$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($id, true);
+			$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($id, true);
+			$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($id, true);
+			
+			if($result->language == 'sp'){
+
+				$subject = 'El pago recibido del patrocinador '.$sponsorName.'. ha sido rechazado ¡Gracias!';
+				$msg = '<p>Estimado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>El pago reciente por la cantidad de $'.$amount.' realizado por su patrocinador '.$sponsorName.' ha sido rechazado a GProCongress.</p><p><br></p>
+						<p>Le notificaremos tan pronto como el pago sea aprobado en nuestro sistema. Hasta entonces, este pago se reflejará como Pago en proceso.</p><p> <br></p>
+						<p>Aquí tiene un resumen actual del estado de su pago:</p>
+						<p>IMPORTE TOTAL A PAGAR:'.$result->amount.'</p>
+						<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
+						<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
+						<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+						<p style="color:red"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
+						<p style="color:red"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>
+						<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
+						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+						<p>Atentamente,</p>
+						<p>El equipo del GProCongress II</p>';
+
+			}elseif($result->language == 'fr'){
+			
+				$subject = 'Le paiement reçu du '.$sponsorName.' est refusé. Nous vous remercions de votre attention.';
+				$msg = '<p>Cher '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Le paiement récent d’un montant de '.$amount.' $ effectué par votre '.$sponsorName.'  à GProCongress a été refusé.</p><p><br></p>
+						<p>Nous vous informerons dès que le paiement sera approuvé dans notre système. Jusqu’à ce moment-là, ce paiement apparaîtra comme un paiement en cours de traitement.</p>
+						<p>Voici un résumé de l’état de votre paiement :</p>
+						<p>MONTANT TOTAL À PAYER:'.$result->amount.'</p>
+						<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
+						<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
+						<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
+						<p style="color:red"><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
+						<p style="color:red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>
+						<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
+						<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
+						<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+			}elseif($result->language == 'pt'){
+			
+				$subject = 'Pagamento recebido do patrocinador '.$sponsorName.' está recusado. Obrigado!';
+				$msg = '<p>Prezado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>O pagamento recente da quantia $'.$amount.' feito pelo seu patrocinador '.$sponsorName.' ao GProCongress foi recusado.</p><p><br></p>
+						<p>Iremos notificá-lo assim que o pagamento for aprovado no nosso sistema. Até lá, este pagamento reflectirá como Pagamento em Processo.</p><p> <br></p>
+						<p>Aqui está o resumo do estado do seu pagamento:</p>
+						<p>VALOR TOTAL A SER PAGO:'.$result->amount.'</p>
+						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
+						<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
+						<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+						<p ><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+						<p ><i>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor  previamente pagos por si serão retidos.</i></p><p><br></p>
+						<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
+						<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
+						<p><br></p><p>Calorosamente,</p>
+						<p>A Equipe do II CongressoGPro</p>';
+
+			}else{
+			
+				$subject = 'Payment received from sponsor '.$sponsorName.' is declined. Thank you!';
+				$msg = '<p>Dear '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Recent payment of amount $'.$amount.' made by your sponsor '.$sponsorName.' to GProCongress was declined.</p><p><br></p>
+						<p>We will notify you as soon as the payment is approved in our system. Until then, this payment will reflect as Payment in Process.</p><p> <br></p>
+						<p>Here is a summary of your payment status:</p>
+						<p>TOTAL AMOUNT TO BE PAID:'.$result->amount.'</p>
+						<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
+						<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
+						<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+						<p ><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+						<p ><i>PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</i></p><p><br></p>
+						<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
+						<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
+						<p>Warmly,</p>
+						<p>GProCongress II Team</p>';
+
+			}
+
+			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg,  $subject,);
+		}
+	}		
+	
+	public static function sendSponsorshipLetterMailSend($user_id,$id) {
+		
+		$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+
+		$user= \App\Models\User::where('id',$user_id)->first();
+		$name = $user->name.' '.$user->last_name;
+
+		$url = '<a href="'.url('sponsorship-letter-approve').'">Click here</a>';
+		$to = $user->email;
+
+		$subject = 'Please verify your sponsorship letter.';
+		$msg = '<p>Thank you for submitting your sponsorship letter.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'sponsorship information completed');
+		
+		if($user->language == 'sp'){
+
+			$subject = "Por favor, verifique su información de viaje";
+			$msg = '<p>Estimado '.$name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace: '.$url.' para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
+		
+		}elseif($user->language == 'fr'){
+		
+			$subject = "Veuillez vérifier vos informations de voyage";
+			$msg = "<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien: '.$url.' pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+
+		}elseif($user->language == 'pt'){
+		
+			$subject = "Por favor verifique sua Informação de Viagem";
+			$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link: '.$url.' para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
+		
+		}else{
+		
+			$subject = 'Please verify your sponsorship letter.';
+			$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+								
+		}
+
+		$pdf = \PDF::loadView('email_templates.sponsorship_info_show', $passportApprove->toArray());
+		$pdf->setPaper('L');
+		$pdf->output();
+		$fileName = strtotime("now").rand(11,99).'.pdf';
+		$path = public_path('uploads/file/');
+		$passportApprove->sponsorship_letter=$fileName;
+		$passportApprove->save();
+		
+		$pdf->save($path . '/' . $fileName);
+		
+		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		
+	}
+
+	public static function sendFinancialLetterMailSend($user_id,$id,$financial) {
+		
+		$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+
+		$user= \App\Models\User::where('id',$user_id)->first();
+		
+		$to = $user->email;
+
+		$subject = 'Financial letter.';
+
+		$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
+
+		$msg = '<p>Dear '.$passportApprove->salutation.' '.$passportApprove->name.',</p><p><br></p><p><br></p>
+		<p>Passport Number: '.$passportApprove->passport_no.'</p><p><br></p>
+		<p>Country: '.\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship).'</p><p><br></p>
+		<p>This letter will confirm that your application to GProCongress II has been accepted, and that you are invited to attend the Congress in Panama City, Panama, from November 12-17, 2023.</p><p><br></p>
+		<p>RREACH is providing you with significant financial assistance, so that you can attend the Congress. First, your registration fee has been discounted to ___________. (RREACH’s cost for each delegate to attend the Congress is around $1,750.00.) In addition, RREACH will cover the following expenses: </p><p><br></p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Airport transfers to/from the hotel.</p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	A room for five nights at the Westin Playa Bonita Panama Hotel.</p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	All meals during the Congress; and</p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	All materials for the Congress.</p><p><br></p>
+		<p>Therefore, the only costs you are responsible for are your registration fee listed above, and your airfare to Panama. All other incidental expenses and visa fee (if applicable) will be borne by you.</p><p><br></p>
+		<p>This is a unique opportunity for you to <b>connect with like-minded peers</b>, who serve undertrained pastors everywhere, and to <b>build new relationships</b> with current and emerging leaders in pastor training.  Secondly, it’s a wonderful time for you to <b>reflect</b> on your ministry calling, to <b>envision</b> the next season of your life and ministry, to <b>think</b> strategically about implementation, and to assess your ministry effectiveness. Thirdly, it’s a great place for you to <b>find resources</b> for your future ministry – learn how to receive <b>strength from the Lord Jesus Christ</b> to continue your work, find committed partners for mutual encouragement in coming years; and gather <b>proven ideas and new models</b> in pastor training partnerships, support, and delivery.</p><p><br</p>
+		<p>We hope that you will come to Panama this November, and be part of this global gathering of pastor trainers, designed to enhance pastoral health and advance church health in 200+ nations, and ultimately to reach the <b>next billion individuals</b> with spiritual health.  </p><p><br></p>
+		<p>For the glory of Christ, and for the beauty of His Bride,</p><p><br></p>
+		<p>'.$rajiv_richard.'</p><p><br></p>
+		<p>Rajiv Richard</p>
+		<p>GProCongress II Coordinator</p>
+		<p>Email: info@gprocongress.org</p>';
+
+		$passportApproveArray= [
+			'salutation'=>$passportApprove->salutation,
+			'name'=>$passportApprove->name,
+			'passport_no'=>$passportApprove->passport_no,
+			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship),
+			'rajiv_richard'=>$rajiv_richard,
+			'amount'=>$user->amount,
+		];
+
+		
+		$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+		$pdf->setPaper('L');
+		$pdf->output();
+		$fileName = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$path = public_path('uploads/file/');
+		
+		$pdf->save($path . '/' . $fileName);
+
+		$passportApproveArray= [
+			'salutation'=>$passportApprove->salutation,
+			'name'=>$passportApprove->name,
+			'passport_no'=>$passportApprove->passport_no,
+			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship),
+			'rajiv_richard'=>$rajiv_richard,
+			'amount'=>$user->amount,
+		];
+
+		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
+		$pdf->setPaper('L');
+		$pdf->output();
+		$financialSpanishLetter = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$path = public_path('uploads/file/');
+		
+		$pdf->save($path . '/' . $financialSpanishLetter);
+
+		$passportApprove->financial_letter=$fileName;
+		$passportApprove->financial_spanish_letter=$financialSpanishLetter;
+		if($financial == 'financial'){
+
+			$passportApprove->status='Approve';
+		}
+		
+		$passportApprove->save();
+
+		// $files = [
+        //     public_path('uploads/file/'.$fileName),
+        //     public_path('uploads/file/'.$financialSpanishLetter),
+        // ];
+
+		// \Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+		// 	$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+		// 	$message->subject($subject);
+		// 	$message->to($to);
+			
+		// 	foreach ($files as $file){
+        //         $message->attach($file);
+        //     }
+			
+		// });
+		
+		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
+		
+		
+	}
+
+	public static function sendExhibitorsRegistrationMailSend($id,$password) {
+		
+		$user = \App\Models\User::where('id',$id)->first();
+
+		$to = $user['email'];
+
+		$subject = "Thank you for registering as an Exhibitor for GProCongress II.";
+		$msg = '<p>Dear '.$user->name.' '.$user->salutation.',</p>
+				<p>We have received your submission, asking to be an Exhibitor at GProCongress II in Panama this November.  Thank you for your interest in being a part of this important and historic event!</p>
+				<p>Your registered email and password are:</p>
+				<p><br>Email: '.$to.'<br>Password: '.$password.'<br></p>
+				<p>Our team will review your submission, and will be in touch with you soon to confirm whether or not you have been approved.  If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
+				<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.</i> </p>
+				<p>Warmly,</p><p><br></p>
+				<p>The GProCongress II Team</p>';
+		
+		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+
+		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Registering as an Exhibitor for GProCongress II.');
+		
+	}
+
+	public static function sendExhibitorsRegistrationUserHistory($data){
+		
+		$ExhibitorsData=new \App\Models\Exhibitors();
+		
+		$ExhibitorsData->user_id = $data['user_id'];
+		$ExhibitorsData->business_owner_id = $data['business_owner_id'];
+		$ExhibitorsData->parent_id = $data['parent_id'];
+		$ExhibitorsData->added_as = $data['added_as'];
+		$ExhibitorsData->name = $data['name'];
+		$ExhibitorsData->email = $data['email']; 
+		$ExhibitorsData->mobile = $data['mobile']; 
+		$ExhibitorsData->citizenship = $data['citizenship'];
+		$ExhibitorsData->business_name = $data['business_name'];
+		$ExhibitorsData->business_identification_no = $data['business_identification_no'];
+		$ExhibitorsData->website = $data['website'];
+		$ExhibitorsData->dob = $data['dob']; 
+		$ExhibitorsData->gender = $data['gender']; 
+		$ExhibitorsData->passport_number = $data['passport_number'];  
+		$ExhibitorsData->any_one_coming_with_along  = $data['any_one_coming_with_along'];
+		$ExhibitorsData->coming_with_spouse  = $data['coming_with_spouse'];
+		$ExhibitorsData->last_name  = $data['salutation'];
+		$ExhibitorsData->phone_code  = $data['mobile_code'];
+		$ExhibitorsData->passport_copy = $data['passport_copy'];
+		$ExhibitorsData->diplomatic_passport = $data['diplomatic_passport'];
+		$ExhibitorsData->logo = $data['logo'];
+		$ExhibitorsData->room = $data['room'];
+
+		$ExhibitorsData->save();
+		
+		
+	}
+
+	
+	public static function sendExhibitorSponsorshipLetterMailSend($user_id) {
+		
+		$passportApprove= \App\Models\Exhibitors::where('user_id',$user_id)->first();
+
+		$user= \App\Models\User::where('id',$user_id)->first();
+		$name = $user->name.' '.$user->last_name;
+
+		$url = '<a href="'.url('sponsorship-letter-approve').'">Click here</a>';
+		$to = $user->email;
+
+		$subject = 'Please verify your sponsorship letter.';
+		$msg = '<p>Thank you for submitting your sponsorship letter.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'sponsorship information completed');
+		
+		if($user->language == 'sp'){
+
+			$subject = "Por favor, verifique su información de viaje";
+			$msg = '<p>Estimado '.$name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace: '.$url.' para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
+		
+		}elseif($user->language == 'fr'){
+		
+			$subject = "Veuillez vérifier vos informations de voyage";
+			$msg = "<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien: '.$url.' pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+
+		}elseif($user->language == 'pt'){
+		
+			$subject = "Por favor verifique sua Informação de Viagem";
+			$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link: '.$url.' para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
+		
+		}else{
+		
+			$subject = 'Please verify your sponsorship letter.';
+			$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+								
+		}
+
+		$pdf = \PDF::loadView('email_templates.sponsorship_info_show', $passportApprove->toArray());
+		$pdf->setPaper('L');
+		$pdf->output();
+		$fileName = strtotime("now").rand(11,99).'.pdf';
+		$path = public_path('uploads/file/');
+		$passportApprove->sponsorship_letter=$fileName;
+		$passportApprove->save();
+		
+		$pdf->save($path . '/' . $fileName);
+		
+		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		
+	}
+
+	public static function sendExhibitorFinancialLetterMailSend($user_id) {
+		
+		$passportApprove= \App\Models\Exhibitors::where('user_id',$user_id)->first();
+
+		$user= \App\Models\User::where('id',$user_id)->first();
+		
+		$to = $user->email;
+
+		$fileName = 'visa_financial_spanish_letter.pdf';
+		$financialSpanishLetter = 'visa_financial_english_letter.pdf';
+		
+		$passportApprove->financial_letter=$fileName.','.$financialSpanishLetter;
+		
+		$passportApprove->save();
+
+		// $files = [
+        //     public_path('uploads/file/'.$fileName),
+        //     public_path('uploads/file/'.$financialSpanishLetter),
+        // ];
+
+		// \Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+		// 	$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+		// 	$message->subject($subject);
+		// 	$message->to($to);
+			
+		// 	foreach ($files as $file){
+        //         $message->attach($file);
+        //     }
+			
+		// });
+		
+		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
+		
+		
+	}
+
+	
+	public static function sendExhibitorPaymentReminderMailSend($id) {
+		
+		$result = \App\Models\User::where('id',$id)->first();
+
+		$to = $result->email;
+		$website = '<a href="'.url('/payment').'">website</a>';
+
+		
+		$subject = 'REMINDER – Please make your GProCongress II payment today.';
+		$msg = '<p>Dear '.$result->name.' '.$result->last_name.',&nbsp;</p>
+				<p>Payment for your attendance as an Exhibitor at GProCongress II is now due in full, but we have not yet received your payment.  Please make your payment as soon as possible.</p>
+				<p>Please follow the instructions listed below to make your payment. You may pay your fees on our '.$website.'. Online payment using credit card – you can pay your fees using any major credit card.</p>
+				<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+				<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.<i></p>
+				<p>Warmly,</p>
+				<p>&nbsp;The GProCongress II Team</p>';
+		
+		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+
+		\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg, 'REMINDER – Please make your GProCongress II payment today.');
+					
+
 	}
 
 }

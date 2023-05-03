@@ -48,7 +48,7 @@
 									<div class="form-line">
 										<label for="image"> Image <label class="text-danger">*</label></label>
 										<input type="file" id="image" class="form-control"  name="image" @if(!$result) required @endif  data-type="single" data-image-preview="category_preview" accept="image/*"  class="form-control" >
-										<p style="color:red;width:50%"> Size must be 238*239</p>
+										<!-- <p style="color:red;width:50%"></p> -->
 									</div>
 								</div>
 								<div class="form-group previewimages col-md-6" id="category_preview">
@@ -62,7 +62,7 @@
 							<div class="col-sm-12">
 								<div class="form-group">
 									<label for="input"> Description:</label>
-									<textarea id="summernote" class="form-control summernote" name="description" placeholder="Enter description" cols="30" rows="5">@if($result){{ $result->description }}@endif</textarea>
+									<textarea class="form-control summernote" name="description" placeholder="Enter description" cols="30" rows="5">@if($result){{ $result->description }}@endif</textarea>
 								</div>
 							</div>
 

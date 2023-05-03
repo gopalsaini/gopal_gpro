@@ -17,7 +17,8 @@ class Userauth
      */
     public function handle(Request $request, Closure $next)
     {
-		if(!Session::get('gpro_user')){
+
+		if(!Session::get('gpro_user') && !Session::get('gpro_exhibitor')){
 			
 			$request->session()->flash('gpro_error','Please first login');
 			return redirect('/login');

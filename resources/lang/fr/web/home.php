@@ -59,7 +59,8 @@ return [
     'pending' => 'En attente',
     'please-choose-option' => 'Veuillez choisir une option',
     'wire-transfer' => 'Virement',
-    'money-gram' => "Money gram",
+    // 'money-gram' => "Money gram",
+    'money-gram' => "RIA",
     'western-union' => 'Western Union',
     'upload-payment-image' => 'Télécharger l’image de paiement',
     'coming-along-with-spouse' => 'Venez-vous avec votre époux/se au Congrès ?',
@@ -123,4 +124,6 @@ return [
     'Offline-payment-successful' => 'Paiement hors ligne réussi',
     'TravelInformation-approved-successful' => 'Informations de voyage approuvées réussies',
     'Email-already-verifiedPlease-Login' => 'E-mail déjà vérifié. Veuillez vous connecter',	
+    'PreRecordedVideo'=>'Pre Recorded Video',
+
 ];

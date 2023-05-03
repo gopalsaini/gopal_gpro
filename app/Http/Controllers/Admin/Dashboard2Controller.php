@@ -181,7 +181,7 @@ class Dashboard2Controller extends Controller
                 'Credit/Debit Card' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Card']])->count(),
                 'Western Union' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'WU']])->count(),
                 'MG' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'MG']])->count(),
-                'RAI' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'RAI']])->count(),
+                'RIA' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'RIA']])->count(),
                 'Bank Wire Transfer' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Wire']])->count(),
         );
 

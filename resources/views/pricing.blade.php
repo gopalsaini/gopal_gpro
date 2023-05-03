@@ -74,19 +74,19 @@
                                     <ul>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB">0</span></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB">0</span></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.deluxe-room-early-bird')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-early">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-early">0</span></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_spouse_trainer')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WEB">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WEB">0</span></span>
                                         </li>
                                     </ul>
                                 </div>
@@ -94,19 +94,19 @@
                                     <ul>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB">0</span></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB">0</span></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.deluxe-room-early-bird')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-after-WOEB">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-after-WOEB">0</span></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_spouse_trainer')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WOEB">0.00</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WOEB">0</span></span>
                                         </li>
                                     </ul>
                                 </div>
@@ -177,22 +177,22 @@
 
 
                     $('.detail-price-wrap').find('.price').html(filter[0].base_price);
-                    $('.detail-price-wrap').find('.twin-sharing-WEB').html((parseInt(filter[0].twin_sharing_per_person_deluxe_room)-parseInt(100)));
-                    $('.detail-price-wrap').find('.twin-sharing-WOEB').html(filter[0].twin_sharing_per_person_deluxe_room);
+                    $('.detail-price-wrap').find('.twin-sharing-WEB').html((parseInt(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room)-parseInt(100))));
+                    $('.detail-price-wrap').find('.twin-sharing-WOEB').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room));
                     $('.detail-price-wrap').find('.single-room-WEB').html(SingleRoomWEB);
                     $('.detail-price-wrap').find('.single-room-WOEB').html(SingleRoomWOEB);
-                    $('.detail-price-wrap').find('.single-trainer-WEB').html(((parseInt(filter[0].base_price)+parseInt(1250))-parseInt(100)));
-                    $('.detail-price-wrap').find('.single-trainer-WOEB').html(((parseInt(filter[0].base_price)+parseInt(1250))));
-                    $('.detail-price-wrap').find('.early-bird').html(filter[0].early_bird_cost);
-                    $('.detail-price-wrap').find('.trainers-early').html(filter[0].both_are_trainers_deluxe_room_early_bird);
-                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(filter[0].both_are_trainers_deluxe_room_after_early_bird);
+                    $('.detail-price-wrap').find('.single-trainer-WEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))-parseInt(100)));
+                    $('.detail-price-wrap').find('.single-trainer-WOEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))));
+                    $('.detail-price-wrap').find('.early-bird').html(Math.trunc(filter[0].early_bird_cost));
+                    $('.detail-price-wrap').find('.trainers-early').html(Math.trunc(filter[0].both_are_trainers_deluxe_room_early_bird));
+                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(Math.trunc(filter[0].both_are_trainers_deluxe_room_after_early_bird));
                 } else {
-                    $('.detail-price-wrap').find('.price, .twin-sharing, .early-bird, .trainers-early, .trainers-after').html('0.00');
+                    $('.detail-price-wrap').find('.price, .twin-sharing, .early-bird, .trainers-early, .trainers-after').html('0');
                 }
                 $('.loader').html('');
             }, 300);
         } else {
-            $('.detail-price-wrap').find('.price, .twin-sharing, .early-bird, .trainers-early, .trainers-after').html('0.00');
+            $('.detail-price-wrap').find('.price, .twin-sharing, .early-bird, .trainers-early, .trainers-after').html('0');
         }
     }
 </script>

@@ -174,7 +174,7 @@ class DashboardController extends Controller
                 'Credit/Debit Card' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Card']])->count(),
                 'Western Union' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'WU']])->count(),
                 'MG' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'MG']])->count(),
-                'RAI' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'RAI']])->count(),
+                'RIA' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'RIA']])->count(),
                 'Bank Wire Transfer' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Wire']])->count(),
         );
 
@@ -305,7 +305,7 @@ class DashboardController extends Controller
           
             $Pastoral = 0; $Aspirational = 0; $Not = 0;
             $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->get();
-            if(!empty($Singles) && count($Singles)>0){
+            if(isset($Singles)){
 
                 foreach($Singles as $Single){
 
@@ -402,27 +402,25 @@ class DashboardController extends Controller
 
       public function SingleMarriedComing(){
         
-          $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Married']])->get();
-          if(!empty($Singles) && count($Singles)>0){
+          $marriedWithoutSpouseCount = 0;
+          $unmarriedCount = 0;
+          $users = \App\Models\User::where('user_type', '!=', 1)
+              ->where('designation_id', 2)
+              ->whereIn('marital_status', ['Married', 'Unmarried'])
+              ->get();
 
-            $MarriedTotal = 0; $singleTotal = 0;
-              foreach($Singles as $Single){
-
-                  $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
-                  
-                  if(!$user){
-
-                      $singleTotal++;
-
-                  }
+          foreach ($users as $user) {
+              if ($user->marital_status === 'Married' && $user->added_as !== 'Spouse') {
+                  $marriedWithoutSpouseCount++;
+              } else if ($user->marital_status === 'Unmarried') {
+                  $unmarriedCount++;
               }
-
           }
 
-          $stages = array(
-                'Single' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Unmarried']])->count(),
-                'Married coming without Spouse' => $singleTotal,
-          );
+          $stages = [
+              'Single' => $unmarriedCount,
+              'Married coming without Spouse' => $marriedWithoutSpouseCount,
+          ];
 
           return response()->json($stages);
       }

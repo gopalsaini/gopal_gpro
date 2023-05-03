@@ -19,6 +19,8 @@ return [
     'myprofile' => 'Mi Perfil',
     'contactus' => 'Contáctenos',
     'pricing' => 'Costo',
+    'donate' => 'Donar',
+    'donate_now' => 'Done ahora',
     'help' => 'Ayuda',
     'login' => 'Iniciar sesión',
     'logout' => 'Cerrar Sesión',

@@ -8,7 +8,7 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> @lang('admin.stage') @lang('admin.zero') @lang('admin.'.$type) </h3>
+                <h3> @lang('admin.stage') @lang('admin.zero') $type </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.user')</li>

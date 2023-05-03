@@ -56,7 +56,7 @@ return [
     'pending' => 'Pendiente',
     'please-choose-option' => 'Por favor, elija una opción',
     'wire-transfer' => 'Transferencia bancaria',
-    'money-gram' => 'RAI',
+    'money-gram' => 'RIA',
     'western-union' => 'Western Union',
     'upload-payment-image' => 'Cargar Imagen de Pago',
     'coming-along-with-spouse' => '¿Viene con su cónyuge al Congreso?',
@@ -119,7 +119,8 @@ return [
     'Offline-payment-successful' => 'Pago fuera de línea exitoso',
     'TravelInformation-approved-successful' => 'Información de viaje aprobada con éxito',
     'Email-already-verifiedPlease-Login' => 'Se ha verificado el correo electrónico, por favor, inicie sesión',	
-    
+    'PreRecordedVideo'=>'Pre Recorded Video',
+
 
 
 ];

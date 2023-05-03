@@ -19,6 +19,8 @@ return [
     'myprofile' => 'Meu Perfil',
     'contactus' => 'Contacte-nos',
     'pricing' => 'Custo',
+    'donate' => 'Doar',
+    'donate_now' => 'Doar Agora',
     'help' => 'Ajuda',
     'login' => 'Iniciar Sessão',
     'logout' => 'Terminar Sessão',

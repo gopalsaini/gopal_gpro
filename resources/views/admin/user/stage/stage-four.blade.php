@@ -44,11 +44,11 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> @lang('admin.stage') @lang('admin.four') @lang('admin.'.$type) </h3>
+                <h3> @lang('admin.stage') @lang('admin.four') {{$type}} </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.user')</li>
-                    <li class="breadcrumb-item" aria-current="page">@lang('admin.'.$type)</li>
+                    <li class="breadcrumb-item" aria-current="page">{{$type}}</li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.stage')</li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.four')</li>
                 </ol>

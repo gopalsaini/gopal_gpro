@@ -26,28 +26,46 @@
 					<form id="form" action="{{ route('admin.user.add') }}" method="post" enctype="multipart/form-data" autocomplete="off">
 						@csrf
 						<input type="hidden" value="@if($result){{ $result->id }} @else 0 @endif" name="id" required />
-						<div class="col-sm-12">
-							<div class="form-group">
-								<label for="input">@lang('admin.designation'): <span style="color:red">*</span></label>
-								<select name="designation_id" class="form-control" required>
-									<option value="">Select</option>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="input">@lang('admin.designation'): <span style="color:red">*</span></label>
+									<select name="designation_id" class="form-control" required>
+										<option value="">Select</option>
 
-									@if (count($designations) > 0)
-										@foreach ($designations as $designation)
-											@if($designation->id == 2)
-											<option value="{{$designation->id}}" @if($result && $result->designation_id == $designation->id) selected @endif>{{$designation->designations}}</option>
-											@endif
-										@endforeach
-									@endif
-								</select>
+										@if (count($designations) > 0)
+											@foreach ($designations as $designation)
+												@if($designation->id == 2 || $designation->id == 3 || $designation->id == 4)
+												<option value="{{$designation->id}}" @if($result && $result->designation_id == $designation->id) selected @endif>{{$designation->designations}}</option>
+												@endif
+											@endforeach
+										@endif
+									</select>
+								</div>
 							</div>
-							<div class="form-group">
-								<label for="input">@lang('admin.email'): <span style="color:red">*</span></label>
-								<input class="form-control" type="email" name="email" placeholder="Enter email address" value="@if($result){{ $result->email }}@endif" required>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label for="input">@lang('admin.email'): <span style="color:red">*</span></label>
+									<input class="form-control" type="email" name="email" placeholder="Enter email address" value="@if($result){{ $result->email }}@endif" required>
+								</div>
 							</div>
-							<div class="form-group">
-								<label for="input">Name: <span style="color:red">*</span></label>
-								<input class="form-control" type="text" name="name" placeholder="Enter Name" value="@if($result){{ $result->name }}@endif" required>
+							
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label for="input">Name: <span style="color:red">*</span></label>
+									<input class="form-control" type="text" name="name" placeholder="Enter Name" value="@if($result){{ $result->name }}@endif" required>
+								</div>
+							</div>
+							<div class="col-lg-6">
+								<div class="form-group">
+									<label for="input">@lang('web/app.Languages'): <span style="color:red">*</span></label>
+									<select name="language" id="language" required class="selectLanguage form-control">
+										<option  value="en">English</option>
+										<option  value="sp">Spanish</option>
+										<option  value="fr">French</option>
+										<option  value="pt">Portuguese</option>
+									</select>
+								</div>
 							</div>
 							<div class="btn-showcase text-center">
 								@if(!$result)

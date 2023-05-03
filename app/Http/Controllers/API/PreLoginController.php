@@ -17,6 +17,8 @@ class PreLoginController extends Controller {
 			'terms_and_condition' => 'required|in:0,1',
 			'first_name' => 'required|string',
 			'last_name' => 'required|string',
+			'phone_code' => 'required',
+			'mobile' => 'required|numeric',
 			'password_confirmation' => 'required',
 			'language' => 'required|in:en,sp,fr,pt',
 		];
@@ -64,6 +66,8 @@ class PreLoginController extends Controller {
 					$user->language=$request->json()->get('language');
 					$user->name=$request->json()->get('first_name');
 					$user->last_name=$request->json()->get('last_name');
+					$user->phone_code=$request->json()->get('phone_code');
+					$user->mobile=$request->json()->get('mobile');
 					$user->reg_type='email';
 					$user->designation_id='2';
 					$user->terms_and_condition=$request->json()->get('terms_and_condition');
@@ -520,7 +524,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['profile_update', '=', '0'], ['stage', '=', '0']])
+			$results = \App\Models\User::where([['profile_update', '=', '0'],['designation_id', '!=', '14'], ['stage', '=', '0'], ['email_reminder', '=', '1']])
 									->whereDate('created_at', '=', now()->subDays(2)->setTime(0, 0, 0)->toDateTimeString())
 									->get();
 									
@@ -640,22 +644,20 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['profile_status','=','Approved'], ['stage', '=', '2']])
+			$results = \App\Models\User::where([['user_type', '=', '2'],['designation_id', '!=', '14'], ['profile_status','=','Approved'], ['stage', '=', '2'], ['email_reminder', '=', '1']])
 									->whereDate('status_change_at', '=', now()->subDays(5)->setTime(0, 0, 0)->toDateTimeString())
 									->get();
-
 									
 			if(count($results) > 0){
 				foreach ($results as $key => $result) {
 				
-					$created_at = \Carbon\Carbon::parse(date('Y-m-d', strtotime($result->created_at)));
-					$today =  \Carbon\Carbon::parse(date('Y-m-d'));
-				
-					$days = $today->diffInDays($created_at);
-
 					$to = $result->email;
 
 					$userData = \App\Models\User::where('id',$result->id)->first();
+					if($userData){
+						$userData->status_change_at = date('Y-m-d H:i:s');
+						$userData->save();
+					}
 					
 					$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($result->id, true);
 					$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($result->id, true);
@@ -665,22 +667,77 @@ class PreLoginController extends Controller {
 					if($result->language == 'sp'){
 
 						$subject = "Su pago está pendiente";
-						$msg = '<p>Estimado '.$result->name.',&nbsp;</p><p><br></p><p>¿Sabía que su pago reciente a GProCongress II sigue pendiente en este momento?</p><p>Aquí tiene un resumen actual del estado de su pago:</p><p><br></p><p>IMPORTE TOTAL A PAGAR: '.$userData->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p><br></p><p>POR FAVOR TENGA EN CUENTA: Si no se recibe el pago completo antes de 31st August 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p><p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo se comunicará con usted.</p><p><br></p><p>Lo mantendremos informado sobre si su pago ha sido aceptado o rechazado.</p><p><br></p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Para realizar el pago ingrese a <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>Para mayor información vea el siguiente tutorial https://youtu.be/xSV96xW_Dx0 </p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+						$msg = '<p>Estimado '.$result->name.',&nbsp;</p><p><br></p>
+						<p>¿Sabía que su pago reciente a GProCongress II sigue pendiente en este momento?</p>
+						<p>Aquí tiene un resumen actual del estado de su pago:</p><p><br></p>
+						<p>IMPORTE TOTAL A PAGAR: '.$userData->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p>
+						<p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p>
+						<p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p><br></p>
+						<p style="background-color:yellow; display: inline;">TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31 de Mayo, 2023</p>
+						<p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p>
+						<p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo se comunicará con usted.</p><p><br></p>
+						<p>Lo mantendremos informado sobre si su pago ha sido aceptado o rechazado.</p><p><br></p><p><br></p>
+						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+						<p>Para realizar el pago ingrese a <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
+						<p>Para mayor información vea el siguiente tutorial https://youtu.be/xSV96xW_Dx0 </p>
+							<p>Atentamente,</p><p><br></p>
+							<p>El equipo del GProCongress II</p>';
 					
 					}elseif($result->language == 'fr'){
 					
 						$subject = "Votre paiement est en attente";
-						$msg = '<p>Cher '.$result->name.',&nbsp;</p><p><br></p><p>Saviez-vous que votre récent paiement pour le GProCongrès II est toujours en attente en ce moment ?&nbsp;</p><p>Voici un résumé actuel de l’état de votre paiement :&nbsp;</p><p><br></p><p>MONTANT TOTAL À PAYER : '.$userData->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS : '.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS : '.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ : '.$totalPendingAmount.'</p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Nous vous tiendrons au courant si votre paiement a été accepté ou refusé.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Pour effectuer le paiement, veuillez vous rendre sur <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>Pour plus d` informations, regardez le tutoriel https://youtu.be/xSV96xW_Dx0 </p><p>Cordialement,</p><p>&nbsp;L’équipe GProCongrès II</p>';
+						$msg = '<p>Cher '.$result->name.',&nbsp;</p><p><br></p>
+						<p>Saviez-vous que votre récent paiement pour le GProCongrès II est toujours en attente en ce moment ?&nbsp;</p>
+						<p>Voici un résumé actuel de l’état de votre paiement :&nbsp;</p><p><br></p>
+						<p>MONTANT TOTAL À PAYER : '.$userData->amount.'</p>
+						<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS : '.$totalAcceptedAmount.'</p>
+						<p>PAIEMENTS EN COURS : '.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ : '.$totalPendingAmount.'</p>
+						<p style="background-color:yellow; display: inline;">VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023</p>
+						<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p>
+						<p>Vous avez des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p>
+						<p>Nous vous tiendrons au courant si votre paiement a été accepté ou refusé.&nbsp;</p><p><br></p>
+						<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
+						<p>Pour effectuer le paiement, veuillez vous rendre sur <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
+						<p>Pour plus d` informations, regardez le tutoriel https://youtu.be/xSV96xW_Dx0 </p>
+							<p>Cordialement,</p><p>&nbsp;L’équipe GProCongrès II</p>';
 					
 					}elseif($result->language == 'pt'){
 					
 						$subject = "Seu pagamento está pendente";
-						$msg = '<p>Prezado '.$result->name.',</p><p><br></p><p>Sabia que o seu recente pagamento para o II CongressoGPro ainda está pendente até agora?</p><p>Aqui está o resumo atual do estado do seu pagamento:</p><p><br></p><p>VALOR TOTAL A SER PAGO: '.$userData->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE: '.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA: '.$totalPendingAmount.'</p><p><br></p><p>POR FAVOR NOTE: Se o seu pagamento não for feito até 31st August 2023 , a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p><p>Tem perguntas? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p>Nós vamos lhe manter informado sobre seu pagamento se foi aceite ou declinado.&nbsp;</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Para fazer o pagamento, favor ir par <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>Para mais informações, veja o tutorial https://youtu.be/xSV96xW_Dx0 </p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p>';
+						$msg = '<p>Prezado '.$result->name.',</p><p><br></p>
+						<p>Sabia que o seu recente pagamento para o II CongressoGPro ainda está pendente até agora?</p>
+						<p>Aqui está o resumo atual do estado do seu pagamento:</p><p><br></p>
+						<p>VALOR TOTAL A SER PAGO: '.$userData->amount.'</p>
+						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE: '.$totalAcceptedAmount.'</p>
+						<p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p>
+						<p>SALDO REMANESCENTE EM DÍVIDA: '.$totalPendingAmount.'</p><p><br></p>
+						<p style="background-color:yellow; display: inline;"> OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31 de Mayo, 2023</p>
+						<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p>
+						<p>Tem perguntas? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p>
+						<p>Nós vamos lhe manter informado sobre seu pagamento se foi aceite ou declinado.&nbsp;</p><p><br></p>
+						<p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Para fazer o pagamento, favor ir par <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
+							<p>Para mais informações, veja o tutorial https://youtu.be/xSV96xW_Dx0 </p>
+								<p>Calorosamente,</p>
+								<p>Equipe do II CongressoGPro</p>';
 					
 					}else{
 					
 						$subject = 'Your payment is pending';
-						$msg = '<p>Dear '.$result->name.',</p><p><br></p><p>Did you know your recent payment to GProCongress II is still pending at this time?</p><p>Here is a current summary of your payment status:</p><p><br></p><p>TOTAL AMOUNT TO BE PAID: '.$userData->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED: '.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS: '.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE: '.$totalPendingAmount.'</p><p><br></p><p>PLEASE NOTE: If full payment is not received by&nbsp; 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p><p><br></p><p>Do you have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>We will keep you updated about whether your payment has been accepted or declined.</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>To make the payment please go to <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p><p>For more information watch the tutorial https://youtu.be/xSV96xW_Dx0 </p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
+						$msg = '<p>Dear '.$result->name.',</p><p><br></p>
+						<p>Did you know your recent payment to GProCongress II is still pending at this time?</p>
+						<p>Here is a current summary of your payment status:</p><p><br></p>
+						<p>TOTAL AMOUNT TO BE PAID: '.$userData->amount.'</p>
+						<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED: '.$totalAcceptedAmount.'</p>
+						<p>PAYMENTS CURRENTLY IN PROCESS: '.$totalAmountInProcess.'</p>
+						<p>REMAINING BALANCE DUE: '.$totalPendingAmount.'</p><p><br></p>
+						<p style="background-color:yellow; display: inline;">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</mark>
+						<p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p>
+						<p>Do you have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p>
+						<p>We will keep you updated about whether your payment has been accepted or declined.</p><p><br></p>
+						<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
+						<p>To make the payment please go to <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
+						<p>For more information watch the tutorial https://youtu.be/xSV96xW_Dx0 </p>
+							<p>Warmly,</p><p>&nbsp;The GProCongress II Team</p>';
 					
 					}
 
@@ -1008,80 +1065,203 @@ class PreLoginController extends Controller {
 							$Wallet->status = 'Success';
 							$Wallet->save();
 
-							if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
-
-								$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
-								$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
-								$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
-								$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
-
-								$user = \App\Models\User::find($transaction->user_id);
-								$user->stage = 3;
-								$user->status_change_at = date('Y-m-d H:i:s');
-								$user->save();
-
-								$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
-							
-								if($resultSpouse){
-
-									$resultSpouse->stage = 3;
-									$resultSpouse->payment_status = '2';
-									$resultSpouse->status_change_at = date('Y-m-d H:i:s');
-									$resultSpouse->save();
-								}
-
+							$userDataresult = \App\Models\User::where('id',$transaction->user_id)->first();
 								
-								if($user->language == 'sp'){
+							if($userDataresult && $userDataresult->designation_id != '14'){
 
-									$subject = 'Pago recibido. ¡Gracias!';
-									$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha recibido la cantidad de $'.$user->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p><p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
+								if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
 
-								}elseif($user->language == 'fr'){
-								
-									$subject = 'Paiement intégral reçu.  Merci !';
-									$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de '.$user->amount.'$ a été reçu sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+									$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
+									$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
+									$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
+									$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
 
-								}elseif($user->language == 'pt'){
-								
-									$subject = 'Pagamento recebido na totalidade. Obrigado!';
-									$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Uma quantia de $'.$user->amount.' foi recebido na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p><p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+									$user = \App\Models\User::find($transaction->user_id);
+									$user->stage = 3;
+									$user->status_change_at = date('Y-m-d H:i:s');
+									$user->save();
 
-								}else{
+									$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
 								
-									$subject = 'Payment received in full. Thank you!';
-									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$user->amount.' has been received on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
-					
-								}
-								
-								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									if($resultSpouse){
 
-								// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
-								
-								if($user->language == 'sp'){
+										$resultSpouse->stage = 3;
+										$resultSpouse->payment_status = '2';
+										$resultSpouse->status_change_at = date('Y-m-d H:i:s');
+										$resultSpouse->save();
+									}
 
-									$subject = "Por favor, envíe su información de viaje.";
-									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp; &nbsp;&nbsp;</p>';
-								
-								}elseif($user->language == 'fr'){
-								
-									$subject = "Veuillez soumettre vos informations de voyage.";
-									$msg = "<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p>Nous sommes ravis de vous voir au GProCongrès à Panama City, au Panama !</p><p><br></p><p>Pour aider les délégués à obtenir des visas, nous leur demandons de nous soumettre leurs informations de voyage.&nbsp;</p><p><br></p><p>Veuillez répondre à cet e-mail avec vos informations de vol.&nbsp; Dès réception, nous vous enverrons un e-mail pour confirmer que les informations que nous avons reçues sont correctes.&nbsp;</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>";
+									
+									if($user->language == 'sp'){
+
+										$subject = 'Pago recibido. ¡Gracias!';
+										$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha recibido la cantidad de $'.$user->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p><p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
+
+									}elseif($user->language == 'fr'){
+									
+										$subject = 'Paiement intégral reçu.  Merci !';
+										$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de '.$user->amount.'$ a été reçu sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+									}elseif($user->language == 'pt'){
+									
+										$subject = 'Pagamento recebido na totalidade. Obrigado!';
+										$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Uma quantia de $'.$user->amount.' foi recebido na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p><p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+
+									}else{
+									
+										$subject = 'Payment received in full. Thank you!';
+										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$user->amount.' has been received on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
 						
-								}elseif($user->language == 'pt'){
-								
-									$subject = "Por favor submeta sua informação de viagem";
-									$msg = '<p>Prezado '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Nós estamos emocionados em ver você no CongressoGPro na Cidade de Panamá, Panamá!</p><p><br></p><p>Para ajudar os delegados na obtenção de vistos, nós estamos pedindo que submetam a nós sua informação de viagem.&nbsp;</p><p><br></p><p>Por favor responda este e-mail com informações do seu voo. Depois de recebermos, iremos lhe enviar um e-mail confirmando que a informação que recebemos é correta.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro&nbsp; &nbsp; &nbsp;&nbsp;</p>';
-								
-								}else{
-								
-									$subject = 'Please submit your travel information.';
-									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
-														
-								}
-								// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-								// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									}
+									
+									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
+									// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
+									
+									if($user->language == 'sp'){
+
+										$subject = " Por favor envíe la información de su pasaporte para el GProCongress II.";
+										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Ahora que ha completado su pago, debe comenzar el proceso de obtener su visa y programar su vuelo a Panamá. Envíenos la información de su pasaporte lo antes posible (su nombre completo, país de residencia, número de pasaporte). Cuando recibamos esa información, prepararemos una carta para que envíe a las autoridades correspondientes junto con su solicitud de visa.&nbsp;</p><p><br></p><p>Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.</p><p><br></p><p>Atentamente,</p><p>Equipo del GProCongress II&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+									
+									}elseif($user->language == 'fr'){
+									
+										$subject = "Veuillez soumettre les informations de votre passeport pour GProCongress II.";
+										$msg = "<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p>Maintenant que vous avez payé la totalité de vos frais, vous devriez commencer le processus d'obtention de votre visa et de planification de votre vol pour le Panama. Veuillez nous envoyer les informations relatives à votre passeport dès que possible (nom complet, pays de résidence, numéro de passeport). Lorsque nous aurons reçu ces informations, nous préparerons une lettre que vous enverrez aux autorités compétentes avec votre demande de visa.&nbsp;</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II </p>";
+							
+									}elseif($user->language == 'pt'){
+									
+										$subject = "Envie as informações de seu passaporte para o GProCongresso I.";
+										$msg = '<p>Prezado '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Agora que você está pago integralmente, você deve começar o processo de obtenção de seu visto e agendar seu voo para o Panamá. Por favor, envie-nos as informações do seu passaporte o mais rápido possível (Seu nome completo; País de residência; Número do passaporte). Quando recebermos essas informações, prepararemos uma carta para você enviar às autoridades competentes junto com o seu pedido de visto.&nbsp;</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+									
+									}else{
+									
+										$subject = 'Please submit your passport information for GProCongress II.';
+										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Now that you are paid in full, you should begin the process of getting your visa and scheduling your flight to Panama.  Please send us your passport information as soon as possible (Your full name; Country of residence; Passport #).  When we receive that information, we will prepare a letter for you to send to the appropriate authorities along with your visa request.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+															
+									}
+									// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+								}
+
+							}else{
+
+								$resultSpouse = \App\Models\User::select('users.*','exhibitors.diplomatic_passport')->join('exhibitors','users.id','=','exhibitors.user_id')->where('exhibitors.business_owner_id',$userDataresult->id)->where('exhibitors.user_id','!=',$userDataresult->id)->get();
+								
+								if(!empty($resultSpouse)){
+									
+									foreach($resultSpouse as $user){
+
+										$additionalUser = \App\Models\User::select('users.*','exhibitors.diplomatic_passport')->join('exhibitors','users.id','=','exhibitors.user_id')->where('users.id',$user->id)->first();
+										if($additionalUser){
+
+											$additionalUser->stage = 3;
+											$additionalUser->save();
+			
+											$doNotRequireVisa = [6,7,10,11,12,14,15,17,20,22,23,26,21,27,28,29,31,33,34,40,37,39,44,48,49,53,55,57,58,59,61,64,66,69,73,74,75,79,81,82,87,85,90,94,97,99,100,105,106,107,108,109,113,114,117,125,126,127,129,130,132,133,133,137,140,142,143,144,145,146,147,152,152,156,158,159,165,168,171,172,173,176,177,179,181,115,182,244,185,186,188,191,192,194,196,197,199,200,201,202,204,116,207,213,214,216,219,222,223,225,228,230,231,232,233,235,237,238,240]; 
+											$diplomaticPassportNotRequireVisa = [56,62,95,102,174,45,239]; 
+											$authorizedVisa = [1,3,4,16,18,19,24,35,36,43,50,60,65,68,70,67,80,92,93,95,102,103,104,54,111,112,248,118,119,121,122,123,124,134,139,149,150,151,154,160,161,166,167,169,116,183,195,198,203,208,209,210,215,217,218,224,226,229,236,245,246]; 
+											$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
+										
+
+											if($additionalUser && $additionalUser->diplomatic_passport == 'No'){
+
+												if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
+
+													// \App\Helpers\commonHelper::sendExhibitorFinancialLetterMailSend($additionalUser->id);
+
+												}else{
+
+													// \App\Helpers\commonHelper::sendExhibitorFinancialLetterMailSend($additionalUser->id,);
+												}
+
+											}elseif($additionalUser && $additionalUser->diplomatic_passport == 'Yes'){
+												
+												if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
+
+													// \App\Helpers\commonHelper::sendExhibitorFinancialLetterMailSend($additionalUser->id);
+
+												}elseif(in_array($additionalUser->citizenship,$diplomaticPassportNotRequireVisa)){
+
+													// \App\Helpers\commonHelper::sendExhibitorFinancialLetterMailSend($additionalUser->id);
+
+												}else{
+
+													// \App\Helpers\commonHelper::sendExhibitorFinancialLetterMailSend($additionalUser->id);
+													// \App\Helpers\commonHelper::sendExhibitorSponsorshipLetterMailSend($additionalUser->id);
+												}
+												
+											}
+										}
+										
+									}
+
+								}
+
+								
+								$userDataresult->stage = '3';
+								$name= $userDataresult->name.' '.$userDataresult->last_name;
+
+								$to = $userDataresult->email;
+
+								$website = '<a href="'.url('/payment').'">website</a>';
+
+								$subject = 'Your payment has been received!';
+								$msg = '<p>Dear '.$name.',</p>
+								<p>A payment has been received from you in the amount of $'.$userDataresult->amount.'.  Thank you for your payment.  Your GProCongress II account has now been paid in full.</p>
+								<p>We are attaching to this email a sponsorship letter, for you to give to whoever is coming from your organization, to assist them in getting their visas for travel to Panama if it is needed.</p>
+								<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
+								<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
+								<p>Warmly,</p>
+								<p>The GProCongress II Team</p>';	
+								
+								$resultSpouse = \App\Models\User::select('users.*','exhibitors.financial_letter','exhibitors.sponsorship_letter','exhibitors.diplomatic_passport')->join('exhibitors','users.id','=','exhibitors.user_id')->where('exhibitors.business_owner_id',$userDataresult->id)->get();
+								$files = [];
+
+								// if(!empty($resultSpouse)){
+									
+								// 	foreach($resultSpouse as $user){
+
+								// 		if($user->financial_letter){
+								// 			$financial_letter = explode(',',$user->financial_letter);
+								// 			$files = [
+								// 				public_path('uploads/file/'.$financial_letter[0]),
+								// 			];
+								// 			if(isset($financial_letter[1])){
+								// 				$files = [
+								// 					public_path('uploads/file/'.$financial_letter[1]),
+								// 				];
+								// 			}
+											
+								// 		}
+								// 		if($user->sponsorship_letter){
+											
+								// 			$files = [
+								// 				public_path('uploads/file/'.$user->sponsorship_letter),
+								// 			];
+											
+								// 		}
+
+								// 	}
+								// }
+
+								// \Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+								// 	$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+								// 	$message->subject($subject);
+								// 	$message->to($to);
+									
+								// 	foreach ($files as $file){
+								// 		$message->attach($file);
+								// 	}
+									
+								// });
+
+								// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+								// \App\Helpers\commonHelper::userMailTrigger($userDataresult->id,$msg,$subject);
+
+			
 							}
+								
 
 						}
 		
@@ -1107,6 +1287,49 @@ class PreLoginController extends Controller {
 							$Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
 							$Wallet->status = 'Failed';
 							$Wallet->save();
+		
+							$user = \App\Models\User::where('id',$transaction->user_id)->first();
+
+							$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($user->id, true);
+							$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($user->id, true);
+							$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($user->id, true);
+							$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, true);
+
+							if($transaction->particular_id == '2'){
+
+								\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
+								\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+								
+
+							}else{
+
+								if($user->language == 'sp'){
+
+									$subject = "Su pago ha sido rechazado";
+									$msg = '<p>Estimado '.$user->name.'</p><p><br></p><p>Su pago reciente a GProCongress ha sido rechazado.</p><p>Este es un resumen actual del estado de su pago:</p><p><br></p><p>IMPORTE TOTAL A PAGAR: '.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p>POR FAVOR TENGA EN CUENTA: Si no se recibe el pago completo antes de 31st August 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p><p>¿Necesita asesoramiento mientras intenta pagar de nuevo? Responda a este correo electrónico y los miembros de nuestro equipo le ayudarán sin lugar a dudas.</p><p><br></p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+								
+								}elseif($user->language == 'fr'){
+								
+									$subject = "Votre paiement a été refusé";
+									$msg = '<p>Cher '.$user->name.',&nbsp;</p><p>Votre paiement récent pour le GProCongrès a été refusé.&nbsp;</p><p><br></p><p>Voici un résumé actuel de l’état de votre paiement :</p><p><br></p><p>MONTANT TOTAL À PAYER : '.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS : '.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS : '.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ : '.$totalPendingAmount.'</p><p><br></p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous besoin d’aide pendant que vous tentez à nouveau de payer ?&nbsp; Veuillez répondre à cet e-mail et les membres de notre équipe vous aideront à coup sûr.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe GProCongrès II</p>';
+								
+								}elseif($user->language == 'pt'){
+								
+									$subject = "Seu pagamento foi declinado";
+									$msg = '<p>Prezado '.$user->name.',&nbsp;</p><p><br></p><p>O seu recente pagamento para o CongressoGPro foi declinado.</p><p>Aqui está o resumo do estado atual do seu pagamento:</p><p><br></p><p><br></p><p>VALOR TOTAL A SER PAGO: '.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE: '.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA: '.$totalPendingAmount.'</p><p><br></p><p>POR FAVOR NOTE: Se o seu pagamento não for feito até 31st August 2023 , a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p><p>Precisa de ajuda enquanto você tenta terminar fazer o pagamento? Por favor responda a este e-mail e membro da nossa equipe vai lhe ajudar com certeza.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p>';
+								
+								}else{
+								
+									$subject = 'Your payment has been declined';
+									$msg = '<p>Dear '.$user->name.',&nbsp;</p><p><br></p><p>You recent payment to GProCongress was declined.</p><p>Here is a current summary of your payment status:</p><p><br></p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p><p><br></p><p>Do you need assistance while you attempt payment again? Please reply to this email and our team members will help you for sure.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp;</p>';
+								
+								}
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your payment has been declined');
+					
+							}
+							
 		
 						}
 					}
@@ -1174,12 +1397,13 @@ class PreLoginController extends Controller {
 							$Wallet->status = 'Success';
 							$Wallet->save();
 
-							if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
+							$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
+							$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
+							$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
+							$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
 
-								$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
-								$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
-								$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
-								$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
+
+							if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
 
 								$user = \App\Models\User::find($transaction->user_id);
 								$user->stage = 3;
@@ -1196,36 +1420,133 @@ class PreLoginController extends Controller {
 									$resultSpouse->save();
 								}
 
-								if($user->language == 'sp'){
+								if($transaction->particular_id == '2'){
 
-									$subject = 'Pago recibido. ¡Gracias!';
-									$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha recibido la cantidad de $'.$user->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p><p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
-
-								}elseif($user->language == 'fr'){
+									\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsApproved($transaction->order_id);
+									\App\Helpers\commonHelper::sendSponsorPaymentApprovedToUserMail($transaction->user_id,$transaction->amount,'partial',$transaction->order_id);
 								
-									$subject = 'Paiement intégral reçu.  Merci !';
-									$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de '.$user->amount.'$ a été reçu sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
-
-								}elseif($user->language == 'pt'){
-								
-									$subject = 'Pagamento recebido na totalidade. Obrigado!';
-									$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Uma quantia de $'.$user->amount.' foi recebido na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p><p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
-
 								}else{
-								
-									$subject = 'Payment received in full. Thank you!';
-									$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$user->amount.' has been received on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
-					
+									
+									if($user->language == 'sp'){
+
+										$subject = 'Pago parcial Aprobado. ¡Gracias!';
+										$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha aprobado una cantidad de  $'.$transaction->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+										<p style="background-color:yellow; display: inline;">TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31 de Mayo, 2023</p><p><br></p>
+										<p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p><br></p>
+				
+										<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
+
+									}elseif($user->language == 'fr'){
+									
+										$subject = 'Paiement partiel Approuvéu.  Merci !';
+										$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de  '.$transaction->amount.'$ a été approuvé sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p style="background-color:yellow; display: inline;">VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023</p><p><br></p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</mark><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+									}elseif($user->language == 'pt'){
+									
+										$subject = 'Aprovado o pagamento parcial. Obrigado!';
+										$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Foi aprovado um montante de $'.$transaction->amount.' na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+										<p style="background-color:yellow; display: inline;">OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31 de Mayo, 2023</p><p><br></p>
+										<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
+				
+										<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+
+									}else{
+									
+										$subject = 'Partial payment Approved. Thank you!';
+										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$transaction->amount.' has been approved on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+										<p style="background-color:yellow; display: inline;">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</p><div><br></div>
+										<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
+				
+										<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+						
+									}
+									
+									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Partial payment Approved. Thank you!');
+	
+
+									
 								}
+
+							}else {
+
+								$user = \App\Models\User::find($transaction->user_id);
+								$user->stage = 3;
+								$user->status_change_at = date('Y-m-d H:i:s');
+								$user->save();
+			
+								$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
+							
+								if($resultSpouse){
+			
+									$resultSpouse->stage = 3;
+									$resultSpouse->payment_status = '2';
+									$resultSpouse->status_change_at = date('Y-m-d H:i:s');
+									$resultSpouse->save();
+								}
+			
+								if($transaction->particular_id == '2'){
+
+									\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsApproved($transaction->order_id);
+									\App\Helpers\commonHelper::sendSponsorPaymentApprovedToUserMail($transaction->user_id,$transaction->amount,'full',$transaction->order_id);
 								
-								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+								}else{
 
-								// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
-								$subject = 'Submit Travel Information';
-								$msg = 'Your '.$user->amount.'  amount has been accepted and payment has been completed successfully. And Please Submit your Travel Information';
-								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									if($user->language == 'sp'){
+				
+										$subject = 'Pago recibido. ¡Gracias!';
+										$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha aprobado una cantidad de $'.$user->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p><p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
+				
+									}elseif($user->language == 'fr'){
+									
+										$subject = 'Paiement intégral reçu.  Merci !';
+										$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de '.$user->amount.'$ a été approuvé sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+				
+									}elseif($user->language == 'pt'){
+									
+										$subject = 'Pagamento recebido na totalidade. Obrigado!';
+										$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Foi aprovado um montante de $'.$user->amount.' na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p><p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+				
+									}else{
+									
+										$subject = 'Payment received in full. Thank you!';
+										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$user->amount.' has been approved on your account. </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+						
+									}
+									
+									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+				
+									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Payment received in full. Thank you!');
 
+									// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
+									
+									// if($user->language == 'sp'){
+
+									// 	$subject = "Por favor, envíe su información de viaje.";
+									// 	$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+									
+									// }elseif($user->language == 'fr'){
+									
+									// 	$subject = "Veuillez soumettre vos informations de voyage.";
+									// 	$msg = "<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p>Nous sommes ravis de vous voir au GProCongrès à Panama City, au Panama !</p><p><br></p><p>Pour aider les délégués à obtenir des visas, nous leur demandons de nous soumettre leurs informations de voyage.&nbsp;</p><p><br></p><p>Veuillez répondre à cet e-mail avec vos informations de vol.&nbsp; Dès réception, nous vous enverrons un e-mail pour confirmer que les informations que nous avons reçues sont correctes.&nbsp;</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>";
+							
+									// }elseif($user->language == 'pt'){
+									
+									// 	$subject = "Por favor submeta sua informação de viagem";
+									// 	$msg = '<p>Prezado '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Nós estamos emocionados em ver você no CongressoGPro na Cidade de Panamá, Panamá!</p><p><br></p><p>Para ajudar os delegados na obtenção de vistos, nós estamos pedindo que submetam a nós sua informação de viagem.&nbsp;</p><p><br></p><p>Por favor responda este e-mail com informações do seu voo. Depois de recebermos, iremos lhe enviar um e-mail confirmando que a informação que recebemos é correta.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro&nbsp; &nbsp; &nbsp;&nbsp;</p>';
+									
+									// }else{
+									
+									// 	$subject = 'Please submit your travel information.';
+									// 	$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>We are excited to see you at the GProCongress at Panama City, Panama!</p><p><br></p><p>To assist delegates with obtaining visas, we are requesting they submit their travel information to&nbsp; us.&nbsp;</p><p><br></p><p>Please reply to this email with your flight information.&nbsp; Upon receipt, we will send you an email to confirm that the information we received is correct.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+															
+									// }
+									// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+			
+								}
 							}
 
 						}
@@ -1246,6 +1567,47 @@ class PreLoginController extends Controller {
 							$Wallet->status = 'Failed';
 							$Wallet->save();
 
+							$user = \App\Models\User::where('id',$transaction->user_id)->first();
+
+							$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($user->id, true);
+							$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($user->id, true);
+							$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($user->id, true);
+							$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, true);
+
+							if($transaction->particular_id == '2'){
+
+								\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
+								\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+
+							}else{
+
+								if($user->language == 'sp'){
+
+									$subject = "Su pago ha sido rechazado";
+									$msg = '<p>Estimado '.$user->name.'</p><p><br></p><p>Su pago reciente a GProCongress ha sido rechazado.</p><p>Este es un resumen actual del estado de su pago:</p><p><br></p><p>IMPORTE TOTAL A PAGAR: '.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p>POR FAVOR TENGA EN CUENTA: Si no se recibe el pago completo antes de 31st August 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p><p>¿Necesita asesoramiento mientras intenta pagar de nuevo? Responda a este correo electrónico y los miembros de nuestro equipo le ayudarán sin lugar a dudas.</p><p><br></p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+								
+								}elseif($user->language == 'fr'){
+								
+									$subject = "Votre paiement a été refusé";
+									$msg = '<p>Cher '.$user->name.',&nbsp;</p><p>Votre paiement récent pour le GProCongrès a été refusé.&nbsp;</p><p><br></p><p>Voici un résumé actuel de l’état de votre paiement :</p><p><br></p><p>MONTANT TOTAL À PAYER : '.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS : '.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS : '.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ : '.$totalPendingAmount.'</p><p><br></p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous besoin d’aide pendant que vous tentez à nouveau de payer ?&nbsp; Veuillez répondre à cet e-mail et les membres de notre équipe vous aideront à coup sûr.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe GProCongrès II</p>';
+								
+								}elseif($user->language == 'pt'){
+								
+									$subject = "Seu pagamento foi declinado";
+									$msg = '<p>Prezado '.$user->name.',&nbsp;</p><p><br></p><p>O seu recente pagamento para o CongressoGPro foi declinado.</p><p>Aqui está o resumo do estado atual do seu pagamento:</p><p><br></p><p><br></p><p>VALOR TOTAL A SER PAGO: '.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE: '.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA: '.$totalPendingAmount.'</p><p><br></p><p>POR FAVOR NOTE: Se o seu pagamento não for feito até 31st August 2023 , a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p><p>Precisa de ajuda enquanto você tenta terminar fazer o pagamento? Por favor responda a este e-mail e membro da nossa equipe vai lhe ajudar com certeza.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p>';
+								
+								}else{
+								
+									$subject = 'Your payment has been declined';
+									$msg = '<p>Dear '.$user->name.',&nbsp;</p><p><br></p><p>You recent payment to GProCongress was declined.</p><p>Here is a current summary of your payment status:</p><p><br></p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p><p><br></p><p>Do you need assistance while you attempt payment again? Please reply to this email and our team members will help you for sure.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp;</p>';
+								
+								}
+
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your payment has been declined');
+							}
+
 						}
 					}
 					
@@ -1263,6 +1625,49 @@ class PreLoginController extends Controller {
 						$Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
 						$Wallet->status = 'Failed';
 						$Wallet->save();
+
+						$user = \App\Models\User::where('id',$transaction->user_id)->first();
+
+						$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($user->id, true);
+						$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($user->id, true);
+						$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($user->id, true);
+						$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, true);
+
+						if($transaction->particular_id == '2'){
+
+							\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
+							\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+
+						}else{
+
+							if($user->language == 'sp'){
+
+								$subject = "Su pago ha sido rechazado";
+								$msg = '<p>Estimado '.$user->name.'</p><p><br></p><p>Su pago reciente a GProCongress ha sido rechazado.</p><p>Este es un resumen actual del estado de su pago:</p><p><br></p><p>IMPORTE TOTAL A PAGAR: '.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p><p>POR FAVOR TENGA EN CUENTA: Si no se recibe el pago completo antes de 31st August 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p><p>¿Necesita asesoramiento mientras intenta pagar de nuevo? Responda a este correo electrónico y los miembros de nuestro equipo le ayudarán sin lugar a dudas.</p><p><br></p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							
+							}elseif($user->language == 'fr'){
+							
+								$subject = "Votre paiement a été refusé";
+								$msg = '<p>Cher '.$user->name.',&nbsp;</p><p>Votre paiement récent pour le GProCongrès a été refusé.&nbsp;</p><p><br></p><p>Voici un résumé actuel de l’état de votre paiement :</p><p><br></p><p>MONTANT TOTAL À PAYER : '.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS : '.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS : '.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ : '.$totalPendingAmount.'</p><p><br></p><p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous besoin d’aide pendant que vous tentez à nouveau de payer ?&nbsp; Veuillez répondre à cet e-mail et les membres de notre équipe vous aideront à coup sûr.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe GProCongrès II</p>';
+							
+							}elseif($user->language == 'pt'){
+							
+								$subject = "Seu pagamento foi declinado";
+								$msg = '<p>Prezado '.$user->name.',&nbsp;</p><p><br></p><p>O seu recente pagamento para o CongressoGPro foi declinado.</p><p>Aqui está o resumo do estado atual do seu pagamento:</p><p><br></p><p><br></p><p>VALOR TOTAL A SER PAGO: '.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE: '.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA: '.$totalPendingAmount.'</p><p><br></p><p>POR FAVOR NOTE: Se o seu pagamento não for feito até 31st August 2023 , a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p><p>Precisa de ajuda enquanto você tenta terminar fazer o pagamento? Por favor responda a este e-mail e membro da nossa equipe vai lhe ajudar com certeza.&nbsp;</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = 'Your payment has been declined';
+								$msg = '<p>Dear '.$user->name.',&nbsp;</p><p><br></p><p>You recent payment to GProCongress was declined.</p><p>Here is a current summary of your payment status:</p><p><br></p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p><p><br></p><p>Do you need assistance while you attempt payment again? Please reply to this email and our team members will help you for sure.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp;</p>';
+							
+							}
+
+							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+							\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your payment has been declined');
+		
+							
+						}
 
 					}
 				}
@@ -1313,7 +1718,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '=', '3']])
+			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '=', '3'],['designation_id', '!=', '14']])
 									->whereDate('updated_at', '=', now()->subDays(2)->setTime(0, 0, 0)->toDateTimeString())
 									->orWhereDate('updated_at', '=', now()->subDays(10)->setTime(0, 0, 0)->toDateTimeString())
 									->get();
@@ -1601,6 +2006,40 @@ class PreLoginController extends Controller {
 		} 	 
 		
 	}
+
+	public function getCountryList(Request $request){
+ 
+		try{
+
+			$result=[];
+			
+			$countries = \App\Models\Country::orderBy('name','Asc')->get();
+
+			if(!empty($countries) && count($countries)>0){
+
+				foreach($countries as $country){
+
+					
+					$result[]=[
+
+						'id'=>$country->id,
+						'name'=>$country->name,
+					];
+				}
+				
+			}
+			
+			
+			return response(array("message" => 'data fetched successfully.','result'=>$result,'error'=>false),200); 
+			
+			
+		}catch (\Exception $e){
+			
+			return response(array("message" => $e->getMessage(),'error'=>true),403); 
+		
+		} 	 
+		
+	}
 	
 	public function GetInformation(Request $request,$id){
  
@@ -1664,7 +2103,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '>', '1'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
+			$results = \App\Models\User::where([['user_type', '=', '2'], ['designation_id', '!=', '14'],['stage', '>', '1'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
 			
 			if(count($results) > 0){
 
@@ -1693,12 +2132,11 @@ class PreLoginController extends Controller {
 
     }
 
-	
 	public function sendEarlyBirdReminderMail(Request $request){
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '>', '1'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
+			$results = \App\Models\User::where([['user_type', '=', '2'], ['designation_id', '!=', '14'],['stage', '>', '1'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
 			
 			if(count($results) > 0){
 
@@ -1712,29 +2150,29 @@ class PreLoginController extends Controller {
 						
 						$subject = 'El pago correspondiente al GProCongreso II ha vencido.';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Pago mediante Paypal -</i></b> si tiene una cuenta PayPal, puede hacer sus pagos a través de PayPal entrando en nuestra página web (https://www.gprocongress.org/payment).&nbsp; Por favor, envíe sus fondos a: david@rreach.org (esta es la cuenta de RREACH).&nbsp; En la transferencia debe anotar el nombre de la persona inscrita.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RAI:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org/payment.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RAI</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
-						$msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RAI:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org/payment.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RAI</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
+						// $msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Pago mediante Paypal -</i></b> si tiene una cuenta PayPal, puede hacer sus pagos a través de PayPal entrando en nuestra página web (https://www.gprocongress.org/payment).&nbsp; Por favor, envíe sus fondos a: david@rreach.org (esta es la cuenta de RREACH).&nbsp; En la transferencia debe anotar el nombre de la persona inscrita.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RIA:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org/payment.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RIA</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
+						$msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RIA:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org/payment.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RIA</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
 					
 					}elseif($user->language == 'fr'){
 					
 						$subject = 'Votre paiement GProCongress II est maintenant dû.';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b.</b> <b><i>Paiement par PayPal -</i></b> si vous avez un compte PayPal, vous pouvez payer vos frais via PayPal en vous rendant sur notre site Web (https://www.gprocongress.org/payment). Veuillez envoyer vos fonds à : david@rreach.org (c’est le compte de RREACH). Dans le transfert, vous devez noter le nom du titulaire.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RAI –</i></b> vous pouvez payer vos frais par RAI. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RAI.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
-						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RAI –</i></b> vous pouvez payer vos frais par RAI. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RAI.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
+						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b.</b> <b><i>Paiement par PayPal -</i></b> si vous avez un compte PayPal, vous pouvez payer vos frais via PayPal en vous rendant sur notre site Web (https://www.gprocongress.org/payment). Veuillez envoyer vos fonds à : david@rreach.org (c’est le compte de RREACH). Dans le transfert, vous devez noter le nom du titulaire.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RIA –</i></b> vous pouvez payer vos frais par RIA. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RIA.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
+						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RIA –</i></b> vous pouvez payer vos frais par RIA. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RIA.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
 					
 					}elseif($user->language == 'pt'){
 					
 						$subject = 'O seu pagamento para o II CongressoGPro em aberto';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org/payment) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Pagamento usando Paypal -</i></b> se tiver uma conta PayPal, pode pagar as suas taxas via PayPal, indo ao nosso site na web (https://www.gprocongress.org/payment).&nbsp; Por favor envie o seu valor para: david@rreach.org (esta é a conta da RREACH).&nbsp; Na transferência, deve anotar o nome do inscrito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RAI -</i></b> pode pagar a sua taxa através do RAI. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RAI.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
-						$msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org/payment) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RAI -</i></b> pode pagar a sua taxa através do RAI. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RAI.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
+						// $msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org/payment) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Pagamento usando Paypal -</i></b> se tiver uma conta PayPal, pode pagar as suas taxas via PayPal, indo ao nosso site na web (https://www.gprocongress.org/payment).&nbsp; Por favor envie o seu valor para: david@rreach.org (esta é a conta da RREACH).&nbsp; Na transferência, deve anotar o nome do inscrito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RIA -</i></b> pode pagar a sua taxa através do RIA. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RIA.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
+						$msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org/payment) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RIA -</i></b> pode pagar a sua taxa através do RIA. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RIA.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
 					
 					}else{
 					
 						$subject = 'Your GProCongress II payment is now due.';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b. <span style="white-space:pre">	</span>Payment using Paypal - if you have a PayPal account, you can pay your fees via PayPal by going to our website&nbsp; &nbsp; (https://www.gprocongress.org/payment).&nbsp; Please send your funds to: david@rreach.org (this is RREACH’s account).&nbsp;</font><span style="color: rgb(153, 153, 153); letter-spacing: inherit; background-color: transparent;">In</span><span style="letter-spacing: inherit; background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"> the transfer it should note the name of the registrant.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RAI –</i> </b>you can pay your fees via RAI. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RAI.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
-						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RAI –</i> </b>you can pay your fees via RAI. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RAI.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
+						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b. <span style="white-space:pre">	</span>Payment using Paypal - if you have a PayPal account, you can pay your fees via PayPal by going to our website&nbsp; &nbsp; (https://www.gprocongress.org/payment).&nbsp; Please send your funds to: david@rreach.org (this is RREACH’s account).&nbsp;</font><span style="color: rgb(153, 153, 153); letter-spacing: inherit; background-color: transparent;">In</span><span style="letter-spacing: inherit; background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"> the transfer it should note the name of the registrant.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RIA –</i> </b>you can pay your fees via RIA. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RIA.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
+						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RIA –</i> </b>you can pay your fees via RIA. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RIA.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
 					
 					}
 
@@ -1762,7 +2200,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '>', '1'], ['amount', '>', 0]])->get();
+			$results = \App\Models\User::where([['user_type', '=', '2'],['designation_id', '!=', '14'], ['stage', '>', '1'], ['amount', '>', 0]])->get();
 			
 			if(count($results) > 0){
 
@@ -1809,7 +2247,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('spouse_confirm_token','!=',null)->get();
+			$results = \App\Models\User::where('spouse_confirm_token','!=',null)->where('designation_id','!=','14')->where('email_reminder','1')->get();
 
 			if(count($results) > 0){
 				foreach ($results as $key => $existSpouse) {
@@ -1870,7 +2308,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
+			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->where('designation_id','!=','14')->get();
 
 			if(count($results) > 0){
 
@@ -1982,7 +2420,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
+			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->where('designation_id','!=','14')->where('email_reminder','1')->get();
 
 			if(count($results) > 0){
 				foreach ($results as $key => $existSpouse) {
@@ -2095,7 +2533,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
+			$results = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->where('designation_id','!=','14')->where('email_reminder','1')->get();
 
 			if(count($results) > 0){
 
@@ -2207,7 +2645,7 @@ class PreLoginController extends Controller {
 
     public function SpouseRejectActionCron(Request $request){
 
-        $existSpouse = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->get();
+        $existSpouse = \App\Models\User::where('spouse_confirm_token','!=','')->where('spouse_confirm_token','!=',null)->where('designation_id','!=','14')->get();
 
 		if(count($existSpouse) > 0){
 
@@ -2419,29 +2857,29 @@ class PreLoginController extends Controller {
 						
 						$subject = 'El pago correspondiente al GProCongreso II ha vencido.';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Pago mediante Paypal -</i></b> si tiene una cuenta PayPal, puede hacer sus pagos a través de PayPal entrando en nuestra página web (https://www.gprocongress.or/paymentg).&nbsp; Por favor, envíe sus fondos a: david@rreach.org (esta es la cuenta de RREACH).&nbsp; En la transferencia debe anotar el nombre de la persona inscrita.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org/payment.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org/payment.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RAI:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RAI</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
-						$msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RAI:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org/payment.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RAI</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
+						// $msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Pago mediante Paypal -</i></b> si tiene una cuenta PayPal, puede hacer sus pagos a través de PayPal entrando en nuestra página web (https://www.gprocongress.or/paymentg).&nbsp; Por favor, envíe sus fondos a: david@rreach.org (esta es la cuenta de RREACH).&nbsp; En la transferencia debe anotar el nombre de la persona inscrita.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org/payment.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org/payment.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RIA:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RIA</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
+						$msg = '<div>Estimado '.$name.',</div><div><br></div><div>El pago total de su inscripción al GProCongress II ha vencido.</div><div>&nbsp;</div><div>Usted puede efectuar el pago en nuestra página web (https://www.gprocongress.org/payment) utilizando cualquiera de los siguientes métodos de pago:</div><div><br></div><div><font color="#000000"><b>1.&nbsp; Pago en línea:</b></font></div><div><font color="#000000"><b><br></b></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Pago con tarjeta de crédito:</i></b> puede realizar sus pagos con cualquiera de las principales tarjetas de crédito.</font></div><div><br></div><div>&nbsp;</div><div><font color="#000000"><b>2.&nbsp; Pago fuera de línea:</b> Si no puede pagar en línea, utilice una de las siguientes opciones de pago. Después de realizar el pago a través del modo fuera de línea, por favor registre su pago yendo a su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div><font color="#000000"><br></font></div><div style="margin-left: 25px;"><font color="#000000"><b>a.&nbsp;&nbsp;<i>Transferencia bancaria:</i></b> puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá las instrucciones por ese medio.</font></div><div style="margin-left: 25px;"><font color="#000000"><b>b.&nbsp;&nbsp;<i>Western Union:</i></b> puede realizar sus pagos a través de Western Union. Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus pagos, envíe la siguiente información a través de su perfil en nuestro sitio web </font><a href="https://www.gprocongress.org/payment." target="_blank">https://www.gprocongress.org.</a></div><div style="margin-left: 25px;"><font color="#000000"><br></font></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">i. Su nombre completo</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">ii. País de procedencia del envío</span></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iii. La cantidad enviada en USD</span></div><div style="margin-left: 75px;"><span style="background-color: transparent; color: rgb(0, 0, 0);">iv. El código proporcionado por Western Union.</span></div><div>&nbsp;</div><div style="margin-left: 25px;"><font color="#000000"><b>c. <i>RIA:</i></b> Por favor, envíe sus fondos a David Brugger, Dallas, Texas, USA.&nbsp; Junto con sus fondos, por favor envíe la siguiente información yendo a su perfil en nuestro sitio web https://www.gprocongress.org/payment.</font></div><div>&nbsp;</div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">i. Su nombre completo</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">ii. País de procedencia del envío</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0);">iii. La cantidad enviada en USD</span><br></div><div style="margin-left: 75px;"><span style="color: rgb(0, 0, 0); background-color: transparent;">iv. El código proporcionado por</span><font color="#000000">&nbsp;RIA</font></div><div>&nbsp;</div><div>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</div><div>&nbsp;</div><div>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</div><div><br></div><div>Si tiene alguna pregunta sobre cómo hacer su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</div><div>&nbsp;</div><div>Únase a nuestra oración en favor de la cantidad y la calidad de los capacitadores de pastores.</div><div><br></div><div>Saludos cordiales,</div><div>El equipo del GProCongreso II</div>';
 					
 					}elseif($user->language == 'fr'){
 					
 						$subject = 'Votre paiement GProCongress II est maintenant dû.';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b.</b> <b><i>Paiement par PayPal -</i></b> si vous avez un compte PayPal, vous pouvez payer vos frais via PayPal en vous rendant sur notre site Web (https://www.gprocongress.org). Veuillez envoyer vos fonds à : david@rreach.org (c’est le compte de RREACH). Dans le transfert, vous devez noter le nom du titulaire.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RAI –</i></b> vous pouvez payer vos frais par RAI. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RAI.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
-						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RAI –</i></b> vous pouvez payer vos frais par RAI. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RAI.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
+						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b.</b> <b><i>Paiement par PayPal -</i></b> si vous avez un compte PayPal, vous pouvez payer vos frais via PayPal en vous rendant sur notre site Web (https://www.gprocongress.org). Veuillez envoyer vos fonds à : david@rreach.org (c’est le compte de RREACH). Dans le transfert, vous devez noter le nom du titulaire.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RIA –</i></b> vous pouvez payer vos frais par RIA. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RIA.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
+						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Cher '.$name.',</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">Le paiement de votre participation au GProCongress II est maintenant dû en totalité.</span></p><p><font color="#242934" face="Montserrat, sans-serif">Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) en utilisant l’un des modes de paiement suivants:</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>1. Paiement en ligne :</b></font></p><p style="margin-left: 25px;"><span style="background-color: transparent; font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">a.</span><span style="background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;">&nbsp;</span><span style="font-weight: bolder; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"><i>Paiement par carte de credit-</i></span><span style="background-color: transparent;"><font color="#999999"><b><i>&nbsp;</i></b></font><b style="font-style: italic; letter-spacing: inherit;">&nbsp;</b></span><font color="#242934" face="Montserrat, sans-serif" style="letter-spacing: inherit; background-color: transparent;">vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</font></p><p><font color="#242934" face="Montserrat, sans-serif"><b>&nbsp;2. Paiement hors ligne :</b> Si vous ne pouvez pas payer en ligne, veuillez utiliser l’une des options de paiement suivantes. Après avoir effectué le paiement en mode hors ligne, veuillez enregistrer votre paiement en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>a. <i style="">Virement bancaire –</i></b> vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org. Vous recevrez des instructions par réponse de l’e-mail.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>b. <i>Western Union –</i> </b>vous pouvez payer vos frais via Western Union. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; i. Votre nom complet</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par Western Union.</font></p><p style="margin-left: 25px;"><font color="#242934" face="Montserrat, sans-serif"><b>c. <i>RIA –</i></b> vous pouvez payer vos frais par RIA. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes en accédant à votre profil sur notre site Web https://www.gprocongress.org/payment.</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i. Votre nom complet</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii. Le pays à partir duquel vous envoyez</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii. Le montant envoyé en dollars</font></p><p style=""><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv. Le code qui vous a été donné par RIA.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</font></p><p><font color="#242934" face="Montserrat, sans-serif">VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Si vous avez des questions concernant votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Cordialement</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">L’équipe GProCongress II</span></p>';
 					
 					}elseif($user->language == 'pt'){
 					
 						$subject = 'O seu pagamento para o II CongressoGPro em aberto';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Pagamento usando Paypal -</i></b> se tiver uma conta PayPal, pode pagar as suas taxas via PayPal, indo ao nosso site na web (https://www.gprocongress.org).&nbsp; Por favor envie o seu valor para: david@rreach.org (esta é a conta da RREACH).&nbsp; Na transferência, deve anotar o nome do inscrito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RAI -</i></b> pode pagar a sua taxa através do RAI. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RAI.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
-						$msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org/payment) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RAI -</i></b> pode pagar a sua taxa através do RAI. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RAI.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
+						// $msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Pagamento usando Paypal -</i></b> se tiver uma conta PayPal, pode pagar as suas taxas via PayPal, indo ao nosso site na web (https://www.gprocongress.org).&nbsp; Por favor envie o seu valor para: david@rreach.org (esta é a conta da RREACH).&nbsp; Na transferência, deve anotar o nome do inscrito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RIA -</i></b> pode pagar a sua taxa através do RIA. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RIA.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
+						$msg = '<p>Prezado '.$name.',</p><p>O pagamento para sua participação no II CongressoGPro está com o valor total em aberto.</p><p>Pode pagar a sua inscrição no nosso website (https://www.gprocongress.org/payment) utilizando qualquer um dos vários métodos de pagamento:</p><p><b>1. Pagamento online:</b></p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Pagamento com cartão de crédito -</i></b> pode pagar as suas taxas utilizando qualquer um dos principais cartões de crédito.</p><p><b>2.&nbsp; Pagamento off-line:</b> Se não puder pagar on-line, por favor utilize uma das seguintes opções de pagamento. Após efetuar o pagamento através do modo offline, por favor registe o seu pagamento indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 25px;"><b>a.&nbsp; <i>Transferência bancária -</i></b> pode pagar através de transferência bancária do seu banco. Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções através de e-mail de resposta.</p><p style="margin-left: 25px;"><b>b.&nbsp; <i>Western Union -&nbsp;</i> </b>pode pagar as suas taxas através da Western Union. Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com os seus fundos, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">I. O seu nome completo</p><p style="margin-left: 50px;">ii. O país de onde vai enviar</p><p style="margin-left: 50px;">iii. O montante enviado em USD</p><p style="margin-left: 50px;">iv. O código que lhe foi dado pela Western Union.</p><p style="margin-left: 25px;"><b>c.&nbsp; <i>RIA -</i></b> pode pagar a sua taxa através do RIA. Por favor envie o seu valor para David Brugger, Dallas, Texas, EUA.&nbsp; Juntamente com o seu valor, envie por favor as seguintes informações, indo ao seu perfil no nosso website https://www.gprocongress.org/payment.</p><p style="margin-left: 50px;">&nbsp;i. O seu nome completo</p><p style="margin-left: 50px;">&nbsp;ii. O país de onde vai enviar</p><p style="margin-left: 50px;">&nbsp;iii. O valor enviado em USD</p><p style="margin-left: 50px;">&nbsp;iv. O código que lhe foi dado por RIA.</p><p>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</p><p>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor&nbsp; previamente pagos por si serão retidos.</p><p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p>Ore conosco no sentido de multiplicar a quantidade e qualidade dos formadores de pastores.</p><p>Com muito carinho,</p><p>Equipe do II CongressoGPro</p>';
 					
 					}else{
 					
 						$subject = 'Your GProCongress II payment is now due.';
 						//When Paypal is active uncomment the commented line and comment the uncommented line
-						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b. <span style="white-space:pre">	</span>Payment using Paypal - if you have a PayPal account, you can pay your fees via PayPal by going to our website&nbsp; &nbsp; (https://www.gprocongress.org/payment).&nbsp; Please send your funds to: david@rreach.org (this is RREACH’s account).&nbsp;</font><span style="color: rgb(153, 153, 153); letter-spacing: inherit; background-color: transparent;">In</span><span style="letter-spacing: inherit; background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"> the transfer it should note the name of the registrant.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RAI –</i> </b>you can pay your fees via RAI. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RAI.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
-						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RAI –</i> </b>you can pay your fees via RAI. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RAI.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
+						// $msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b. <span style="white-space:pre">	</span>Payment using Paypal - if you have a PayPal account, you can pay your fees via PayPal by going to our website&nbsp; &nbsp; (https://www.gprocongress.org/payment).&nbsp; Please send your funds to: david@rreach.org (this is RREACH’s account).&nbsp;</font><span style="color: rgb(153, 153, 153); letter-spacing: inherit; background-color: transparent;">In</span><span style="letter-spacing: inherit; background-color: transparent; color: rgb(36, 41, 52); font-family: Montserrat, sans-serif;"> the transfer it should note the name of the registrant.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RIA –</i> </b>you can pay your fees via RIA. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RIA.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
+						$msg = '<p><font color="#242934" face="Montserrat, sans-serif">Dear '.$name.',</font></p><p><font color="#242934" face="Montserrat, sans-serif">Payment for your attendance at GProCongress II is now due in full.</font></p><p><font color="#242934" face="Montserrat, sans-serif">You may pay your fees on our website (https://www.gprocongress.org/payment) using any of several payment methods:</font></p><p><font color="#242934" face="Montserrat, sans-serif">1. <span style="white-space:pre">	</span><b>Online Payment:</b></font></p><p style="margin-left: 50px;"><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">a. </span><span style="font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent; white-space: pre;">	</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;"><b><i style="">Payment using credit card</i> –</b> you can pay your fees using any major credit card.</span></p><p><font color="#242934" face="Montserrat, sans-serif">2. <b>Offline Payment:</b> If you cannot pay online, then please use one of the following payment options. After making the payment via offline mode, please register your payment by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">a.&nbsp; &nbsp; <b><i>Bank transfer –</i></b> you can pay via wire transfer from your bank. If you want to make a wire transfer, please emai david@rreach.org. You will receive instructions via reply email.&nbsp;</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">b.&nbsp; &nbsp; <b><i>Western Union –</i></b> you can pay your fees via Western Union. Please send your funds to David Brugger, Dallas Texas, USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;i.&nbsp; Your full name</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ii.&nbsp;&nbsp;The country you are sending from</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iii.&nbsp; The amount sent in USD</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; iv.&nbsp; The code given to you by Western Union.</font></p><p style="margin-left: 50px;"><font color="#242934" face="Montserrat, sans-serif">c. <span style="white-space:pre">	</span><b><i>RIA –</i> </b>you can pay your fees via RIA. Please send your funds to David Brugger, Dallas, Texas,&nbsp; USA.&nbsp; Along with your funds, please submit the following information by going to your profile in our website https://www.gprocongress.org/payment.</font></p><p style="margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">&nbsp; &nbsp; &nbsp; &nbsp; i.&nbsp; &nbsp;&nbsp;</span><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">Your full name</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ii.&nbsp; &nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The country you are sending from</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iii.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The amount sent in USD</span></p><p style="letter-spacing: 0.5px; margin-left: 75px;"><font color="#242934" face="Montserrat, sans-serif">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;iv.&nbsp;&nbsp;</font><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; background-color: transparent;">The code given to you by RIA.</span></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</font></p><p><font color="#242934" face="Montserrat, sans-serif">PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</font></p><p><font color="#242934" face="Montserrat, sans-serif">If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Pray with us toward multiplying the quantity and quality of pastor-trainers.</font></p><p><font color="#242934" face="Montserrat, sans-serif">Warmly,</font></p><p><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; letter-spacing: inherit; background-color: transparent;">GProCongress II Team</span></p><div><span style="color: rgb(36, 41, 52); font-family: Montserrat, sans-serif; font-weight: 600;"><br></span></div>';
 					
 					}
 
@@ -2861,8 +3299,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
-
     public function AppologiesLetter(Request $request){
 
         $emails = array('jjustinenos@gmail.com',
@@ -2972,61 +3408,1789 @@ class PreLoginController extends Controller {
 
     }
 	
-	
 	public function SendEmailsToAppsAvailable(Request $request){
-
-			$user = \App\Models\User::where('id','DESC')->where('stage','>=','2')->get();
-			// $emails = array('gopalsaini.img@gmail.com');
-			foreach ($user as $val) {
 			
-				$user = \App\Models\User::where('id',$val->id)->first();
-				if($user){
-
-					$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+			$users = \App\Models\User::where('stage','>=','2')->where('profile_status','Approved')->get();
+			
+			if(!empty($users) && count($users)>0){
+				
+				foreach ($users as $val) {
 					
-					if($user->language == 'sp'){
-
-						$faq = '<a href="'.url('profile').'">aqui</a>';
-
-						$subject = "¡Manténgase al día de todo lo que ocurre en el GProCongress!";
-						$msg = '<p>Estimado '.$name.',&nbsp;</p><p><br></p><p><br></p><p>Descargue hoy nuestra nueva app - es la app oficial del Segundo Congreso de Proclamación Global para Capacitadores de Pastores (GProCongress II), que se celebrará (Dios mediante) en Ciudad de Panamá, Panamá del 12 al 17 de noviembre de 2023. Con la app de GProCommission, podrá completar el proceso de inscripción al Congreso, efectuar los pagos correspondientes, interactuar antes del evento, y eso es sólo el comienzo. Pronto habrá más funcionalidades: temas, encuestas, chats, ¡y mucho más!</p><p><br></p><p>Puede encontrar la aplicación GProCommission en la App Store (LINK), o en Google Play (LINK). ¡Consíguala hoy!</p><p>Calurosamente,</p><p><br></p><p>El Equipo GProCongress II</p>';
+					$user = \App\Models\User::where('id',$val->id)->first();
 					
-					}elseif($user->language == 'pt'){
-
-						$faq = '<a href="'.url('profile').'">link</a>';
-
-						$subject = "Fique por dentro de tudo o que está acontecendo sobre o CongressoGPro!";
-						$msg = '<p>Caro '.$name.',</p><p><br></p><p>Baixe hoje o nosso novo aplicativo - é o aplicativo oficial do 2º Congresso de Proclamação Global para Formadores de Pastores (II CongressoGPro), que acontecerá (se Deus quiser) na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023. Com o aplicativo GProCommission, você poderá completar o processo de inscrição para o Congresso, pagar a sua taxa de inscrição para o Congresso, interagir antes do evento, e isso é apenas o início. Uma maior funcionalidade está para funcionar em  breve: tópicos, sondagens, chats, e muito mais!</p><p><br></p><p>Pode encontrar o aplicativo GProCommission na App Store (LINK), ou no Google Play (LINK). Adquira-o hoje!</p><p><br></p><p>Calorosamente,</p><p>Equipe GProCongress II</p>';
-					
-					}elseif($user->language == 'fr'){
-					
-						$faq = '<a href="'.url('profile').'">lien</a>';
-
-						$subject = "Restez informés de tout ce qui se passe avec le GProCongrès !";
-						$msg = "<p>Cher/Chère '.$name.',</p><p><br></p><p><br></p><p>Téléchargez notre nouvelle application dès aujourd'hui c'est l'application officielle du 2e Congrès mondial de  la Proclamation pour les formateurs de pasteurs (GProCongress II),qui se tiendra (si le Seigneur le veut) dans la ville de Panama, au Panama, du 12 au 17 novembre 2023. Avec l'application GProCommission, vous pouvez compléter le processus d'inscription au Congrès, payer vos frais pour le Congrès, interagir avant l'événement, et ce n'est que le début. De plus amples fonctionnalités  seront bientôt disponibles : sujets, sondages, chats, et bien plus encore ! </p><p><br></p><p>Vous pouvez trouver l'application GProCommission dans l'App Store (LIEN), ou sur Google Play (LIEN). Obtenez-la dès aujourd'hui !</p><p><br></p><p></p><p>Cordialement</p><p>L` équipe du GProCongress II</p>";
+					if($user){
+	
+						$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+						$android = '<a href="https://play.google.com/store/apps/details?id=org.gprocommision">Google Play</a>';
+						$ios = '<a href="https://apps.apple.com/us/app/gpro-commission/id1664828059">App Store</a>';
+	
+						if($user->language == 'sp'){
+	
+							$subject = "¡Manténgase al día de todo lo que ocurre en el GProCongress!";
+							$msg = '<p>Estimado '.$name.',&nbsp;</p><p><br></p><p><br></p>
+									<p>Descargue hoy nuestra nueva app - es la app oficial del Segundo Congreso de Proclamación Global para Capacitadores de Pastores (GProCongress II), que se celebrará (Dios mediante) en Ciudad de Panamá, Panamá del 12 al 17 de noviembre de 2023. Con la app de GProCommission, podrá completar el proceso de inscripción al Congreso, efectuar los pagos correspondientes, interactuar antes del evento, y eso es sólo el comienzo. Pronto habrá más funcionalidades: temas, encuestas, chats, ¡y mucho más!</p><p><br></p>
+									<p>Puede encontrar la aplicación GProCommission en la '.$ios.', o en '.$android.'. ¡Consíguala hoy!</p>
+									<p>Calurosamente,</p><p><br></p><p>El Equipo GProCongress II</p>';
 						
-					}else{
-					
-						$faq = '<a href="'.url('profile').'">Click here</a>';
-
-						$subject = "Stay up to date on everything happening with the GProCongress!";
-						$msg = '<p>Dear '.$name.',</p><p><br></p><p>Download our new app today – it’s the official app of the 2nd Global Proclamation Congress for Trainers of Pastors (GProCongress II), to be held (Lord willing) in Panama City, Panama on November 12-17, 2023. With the GProCommission app, you can complete the registration process for the Congress, pay your fees for the Congress, interact before the event, and that’s just the beginning. Greater functionality is coming soon: topics, polls, chats, and much more!</p><p><br></p><p>You can find the GProCommission app in the App Store (LINK), or on Google Play (LINK). Get it today!!</p><p><br></p><p>Warmly,</p><p>&nbsp;The GProCongress II Team</p><div><br></div>';
-					
+						}elseif($user->language == 'pt'){
+	
+							$subject = "Fique por dentro de tudo o que está acontecendo sobre o CongressoGPro!";
+							$msg = '<p>Caro '.$name.',</p><p><br></p>
+									<p>Baixe hoje o nosso novo aplicativo - é o aplicativo oficial do 2º Congresso de Proclamação Global para Formadores de Pastores (II CongressoGPro), que acontecerá (se Deus quiser) na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023. Com o aplicativo GProCommission, você poderá completar o processo de inscrição para o Congresso, pagar a sua taxa de inscrição para o Congresso, interagir antes do evento, e isso é apenas o início. Uma maior funcionalidade está para funcionar em  breve: tópicos, sondagens, chats, e muito mais!</p><p><br></p>
+									<p>Pode encontrar o aplicativo GProCommission na '.$ios.', ou no '.$android.'. Adquira-o hoje!</p><p><br></p>
+									<p>Calorosamente,</p><p>Equipe GProCongress II</p>';
+						
+						}elseif($user->language == 'fr'){
+						
+							$subject = "Restez informés de tout ce qui se passe avec le GProCongrès !";
+							$msg = "<p>Cher/Chère '.$name.',</p><p><br></p><p><br></p>
+									<p>Téléchargez notre nouvelle application dès aujourd'hui c'est l'application officielle du 2e Congrès mondial de  la Proclamation pour les formateurs de pasteurs (GProCongress II),qui se tiendra (si le Seigneur le veut) dans la ville de Panama, au Panama, du 12 au 17 novembre 2023. Avec l'application GProCommission, vous pouvez compléter le processus d'inscription au Congrès, payer vos frais pour le Congrès, interagir avant l'événement, et ce n'est que le début. De plus amples fonctionnalités  seront bientôt disponibles : sujets, sondages, chats, et bien plus encore ! </p><p><br></p>
+									<p>Vous pouvez trouver l'application GProCommission dans l' ".$ios.", ou sur  ".$android.". Obtenez-la dès aujourd'hui !</p><p><br></p><p></p>
+									<p>Cordialement</p><p>L` équipe du GProCongress II</p>";
+							
+						}else{
+						
+							$subject = "Stay up to date on everything happening with the GProCongress!";
+							$msg = '<p>Dear '.$name.',</p><p><br></p>
+									<p>Download our new app today – it’s the official app of the 2nd Global Proclamation Congress for Trainers of Pastors (GProCongress II), to be held (Lord willing) in Panama City, Panama on November 12-17, 2023. With the GProCommission app, you can complete the registration process for the Congress, pay your fees for the Congress, interact before the event, and that’s just the beginning. Greater functionality is coming soon: topics, polls, chats, and much more!</p><p><br></p>
+									<p>You can find the GProCommission app in the  '.$ios.', or on  '.$android.'. Get it today!!</p><p><br></p>
+									<p>Warmly,</p><p>&nbsp;The GProCongress II Team</p><div><br></div>';
+						
+						}
+						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+	
+						\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Stay up to date on everything happening with the GProCongress!');
+	
 					}
-					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-
-					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Our Apologies');
-
+					
 				}
+				return response(array('message'=>'Reminders has been sent successfully. All Emails'), 200);	
 				
 			}
-				
-			return response(array('message'=>'Reminders has been sent successfully. All Emails'), 200);
+			
 
 
     }
 
+	public function sendEarlyBirdReminderFirstMail(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where([['stage', '=', '2'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
+			
+			if(count($results) > 0){
+
+				foreach ($results as $key => $user) {
+					$emails= [];
+					$name = '';
+					$emails[]= $user->email;
+					$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+                    
+                    
+					if($user->language == 'sp'){
+						
+						$subject = '¡Por favor, realice hoy el pago para el GProCongress II!';
+						$url = '<a href="'.url('payment').'" target="_blank">Haga clic AQUÍ</a>';
+						$msg = '<p>Estimado/a Entrenador de Pastores:</p>
+						<p><br></p>
+						<p>Su solicitud para el GProCongress II ha sido aprobada, pero aún no hemos recibido el pago de sus derechos de inscripción.  Le pedimos que realice su pago lo antes posible, por las siguientes razones:</p>
+						<p><br></p>
+						<p>1.     La asistencia al GProCongress II es por orden de llegada.  Por lo tanto, su plaza en el GproCongress no está garantizada hasta que no abone el importe total de su inscripción.</p>
+						<p><br></p>
+						<p style="color:red"><b>2.     Con el fin de mantener su descuento de "pago adelantado", deberá realizar el pago completo a más tardar el 31 de mayo de 2023.</b></p>
+						<p><br></p>
+						<p style="color:red"><b>3.     El proceso de visado puede tardar hasta 4 meses, dependiendo de su país de residencia.  Por lo tanto, debe iniciar los trámites de visado lo antes posible.</b></p>
+						<p><br></p>
+						<p>(POR FAVOR, TENGA EN CUENTA que si no puede obtener un visado para viajar a Panamá, se le devolverá el importe total de los pagos de inscripción).</p>
+						<p><br></p>
+						<p>Entonces, ¿qué está esperando?  No pierda la oportunidad de asistir a este acontecimiento histórico.  Realice su pago hoy mismo.  Puede abonar los cargos de inscripción en nuestro sitio web mediante un pago en línea con tarjeta de crédito, o tiene la opción de abonar los cargos mediante transferencia bancaria, Western Union, o RIA.  '.$url.' para ir a la página de pago de nuestro sitio web, donde encontrará toda la información que necesita para efectuar el pago.</p>
+						<p><br></p>
+						<p>Esperamos con gran anticipación verle en la Ciudad de Panamá, Panamá del 12 al 17 de noviembre de 2023.  Si tiene alguna pregunta sobre cómo efectuar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+						<p><br></p>
+						<p>Súmese a nuestra oración a fin de multiplicar la cantidad y calidad de capacitadores de pastores. </p>
+						<p><br></p>
+						<p>Atentamente,</p>
+						<p>&nbsp;El equipo de GproCongress II</p><div><br></div>';
+
+
+					}elseif($user->language == 'fr'){
+					
+						$subject = 'Veuillez effectuer votre paiement GProCongress II dès aujourd’hui!';
+						$url = '<a href="'.url('payment').'" target="_blank">Cliquez ICI</a>';
+						$msg = '<p>Cher pasteur-formateur,</p>
+						<p><br></p>
+						<p>Votre demande d’inscription au GProCongress II a été approuvée, mais nous n’avons pas encore reçu le paiement de vos frais d’inscription. Nous vous demandons d’effectuer votre paiement le plus tôt que possible, pour les raisons suivantes :</p>
+						<p><br></p>
+						<p>1. La participation au GProCongress II se fait selon le principe "du premier arrivé, premier servi". Par conséquent, votre place au Congrès n’est pas garantie tant que vous n’avez pas effectué le paiement intégral.</p>
+						<p><br></p>
+						<p style="color:red"><b>2. Afin de conserver votre réduction de « l’inscription anticipée », votre paiement intégral doit être reçu au plus tard le 31 mai 2023.</b></p>
+						<p><br></p>
+						<p style="color:red"><b>3. Le processus de visa peut prendre jusqu’à 4 mois, selon votre pays de résidence. Par conséquent, vous devez commencer le processus de visa le plus tôt que possible. </b></p>
+						<p><br></p>
+						<p>(VEUILLEZ NOTER – si vous ne parvenez pas à obtenir un visa pour venir au Panama, vous recevrez un remboursement complet de vos frais d’inscription.) </p>
+						<p><br></p>
+						<p>Alors qu’attendez-vous ? Ne perdez pas votre chance d’assister à cet événement historique! Effectuez votre paiement dès aujourd’hui. Vous pouvez payer vos frais d’inscription sur notre site web avec un paiement par carte de crédit en ligne, ou vous avez la possibilité de payer vos frais par virement bancaire, Western Union, ou RIA. '.$url.' pour accéder à la page de paiement de notre site Web, où vous trouverez toutes les informations nécessaires pour payer vos frais.</p>
+						<p><br></p>
+						<p>Nous attendons avec impatience de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023. Si vous avez des questions concernant votre paiement, ou si vous souhaitez parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+						<p><br></p>
+						<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs. </p>
+						<p><br></p>
+						<p>Cordialement</p>
+						<p>&nbsp;L’équipe GProCongress II</p><div><br></div>';
+
+					}elseif($user->language == 'pt'){
+					
+						$subject = 'Faça o pagamento do GProCongress II hoje!';
+						$url = '<a href="'.url('payment').'" target="_blank">Clique AQUI</a>';
+						$msg = '<p>Prezado Pastor-Treinador,</p>
+						<p><br></p>
+						<p>Sua inscrição para o GProCongresso II foi aprovada, mas ainda não recebemos o pagamento de suas taxas de inscrição. Pedimos que efetue o seu pagamento com a maior brevidade possível, pelos seguintes motivos:</p>
+						<p><br></p>
+						<p>1. A participação no GProCongresso II é por ordem de chegada. Portanto, sua vaga no Congresso não está garantida até que você efetue o pagamento integral.</p>
+						<p><br></p>
+						<p style="color:red"><b>2. Para manter seu desconto de “antecipado”, seu pagamento integral deve ser recebido até 31 de maio de 2023.</b></p>
+						<p><br></p>
+						<p style="color:red"><b>3. O processo de visto pode levar até 4 meses, dependendo do seu país de residência. Portanto, você precisa iniciar o processo de visto o mais rápido possível.</b></p>
+						<p><br></p>
+						<p>(OBSERVE – se você não conseguir obter um visto para vir ao Panamá, receberá um reembolso total de suas taxas de registro.)</p>
+						<p><br></p>
+						<p>Então, o que você está esperando? Não perca a chance de participar desse este evento histórico! Faça seu pagamento hoje. Você pode pagar suas taxas de inscrição em nosso site com um pagamento on-line com cartão de crédito ou tem a opção de pagar suas taxas por transferência bancária, Western Union, ou RIA. '.$url.' para ir para a página de pagamento em nosso site, onde você encontrará todas as informações necessárias para pagar suas taxas.</p>
+						<p><br></p>
+						<p>Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023. Se você tiver alguma dúvida sobre como efetuar seu pagamento ou se precisar falar com um dos membros de nossa equipe, basta responder a este e-mail .</p>
+						<p><br></p>
+						<p>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</p>
+						<p><br></p>
+						<p>Calorosamente,</p>
+						<p>&nbsp;Equipe GProCongress II</p><div><br></div>';
+
+					}else{
+					
+                        $url = '<a href="'.url('payment').'" target="_blank">Click HERE</a>';
+
+						$subject = 'Please make your GProCongress II payment today!';
+						$msg = '<p>Dear Pastor-Trainer,</p>
+						<p></p>
+						<p>Your application for GProCongress II has been approved, but we have not yet received payment of your registration fees.  We are asking that you make your payment as soon as possible, for the following reasons:</p>
+						<p></p>
+						<p>1.     Attendance at GProCongress II is on a first-come, first-served basis.  Therefore, your place at the Congress is not guaranteed until you make full payment.</p>
+						<p></p>
+						<p style="color:red"><b>2.     In order to keep your “early bird” discount, your full payment must be received on or before May 31, 2023.</b></p>
+						<p></p>
+						<p style="color:red"><b>3.     The visa process may take up to 4 months, depending on your country of residence.  Therefore, you need to start the visa process as soon as possible. </b></p>
+						<p></p>
+						<p>(PLEASE NOTE – if you are unable to obtain a visa to come to Panama, you will receive a full refund of your registration fees.) </p>
+						<p></p>
+						<p>So what are you waiting for?  Don’t lose your chance to attend this historic event!  Make your payment today.  You can pay your registration fees on our website with an online credit card payment, or you have the option of paying your fees via bank transfer, Western Union, or RIA.  '.$url.' to go to the payment page on our website, where you will find all the information you need to pay your fees.</p>
+						<p></p>
+						<p>We look forward with great anticipation to seeing you in Panama City, Panama on November 12-17, 2023.  If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+						<p></p>
+						<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+						<p><br></p>
+						<p>Warmly,</p>
+						<p>&nbsp;The GProCongress II Team</p><div><br></div>';
+					
+					}
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Please make your GProCongress II payment today!');
+				
+					
+				}
+				
+				return response(array('message'=>' Reminders has been sent successfully.All Emails : '.print_r($emails)), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	public function speakerList(Request $request){
+		
+		try{
+
+			$speakerResult=\App\Models\Speaker::where([['status','=','1']])->orderBy('id','ASC')->get();
+		
+			if($speakerResult->count()==0){
+
+				return response(array("error"=>true,"message" => 'Speaker Not found.'),200);
+
+			}else{
+				
+				$result=[];
+				
+				foreach($speakerResult as $speaker){
+					
+					$result[]=[
+						'image'=>asset('/uploads/speaker/'.$speaker->image),
+						'name'=>$speaker->name,
+						'description'=>$speaker->description,
+					];
+				}
+				return response(array("error"=>false,"message" => 'Speaker fetched successfully.','result'=>$result),200); 
+			}
+		
+		}catch (\Exception $e){
+			
+			return response(array("error"=>true,"message" => $e->getMessage()),403); 
+		
+		} 
+		
+	}	
 	
+	public function PreRecordedVideoList(Request $request){
+		
+		try{
+
+			$preRecordedVideoResult=\App\Models\PreRecordedVideo::where([['status','=','1']])->orderBy('id','ASC')->get();
+		
+			if($preRecordedVideoResult->count()==0){
+
+				return response(array("error"=>true,"message" => 'PreRecordedVideo Not found.'),200);
+
+			}else{
+				
+				$result=[];
+				
+				foreach($preRecordedVideoResult as $preRecordedVideoVal){
+					
+					$result[]=[
+						'video'=>asset('/uploads/pre-recorded-video/'.$preRecordedVideoVal->video),
+						'name'=>$preRecordedVideoVal->name,
+					];
+				}
+				return response(array("error"=>false,"message" => 'PreRecordedVideo fetched successfully.','result'=>$result),200); 
+			}
+		
+		}catch (\Exception $e){
+			
+			return response(array("error"=>true,"message" => $e->getMessage()),403); 
+		
+		} 
+		
+	}
+
+	public function exhibitorsRegistration(Request $request){
+	
+		$rules['name']='required';
+		$rules['email']='required';
+		$rules['mobile']='required';
+		$rules['category']='required';
+		
+		// $messages = array(
+		// 	'is_group.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'is_group_required'),
+		// 	'user_whatsup_code.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'user_whatsup_code_required'),
+		// 	'contact_whatsapp_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_whatsapp_number_required'), 
+		// 	'user_mobile_code.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'user_mobile_code_required'), 
+		// 	'contact_business_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_business_number_required'), 
+		// 	'contact_business_number.unique' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'contact_business_number_unique'),  
+			
+		// );
+
+		$validator = \Validator::make($request->json()->all(), $rules);
+		 
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message = $msg[0];
+				break;
+			}
+			
+			return response(array("error"=>true, 'message'=>$message), 403);
+			
+		}else{
+
+			try {
+					
+				//check email address
+				$tempArr = array_unique(array_column($request->json()->get('group_list'), 'email'));
+				$uniqueGroupUsers=array_intersect_key($request->json()->get('group_list'), $tempArr);
+
+				if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
+					return response(array( "message"=>$message), 403);
+				
+				}else{
+
+					$groupEmails = $names = array_column($request->json()->get('group_list'), 'email'); 
+					$checkExistUsers=\App\Models\User::whereIn('email',$groupEmails)->get();
+
+					if($checkExistUsers->count()>0){
+
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
+						return response(array("message"=>$checkExistUsers[0]['email'].$message), 403);
+
+					}
+				}
+
+				$users=[];
+
+				foreach($request->json()->get('group_list') as $group){
+
+					$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+					$password = substr(str_shuffle($chars),0,8);
+
+					$users[]=array(
+						'name'=>$group['name'],
+						'email'=>$group['email'],
+						'mobile'=>$group['mobile'],
+						// 'category'=>$group['category'],
+						'reg_type'=>'email',
+						'designation_id'=>'4',
+						'password'=>\Hash::make($password),
+						'otp_verified'=>'No',
+						'system_generated_password'=>'1',
+					);
+
+					
+					$to = $group['email'];
+					$name = $group['name'];
+					$language = $group['lang'];
+
+					if($language == 'sp'){
+						$url = '<a href="'.url('profile-update').'">aqui</a>';
+						$faq = '<a href="'.url('faq').'">aqui</a>';
+
+						$subject = "¡Su inscripción al GproCongress II ha iniciado!";
+						$msg = '<p>Estimado '.$group['name'].',</p><p>&nbsp;</p><p>'.$name.' ha inicado el proceso de inscripción al GproCongress II al ingresar tu nombre.</p><p>Quedamos a la espera de recibir su solicitud completa.</p><p><br></p><p>Por favor, utilice este enlace haga click '.$url.' para acceder, editar y completer su cuenta en cualquier momento.&nbsp;</p><p><br><div><br>Dirección de correo electrónico: '.$to.'<br>Contraseña: '.$password.'<br></div></p><p>Si usted desea más información sobre los criterios de admisibilidad para candidatos potenciales al congreso, antes de continuar, haga click, '.$faq.'</p><p><br></p><p>Para hablar con uno de los miembros de nuestro equipo, usted solo tiene que responder a este email. ¡Estamos aquí para ayudarle!&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+					
+					}elseif($language == 'fr'){
+					
+						$url = '<a href="'.url('profile-update').'">aqui</a>';
+						$faq = '<a href="'.url('faq').'">cliquez ici</a>';
+
+						$subject = "Votre inscription au GProCongrès II a commencé!";
+						$msg = '<p>Cher '.$group['name'].',&nbsp;</p><p>'.$name.' a commencé le processus d’inscription au GProCongrès II, en soumettant votre nom!&nbsp;</p><p><br></p><p><br></p><p><br></p><p>Nous sommes impatients de recevoir votre demande complète. Veuillez utiliser ce lien '.$url.' pour accéder, modifier et compléter votre compte à tout moment.&nbsp;</p><p><br><div><br>E-mail: '.$to.'<br>Mot de passe: '.$password.'<br></div></p><p>Si vous souhaitez plus d’informations sur les critères d’éligibilité pour les participants potentiels au Congrès, avant de continuer,  '.$faq.'.</p><p><br></p><p>Pour parler à l’un des membres de notre équipe, vous pouvez simplement répondre à ce courriel. Nous sommes là pour vous aider !</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+					
+					}elseif($language == 'pt'){
+					
+						$url = '<a href="'.url('profile-update').'">aqui</a>';
+						$faq = '<a href="'.url('faq').'">clique aqui</a>';
+
+						$subject = "A sua inscrição para o II CongressoGPro já Iniciou!";
+						$msg = '<p>Prezado '.$group['name'].',</p><p><br></p><p>'.$name.' iniciou com o processo de inscrição para o II CongressoGPro, por submeter o teu nome!&nbsp;</p><p><br></p><p>Nós esperamos receber a sua inscrição complete.</p><p>Por favor use este '.$url.' para aceder, editar e terminar a sua conta a qualquer momento.</p><p><br><div><br>Eletrónico: '.$to.'<br>Senha: '.$password.'<br></div></p><p>Se você precisa de mais informações sobre o critério de elegibilidade para participantes potenciais ao Congresso, antes de continuar,  '.$faq.'</p><p><br></p><p>Para falar com um dos nossos membros da equipe, você pode simplesmente responder a este e-mail. Estamos aqui para ajudar!</p><p><br></p><p>Ore conosco, a medida que nos esforçamos para multiplicar o número, e desenvolvemos a capacidade dos treinadores de pastores&nbsp;</p><p><br></p><p>Calorosamente,</p><p><br></p><p>A Equipe do II CongressoGPro</p>';
+					
+					}else{
+					
+						$url = '<a href="'.url('profile-update').'">link</a>';
+						$faq = '<a href="'.url('faq').'">click here</a>';
+
+						$subject = "Your registration for GProCongress II has begun!";
+						$msg = '<p>Dear '.$group['name'].',</p><p><br></p><p>'.$name.' has begun the registration process for the GProCongress II, by submitting your name!&nbsp;</p><p><br></p><p>We look forward to receiving your full application.</p><p>Please use this  '.$url.' to access, edit, and complete your account at any time.&nbsp;</p><p><br><div>Your registered email and password are:</div><div><br>Email: '.$to.'<br>Password: '.$password.'<br></div></p><p>If you want more information about the eligibility criteria for potential Congress attendees, before proceeding,  '.$faq.'.</p><p><br></p><p>To speak with one of our team members, you can simply respond to this email. We are here to help!</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+						
+					}
+
+					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+
+					// \App\Helpers\commonHelper::sendSMS($group['mobile']);
+
+				}
+
+				\App\Models\User::insert($users);
+
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($language,'GroupInfo-updated-successfully');
+				return response(array("error"=>true, "message"=>$message), 200);
+
+			} catch (\Exception $e) {
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			}
+		}
+
+    }
+
+	
+	public function getUserData(Request $request) {
+ 
+		$type = 'Pending';
+	
+		
+		$columns = \Schema::getColumnListing('users');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		
+		$query = \App\Models\User::where([['id', '!=', '1'],['parent_id', '=', null]])->orderBy('id', 'desc');
+
+		if (request()->has('email')) {
+			$query->where(function ($query1) {
+				$query1->where('email', 'like', "%" . request('email') . "%")
+					  ->orWhere('name', 'like', "%" . request('email') . "%")
+					  ->orWhere('last_name', 'like', "%" . request('email') . "%");
+			});
+			
+		}
+
+		$data = $query->get();
+		
+		$totalData1 = \App\Models\User::where([['id', '!=', '1'],['parent_id', '=', null]])->orderBy('id', 'desc');
+		
+		if (request()->has('email')) {
+
+			$totalData1->where(function ($query) {
+				$query->where('email', 'like', "%" . request('email') . "%")
+					  ->orWhere('name', 'like', "%" . request('email') . "%")
+					  ->orWhere('last_name', 'like', "%" . request('email') . "%");
+			});
+
+		}
+
+		$totalData = $totalData1->count();
+		
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		// ->setOffset($start)
+
+		->addColumn('name', function($data){
+			return $data->name.' '.$data->last_name;
+		})
+		->addColumn('user_name', function($data){
+
+			if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+				return '<a href="javascript:void(0)" class="group-user-list" data-email="'.$data->email.'"></a> '.$data->email ;
+			} else {
+				return $data->email;
+			}
+
+		})
+
+		->addColumn('stage0', function($data){
+			return \App\Helpers\commonHelper::getCountryNameById($data->id); 
+		})
+
+		->addColumn('stage1', function($data){
+			return ucfirst($data->business_name);
+		})
+
+		->addColumn('stage2', function($data){
+			return ucfirst($data->business_identification_no);
+		})
+
+		->addColumn('stage3', function($data){
+			return ($data->mobile);
+		})
+
+		->addColumn('stage4', function($data){
+			return ($data->passport_number);
+		})
+
+		->addColumn('stage5', function($data){
+			return '<a target="_blank" href="'.asset('uploads/passport/'.$data->passport_copy).'" >View</a>'; 
+		})
+
+		->addColumn('payment', function($data){
+			if($data->parent_id != null){
+				return '<div class="span badge rounded-pill pill-badge-secondary">N/A</div>';
+			}
+			if(\App\Helpers\commonHelper::getTotalPendingAmount($data->id)) {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			} else {
+				return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+			}
+		})
+
+		->addColumn('action', function($data){
+
+			if($data->profile_status == 'Approved'){
+
+				return '
+					<div style="display:flex">
+					<a href="'.env('Admin_URL').'/admin/exhibitor/profile/'.$data->id.'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+					</div>
+				';
+				
+			}else{
+
+				return '
+					<div style="display:flex">
+					<a data-id="'.$data->id.'" title="Send Sponsorship letter" class="btn btn-sm btn-outline-success m-1 sendSponsorshipLetter">Send</a>
+					<a href="'.env('Admin_URL').'/admin/exhibitor/profile/'.$data->id.'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+					<a href="javascript:void(0)" title="Approve Profile" data-id="'.$data->id.'" data-status="Approved" class="btn btn-sm btn-success px-3 m-1 text-white profile-status"><i class="fas fa-check"></i></a>
+					</div>
+				';
+			}
+			
+
+		})
+
+		
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function getGroupUsersList(Request $request) {
+
+
+		$id = \App\Models\User::where('email', $request->post('email'))->first()->id;
+		$results = \App\Models\User::where([['parent_id', $id]])->get();
+
+		$html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"> 
+					<thead> 
+					<tr> 
+					<th class="text-center">'. \Lang::get('admin.id') .'</th> 
+					<th class="text-center">Added As</th> 
+					<th class="text-center">Name</th> 
+					<th class="text-center">Email</th> 
+					<th class="text-center">Mobile</th> 
+					<th class="text-center">Citizenship</th> 
+					<th class="text-center">Passport Number</th> 
+					<th class="text-center">DOB</th> 
+					<th class="text-center">Gender</th> 
+					<th class="text-center">Passport Copy</th> 
+					<th class="text-center">'. \Lang::get('admin.action') .'</th> </tr> </thead><tbody>';
+		
+		if (count($results) > 0) {
+			foreach ($results as $key=>$result) {
+
+				$spouse = \App\Models\User::where([['parent_id', $result->id]])->first();
+
+				$key += 1;
+				$html .= '<tr>';
+				$html .= '<td class="text-center">'.$key.'.</td>';
+
+				$html .= '<td class="text-center">'.$result->added_as;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->added_as.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->name;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->name.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->email;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->email.'</p>' : '';
+				$html .= '</td>';
+
+				
+				$html .= '<td class="text-center">'.$result->mobile;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->mobile.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.\App\Helpers\commonHelper::getCountryNameById($result->id);
+				$html .= $spouse ? '<hr><p class="text-danger">'.\App\Helpers\commonHelper::getCountryNameById($spouse->id).'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->passport_number;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->passport_number.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->dob;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->dob.'</p>' : '';
+				$html .= '</td>';
+
+				$gender = 'Male';
+				if($spouse && $spouse->gender == '2'){
+					$gender = 'Female';
+				}
+
+				$resultGender = 'Male';
+				if($result && $result->gender == '2'){
+					$resultGender = 'Female';
+				}
+
+				$html .= '<td class="text-center">'.$resultGender ;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$gender : '</p>';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center"><a target="_blank" href="'.asset('uploads/passport/'.$result->passport_copy).'" >View</a></p>';
+				$html .= $spouse ? '<hr><p class="text-danger"><a target="_blank" href="'.asset('uploads/passport/'.$spouse->passport_copy).'" >View</a></p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center"><a href="'.env('Admin_URL').'/admin/exhibitor/profile/'.$result->id.'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a></p>';
+				$html .= $spouse ? '<hr><p class="text-danger"><a href="'.env('Admin_URL').'/admin/exhibitor/profile/'.$spouse->id.'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a></p>' : '';
+				$html .= '</td>';
+
+				$html .= '</tr>';
+			}
+		} else {
+			$html .= '<tr colspan="9"><td class="text-center">No Group Users Found</td></tr>';
+		}
+		$html .= '</tbody></table>';
+
+		return response()->json(array('html'=>$html));
+		
+
+	}
+
+
+	public function userProfile(Request $request) {
+
+		$id = '';
+		if(isset($_GET['id']) && $_GET['id'] != ''){
+			$id = $_GET['id'];
+		}
+
+		$data = [];
+
+		$result = \App\Models\User::where([['id', '=', $id]])->first();
+		
+		if (!$result) {
+
+			return response(array("error"=>true, "message"=>'data not found', "result"=>[]), 403);
+		}
+
+		$data = [
+			'id'=>$result->id,
+			'parent_id'=>$result->parent_id,
+			'business_owner'=>$result->parent_id,
+			'added_as'=>$result->added_as,
+			'salutation'=>$result->salutation,
+			'last_name'=>$result->last_name,
+			'name'=>$result->name,
+			'gender'=>$result->gender,
+			'last_name'=>$result->last_name,
+			'email'=>$result->email,
+			'phone_code'=>$result->phone_code,
+			'mobile'=>$result->mobile,
+			'reg_type'=>$result->reg_type,
+			'status'=>$result->status,
+			'profile_status'=>$result->profile_status,
+			'dob'=>$result->dob,
+			'citizenship'=>$result->citizenship,
+			'amount'=>$result->amount,
+			'payment_status'=>$result->payment_status,
+			'room'=>$result->room,
+			'business_name'=>$result->business_name,
+			'business_identification_no'=>$result->business_identification_no,
+			'website'=>$result->website,
+			'logo'=>'<a target="_blank" href="'.asset('uploads/logo/'.$result->logo).'">View</a>',
+			'passport_number'=>$result->passport_number,
+			'passport_copy'=>'<a target="_blank" href="'.asset('uploads/passport/'.$result->passport_copy).'">View</a>',
+			'any_one_coming_with_along'=>$result->any_one_coming_with_along,
+			'coming_with_spouse'=>$result->coming_with_spouse,
+			'number_of_room'=>$result->number_of_room,
+			'qrcode'=>$result->qrcode,
+			'spouse_id'=>$result->spouse_id,
+			'language'=>$result->language,
+			'spouse'=>\App\Models\User::where('parent_id',$result['id'])->where('added_as','Spouse')->first(),
+			'parent_name'=>\App\Helpers\commonHelper::getUserNameById($result['parent_id']),
+			'AmountInProcess'=>\App\Helpers\commonHelper::getTotalAmountInProcess($result['id']),
+			'AcceptedAmount'=>\App\Helpers\commonHelper::getTotalAcceptedAmount($result['id']),
+			'PendingAmount'=>\App\Helpers\commonHelper::getTotalPendingAmount($result['id']),
+			'WithdrawalBalance'=>\App\Helpers\commonHelper::userWithdrawalBalance($result['id']),
+			'RejectedAmount'=>\App\Helpers\commonHelper::getTotalRejectedAmount($result['id']),
+		];
+
+		return response(array("error"=>false, "message"=>'user data found', "result"=>$data), 200);
+
+	}
+
+	public function getExhibitorPaymentHistory(Request $request, $id) {
+		
+		$columns = \Schema::getColumnListing('transactions');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\Transaction::where('user_id', $id)->where('particular_id', '1')->orderBy($order,$dir);
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\Transaction::where('user_id', $id)->where('particular_id', '1')->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('user_name', function($data){
+			return \App\Helpers\commonHelper::getDataById('User', $data->user_id, 'name');
+		})
+		
+		->addColumn('created_at', function($data){
+			return date('d-M-Y H:i:s',strtotime($data->created_at));
+		})
+
+		
+		->addColumn('transaction', function($data){
+			return $data->order_id;
+		})
+
+		->addColumn('utr', function($data){
+			return $data->bank_transaction_id;
+		})
+
+		->addColumn('bank', function($data){
+			return $data->bank." Transfer";
+		})
+
+		->addColumn('type', function($data){
+			
+			return 'Credit';
+			
+		})
+
+
+		->addColumn('mode', function($data){
+			return $data->method;
+		})
+
+		->addColumn('amount', function($data){
+			return '$'.$data->amount;
+		})
+
+		->addColumn('payment_status', function($data){
+
+			if($data->payment_status == '0'){
+
+				return "Pending";
+
+			}elseif($data->payment_status == '2'){
+
+				return "Accepted";
+				
+			}else{
+				return "Failed";
+			}
+			
+		})
+
+		->addColumn('updated_at', function($data){
+			return date('d-M-Y H:i:s',strtotime($data->updated_at));
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function getExhibitorCommentHistory(Request $request) {
+		
+		$columns = \Schema::getColumnListing('comments');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('comment_by', function($data){
+
+			return 'Admin';
+		})
+
+		->addColumn('comment', function($data){
+			return $data->comment;
+		})
+
+		->addColumn('created_at', function($data){
+			return date('Y-m-d h:i', strtotime($data->created_at));
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function getExhibitorActionHistory(Request $request) {
+		
+		$columns = \Schema::getColumnListing('user_histories');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\UserHistory::where('user_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\UserHistory::where('user_id', $request->input('user_id'))->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+		->addColumn('action', function($data){
+			return $data->action;
+		})
+		->addColumn('admin', function($data){
+
+			if($data->action_id){
+
+				
+				return \App\Helpers\commonHelper::getUserNameById($data->action_id);
+			}else{
+
+				return \App\Helpers\commonHelper::getUserNameById($data->user_id);
+			}
+			
+		})
+		
+		->addColumn('date', function($data){
+			return date('d M Y', strtotime($data->created_at));
+		})
+
+		->addColumn('time', function($data){
+			return date('H:i a', strtotime($data->created_at));
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function getExhibitorMailTriggerList(Request $request) {
+		
+		$columns = \Schema::getColumnListing('user_mail_triggers');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\UserMailTrigger::where('user_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\UserMailTrigger::where('user_id', $request->input('user_id'))->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+		
+		->addColumn('subject', function($data){
+			return $data->subject;
+		})
+
+		->addColumn('date', function($data){
+			return date('d M Y', strtotime($data->created_at));
+		})
+
+		->addColumn('time', function($data){
+			return date('H:i a', strtotime($data->created_at));
+		})
+
+		->addColumn('action', function($data){
+				
+			
+				return '<div >
+							<button type="button" style="width:41px" title="View message" class="btn btn-sm btn-primary px-3 m-1 text-white messageGet" data-id="'.$data->id.'" ><i class="fas fa-eye"></i></button>
+						</div>';			
+			
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function exhibitorCommentSubmit(Request $request) {
+		
+		if($request->isMethod('post')){
+			
+			$rules = [
+				'user_id' => 'required|numeric|exists:users,id',
+				'comment' => 'required',
+			];
+
+			$validator = \Validator::make($request->all(), $rules);
+			
+			if ($validator->fails()){
+				$message = "";
+				$messages_l = json_decode(json_encode($validator->messages()), true);
+				foreach ($messages_l as $msg) {
+					$message= $msg[0];
+					break;
+				}
+				
+				return response(array('message'=>$message),403);
+				
+			} else {
+
+				try {
+
+					$data=new \App\Models\Comment();
+					$data->sender_id = $request->post('admin_id');
+					$data->receiver_id = $request->post('user_id');
+					$data->comment = $request->post('comment');
+					$data->save();
+
+					$UserHistory=new \App\Models\UserHistory();
+					$UserHistory->action_id=$request->post('admin_id');
+					$UserHistory->user_id=$request->post('user_id');
+					$UserHistory->action='Comment';
+					$UserHistory->save();
+
+					return response(array('reset'=>true, 'comment' => true, 'message'=>'Comment has been sent successfully.'), 200);
+
+				} catch (\Throwable $th) {
+					return response(array('message'=>'Something went wrong, please try again'), 500);
+				}
+			
+			}
+
+
+		} else if($request->isMethod('get')) {
+			
+			$columns = \Schema::getColumnListing('comments');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			$order = $columns[$request->input('order.0.column')];
+			$dir = $request->input('order.0.dir');
+
+			$query = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->count();
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));  
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('comment_by', function($data){
+
+				return 'Admin';
+			})
+
+			->addColumn('comment', function($data){
+				return $data->comment;
+			})
+
+			->addColumn('created_at', function($data){
+				return date('Y-m-d h:i', strtotime($data->created_at));
+			})
+
+			->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+			->make(true);
+
+		}
+
+	}
+
+	public function exhibitorMailTriggerListModel(Request $request) {
+
+		$UserMailTrigger = \App\Models\UserMailTrigger::where('id', $request->id)->first();
+
+		return response(array('message'=>$UserMailTrigger->message), 200);
+
+
+	}
+
+	public function exhibitorTransactionList(Request $request) {
+
+		$columns = \Schema::getColumnListing('transactions');
+			
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		// $order = $columns[$request->input('order.0.column')];
+		// $dir = $request->input('order.0.dir');
+
+		$query = \App\Models\Transaction::orderBy('created_at','desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\Transaction::count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('user_name', function($data){
+			return '<a style="color: blue !important;" href="'.url('admin/user/user-profile/'.$data->user_id).'" target="_blank" title="User Profile">'.\App\Helpers\commonHelper::getUserNameById($data->user_id).'</a>';
+			
+		})
+
+		->addColumn('payment_by', function($data){
+			return $data->bank;
+		})
+
+		->addColumn('method', function($data){
+			return $data->method;
+		})
+		->addColumn('transaction_id', function($data){
+			return $data->order_id;
+		})
+		->addColumn('bank_transaction_id', function($data){
+			return $data->bank_transaction_id;
+		})
+
+
+		->addColumn('amount', function($data){
+			return '$'.$data->amount;
+		})
+
+		->addColumn('payment_status', function($data){
+			if($data->payment_status=='0' || $data->payment_status=='1' || $data->payment_status=='7' || $data->payment_status=='8' || $data->payment_status=='9') {
+				return '<div class="span badge rounded-pill pill-badge-danger">'.\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status).'</div>';
+			} else if($data->payment_status=='3' || $data->payment_status=='4' || $data->payment_status=='6') {
+				return '<div class="span badge rounded-pill pill-badge-orange">'.\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status).'</div>';
+			} else if($data->payment_status=='2' || $data->payment_status=='5') {
+				return '<div class="span badge rounded-pill pill-badge-success">'.\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status).'</div>';
+			}
+		})
+
+		->addColumn('created_at', function($data){
+			return date('d-M-Y H:i:s',strtotime($data->created_at));
+		})
+		->addColumn('decline_remark', function($data){
+			return $data->decline_remark ?? '-';
+		})
+
+		->addColumn('action', function($data){
+			$msg = "' Are you sure to delete this transaction ?'";
+
+			if ($data->status == '1') {
+				return '<div class="badge rounded-pill pill-badge-success">Approved</div>';
+			} else if ($data->status == '2') {
+				return '<div class="badge rounded-pill pill-badge-danger">Decline</div>';
+			} else if ($data->status == '0' && $data->method != 'Online') {
+
+				return '<div style="display:flex"><a data-id="'.$data->id.'" data-type="1" title="Transaction Approve" class="btn btn-sm btn-outline-success m-1 -change">Approve</a>
+				<a data-id="'.$data->id.'" data-type="2" title="Transaction Decline" class="btn btn-sm btn-outline-danger m-1 declineRemark">Decline</a></div>';
+			}
+
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function getExhibitorQrcodeData(Request $request) {
+
+		$columns = \Schema::getColumnListing('users');
+			
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		// $order = $columns[$request->input('order.0.column')];
+		// $dir = $request->input('order.0.dir');
+
+		$query = \App\Models\User::where([['stage', '=', '3']])->orderBy('updated_at', 'desc');
+
+		if (request()->has('email')) {
+			$query->where('email', 'like', "%" . request('email') . "%");
+		}
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData1 = \App\Models\User::where([['stage', '=', '3']]);
+		
+		if (request()->has('email')) {
+			$totalData1->where('email', 'like', "%" . request('email') . "%");
+		}
+
+		$totalData = $totalData1->count();
+
+
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('user_name', function($data){
+			return $data->name;
+		})
+
+		->addColumn('profile', function($data){
+			if ($data->profile_update == '1') {
+				return '<div class="span badge rounded-pill pill-badge-success">Updated</div>';
+			} else if ($data->user_status == '0') {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			}
+		})
+
+		->addColumn('payment', function($data){
+			if(\App\Helpers\commonHelper::getTotalPendingAmount($data->id)) {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			} else {
+				return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+			}
+		})
+
+		->addColumn('session_info', function($data){
+			if (count($data->SessionInfo) > 0) {
+				if ($data->SessionInfo[0]->admin_status == '1') {
+					return '<div class="span badge rounded-pill pill-badge-success">Verify</div>';
+				} else if ($data->SessionInfo[0]->user_status == '0') {
+					return '<div class="span badge rounded-pill pill-badge-danger">Reject</div>';
+				} else if ($data->SessionInfo[0]->user_status === null) {
+					return '<div class="span badge rounded-pill pill-badge-warning">In Process</div>';
+				}
+			}else {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			}
+		})
+
+		->addColumn('user_type', function($data){
+			
+			if($data->parent_id != Null){
+
+				if($data->added_as == 'Group'){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}elseif($data->added_as == 'Spouse'){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+					
+				}
+
+			}else {
+
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+				if($groupName){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}else if($spouseName){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+				}
+					
+
+			}
+			
+		})
+
+		->addColumn('group_owner_name', function($data){
+			
+			$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+			
+			if($data->parent_id != Null && $data->added_as == 'Group'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+				
+			}else if(count($groupName) > 0) {
+
+				return ucfirst($data->name.' '.$data->last_name);
+
+			}else{
+				return 'N/A';
+			}
+			
+		})
+
+		->addColumn('spouse_name', function($data){
+			
+			$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+			if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+			}else if($spouseName) {
+
+				return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+			}else{
+
+				return 'N/A';
+			}
+			
+		})
+		->addColumn('action', function($data){
+			$msg = "' Are you sure to delete this user ?'";
+
+			return '<a href="'.route('admin.user.details', ['id' => $data->id] ).'" title="View user details" class="btn btn-sm btn-primary px-3" ><i class="fas fa-eye"></i></a>';
+			
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function getExhibitorSponsorshipData(Request $request) {
+
+		$columns = \Schema::getColumnListing('users');
+			
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		// $order = $columns[$request->input('order.0.column')];
+		// $dir = $request->input('order.0.dir');
+
+		$query = \App\Models\User::where([['stage', '=', '2']])->orderBy('updated_at', 'desc');
+
+		if (request()->has('email')) {
+			$query->where('email', 'like', "%" . request('email') . "%");
+		}
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData1 = \App\Models\User::where([['stage', '=', '2']]);
+		
+		if (request()->has('email')) {
+			$totalData1->where('email', 'like', "%" . request('email') . "%");
+		}
+
+		$totalData = $totalData1->count();
+
+
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('name', function($data){
+			return $data->name;
+		})
+
+		->addColumn('email', function($data){
+			return $data->email;
+		})
+
+		->addColumn('mobile', function($data){
+			return $data->mobile;
+		})
+
+		->addColumn('status', function($data){
+			if ($data->profile_status == 'Approved') {
+				return '<div class="span badge rounded-pill pill-badge-success">Approved</div>';
+			} else if ($data->profile_status == 'Pending') {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			}
+		})
+
+		->addColumn('payment', function($data){
+			if($data->parent_id != null){
+				return '<div class="span badge rounded-pill pill-badge-secondary">N/A</div>';
+			}
+			if(\App\Helpers\commonHelper::getTotalPendingAmount($data->id)) {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			} else {
+				return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+			}
+		})
+
+		->addColumn('sponsorship', function($data){
+			
+			return '<a target="_blank" href="'.asset('uploads/sponsorship/'.$data->sponsorship_letter).'" title="View Letter" class="btn btn-sm btn-success px-3" ><i class="fas fa-eye" style="color:#fff"></i></a>';
+			
+		})
+
+
+		->addColumn('user_type', function($data){
+			
+			if($data->parent_id != Null){
+
+				if($data->added_as == 'Group'){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}elseif($data->added_as == 'Spouse'){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+					
+				}
+
+			}else {
+
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+				if($groupName){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}else if($spouseName){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+				}
+					
+
+			}
+			
+		})
+
+		->addColumn('group_owner_name', function($data){
+			
+			$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+			
+			if($data->parent_id != Null && $data->added_as == 'Group'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+				
+			}else if(count($groupName) > 0) {
+
+				return ucfirst($data->name.' '.$data->last_name);
+
+			}else{
+				return 'N/A';
+			}
+			
+		})
+
+		->addColumn('spouse_name', function($data){
+			
+			$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+			if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+			}else if($spouseName) {
+
+				return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+			}else{
+
+				return 'N/A';
+			}
+			
+		})
+		->addColumn('action', function($data){
+			
+			return '
+					<div style="display:flex">
+						<a data-id="'.$data->id.'" title="Send Sponsorship letter" class="btn btn-sm btn-outline-success m-1 sendSponsorshipLetter">Send</a>
+						<a href="'.env('Admin_URL').'/admin/exhibitor/profile/'.$data->id.'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+					</div>
+				';
+				
+			
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function exhibitorProfileBasePrice(Request $request) {
+
+		$basePrice = 0; $Spouse = [];
+
+		$user = \App\Models\User::where('id', $request->get('id'))->first();
+
+		if($user){
+
+			$additionalPerson = \App\Models\User::where('business_owner_id', $request->get('id'))->count();
+
+			if($user->room == 'No'){
+
+				if($additionalPerson > 0){
+
+					$basePrice = 850+($additionalPerson*350);
+
+				}else{
+
+					$basePrice = 850;
+				}
+				
+			}else if($user->room == 'Yes'){
+
+				$basePrice = 1500;
+
+				$Spouse = \App\Models\User::where('business_owner_id', $request->get('id'))->where('added_as', 'Spouse')->count();
+				if($Spouse>0){
+					$basePrice+= $Spouse*350;
+				}
+
+				$additionalPerson = \App\Models\User::where('business_owner_id', $request->get('id'))->where('added_as', 'Group')->count();
+				if($additionalPerson>0){
+					$basePrice+= $additionalPerson*1000;
+				}
+				
+			}
+
+			$html=view('admin.user.stage.stage_one_profile_status_model',compact('basePrice','user'))->render();
+
+			return response()->json(array('html'=>$html));
+			
+
+		}
+			
+	}
+
+	public function exhibitorProfileStatus(Request $request) {
+
+		$result = \App\Models\User::find($request->post('user_id'));
+		
+		if ($result) {
+
+			$to = $result->email;
+
+			if ($request->post('status') == 'Approved') {
+
+				$resultSpouse = \App\Models\User::where('business_owner_id',$result->id)->get();
+				
+				if(!empty($resultSpouse)){
+					
+					foreach($resultSpouse as $user){
+
+						$additionalUser = \App\Models\User::find($user->id);
+						if($additionalUser){
+
+							$additionalUser->profile_status = $request->post('status');
+							$additionalUser->stage = 2;
+							$additionalUser->save();
+
+							$name= $additionalUser->name.' '.$additionalUser->last_name;
+
+							$doNotRequireVisa = [6,7,10,11,12,14,15,17,20,22,23,26,21,27,28,29,31,33,34,40,37,39,44,48,49,53,55,57,58,59,61,64,66,69,73,74,75,79,81,82,87,85,90,94,97,99,100,105,106,107,108,109,113,114,117,125,126,127,129,130,132,133,133,137,140,142,143,144,145,146,147,152,152,156,158,159,165,168,171,172,173,176,177,179,181,115,182,244,185,186,188,191,192,194,196,197,199,200,201,202,204,116,207,213,214,216,219,222,223,225,228,230,231,232,233,235,237,238,240]; 
+							$diplomaticPassportNotRequireVisa = [56,62,95,102,174,45,239]; 
+							$authorizedVisa = [1,3,4,16,18,19,24,35,36,43,50,60,65,68,70,67,80,92,93,95,102,103,104,54,111,112,248,118,119,121,122,123,124,134,139,149,150,151,154,160,161,166,167,169,116,183,195,198,203,208,209,210,215,217,218,224,226,229,236,245,246]; 
+							$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
+						
+
+							if($additionalUser && $additionalUser->diplomatic_passport == 'No'){
+
+								if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
+
+									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+
+								}else{
+
+									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id,);
+									\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($additionalUser->user_id);
+								}
+
+							}elseif($additionalUser && $additionalUser->diplomatic_passport == 'Yes'){
+								
+								if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
+
+									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+
+								}elseif(in_array($additionalUser->citizenship,$diplomaticPassportNotRequireVisa)){
+
+									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+
+								}else{
+
+									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+									\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($additionalUser->user_id);
+								}
+								
+							}
+								
+							
+							if($additionalUser->language == 'sp'){
+
+								$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+								$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							
+							}elseif($additionalUser->language == 'fr'){
+							
+								$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+								$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+							
+							}elseif($additionalUser->language == 'pt'){
+							
+								$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+								$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = 'Congratulations, '.$name.', your application has been approved!';
+								$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
+							
+							}
+
+							$to = $additionalUser->email;
+							
+							// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+							\App\Helpers\commonHelper::userMailTrigger($additionalUser->id,$msg,$subject);
+						}
+						
+					}
+
+				}
+
+				$result->profile_status = $request->post('status');
+				$result->remark = $request->post('remark');
+				$result->amount = $request->post('amount');
+				$result->stage = '2';
+				$name= $result->name.' '.$result->last_name;
+
+				if($result->language == 'sp'){
+
+					$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+					$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+				
+				}elseif($result->language == 'fr'){
+				
+					$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+					$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+				
+				}elseif($result->language == 'pt'){
+				
+					$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+					$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+				
+				}else{
+				
+					$subject = 'Congratulations, '.$name.', your application has been approved!';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
+				
+				}
+
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
+				// \App\Helpers\commonHelper::sendSMS($result->mobile);
+
+			}else if ($request->post('status') == 'Decline') {
+
+				$result->profile_status = 'Rejected';
+
+				$faq = '<a href="'.url('faq').'">Click here</a>';
+				
+				$name= $result->name.' '.$result->last_name;
+				
+				if($result->language == 'sp'){
+
+					$url = '<a href="'.url('profile-update').'">clic aquí</a>';
+				
+					$subject = "Estado de su Solicitud para el GProCongress II";
+					$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>Gracias por registrarse para participar del GProCongress II.</p><p><br></p><p>Hemos evaluado muchas aplicaciones con varios nivels de participación en la capacitación de pastores, pero lamentablemente sentimos informale que su solicitud ha sido rechazada en esta ocación.&nbsp;</p><p><br></p><p><br></p><p>Sin embargo, esto no significa el fin de nuestra relación.&nbsp;</p><p><br></p><p>Por favor, manténgase conectado a la comunidad GProCommission haciendo : '.$url.'. Recibirá aliento continuo, ideas, apoyo en oración y mucho más mientras usted forma líderes pastorales.</p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+				
+				}elseif($result->language == 'fr'){
+				
+					$url = '<a href="'.url('profile-update').'">cliquant ici</a>';
+				
+					$subject = "Statut de votre demande GProCongrès II";
+					$msg = '<p>Cher '.$name.',</p><p><br></p><p><br></p><p>Merci d’avoir postulé pour assister au GProCongrès II.</p><p>Nous avons évalué de nombreuses candidatures avec différents niveaux d’implication de la formation des pasteurs, mais nous avons malheureusement le regret de vous informer que votre candidature a été refusée, cette fois-ci.&nbsp;&nbsp;</p><p><br></p><p>Cependant, ce n’est pas la fin de notre relation.&nbsp;</p><p>Veuillez rester connecté à la communauté GProCommission en : '.$url.'. Vous recevrez des encouragements continus, des idées, un soutien à la prière et autres alors que vous préparez les responsables pastoraux.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+				
+				}elseif($result->language == 'pt'){
+				
+					$url = '<a href="'.url('profile-update').'">aqui</a>';
+				
+					$subject = "Estado do seu pedido para o II CongressoGPro";
+					$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pelo seu pedido para participar no II CongressoGPro.</p><p>Nós avaliamos muitos pedidos com vários níveis de envolvimento no treinamento pastoral, mas infelizmente lamentamos informar que o seu pedido foi declinado esta vez.&nbsp;</p><p><br></p><p>Contudo, este não é o fim do nosso relacionamento.</p><p>&nbsp;</p><p>Por favor se mantenha conectado com a nossa ComunidadeGPro clicando : '.$url.'. Você continuará recebendo encorajamento contínuo, ideias, suporte em oração e muito mais, à medida que prepara os líderes pastorais.</p><p><br></p><p>Ainda tem perguntas? Simplesmente responda este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+				
+				}else{
+				
+					$url = '<a href="'.url('profile-update').'">Click here</a>';
+				
+					$subject = 'Your GProCongress II application status';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for applying to attend the GProCongress II.</p><p>We have evaluated many applications with various levels of pastor training involvement, but sadly regret to inform you that your application has been declined, this time.&nbsp;</p><p><br></p><p>However, this is not the end of our relationship.&nbsp;</p><p>Please stay connected to the GProCommission community by : '.$url.'. You will receive ongoing encouragement, ideas, prayer support, and more as you prepare pastoral leaders.&nbsp;</p><p><br></p><p>Do you still have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+					
+				}
+
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
+				// \App\Helpers\commonHelper::sendSMS($result->mobile);
+
+			}
+			
+			$result->save();
+
+			$UserHistory=new \App\Models\UserHistory();
+			$UserHistory->user_id=$result->id;
+			$UserHistory->action_id=$request->post('admin_id');
+			$UserHistory->action='User Profile '.$request->post('status');
+			$UserHistory->save();
+
+			if ($request->post('status') == 'Approved') {
+
+				$name = $result->name.' '.$result->last_name;
+
+				\App\Helpers\commonHelper::sendPaymentReminderMailSend($result->id,$result->email,$name);
+
+				// \App\Helpers\commonHelper::sendSMS($result->mobile);
+
+			}
+
+			return response(array('error'=>false, 'reload'=>true, 'message'=>'Profile status change successful'), 200);
+		
+		} else {
+			return response(array('error'=>true, 'reload'=>false, 'message'=>'Something went wrong. Please try again.'), 403);
+		}
+			
+	}
+
+	public function exhibitorUploadSponsorshipLetter(Request $request) {
+
+		$rules = [
+			'file' => 'required|mimes:pdf',
+			'id' => 'numeric|required',
+			
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+			
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
+		
+			return response(array('message'=>$message,"error" => true),403);
+		
+
+		}else{
+
+			try{
+
+				$user= \App\Models\User::where('id',$request->post('id'))->first();
+
+				if($request->hasFile('file')){
+					$imageData = $request->file('file');
+					$image = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+					$destinationPath = public_path('/uploads/sponsorship');
+					$imageData->move($destinationPath, $image);
+
+					$user->sponsorship_letter = $image;
+				}
+
+
+				$user->save();
+
+				$to = $user->email;
+				$subject = 'Please verify your sponsorship letter.';
+				$msg = '<p>Thank you for submitting your sponsorship letter.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link:  to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->admin_id,$subject,$msg,'Sponsorship letter upload');
+				
+				$name = $user->name.' '.$user->last_name;
+
+				if($user->language == 'sp'){
+
+					$subject = "Por favor, verifique su información de viaje";
+					$msg = '<p>Estimado '.$name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace:  para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
+				
+				}elseif($user->language == 'fr'){
+				
+					$subject = "Veuillez vérifier vos informations de voyage";
+					$msg = "<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien:  pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+		
+				}elseif($user->language == 'pt'){
+				
+					$subject = "Por favor verifique sua Informação de Viagem";
+					$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link:  para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
+				
+				}else{
+				
+					$subject = 'Please verify your sponsorship letter.';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link:  to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+										
+				}
+
+				$file = public_path('uploads/sponsorship/'.$user->sponsorship_letter);
+
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, false, $file);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				
+				return response(array('message'=>'Sponsorship letter upload successfully'),200);
+				
+			}catch (\Exception $e){
+				
+				return response(array('message'=>$e->getMessage()),403);
+			}
+		}
+			
+	}
+
+	
+	public function exhibitorPaymentReminder(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where([['designation_id', '=', '14'], ['profile_status','=','Approved'], ['added_as', '=', null]])
+									->whereDate('status_change_at', '=', now()->subDays(5)->setTime(0, 0, 0)->toDateTimeString())
+									->get();
+
+									
+			if(count($results) > 0){
+				foreach ($results as $key => $result) {
+				
+					\App\Helpers\commonHelper::sendExhibitorPaymentReminderMailSend($result->id);
+
+				}
+				
+				return response(array('message'=>count($results).' Reminders has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
 
 }

@@ -61,7 +61,7 @@ return [
     'payment-pay' => 'Payé par',
     'payment-for' => 'Payé pour',
     'Status' => 'Statut',
-    'pay-using-money-gram' => "Si vous n’êtes pas en mesure de payer avec votre carte de crédit, payez en utilisant RAI",
+    'pay-using-money-gram' => "Si vous n’êtes pas en mesure de payer avec votre carte de crédit, payez en utilisant RIA",
     'enter' => 'Entrer',
     'payment-history'=>'Historique du Paiement',
     'payment-method'=>'Mode de paiement',
@@ -78,7 +78,7 @@ return [
     'Offline-Payment_description'=>"Si vous ne pouvez pas payer en ligne avec votre carte de crédit, veuillez utiliser l'une des options de paiement suivantes:",
     'bank-transfer_description'=>"Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org.  Vous recevrez des instructions de virement par réponse de l'e-mail.",
     'western-union_description'=>'Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, USA.  En plus de vos fonds, veuillez soumettre les informations demandées par Western Union',
-    'money-gram_description'=>'Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, USA.  En plus de vos fonds, veuillez soumettre les informations demandées par RAI.',
+    'money-gram_description'=>'Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, USA.  En plus de vos fonds, veuillez soumettre les informations demandées par RIA.',
 
     'YourFullName'=>'Votre nom complet',
     'CountryOfSender'=>'Le pays à partir duquel vous envoyez',

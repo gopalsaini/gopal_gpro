@@ -61,7 +61,7 @@ return [
     'payment-pay' => 'Paid by',
     'payment-for' => 'Paid For',
     'Status' => 'Status',
-    'pay-using-money-gram' => 'If you are unable to pay with your credit card then pay using RAI',
+    'pay-using-money-gram' => 'If you are unable to pay with your credit card then pay using RIA',
     'enter' => 'Enter',
     'upload-payment-image'=>'Upload Payment Image',
 
@@ -76,7 +76,7 @@ return [
     'Offline-Payment_description'=>'If you cannot pay online using your credit card, then please use one of the following payment options:',
     'bank-transfer_description'=>'If you want to make a wire transfer, please email david@rreach.org.  You will receive wiring instructions via reply email.',
     'western-union_description'=>'Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the information requested by Western Union.',
-    'money-gram_description'=>'Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the information requested by RAI.',
+    'money-gram_description'=>'Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the information requested by RIA.',
 
     'YourFullName'=>'Your full name',
     'CountryOfSender'=>'The country you are sending from',

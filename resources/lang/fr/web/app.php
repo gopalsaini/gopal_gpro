@@ -19,6 +19,8 @@ return [
     'myprofile' => 'Mon profil',
     'contactus' => 'Contactez-nous',
     'pricing' => 'Tarif',
+    'donate' => 'Faire un don',
+    'donate_now' => 'Faire un don maintenant',
     'help' => 'Aide',
     'login' => 'Connexion',
     'logout' => 'Déconnexion',

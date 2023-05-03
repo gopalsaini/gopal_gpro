@@ -36,12 +36,77 @@
             position: relative;
             margin-top: 12px;
         }
+        .banner-wrapper .banner-head .banner-btn ul li .main-btn {
+            min-width: 209px !important;
+        }
+        .common-select .fs-wrap{
+            width: 100%;
+        }
+        
+        .fs-label-wrap{
+            height: 50.5px;
+            background: #F9F9F9;
+            border:0px;
+        }
+        
+        .fs-label-wrap .fs-label{
+            padding: 15px 15px 2px 7px;
+        }
+        .fs-wrap {
+    
+            padding-top: 7px;
+        }
+        .modelReg {
+
+            max-width: 83% !important;
+        }
+        @media only screen and (min-width: 320px) and  (max-width: 768px){
+           #registrationImage {            
+                height: 100% !important; 
+            }
+            .modelReg {
+                max-width: 100% !important;
+            }
+        }
+        .marq-link{
+            height: 54px;
+            background: #ffcd34;
+        }
+        .marq-link marquee{
+            padding: 15px 0;;
+        }
+        .marq-link marquee a{
+            color: #58595b;
+        }
+        footer {
+           
+           padding-top: 354px !important;
+       }
     </style>
 
     @stack('custom_css')
 </head>
 
 <body>
+    
+    @if($siteSetting && $siteSetting->en_title != null)
+    <div class="marq-link">
+            <marquee onmouseover="this.stop();" onmouseout="this.start();" behavior="" direction="left" height="54px" width="100%">
+            <a target="_blank" href="#">
+                @if(App::getLocale() == 'pt')
+                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->pt_title }}  @endif</span>
+                @elseif(App::getLocale() == 'sp')
+                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->sp_title }}  @endif</span>
+                @elseif(App::getLocale() == 'fr')
+                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->fr_title }}  @endif</span>
+                @else
+                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->en_title }}  @endif</span>
+                @endif
+            </a>
+            </marquee>
+        </div>
+    @endif
+    
     
     <!---header section start-->
     <div class="header">
@@ -55,26 +120,29 @@
                 <div class="col-lg-6 col-xl-5 d-lg-block d-xl-block d-none">
                     <ul class="header-menu">
                         <li><a href="{{ route('home') }}">@lang('web/app.home')</a></li>
+                        
                         @if(!\Session::has('gpro_user'))
-                        <li><a href="javascript:void(0)" onclick="openRegistrationModal()">@lang('web/app.register')</a></li>
+                        <li ><a href="javascript:void(0)" onclick="openRegistrationModal()">@lang('web/app.register')</a></li>
                         @else
                         <li><a href="{{ url('groupinfo-update') }}">@lang('web/app.myprofile')</a></li>
                         @endif
                         <li><a href="{{ url('/#contact-us') }}">@lang('web/app.contactus')</a></li>
+
+                        <!-- <li><a target="_blank" href="{{ url('exhibitor-index') }}">Exhibitor</a></li> -->
                         <li><a href="{{ route('pricing') }}">@lang('web/app.pricing')</a></li>
                         <li><a href="{{ route('help') }}">@lang('web/app.help')</a></li>
+                        <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
+                        @if(\Session::has('gpro_user'))
+                            @php $tokens = "http://127.0.0.1:8000/community?token=".\Session::get('gpro_user');  @endphp
+                        <li><a  href="{{$tokens}}">Community</a></li>
+                           
+                        @endif
+
                     </ul>
                 </div>
                 <div class=" col-6 col-sm-6 col-md-6 col-lg-4 col-xl-4">
                     <div class="header-icons">
-                        {{-- <ul class="d-xl-flex d-lg-flex d-none social-icons">
-                            <li><a href="javascript:;" class="icon-img"><i
-                                        class="fa-brands fa-facebook-f icon-size"></i></a></li>
-                            <li><a href="javascript:;" class="icon-img"><i
-                                        class="fa-brands fa-twitter icon-size"></i></a></li>
-                            <li><a href="javascript:;" class="icon-img"><i
-                                        class="fa-brands fa-instagram icon-size"></i></a></li>
-                        </ul> --}}
+                        
                         <ul class="toggle-login">
                             @if(!\Session::has('gpro_user'))
                                 <li class="d-xs-none d-none d-sm-block d-lg-block d-xl-block"><a href="javascript:void(0);" onclick="openLoginModal()" class="main-btn">@lang('web/app.login')</a></li>
@@ -147,8 +215,11 @@
                 <li><a href="{{ url('groupinfo-update') }}">@lang('web/app.myprofile')</a></li>
                 @endif
                 <li><a href="{{ url('/#contact-us') }}">@lang('web/app.contactus')</a></li>
+                <!-- <li><a target="_blank" href="{{ url('exhibitor-index') }}">Exhibitor</a></li> -->
+
                 <li><a href="{{ route('pricing') }}">@lang('web/app.pricing')</a></li>
                 <li><a href="{{ route('help') }}">@lang('web/app.help')</a></li>
+                <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
                 @if(!\Session::has('gpro_user'))
                     <li><a href="javascript:void(0);" onclick="openLoginModal()">@lang('web/app.login')</a></li>
                 @else
@@ -210,99 +281,134 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="registrationModal" aria-hidden="true" aria-labelledby="registrationModalLabel"
+
+
+        <div class="modal fade bd-example-modal-xl" id="registrationModal" aria-hidden="true" aria-labelledby="registrationModalLabel"
             tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-xl modelReg">
                 <div class="modal-content">
                     <div class="modal-header d-block border-0">
                         <h2 class="main-head">@lang('web/app.register-heading')</h2>
                         <h5 style="text-align:center">@lang('web/app.register-description')</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body" style="padding-top:0px">
-                        <form id="registration" action="{{ route('registration') }}" class="row" enctype="multipart/form-data">
-                            @csrf
-                            <div class="col-lg-6">
-                                <div class="form-check">
-                                    <label class="form-check-label">@lang('web/app.first_name') <b>*</b> </label>
-                                    <div class="input-box">
-                                        <input type="text" onkeypress="return /[a-z A-Z ]/i.test(event.key)"  name="first_name" id="firstName"  placeholder=" @lang('web/app.first_name_label')" required>
+                    <div class="modal-body row">
+                        <div class="col-md-6" style="padding-top:45px" >
+                            @if(App::getLocale() == 'pt')
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_pt.webp') }}" style="width: 100%;height: 84%;">
+                            @elseif(App::getLocale() == 'sp')
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_sp.webp') }}" style="width: 100%;height: 84%;">
+                            @elseif(App::getLocale() == 'fr')
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_fr.webp') }}" style="width: 100%;height: 84%;">
+                            @else
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_en.webp') }}" style="width: 100%;height: 84%;">
+                            @endif
+                            
+                        </div>
+                        <div class="col-md-6" style="padding-top:0px">
+                            <form id="registration" action="{{ route('registration') }}" class="row" enctype="multipart/form-data">
+                                @csrf
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label class="form-check-label">@lang('web/app.first_name') <b>*</b> </label>
+                                        <div class="input-box">
+                                            <input type="text" onkeypress="return /[a-z A-Z ]/i.test(event.key)"  name="first_name" id="firstName"  placeholder=" @lang('web/app.first_name_label')" required>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label class="form-check-label">@lang('web/app.last_name_label') <b>*</b> </label>
+                                        <div class="input-box">
+                                            <input type="text" onkeypress="return /[a-z A-Z ]/i.test(event.key)"  name="last_name" id="LastName" placeholder=" @lang('web/app.last_name')" required>
                                         
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-check">
-                                    <label class="form-check-label">@lang('web/app.last_name_label') <b>*</b> </label>
-                                    <div class="input-box">
-                                        <input type="text" onkeypress="return /[a-z A-Z ]/i.test(event.key)"  name="last_name" id="LastName" placeholder=" @lang('web/app.last_name')" required>
-                                       
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label class="form-check-label">@lang('web/app.Languages') <b>*</b> </label>
+                                        <div class="input-box">
+                                            <select name="language" id="language" required class="selectLanguage">
+                                                <option value="en">English</option>
+                                                <option value="sp">Spanish</option>
+                                                <option value="fr">French</option>
+                                                <option value="pt">Portuguese</option>
+                                            </select>
+                                            
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-check">
-                                    <label class="form-check-label">@lang('web/app.Languages') <b>*</b> </label>
-                                    <div class="input-box">
-                                        <select name="language" id="language" required class="selectLanguage">
-                                            <option value="en">English</option>
-                                            <option value="sp">Spanish</option>
-                                            <option value="fr">French</option>
-                                            <option value="pt">Portuguese</option>
-                                        </select>
-                                        
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="col-lg-6">
-                                <div class="form-check">
-                                    <label class="form-check-label">@lang('web/app.email') <b>*</b> </label>
-                                    <div class="input-box">
-                                        <input type="email" name="email" placeholder="@lang('web/app.enter_email')" required>
-                                        <i class="fas fa-user"></i>
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label class="form-check-label">@lang('web/app.email') <b>*</b> </label>
+                                        <div class="input-box">
+                                            <input type="email" name="email" placeholder="@lang('web/app.enter_email')" required>
+                                            <i class="fas fa-user"></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-check">
-                                    <label class="form-check-label">@lang('web/app.passowrd') <b>*</b> </label>
-                                    <div class="input-box">
-                                        <input type="password" name="password" placeholder="@lang('web/app.placeholder-password')" required>
-                                        <i class="toggle-password fas fa-eye-slash eye-wrap"></i>
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                    <label class="form-check-label">@lang('web/ministry-details.country') <b>*</b></label>
+                                    <select class="form-control test phoneCode" name="phone_code"> 
+                                        <option value="" >--@lang('web/app.select_code')--</option>
+                                        @foreach($country as $con)
+                                            <option value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
+                                        @endforeach
+                                    </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-check">
-                                    <label class="form-check-label">@lang('web/app.confirm') @lang('web/app.passowrd') <b>*</b> </label>
-                                    <div class="input-box">
-                                        <input type="password" name="password_confirmation" placeholder="@lang('web/app.placeholder-re-password')" required>
-                                        <i class="toggle-password fas fa-eye-slash eye-wrap"></i>
+                                <div class="col-lg-4">
+                                    <div class="form-check">
+                                        <label class="form-check-label">Mobile Number <b>*</b></label>
+                                        <div class="input-box">
+                                        <input  type="tel" id="home" class="mt-2" name="mobile" placeholder="@lang('web/app.enter') @lang('web/help.mobile')" onkeypress="return /[0-9 ]/i.test(event.key)"  autocomplete="off">
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div class="form-check position-relative">
-                                    <label for="terms_and_condition" class="form-check-label ps-4"><a href="{{url('information/terms-and-conditions')}}" target="_blank">@lang('web/app.terms-and-conditions') </a><b>*</b> </label>
-                                    <div class="input-box" style="position:absolute; top: -23px">
-                                        <input type="checkbox" name="terms_and_condition" id="terms_and_condition" required>
+                                <div class="col-lg-6">
+                                    <div class="form-check">
+                                        <label class="form-check-label">@lang('web/app.passowrd') <b>*</b> </label>
+                                        <div class="input-box">
+                                            <input type="password" name="password" placeholder="@lang('web/app.placeholder-password')" required>
+                                            <i class="toggle-password fas fa-eye-slash eye-wrap"></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-12">
-                                <div>
-                                    <button type="submit" class="login-btn" form="registration">@lang('web/app.register')</button>
-                                    <!-- //Vineet - 080123 -->
-                                    <!-- <a href="javascript:void(0);" class="forget" onclick="openForgotPasswordModal()">@lang('web/app.forgot') @lang('web/app.passowrd')?</a> -->
-                                    <a href="javascript:void(0);" class="forget" onclick="openForgotPasswordModal()">@lang('web/app.forgot-password')</a>
-                                    <!-- //Vineet - 080123 -->
+                                <div class="col-lg-6">
+                                    <div class="form-check">
+                                        <label class="form-check-label">@lang('web/app.confirm') @lang('web/app.passowrd') <b>*</b> </label>
+                                        <div class="input-box">
+                                            <input type="password" name="password_confirmation" placeholder="@lang('web/app.placeholder-re-password')" required>
+                                            <i class="toggle-password fas fa-eye-slash eye-wrap"></i>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="signup">
-                                    <p>@lang('web/app.already-have-account') <a href="javascript:void(0);" onclick="openLoginModal()">@lang('web/app.click-here-to-sign-in')</a></p>
+                                <div class="col-lg-12">
+                                    <div class="form-check position-relative">
+                                        <label for="terms_and_condition" class="form-check-label ps-4"><a href="{{url('information/terms-and-conditions')}}" target="_blank">@lang('web/app.terms-and-conditions') </a><b>*</b> </label>
+                                        <div class="input-box" style="position:absolute; top: -23px">
+                                            <input type="checkbox" name="terms_and_condition" id="terms_and_condition" required>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                                <div class="col-lg-12">
+                                    <div>
+                                        <button type="submit" class="login-btn" form="registration">@lang('web/app.register')</button>
+                                        <!-- //Vineet - 080123 -->
+                                        <!-- <a href="javascript:void(0);" class="forget" onclick="openForgotPasswordModal()">@lang('web/app.forgot') @lang('web/app.passowrd')?</a> -->
+                                        <a href="javascript:void(0);" class="forget" onclick="openForgotPasswordModal()">@lang('web/app.forgot-password')</a>
+                                        <!-- //Vineet - 080123 -->
+                                    </div>
+                                    <div class="signup">
+                                        <p>@lang('web/app.already-have-account') <a href="javascript:void(0);" onclick="openLoginModal()">@lang('web/app.click-here-to-sign-in')</a></p>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -390,14 +496,29 @@
                         <div>
                             <h4>@lang('web/app.footer-heading')</h4>
                             <p>@lang('web/app.footer-description')</p>
+                            <div class="requirement-right pt-3 ">
+                            @if(App::getLocale() == 'pt')
+                              <a href="{{ route('attend-the-congress') }}" class="main-btn">Porquê devo participar no Congresso?</a>
+                            @elseif(App::getLocale() == 'sp')
+                              <a href="{{ route('attend-the-congress') }}" class="main-btn">¿Por qué asistir al Congreso?</a>
+                            @elseif(App::getLocale() == 'fr')
+                              <a href="{{ route('attend-the-congress') }}" class="main-btn">Pourquoi devrais-je participer au Congrès?</a>
+                            @else
+                              <a href="{{ route('attend-the-congress') }}" class="main-btn">Why should I attend the Congress?</a>
+                            @endif
+                            </div>
+                            <p>Read the compelling reasons here</p>
                         </div>
                     </div>
+                    
                     <div class="requirement-right">
-                        @if(!\Session::has('gpro_user'))
+                        @if(!\Session::has('gpro_exhibitor'))
                             <a href="javascript:void(0)" onclick="openRegistrationModal()" class="main-btn">@lang('web/app.register') @lang('web/app.now')</a>
                         @endif
                     </div>
+                   
                 </div>
+                
             </div>
             <div class="footer-logo">
                 <a href="{{ route('home') }}">
@@ -409,7 +530,7 @@
                     <li>
                         <a href="{{ route('home') }}">@lang('web/app.home')</a>
                     </li>
-                    @if(!\Session::has('gpro_user'))
+                    @if(!\Session::has('gpro_exhibitor'))
                     <li>
                         <a href="javascript:void(0)" onclick="openRegistrationModal()">@lang('web/app.register')</a>
                     </li>
@@ -1026,6 +1147,12 @@
                 }
             });
         });
+
+        $(document).ready(function(){
+        $('.test').fSelect();
+        $('.statehtml').fSelect();
+        $('.cityHtml').fSelect(); 
+    });
 
 </script>
     @stack('custom_js')

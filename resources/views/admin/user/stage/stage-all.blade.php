@@ -36,11 +36,11 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> @lang('admin.stage') All @lang('admin.'.$type) </h3>
+                <h3> @lang('admin.stage') All {{$type}}</h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.user')</li>
-                    <li class="breadcrumb-item" aria-current="page">@lang('admin.'.$type)</li>
+                    <li class="breadcrumb-item" aria-current="page">{{$type}}</li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.stage')</li>
                     <li class="breadcrumb-item" aria-current="page">All</li>
                 </ol>
@@ -86,6 +86,7 @@
                                     <th> @lang('admin.id') </th>
                                     <th> Name </th>
                                     <th> @lang('admin.user') </th>
+                                    <th> Mobile </th>
                                     <th> @lang('admin.stage') 0 </th> 
                                     <th> @lang('admin.stage') 1 </th>  
                                     <th> @lang('admin.stage') 2 </th>   
@@ -93,6 +94,7 @@
                                     <th> @lang('admin.stage') 4 </th>   
                                     <th> @lang('admin.stage') 5 </th>   
                                     <th> @lang('admin.action') </th>
+                                    <th> Email Reminder </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -107,6 +109,7 @@
                                     <th> @lang('admin.id') </th>
                                     <th> Name </th>
                                     <th> @lang('admin.user') </th>
+                                    <th> Mobile </th>
                                     <th> @lang('admin.stage') 0 </th> 
                                     <th> @lang('admin.stage') 1 </th>  
                                     <th> @lang('admin.stage') 2 </th>   
@@ -114,6 +117,7 @@
                                     <th> @lang('admin.stage') 4 </th>   
                                     <th> @lang('admin.stage') 5 </th>   
                                     <th> @lang('admin.action') </th>
+                                    <th> Email Reminder </th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -179,6 +183,9 @@ $(document).ready(function() {
             }, 
             {
                 "data": "user_name",
+            },
+            {
+                "data": "mobile",
             }, 
             {
                 "data": "stage0"
@@ -200,6 +207,9 @@ $(document).ready(function() {
             },
             {
                 "data": "action"
+            },
+            {
+                "data": "reminder"
             }
         ]
     });
@@ -231,6 +241,7 @@ $(document).ready(function() {
 });
 
 function fill_datatable() {
+
     $('.-change').click(function() {
         var status = $(this).data('type');
         var id = $(this).data('id');
@@ -262,6 +273,40 @@ function fill_datatable() {
                 $('#preloader').css('display', 'none');
                 sweetAlertMsg('success', data.message);
                 $('#tablelist').DataTable().ajax.reload(null, false);
+            }
+        });
+    });
+
+    $('.reminderChange').change(function() {
+        var status = $(this).prop('checked') == true ? '1' : '0';
+        var id = $(this).data('id');
+
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "{{ route('admin.user.reminder.status') }}",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: {
+                'id': id,
+                'status': status
+            },
+            beforeSend: function() {
+                $('#preloader').css('display', 'block');
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+                $('#preloader').css('display', 'none');
+            },
+            success: function(data) {
+                $('#preloader').css('display', 'none');
+                sweetAlertMsg('success', data.message);
             }
         });
     });

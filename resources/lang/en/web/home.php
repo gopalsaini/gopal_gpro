@@ -57,7 +57,7 @@ return [
     'pending' => 'Pending',
     'please-choose-option' => 'Please choose an option',
     'wire-transfer' => 'Wire transfer',
-    'money-gram' => 'RAI',
+    'money-gram' => 'RIA',
     'western-union' => 'Western Union',
     'upload-payment-image' => 'Upload Payment Image',
     'coming-along-with-spouse' => 'Are you coming along with your spouse to the Congress?',
@@ -121,6 +121,6 @@ return [
     'Offline-payment-successful' => 'Offline payment successful',
     'TravelInformation-approved-successful' => 'Travel Information approved successful',
     'Email-already-verifiedPlease-Login' => 'Email already verified. Please Login',	
-
+    'PreRecordedVideo'=>'Pre Recorded Video',
 
 ];

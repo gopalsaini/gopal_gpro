@@ -329,7 +329,7 @@
                                                                     <td>{{$transaction->order_id}}</td>
                                                                     <td>{{$transaction->bank_transaction_id}}</td>
                                                                     <td>{{$transaction->bank}} Transfer</td>
-                                                                    <td>{{\App\Helpers\commonHelper::getParticularNameById($transaction->particular_id)}}</td>
+                                                                    <td>{{\App\Helpers\commonHelper::getUserNameById($transaction->user_id)}}</td>
                                                                     <td>
                                                                         @if($transaction->particular_id == 1 || $transaction->particular_id == 2)
                                                                             Registration
@@ -633,7 +633,7 @@
                                     <select name="mode" class="mt-2 form-control addInFullAmountPaymentField" required>
                                         <option value="">--@lang('web/payment.transfer-type')--</option>
                                         <option value="Wire">Wire Transfer</option>
-                                        <option value="RAI">RAI</option>
+                                        <option value="RIA">RIA</option>
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
@@ -717,7 +717,7 @@
                                     <select name="mode" class="mt-2 form-control addPaymentTypeInPartial" required>
                                         <option value="">--@lang('web/ministry-details.select')--</option>
                                         <option value="Wire">Wire Transfer</option>
-                                        <option value="RAI">RAI</option>
+                                        <option value="RIA">RIA</option>
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
@@ -1244,7 +1244,7 @@
                     $("#countryOfSenderRequiredInFullAmount").attr('required',false);
 
                     
-                }else if ( this.value == 'RAI'){
+                }else if ( this.value == 'RIA'){
                     $("#countryOfSenderRequired").attr('required',true);
                     $("#senderNameRequiredInFullAmount").attr('required',true);
                     $("#AmountRequiredInFullAmount").attr('required',true);
@@ -1270,7 +1270,7 @@
                     $("#reference_numberRequired").attr('required',true);
                     $("#countryOfSenderRequired").attr('required',false);
                     
-                }else if ( this.value == 'RAI'){
+                }else if ( this.value == 'RIA'){
                     $("#showInPartialMG").show();
                     $("#countryOfSenderRequired").attr('required',true);
                     $("#senderNameRequired").attr('required',true);

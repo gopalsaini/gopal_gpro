@@ -27,6 +27,9 @@ class HomeController extends Controller
 	 
     public function index() {
 
+        if(isset($_GET['lang']) && $_GET['lang'] !=  ''){
+            \App::setLocale($_GET['lang']);
+        }
         
         \App\Helpers\commonHelper::setLocale();
         
@@ -43,11 +46,18 @@ class HomeController extends Controller
             })->get();
         
         }
-        
-        return view('index', compact('testimonials'));
+
+        $speakers = \App\Models\Speaker::where('status', '1')->inRandomOrder()->limit(3)->get();
+        $preRecordedVideo = \App\Models\PreRecordedVideo::where('status', '1')->inRandomOrder()->limit(3)->get();
+
+        return view('index', compact('testimonials','speakers','preRecordedVideo'));
     } 
 
     public function Registration() {
+
+        if(isset($_GET['lang']) && $_GET['lang'] !=  ''){
+            \App::setLocale($_GET['lang']);
+        }
         $testimonials = \App\Models\Testimonial::where('status', '1')->inRandomOrder()->limit(3)->get();
         \App\Helpers\commonHelper::setLocale();
         
@@ -150,8 +160,13 @@ class HomeController extends Controller
                 $data = \App\Helpers\commonHelper::paymentGateway($user->id,$linkPayment->amount,2);
 
                 $intent = $data['intent'];
-                $order_id = $data['order_id'];
+                echo $order_id = $data['order_id'];
+                die;
+                $linkPayment->order_id = $data['order_id'];
+                $linkPayment->save();
 
+                \App\Helpers\commonHelper::sendSponsorPaymentTriggeredToUserMail($linkPayment->user_id,$linkPayment->amount,$linkPayment->name);
+                
                 return view('stripe',compact('intent','order_id'));
                 
             }else{
@@ -329,22 +344,33 @@ class HomeController extends Controller
 
     }
 
+    public function donate(Request $request) {
+
+        if(isset($_GET['lang']) && $_GET['lang'] !=  ''){
+            \App::setLocale($_GET['lang']);
+        }
+        \App\Helpers\commonHelper::setLocale();
+
+        return view('donate');
+
+    }
+
     public function localization(Request $request) {
 		if($request->ajax() && $request->isMethod('post')){
 
 		    \Session::put('lang', $request->post('lang'));
 
-            if(\Session::has('gpro_user')){
+            // if(\Session::has('gpro_user')){
 
-                $data=array(
-                    'language'=>$request->post('lang'),
-                );
+            //     $data=array(
+            //         'language'=>$request->post('lang'),
+            //     );
 
-                $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/change-user-language', json_encode($data));
-                $resultData=json_decode($result->content, true);
+            //     $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/change-user-language', json_encode($data));
+            //     $resultData=json_decode($result->content, true);
                
 
-            }
+            // }
             return response(array('reload' => true), 200);
         }
 	}
@@ -356,6 +382,7 @@ class HomeController extends Controller
             'email' => 'required',
             'amount' => 'required',
             'user_id' => 'required',
+            'id' => 'numeric|required',
 		];
 
         $messages = array(
@@ -385,6 +412,7 @@ class HomeController extends Controller
 				$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($request->post('user_id'), false); 
 				if($request->post('amount') <= $totalPendingAmount){
 
+                    
 					$data = \App\Helpers\commonHelper::paymentGateway($request->post('user_id'),$request->post('amount'),2);
 
                     $intent = $data['intent'];
@@ -393,6 +421,16 @@ class HomeController extends Controller
 
                     $order_id = $data['order_id'];
 
+                    $linkPayment = \App\Models\SponsorPayment::where('id',$request->post('id'))->first();
+                    if($linkPayment){
+
+                        $linkPayment->order_id = $data['order_id'];
+                        $linkPayment->save();
+    
+                        \App\Helpers\commonHelper::sendSponsorPaymentTriggeredToUserMail($linkPayment->user_id,$request->post('amount'),$linkPayment->name);
+    
+                    }
+                
                     $subject='Sponsor Submitted Payment';
                     $msg='Sponsor Submitted Payment';
 
@@ -834,4 +872,437 @@ class HomeController extends Controller
 
     }
 
+    public function exhibitorPolicy(Request $request) {
+
+        \App\Helpers\commonHelper::setLocale();
+
+        return view('exhibitors.exhibitor_policy');
+
+    }
+
+    public function exhibitorsHome(Request $request){
+ 
+        return view('exhibitors.index');
+        
+    }
+
+    public function ExhibitorRegistration(Request $request){
+	
+        if($request->ajax()){
+
+            $rules=[
+            
+                'name' => 'required',
+                'email' => ['required', 'email','unique:users,email'],
+                'mobile' => 'required',
+                'citizenship' => 'required',
+                'business_name' => 'required',
+                'business_identification_no' => 'required',
+                'website' => 'required',
+                'dob' => 'required',
+                'gender' => 'required',
+                'passport_number' => 'required',
+                'passport_copy' => 'required',
+                'logo' => 'required',
+                'salutation' => 'required',
+                'mobile_code' => 'required',
+                'room' => 'required',
+                'diplomatic_passport' => 'required',
+            ];
+
+            if($request->post('coming_with_spouse') == 'Yes'){
+
+                $rules['spouse_name'] = 'required';
+                $rules['spouse_citizenship'] = 'required';
+                $rules['spouse_gender'] = 'required';
+                $rules['spouse_dob'] = 'required';
+                $rules['spouse_email'] = ['required', 'email','unique:users,email'];
+                $rules['spouse_mobile'] = 'required';
+                $rules['spouse_passport_number'] = 'required';
+                $rules['spouse_passport_copy'] = 'required';
+                $rules['spouse_mobile_code'] = 'required';
+                $rules['spouse_salutation'] = 'required';
+                $rules['spouse_diplomatic_passport'] = 'required';
+            }
+
+            if($request->post('any_one_coming_with_along') == 'Yes'){
+
+                $rules['along_name'] = 'array|required';
+                $rules['along_citizenship'] = 'array|required';
+                $rules['along_gender'] = 'array|required';
+                $rules['along_dob'] = 'array|required';
+                $rules['along_email'] = 'array|required';
+                $rules['along_mobile'] = 'array|required';
+                $rules['along_passport_number'] = 'array|required';
+                $rules['along_passport_copy'] = 'array|required';
+                $rules['along_salutation'] = 'array|required';
+                $rules['along_mobile_code'] = 'array|required';
+                $rules['along_diplomatic_passport'] = 'array|required';
+            }
+
+            $validator = \Validator::make($request->all(), $rules);
+            
+            if ($validator->fails()) {
+                $message = [];
+                $messages_l = json_decode(json_encode($validator->messages()), true);
+                foreach ($messages_l as $msg) {
+                    $message = $msg[0];
+                    break;
+                }
+                
+                return response(array("error"=>true, 'message'=>$message), 403);
+                
+            }else{
+
+                // try {
+
+                    
+                    if($request->post('email') == $request->post('spouse_email')){
+
+                        $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Wehave-duplicate-email-group-users');
+                        return response(array( "message"=>$message), 403);
+                    
+                    }
+                    
+
+                    $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    
+                    $password = substr(str_shuffle($chars),0,8);
+                    $user=new \App\Models\User();
+                    $user->name=$request->post('name');
+                    $user->email=$request->post('email');
+                    $user->parent_id=$request->post('parent_id');
+                    $user->citizenship=$request->post('citizenship');
+                    $user->phone_code=$request->post('mobile_code');
+                    $user->mobile=$request->post('mobile');
+                    $user->added_as=$request->post('added_as');
+                    $user->dob=$request->post('dob');
+                    $user->gender=$request->post('gender');
+                    $user->last_name=$request->post('salutation');
+                    $user->reg_type='email';
+                    $user->designation_id='14';
+                    $user->password=\Hash::make($password);
+                    $user->otp_verified='Yes';
+
+                    if($request->hasFile('passport_copy')){
+                        $imageData = $request->file('passport_copy');
+                        $image = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+                        $destinationPath = public_path('/uploads/passport');
+                        $imageData->move($destinationPath, $image);
+
+                        // $user->passport_copy = $image;
+                    }
+
+                    if($request->hasFile('logo')){
+                        $imageData = $request->file('logo');
+                        $imageLogo = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+                        $destinationPath = public_path('/uploads/logo');
+                        $imageData->move($destinationPath, $imageLogo);
+
+                        // $user->logo = $image;
+                    }
+
+                    $user->save();
+                    
+                    \App\Helpers\commonHelper::sendExhibitorsRegistrationMailSend($user->id,$password);
+                    
+                    
+                    $data=[
+                        'user_id' => $user->id,
+                        'business_owner_id' => $user->id,
+                        'parent_id' => null,
+                        'added_as' => null,
+                        'name' => $request->post('name'),
+                        'email' => $request->post('email'),
+                        'mobile' => $request->post('mobile'),
+                        'citizenship' => $request->post('citizenship'),
+                        'business_name' => $request->post('business_name'),
+                        'business_identification_no' => $request->post('business_identification_no'),
+                        'website' => $request->post('website'),
+                        'dob' => $request->post('dob'),
+                        'gender' => $request->post('gender'),
+                        'passport_number' => $request->post('passport_number'),
+                        'any_one_coming_with_along' => $request->post('any_one_coming_with_along'),
+                        'coming_with_spouse' => $request->post('coming_with_spouse'),
+                        'salutation' => $request->post('salutation'),
+                        'mobile_code' => $request->post('mobile_code'),
+                        'diplomatic_passport' => $request->post('diplomatic_passport'),
+                        'room' => $request->post('room'),
+                        'passport_copy' =>  $image,
+                        'logo' => $imageLogo,
+
+                    ];
+
+                  \App\Helpers\commonHelper::sendExhibitorsRegistrationUserHistory($data);
+                  
+
+                    if($request->post('coming_with_spouse') == 'Yes'){
+
+                        $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    
+                        $password = substr(str_shuffle($chars),0,8);
+
+                        $userSpouse=new \App\Models\User();
+                        $userSpouse->parent_id=$user->id;
+                        $userSpouse->added_as='Spouse';
+                        $userSpouse->name=$request->post('spouse_name');
+                        $userSpouse->email=$request->post('spouse_email');
+                        $userSpouse->mobile=$request->post('spouse_mobile');
+                        $userSpouse->citizenship=$request->post('spouse_citizenship');
+                        $userSpouse->dob=$request->post('spouse_dob');
+                        $userSpouse->gender=$request->post('spouse_gender');
+                        $userSpouse->last_name=$request->post('spouse_salutation');
+                        $userSpouse->phone_code=$request->post('spouse_mobile_code');
+                        $userSpouse->reg_type='email';
+                        $userSpouse->designation_id='14';
+                        $userSpouse->password=\Hash::make($password);
+                        $userSpouse->otp_verified='Yes';
+
+                        if($request->hasFile('spouse_passport_copy')){
+                            $imageData = $request->file('spouse_passport_copy');
+                            $image = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(0000,99999).'.'.$imageData->getClientOriginalExtension();
+                            $destinationPath = public_path('/uploads/passport');
+                            $imageData->move($destinationPath, $image);
+        
+                            // $userSpouse->passport_copy = $image;
+                        }
+
+                        $userSpouse->save();
+
+                        \App\Helpers\commonHelper::sendExhibitorsRegistrationMailSend($userSpouse->id,$password);
+
+                        $data=[
+                            'user_id' => $userSpouse->id,
+                            'business_owner_id' => $user->id,
+                            'parent_id' => $user->id,
+                            'added_as' => 'Spouse',
+                            'name' => $request->post('spouse_name'),
+                            'email' => $request->post('spouse_email'),
+                            'mobile' => $request->post('spouse_mobile'),
+                            'citizenship' => $request->post('spouse_citizenship'),
+                            'business_name' =>null,
+                            'business_identification_no' =>null,
+                            'website' => null,
+                            'dob' => $request->post('spouse_dob'),
+                            'gender' => $request->post('spouse_gender'),
+                            'passport_number' => $request->post('spouse_passport_number'),
+                            'any_one_coming_with_along' => null,
+                            'coming_with_spouse' => null,
+                            'salutation' => $request->post('spouse_salutation'),
+                            'mobile_code' => $request->post('spouse_mobile_code'),
+                            'diplomatic_passport' => $request->post('spouse_diplomatic_passport'),
+                            'room' => null,
+                            'passport_copy' =>  $image,
+                            'logo' => null,
+                            'room' => null,
+    
+                        ];
+                        
+                        
+                        \App\Helpers\commonHelper::sendExhibitorsRegistrationUserHistory($data);
+
+                    }
+
+                    
+                
+                    if($request->post('any_one_coming_with_along') == 'Yes'){
+
+                        //check email address
+                        $tempArr = array_unique($request->post('along_email'));
+                        $uniqueGroupUsers=array_intersect_key($request->post('along_email'), $tempArr);
+
+                        if(count($uniqueGroupUsers) != count($request->post('along_email'))){
+
+                            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Wehave-duplicate-email-group-users');
+                            return response(array( "message"=>$message), 403);
+                        
+                        }else{
+
+                            $groupEmails = $names = array_column($request->post('along_email'), 'email'); 
+                            $checkExistUsers=\App\Models\User::whereIn('email',$groupEmails)->get();
+
+                            if($checkExistUsers->count()>0){
+
+                                $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Wehave-duplicate-email-group-users');
+                                return response(array("message"=>$checkExistUsers[0]['email'].$message), 403);
+
+                            }
+                        }
+
+                        $users=[];
+                        
+                        $totalEmail=count($request->post('along_email')); 
+
+                        if($totalEmail>0){
+
+                            for($i=0;$i<$totalEmail;$i++){
+
+                                $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                                $image = '';
+                                $password = substr(str_shuffle($chars),0,8);
+
+                                $userDataEmail= \App\Models\User::where('email',$request->post('along_email')[$i])->first();
+                                if(!$userDataEmail){
+
+                                    $userAlong=new \App\Models\User();
+                                    
+                                    $userAlong->parent_id=$user->id;
+                                    $userAlong->added_as='Group';
+                                    $userAlong->name=$request->post('along_name')[$i];
+                                    $userAlong->last_name=$request->post('along_salutation')[$i];
+                                    $userAlong->phone_code=$request->post('along_mobile_code')[$i];
+                                    $userAlong->email=$request->post('along_email')[$i];
+                                    $userAlong->mobile=$request->post('along_mobile')[$i];
+                                    $userAlong->citizenship=$request->post('along_citizenship')[$i];
+                                    $userAlong->dob=$request->post('along_dob')[$i];
+                                    $userAlong->gender=$request->post('along_gender')[$i];
+                                    $userAlong->reg_type='email';
+                                    $userAlong->designation_id='14';
+                                    $userAlong->password=\Hash::make($password);
+                                    $userAlong->otp_verified='Yes';
+
+                                    if($request->file('along_passport_copy')[$i]){
+                                        $imageData = $request->file('along_passport_copy')[$i];
+                                        $image = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(000000,9999999).'.'.$imageData->getClientOriginalExtension();
+                                        $destinationPath = public_path('/uploads/passport');
+                                        $imageData->move($destinationPath, $image);
+                    
+                                    }
+
+                                    // $userAlong->passport_copy= $image;
+                                    $userAlong->save();
+
+                                    $data=[
+                                        'user_id' => $userAlong->id,
+                                        'business_owner_id' => $user->id,
+                                        'parent_id' => $user->id,
+                                        'added_as' => 'Group',
+                                        'name' => $request->post('along_name')[$i],
+                                        'email' => $request->post('along_email')[$i],
+                                        'mobile' => $request->post('along_mobile')[$i],
+                                        'citizenship' => $request->post('along_citizenship')[$i],
+                                        'business_name' =>null,
+                                        'business_identification_no' =>null,
+                                        'website' => null,
+                                        'dob' => $request->post('along_dob')[$i],
+                                        'gender' => $request->post('along_gender')[$i],
+                                        'passport_number' => $request->post('along_passport_number')[$i],
+                                        'any_one_coming_with_along' => null,
+                                        'coming_with_spouse' => $request->post('along_spouse')[$i],
+                                        'salutation' => $request->post('along_salutation')[$i],
+                                        'mobile_code' => $request->post('along_mobile_code')[$i],
+                                        'diplomatic_passport' => $request->post('along_diplomatic_passport')[$i],
+                                        'room' => null,
+                                        'passport_copy' =>  $image,
+                                        'logo' => null,
+                                        'room' => null,
+                
+                                    ];
+
+                                    \App\Helpers\commonHelper::sendExhibitorsRegistrationUserHistory($data);
+
+                                    \App\Helpers\commonHelper::sendExhibitorsRegistrationMailSend($userAlong->id,$password);
+                        
+                                    if($request->post('along_spouse')[$i] == 'Yes'){
+
+                                        $userDataEmail= \App\Models\User::where('email',$request->post('along_spouse_email')[$i])->first();
+
+                                        if(!$userDataEmail){
+
+                                            $userAlongSpouse=new \App\Models\User();
+                                            
+                                            $userAlongSpouse->parent_id=$userAlong->id;
+                                            $userAlongSpouse->added_as='Spouse';
+                                            $userAlongSpouse->name=$request->post('along_spouse_name')[$i];
+                                            $userAlongSpouse->last_name=$request->post('along_spouse_salutation')[$i];
+                                            $userAlongSpouse->phone_code=$request->post('along_spouse_mobile_code')[$i];
+                                            $userAlongSpouse->email=$request->post('along_spouse_email')[$i];
+                                            $userAlongSpouse->mobile=$request->post('along_spouse_mobile')[$i];
+                                            $userAlongSpouse->citizenship=$request->post('along_spouse_citizenship')[$i];
+                                            $userAlongSpouse->dob=$request->post('along_spouse_dob')[$i];
+                                            $userAlongSpouse->gender=$request->post('along_spouse_gender')[$i];
+                                            $userAlongSpouse->reg_type='email';
+                                            $userAlongSpouse->designation_id='14';
+                                            $userAlongSpouse->password=\Hash::make($password);
+                                            $userAlongSpouse->otp_verified='Yes';
+                                            
+
+                                            if($request->file('along_spouse_passport_copy')[$i]){
+                                                $imageData = $request->file('along_spouse_passport_copy')[$i];
+                                                $image = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(000000,9999999).'.'.$imageData->getClientOriginalExtension();
+                                                $destinationPath = public_path('/uploads/passport');
+                                                $imageData->move($destinationPath, $image);
+                            
+                                            }
+                                            // $userAlongSpouse->passport_copy= $image;
+                                            $userAlongSpouse->save();
+
+                                            $data=[
+                                                'user_id' => $userAlongSpouse->id,
+                                                'business_owner_id' => $user->id,
+                                                'parent_id' => $userAlong->id,
+                                                'added_as' => 'Spouse',
+                                                'name' => $request->post('along_spouse_name')[$i],
+                                                'email' => $request->post('along_spouse_email')[$i],
+                                                'mobile' => $request->post('along_spouse_mobile')[$i],
+                                                'citizenship' => $request->post('along_spouse_citizenship')[$i],
+                                                'business_name' =>null,
+                                                'business_identification_no' =>null,
+                                                'website' => null,
+                                                'dob' => $request->post('along_spouse_dob')[$i],
+                                                'gender' => $request->post('along_spouse_gender')[$i],
+                                                'passport_number' => $request->post('along_spouse_passport_number')[$i],
+                                                'any_one_coming_with_along' => null,
+                                                'coming_with_spouse' => null,
+                                                'salutation' => $request->post('along_spouse_salutation')[$i],
+                                                'mobile_code' => $request->post('along_spouse_mobile_code')[$i],
+                                                'diplomatic_passport' => $request->post('along_spouse_diplomatic_passport')[$i],
+                                                'room' => null,
+                                                'passport_copy' =>  $image,
+                                                'logo' => null,
+                                                'room' => null,
+                        
+                                            ];
+                                            
+                                            
+                                            \App\Helpers\commonHelper::sendExhibitorsRegistrationUserHistory($data);
+
+                                            \App\Helpers\commonHelper::sendExhibitorsRegistrationMailSend($userAlongSpouse->id,$password);
+                        
+                                            
+                                        }
+                                    }
+
+                                    
+                                }
+                                
+                            }
+
+                        } 
+                    }
+
+                    $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Your-registration-hasbeen-completed-successfullyPlease-updateyourProfile');
+                    return response(array("error"=>true, "message"=>'Registration Successfully','reset'=>true), 200);
+                    
+
+                // } catch (\Exception $e) {
+                // 	return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($user->language,'Something-went-wrongPlease-try-again')), 403);
+                // }
+            }
+        }
+        $country = \App\Models\Country::get();
+        return view('exhibitors.exhibitors',compact('country'));
+
+    }
+
+    public function attendTheCongress(Request $request) {
+
+        if(isset($_GET['lang']) && $_GET['lang'] !=  ''){
+            \App::setLocale($_GET['lang']);
+        }
+        \App\Helpers\commonHelper::setLocale();
+
+        return view('attend_the_congress');
+
+    }
 }

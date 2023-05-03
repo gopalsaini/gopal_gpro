@@ -36,6 +36,13 @@
             background: url('{{asset("admin-assets/images/details_close.png")}}') no-repeat center center;
         }
     </style>
+    <style>
+        
+
+        .list-group-item-action{
+            background-color: #ffcd34 !important;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -44,11 +51,11 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> @lang('admin.stage') @lang('admin.three') @lang('admin.'.$type) </h3>
+                <h3> @lang('admin.stage') @lang('admin.three') {{$type}} </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.user')</li>
-                    <li class="breadcrumb-item" aria-current="page">@lang('admin.'.$type)</li>
+                    <li class="breadcrumb-item" aria-current="page">{{$type}}</li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.stage')</li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.three')</li>
                 </ol>
@@ -62,58 +69,216 @@
             </div>
         </div>
     </div>
+    @include('admin.user.stage-bar')
+    
     <div class="row">
-        @include('admin.user.stage-bar')
         <div class="col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <input type="text" name="email" class="form-control searchEmail " placeholder="Search ...">
-                    <br>
-                    <div class="table-responsive">
-                        <table class="display datatables" id="tablelist">
-                            <thead>
-                                <tr>
-                                    <th> @lang('admin.id') </th>
-                                    <th> @lang('admin.user') </th>
-                                    <th> @lang('admin.email') </th>
-                                    <th> @lang('admin.mobile') </th>
-                                    <th>  User Remark </th>
-                                    <th> @lang('admin.travel') @lang('admin.info') </th>
-                                    <th> Visa Letter </th>
-                                    <th> User Type </th>
-                                    <th> Group Owner Name </th>
-                                    <th> Spouse Name </th>
-                                    <th> @lang('admin.action') </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-center" colspan="8">
-                                        <div id="loader" class="spinner-border" role="status"></div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th> @lang('admin.id') </th>
-                                    <th> @lang('admin.user') </th>
-                                    <th> @lang('admin.email') </th>
-                                    <th> @lang('admin.mobile') </th>
-                                    <th>  User Remark</th>
-                                    <th> @lang('admin.travel') @lang('admin.info') </th>
-                                    <th> Visa Letter </th>
-                                    <th> User Type </th>
-                                    <th> Group Owner Name </th>
-                                    <th> Spouse Name </th>
-                                    <th> @lang('admin.action') </th>
-                                </tr>
-                            </tfoot>
-                        </table>
+            <div class="list-group flex-row text-center" id="list-tab" role="tablist">
+                <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home"><span style="font-size: 16px;">Passport Details</span> </a>
+                <a class="list-group-item list-group-item-action" id="list-contact-list" data-bs-toggle="list" href="#contact-details" role="tab" aria-controls="list-contact"><span style="font-size: 16px;">Sponsorship Details</span></a>
+                <a class="list-group-item list-group-item-action" id="list-travel-list" data-bs-toggle="list" href="#travel-details" role="tab" aria-controls="list-travel"><span style="font-size: 16px;">Travel Details</span></a>
+            </div>
+        </div>
+        
+        <div class="col-sm-12" style="margin-top: 20px;">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                    <div class="row">
+                       
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <input type="text" name="email" class="form-control passportEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="passportlist">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> DOB </th>
+                                                    <th> Citizenship </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Remark  </th>
+                                                    <th> Admin Status </th>
+                                                    <th> User Type </th>
+                                                    <th> Group Owner Name </th>
+                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> DOB </th>
+                                                    <th> Citizenship </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Remark  </th>
+                                                    <th> admin Status </th>
+                                                    <th> User Type </th>
+                                                    <th> Group Owner Name </th>
+                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="tab-pane fade" id="contact-details" role="tabpanel" aria-labelledby="list-contact-list">
+                    <div class="row">
+                       
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <input type="text" name="email" class="form-control sponsorshipEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="sponsorshipList">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> DOB </th>
+                                                    <th> Citizenship </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Sponsorship Letter  </th>
+                                                    <th> Financial Letter  </th>
+                                                    <th> Remark  </th>
+                                                    <th> User Status </th>
+                                                    <th> User Type </th>
+                                                    <th> Group Owner Name </th>
+                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> DOB </th>
+                                                    <th> Citizenship </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Sponsorship Letter  </th>
+                                                    <th> Financial Letter   </th>
+                                                    <th> Remark  </th>
+                                                    <th> User Status </th>
+                                                    <th> User Type </th>
+                                                    <th> Group Owner Name </th>
+                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="travel-details" role="tabpanel" aria-labelledby="list-travel-list">
+                    <div class="row">
+                       
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <input type="text" name="email" class="form-control searchEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="tablelist">
+                                            <thead>
+                                                <tr>
+                                                    <th> @lang('admin.id') </th>
+                                                    <th> @lang('admin.user') </th>
+                                                    <th> @lang('admin.email') </th>
+                                                    <th> @lang('admin.mobile') </th>
+                                                    <th>  User Remark </th>
+                                                    <th> @lang('admin.travel') @lang('admin.info') </th>
+                                                    <th> Visa Letter </th>
+                                                    <th> User Type </th>
+                                                    <th> Group Owner Name </th>
+                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="8">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> @lang('admin.id') </th>
+                                                    <th> @lang('admin.user') </th>
+                                                    <th> @lang('admin.email') </th>
+                                                    <th> @lang('admin.mobile') </th>
+                                                    <th>  User Remark</th>
+                                                    <th> @lang('admin.travel') @lang('admin.info') </th>
+                                                    <th> Visa Letter </th>
+                                                    <th> User Type </th>
+                                                    <th> Group Owner Name </th>
+                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                        
+                </div>
+                
             </div>
         </div>
     </div>
+
+    
+</div>
+
+
+<div class="modal fade" id="passportRemarkModal" tabindex="-1" aria-labelledby="passportRemarkModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="passportRemarkModalLabel">User/Admin Passport Remark</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+            <p id="PassportRemark"></p>
+      </div>
+      
+    </div>
+  </div>
 </div>
 
 
@@ -173,6 +338,55 @@
   </div>
 </div>
 
+<div class="modal fade" id="sendSponsorshipLetterModal" tabindex="-1" aria-labelledby="sendSponsorshipLetterLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="sendSponsorshipLetterLabel">Upload Sponsorship Letter</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+            <form id="sponsorshipSubmit" action="{{ url('admin/user/upload-sponsorship-letter') }}" class="row" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="id" required value="" placeholder="id" id="SponsorshipId" class="mt-2" >
+
+                <div class="information-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="info">
+                                <div class="information-box">
+                                    <h6>Upload Sponsorship Letter <span style="color:red">*</span></h6>
+                                    <p><input accept="application/pdf" name="file" type="file" required class="form-control" /></p>
+                            
+                                </div>
+                                <div class="information-box">
+                                    <h6> Financial Latter Upload Letter (English)<span style="color:red">*</span></h6>
+                                    <p><input accept="application/pdf" name="financial_english_letter" type="file" required class="form-control" /></p>
+                            
+                                </div>
+                                <div class="information-box">
+                                    <h6>Financial Latter Upload Letter (Spanish) <span style="color:red">*</span></h6>
+                                    <p><input accept="application/pdf" name="financial_spanish_letter" type="file" required class="form-control" /></p>
+                            
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="col-lg-12">
+                    <div class="step-next">
+                        <button type="submit" class="btn btn-sm btn-primary m-1 text-white" form="sponsorshipSubmit">Submit</button>
+                    </div>
+                </div>
+            </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="finalLetterModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -213,6 +427,43 @@
   </div>
 </div>
 
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header px-3">
+                <h5 class="modal-title" id="exampleModalLongTitle">Passport Info Decline</h5>
+                <button type="button" class="close" onclick="modalHide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <hr class="m-0">
+            <div class="modal-body px-3">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <div class="form-line">
+                                <label for="inputName">Enter Decline Remark <label class="text-danger">*</label></label>
+                                <form id="Passport" action="{{ url('admin/user/passport/decline') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                                    @csrf
+                                    <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea>
+                                    <input type="hidden" name="id" id="row_id" cols="10" rows="5" class="form-control" required />
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger " onclick="modalHide()">Close</button>
+                <button type="submit" class="btn btn-dark " form="Passport">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('custom_js')
@@ -239,6 +490,175 @@ $(document).ready(function () {
 $(document).ready(function() {
 
     
+    var passport = $('#passportlist').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "ordering": false,
+
+        "ajax": {
+            "url": "{{ url('admin/user/passport/list/'.$type) }}",
+            "dataType": "json",
+            "async": false,
+            "type": "get",
+            data: function (d) {
+                d.email = $('.passportEmail').val()
+            },
+            "error": function(xhr, textStatus) {
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+            },
+        },
+        "fnDrawCallback": function() {
+            fill_datatable();
+        },
+        "order": [0, 'desc'],
+        "columnDefs": [{
+                className: "text-left",
+                targets: "_all"
+            },
+            {
+                orderable: false,
+                targets: [-1]
+            },
+        ],
+        "columns": [{
+                "data": null,
+                render: function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                },
+                className: "text-center font-weight-bold"
+            },
+            {
+                "data": "name"
+            },
+            {
+                "data": "passport_no"
+            },
+            {
+                "data": "dob"
+            },
+            {
+                "data": "citizenship"
+            },
+            {
+                "data": "country_id"
+            },
+            {
+                "data": "passport_copy"
+            },
+            {
+                "data": "remark"
+            },
+            {
+                "data": "admin_status"
+            },
+            {
+                "data": "user_type"
+            },
+            {
+                "data": "group_owner_name"
+            },
+            {
+                "data": "spouse_name"
+            },
+            {
+                "data": "action"
+            }
+        ]
+    });
+
+    var sponsorship = $('#sponsorshipList').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "searching": false,
+        "ordering": false,
+
+        "ajax": {
+            "url": "{{ url('admin/user/passport/sponsorship/'.$type) }}",
+            "dataType": "json",
+            "async": false,
+            "type": "get",
+            data: function (d) {
+                d.email = $('.sponsorshipEmail').val()
+            },
+            "error": function(xhr, textStatus) {
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+            },
+        },
+        "fnDrawCallback": function() {
+            fill_datatable();
+        },
+        "order": [0, 'desc'],
+        "columnDefs": [{
+                className: "text-left",
+                targets: "_all"
+            },
+            {
+                orderable: false,
+                targets: [-1]
+            },
+        ],
+        "columns": [{
+                "data": null,
+                render: function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                },
+                className: "text-center font-weight-bold"
+            },
+            {
+                "data": "name"
+            },
+            {
+                "data": "passport_no"
+            },
+            {
+                "data": "dob"
+            },
+            {
+                "data": "citizenship"
+            },
+            {
+                "data": "country_id"
+            },
+            {
+                "data": "passport_copy"
+            },
+            {
+                "data": "sponsorship_letter"
+            },
+            {
+                "data": "financial_letter"
+            },
+            {
+                "data": "remark"
+            },
+            {
+                "data": "user_status"
+            },
+            {
+                "data": "user_type"
+            },
+            {
+                "data": "group_owner_name"
+            },
+            {
+                "data": "spouse_name"
+            },
+            {
+                "data": "action"
+            }
+        ]
+    });
+
+
     var table = $('#tablelist').DataTable({
         "processing": true,
         "serverSide": true,
@@ -250,6 +670,9 @@ $(document).ready(function() {
             "dataType": "json",
             "async": false,
             "type": "get",
+            data: function (d) {
+                d.email = $('.searchEmail').val()
+            },
             "error": function(xhr, textStatus) {
                 if (xhr && xhr.responseJSON.message) {
                     sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
@@ -315,6 +738,14 @@ $(document).ready(function() {
         table.draw();
     });
 
+    $(".passportEmail").keyup(function(){
+        passport.draw();
+    });
+
+    $(".sponsorshipEmail").keyup(function(){
+        sponsorship.draw();
+    });
+
 });
 
 function fill_datatable() {
@@ -325,10 +756,22 @@ function fill_datatable() {
         $('#Remark').html($(this).data('remark'));
     });
 
+    $('.ViewPassportRemark').click(function() {
+    
+        $('#passportRemarkModal').modal('show');
+        $('#PassportRemark').html($(this).data('remark'));
+    });
+
     $('.sendDraftLetter').click(function() {
     
         $('#draftLetterModal').modal('show');
         $('#travelId').val($(this).data('id'));
+    });
+
+    $('.sendSponsorshipLetter').click(function() {
+    
+        $('#sendSponsorshipLetterModal').modal('show');
+        $('#SponsorshipId').val($(this).data('id'));
     });
 
     $('.sendFinalLetter').click(function() {
@@ -403,6 +846,17 @@ function fill_datatable() {
             }
         });
     });
+
+        
+    $('.passportReject').click(function() {
+        var id = $(this).data('id');
+
+        $('#exampleModalCenter').modal('show');
+        $('#row_id').val(id);
+        $('#remark').val(null);
+
+    });
+
 }
 
  
@@ -437,6 +891,45 @@ function fill_datatable() {
                 $('#preloader').css('display', 'none');
                 sweetAlertMsg('success', data.message);
                 $('#draftLetterModal').modal('hide');
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+
+ 
+    $("form#sponsorshipSubmit").submit(function(e) {
+        e.preventDefault();
+        
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+
+        $.ajax({
+            url: formAction,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                $('#preloader').css('display', 'block');
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+                $('#preloader').css('display', 'none');
+            },
+            success: function(data) {
+
+                $('#preloader').css('display', 'none');
+                sweetAlertMsg('success', data.message);
+                $('#sendSponsorshipLetterModal').modal('hide');
             },
             cache: false,
             contentType: false,
@@ -482,6 +975,66 @@ function fill_datatable() {
             processData: false,
         });
     });
+
+    $("form#Passport").submit(function(e) {
+
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+
+        var form_data = new FormData(this);
+
+        var btnhtml = $("button[form=" + formId + "]").html();
+
+        $.ajax({
+            url: formAction,
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            headers: {
+                "Authorization": "Bearer {{\Session::get('gpro_user')}}"
+            },
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+
+                submitButton(formId, btnhtml, false);
+
+            },
+            success: function(data) {
+                sweetAlertMsg('success', data.message);
+                location.reload();
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+
+    }); 
+
+    $(document).ready(function() {
+
+        $('#exampleModalCenter').on('hidden.bs.modal', function (e) {
+            modalHide();
+        })
+
+
+    });
+
+    function modalHide() {
+
+        $('#exampleModalCenter').modal('hide');
+        $('#row_id').val(0);
+        $('#remark').val(null);
+    }
 
 
 </script>

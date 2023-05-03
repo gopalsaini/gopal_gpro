@@ -29,9 +29,11 @@ class AppServiceProvider extends ServiceProvider
 
 		View::composer('layouts.app', function($view){
 
-        $informations = \App\Models\Information::where('status', '1')->get();
+            $informations = \App\Models\Information::where('status', '1')->get();
+            $country=\App\Models\Country::select('id','name','phonecode')->get();
+            $siteSetting=\App\Models\SiteSetting::where('status', 'Approve')->first();
 
-			  return $view->with(['informations' => $informations]);
+            return $view->with(['informations' => $informations,'country' => $country,'siteSetting' => $siteSetting]);
 		});
     }
 }

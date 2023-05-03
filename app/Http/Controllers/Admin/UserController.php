@@ -131,6 +131,7 @@ class UserController extends Controller {
 					$data->designation_id = $request->post('designation_id');
 					$data->parent_id = null;
 					$data->password = \Hash::make($password);
+					$data->language = $request->post('language');
 
 
 				}
@@ -195,9 +196,10 @@ class UserController extends Controller {
 			// $order = $columns[$request->input('order.0.column')];
 			// $dir = $request->input('order.0.dir');
 
+			
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['id', '!=', '1']])->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::where([['id', '!=', '1'],['designation_id', $designation_id],['designation_id', '!=', '14']])->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
@@ -210,7 +212,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['id', '!=', '1']])->orderBy('updated_at', 'desc');
+			$totalData1 = \App\Models\User::where([['id', '!=', '1'],['designation_id', $designation_id],['designation_id', '!=', '14']])->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 
@@ -246,6 +248,17 @@ class UserController extends Controller {
 
 		    })
 
+			->addColumn('mobile', function($data){
+				if($data->mobile){
+
+					return '+'.$data->phone_code.' '.$data->mobile ?? '-';
+				}else{
+					return '-';
+
+				}
+				
+		    })
+			
 			->addColumn('stage0', function($data){
 				if($data->stage == 0){
 					return '<div class="span badge rounded-pill pill-badge-secondary">In Process</div>';
@@ -324,6 +337,28 @@ class UserController extends Controller {
 			})
 
 			
+			->addColumn('reminder', function($data){
+
+				if(\Auth::user()->designation_id == 1){
+
+					if ($data->email_reminder=='1') { 
+						$checked = "checked";
+					} else {
+						$checked = " ";
+					}
+	
+					return '<div class="media-body icon-state switch-outline">
+								<label class="switch">
+									<input type="checkbox" class="reminderChange" data-id="'.$data->id.'" '.$checked.'><span class="switch-state bg-primary"></span>
+								</label>
+							</div>';
+				}else{
+					return '-';
+				}
+				
+		    })
+
+			
 
 		    ->escapeColumns([])	
 			->setTotalRecords($totalData)
@@ -339,6 +374,7 @@ class UserController extends Controller {
         return view('admin.user.stage.stage-all', compact('type', 'setting', 'stageno'));
 
 	}
+
 
     public function stageZero(Request $request, $type) {
 		
@@ -388,6 +424,16 @@ class UserController extends Controller {
 				return $data->email;
 		    })
 
+			->addColumn('mobile', function($data){
+				if($data->mobile){
+
+					return '+'.$data->phone_code.' '.$data->mobile ?? '-';
+				}else{
+					return '-';
+
+				}
+				
+		    })
 			->addColumn('profile', function($data){
 				if ($data->profile_status == 'Review') {
 					return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
@@ -525,7 +571,7 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::where([['stage', '=', '1'], ['profile_status', $request->input('status')]])
+			$query = \App\Models\User::where([['designation_id', '!=', '14'],['designation_id', $designation_id],['stage', '=', '1'], ['profile_status', $request->input('status')]])
 						->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group')
@@ -540,7 +586,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::where([['stage', '=', '1'], ['profile_status', $request->input('status')]])
+			$totalData1 = \App\Models\User::where([['designation_id', '!=', '14'],['designation_id', $designation_id],['stage', '=', '1'], ['profile_status', $request->input('status')]])
 						->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
@@ -1011,6 +1057,7 @@ class UserController extends Controller {
 				}
 		    })
 
+			
 			->addColumn('admin_status', function($data){
 
 				$draft_file = '';
@@ -1025,6 +1072,7 @@ class UserController extends Controller {
 							$final_file =  '<a href="'.asset('uploads/file/'.$data->TravelInfo->final_file).'" target="_blank" class="btn btn-sm btn-outline-success m-1">View File</a>';
 						}
 
+					
 						return '<div class="badge rounded-pill pill-badge-success">Approved</div>'.$final_file;
 					} else if ($data->TravelInfo->admin_status == '0') {
 						return '<div class="badge rounded-pill pill-badge-danger">Decline</div>';
@@ -1046,7 +1094,7 @@ class UserController extends Controller {
 					
 					}
 
-					return '<a class="btn btn-sm btn-dark sendEmail" data-id="'.$data->id.'" ><span style="color:#fff">Primarily Letter Issue</span></a>';
+					// return '<a class="btn btn-sm btn-dark sendEmail" data-id="'.$data->id.'" ><span style="color:#fff">Primarily Letter Issue</span></a>';
 				}
 
 		    })
@@ -1152,6 +1200,7 @@ class UserController extends Controller {
 		}
 
 	}
+
 
 	public function stageFour(Request $request, $type) {
 		
@@ -1638,6 +1687,22 @@ class UserController extends Controller {
 			$result->save();
 
 			return response(array('message'=>'User status changed successfully.'), 200);
+		} else {
+			return response(array('message'=>'Something went wrong. Please try again.'), 403);
+		}
+
+	}
+
+	public function reminderStatus(Request $request) {
+		
+		$result = \App\Models\User::find($request->post('id'));
+
+		if ($result) {
+
+			$result->email_reminder = $request->post('status');
+			$result->save();
+
+			return response(array('message'=>'Email Reminder status changed successfully.'), 200);
 		} else {
 			return response(array('message'=>'Something went wrong. Please try again.'), 403);
 		}
@@ -2417,202 +2482,151 @@ class UserController extends Controller {
 						$result->profile_update = '1';
 						$name= $result->name.' '.$result->last_name;
 
-						if($result->language == 'sp'){
+						if($request->post('amount')>0){
 
-							$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
-							$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-						
-						}elseif($result->language == 'fr'){
-						
-							$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
-							$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-						
-						}elseif($result->language == 'pt'){
-						
-							$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
-							$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-						
+							$android = '<a href="https://play.google.com/store/apps/details?id=org.gprocommision">Google Play</a>';
+							$ios = '<a href="https://apps.apple.com/us/app/gpro-commission/id1664828059">App Store</a>';
+							$website = '<a href="https://www.gprocongress.org/payment">website</a>';
+		
+							if($result->language == 'sp'){
+
+								$website = '<a href="https://www.gprocongress.org/payment">sitio web</a>';
+
+								$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+								$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
+									<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
+									<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a '.$ios.' o a '.$android.' y ¡descárguelo hoy!</p><p><br></p><p>
+									<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.' usando cualquiera de los distintos métodos de pago:</p><p>
+									<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+									<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+									<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.'. Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: </p><p>&nbsp;&nbsp;&nbsp;(1) su nombre completo, </p><p>&nbsp;&nbsp;&nbsp;(2) el país desde el que realiza el envío, </p><p>&nbsp;&nbsp;&nbsp;(3) la cantidad enviada en USD, y </p><p>&nbsp;&nbsp;&nbsp;(4) el código que Western Union le haya dado.</p><p>
+									<br></p><p>4. RIA: Puedes pagar su inscripción a través de Western Union en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.'. Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: </p><p>&nbsp;&nbsp;&nbsp;(1) su nombre completo, </p><p>&nbsp;&nbsp;&nbsp;(2) el país desde el que realiza el envío, </p><p>&nbsp;&nbsp;&nbsp;(3) la cantidad enviada en USD, y </p><p>&nbsp;&nbsp;&nbsp;(4) el código que Western Union le haya dado.</p><p>
+									<br></p><p style="background-color:yellow; display: inline;">TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31 de Mayo, 2023 </p><p>
+									<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
+									<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
+									<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
+							
+							}elseif($result->language == 'fr'){
+
+								$website = '<a href="https://www.gprocongress.org/payment">site Web</a>';
+		
+								$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+								$msg = '<p>Cher '.$name.',&nbsp;</p><p>
+								<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
+								<br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’'.$ios.' ou sur '.$android.' et de la télécharger dès aujourd’hui!</p><p>
+								<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
+								<br></p><p>Vous pouvez payer vos frais sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.' en utilisant l’un des différents modes de paiement:</p><p>
+								<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
+								<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
+								<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.'. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : </p><p>&nbsp;&nbsp;&nbsp;(1) votre nom complet, </p><p>&nbsp;&nbsp;&nbsp;(2) le pays à partir duquel vous envoyez, </p><p>&nbsp;&nbsp;&nbsp;(3) le montant envoyé en USD et </p><p>&nbsp;&nbsp;&nbsp;(4) le code qui vous a été donné par Western Union.</p><p>
+								<br></p><p>4. RIA – vous pouvez payer vos frais par RIA en allant sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.'. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: </p><p>&nbsp;&nbsp;&nbsp;(1) votre nom complet, </p><p>&nbsp;&nbsp;&nbsp;(2) le pays à partir duquel vous envoyez, </p><p>&nbsp;&nbsp;&nbsp;(3) le montant envoyé en USD et </p><p>&nbsp;&nbsp;&nbsp;(4) le code qui vous a été donné par RIA.</p><p>
+								<br></p><p style="background-color:yellow; display: inline;">VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023 </p><p>
+								<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
+								<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
+								<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+							
+							}elseif($result->language == 'pt'){
+
+								$website = '<a href="https://www.gprocongress.org/payment">site</a>';
+		
+								$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+								$msg = '<p>Prezado '.$name.',</p><p>
+								<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
+								<br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na '.$ios.' ou ao '.$android.' e fazer o download hoje mesmo!</p><p>
+								<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
+								<br></p><p>Você pode pagar suas taxas em nosso '.$website.' ou em nosso aplicativo '.$ios.' ou ao '.$android.' usando qualquer um dos vários métodos de pagamento:</p><p>
+								<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
+								<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
+								<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso '.$website.' ou nosso aplicativo '.$ios.' ou ao '.$android.'. Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: </p><p>&nbsp;&nbsp;&nbsp;(1) seu nome completo, </p><p>&nbsp;&nbsp;&nbsp;(2) o país de onde você está enviando, </p><p>&nbsp;&nbsp;&nbsp;(3) o valor enviado em USD e </p><p>&nbsp;&nbsp;&nbsp;(4) o código fornecido a você pela Western Union.</p><p>
+								<br></p><p>4. RIA – você pode pagar suas taxas via RIA acessando nosso '.$website.' ou nosso aplicativo '.$ios.' ou ao '.$android.'. Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: </p><p>&nbsp;&nbsp;&nbsp;(1) seu nome completo, </p><p>&nbsp;&nbsp;&nbsp;(2) o país de onde você está enviando, </p><p>&nbsp;&nbsp;&nbsp;(3) o valor enviado em USD e </p><p>&nbsp;&nbsp;&nbsp;(4) o código fornecido a você pela RIA.</p><p>
+								<br></p><p style="background-color:yellow; display: inline;">OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31 de Mayo, 2023 </p><p>
+								<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
+								<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
+								<br></p><p>Calorosamente,</p><p>
+								<br></p><p>Equipe do II CongressoGPro</p>';
+							
+							}else{
+							
+								$subject = 'Congratulations, '.$name.', your application has been approved!';
+								$msg = '<p>Dear '.$name.',</p><p><br></p>
+								<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
+								<p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the '.$ios.' or to '.$android.' and download it today!</p><p>
+								<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
+								<br></p><p>You may pay your fees on our '.$website.' or on our app '.$ios.' or to '.$android.' using any of several payment methods:</p><p><br>
+								</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
+								</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
+								</p><p>3. Western Union – you can pay your fees via Western Union by going to our '.$website.', or to our app '.$ios.' or to '.$android.'. Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: </p><p>&nbsp;&nbsp;&nbsp;(1) your full name, </p><p>&nbsp;&nbsp;&nbsp;(2) the country you are sending from, </p><p>&nbsp;&nbsp;&nbsp;(3) the amount sent in USD, and </p><p>&nbsp;&nbsp;&nbsp;(4) the code given to you by Western Union. </p><p><br>
+								</p><p>4. RIA – you can pay your fees via RIA by going to our '.$website.', or to our app '.$ios.' or to '.$android.'. Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: </p><p>&nbsp;&nbsp;&nbsp;(1) your full name, </p><p>&nbsp;&nbsp;&nbsp;(2) the country you are sending from, </p><p>&nbsp;&nbsp;&nbsp;(3) the amount sent in USD, and </p><p>&nbsp;&nbsp;&nbsp;(4) the code given to you by RIA.</p><p><br>
+								</p><p style="background-color:yellow; display: inline;">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before 31st May 2023 </p><p><br>
+								</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
+								</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
+								<br></p><p>Warmly,</p><p>
+								<br></p><p>The GProCongress II Team</p>';	
+							
+							}
+
+							\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+							\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
+							$resultSpouse->profile_status = $request->post('status');
+							$resultSpouse->stage = 2;
+							$resultSpouse->save();
+
 						}else{
-						
-							$subject = 'Congratulations, '.$name.', your application has been approved!';
-							$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
-						
+
+							$result->stage = '3';
+
+							$resultSpouse->profile_status = $request->post('status');
+							$resultSpouse->stage = 3;
+							$resultSpouse->save();
+
 						}
 						
-						// if($result->language == 'sp'){
-
-						// 	$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
-						// 	$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
-						// 	<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
-						// 	<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a Apple Store (LINK) o a Google Play (LINK) y ¡descárguelo hoy!</p><p><br></p><p>
-						// 	<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (link) usando cualquiera de los distintos métodos de pago:</p><p>
-						// 	<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
-						// 	<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
-						// 	<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
-						// 	<br></p><p>4. RAI: Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
-						// 	<br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31st August 2023 </p><p>
-						// 	<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31st August 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
-						// 	<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
-						// 	<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
-						
-						// }elseif($result->language == 'fr'){
-						
-						// 	$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
-						// 	$msg = '<p>Cher '.$name.',&nbsp;</p><p>
-						// 	<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
-						// 	<br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’Apple Store (LIEN) ou sur Google Play (LIEN) et de la télécharger dès aujourd’hui!</p><p>
-						// 	<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
-						// 	<br></p><p>Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN) en utilisant l’un des différents modes de paiement:</p><p>
-						// 	<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
-						// 	<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
-						// 	<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par Western Union.</p><p>
-						// 	<br></p><p>4. RAI – vous pouvez payer vos frais par RAI en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par RAI.</p><p>
-						// 	<br></p><p>VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31st August 2023 </p><p>
-						// 	<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
-						// 	<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
-						// 	<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-						
-						// }elseif($result->language == 'pt'){
-						
-						// 	$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
-						// 	$msg = '<p>Prezado '.$name.',</p><p>
-						// 	<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
-						// 	<br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na Apple Store (LINK) ou ao Google Play (LINK) e fazer o download hoje mesmo!</p><p>
-						// 	<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
-						// 	<br></p><p>Você pode pagar suas taxas em nosso site (https://www.gprocongress.org/payment) ou em nosso aplicativo (LINK) usando qualquer um dos vários métodos de pagamento:</p><p>
-						// 	<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
-						// 	<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
-						// 	<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela Western Union.</p><p>
-						// 	<br></p><p>4. RAI – você pode pagar suas taxas via RAI acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela RAI.</p><p>
-						// 	<br></p><p>OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31st August 2023 </p><p>
-						// 	<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
-						// 	<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
-						// 	<br></p><p>Calorosamente,</p><p>
-						// 	<br></p><p>Equipe do II CongressoGPro</p>';
-						
-						// }else{
-						
-						// 	$subject = 'Congratulations, '.$name.', your application has been approved!';
-						// 	$msg = '<p>Dear '.$name.',</p><p><br></p>
-						// 	<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
-						// 	<p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the Apple Store (LINK) or to Google Play (LINK) and download it today!</p><p>
-						// 	<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
-						// 	<br></p><p>You may pay your fees on our website (https://www.gprocongress.org/payment) or on our app (LINK) using any of several payment methods:</p><p><br>
-						// 	</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
-						// 	</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
-						// 	</p><p>3. Western Union – you can pay your fees via Western Union by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by Western Union. </p><p><br>
-						// 	</p><p>4. RAI – you can pay your fees via RAI by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by RAI.</p><p><br>
-						// 	</p><p>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before 31st August 2023 </p><p><br>
-						// 	</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
-						// 	</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
-						// 	<br></p><p>Warmly,</p><p>
-						// 	<br></p><p>The GProCongress II Team</p>';	
-						
-						// }
-
-						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-						\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
-
-						// \App\Helpers\commonHelper::sendSMS($result->mobile);
-
-						$resultSpouse->profile_status = $request->post('status');
-						$resultSpouse->stage = 2;
-						$resultSpouse->save();
-
 						$name= $resultSpouse->name.' '.$resultSpouse->last_name;
-						
+						$android = '<a href="https://play.google.com/store/apps/details?id=org.gprocommision">Google Play</a>';
+						$ios = '<a href="https://apps.apple.com/us/app/gpro-commission/id1664828059">App Store</a>';
+	
 						if($resultSpouse->language == 'sp'){
 
 							$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
-							$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+							$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p>
+									<p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p>
+									<p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a '.$ios.' o a '.$android.' y ¡descárguelo hoy!</p><p><br></p><p><br></p>
+									<p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p><br></p>
+									<p>Atentamente,</p><p><br></p>
+									<p>El equipo del GProCongress II</p>';
 						
 						}elseif($resultSpouse->language == 'fr'){
 						
 							$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
-							$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+							$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p>
+									<p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p>
+									<p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’'.$ios.' ou sur '.$android.' et de la télécharger dès aujourd’hui!</p><p><br></p>
+									<p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p><br></p>
+									<p>Cordialement,</p><p><br></p>
+									<p>L’équipe GProCongrès II</p>';
 						
 						}elseif($resultSpouse->language == 'pt'){
 						
 							$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
-							$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+							$msg = '<p>Prezado '.$name.',</p><p><br></p>
+									<p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p>
+									<p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na '.$ios.' ou ao '.$android.' e fazer o download hoje mesmo!</p><p><br></p>
+									<p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p><br></p>
+									<p>Calorosamente,</p><p><br></p>
+									<p>Equipe do II CongressoGPro</p>';
 						
 						}else{
 						
 							$subject = 'Congratulations, '.$name.', your application has been approved!';
-							$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
+							$msg = '<p>Dear '.$name.',</p><p><br></p>
+									<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing. </p><p><br></p>
+									<p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the '.$ios.' or to '.$android.' and download it today! </p><p><br></p>
+									<p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide!</p><p><br></p>
+									<p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
 						
 						}
 
-						// if($resultSpouse->language == 'sp'){
-
-						// 	$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
-						// 	$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
-						// 	<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
-						// 	<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a Apple Store (LINK) o a Google Play (LINK) y ¡descárguelo hoy!</p><p><br></p><p>
-						// 	<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (link) usando cualquiera de los distintos métodos de pago:</p><p>
-						// 	<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
-						// 	<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
-						// 	<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
-						// 	<br></p><p>4. RAI: Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
-						// 	<br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31st August 2023 </p><p>
-						// 	<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31st August 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
-						// 	<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
-						// 	<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
-						
-						// }elseif($resultSpouse->language == 'fr'){
-						
-						// 	$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
-						// 	$msg = '<p>Cher '.$name.',&nbsp;</p><p>
-						// 	<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
-						// 	<br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’Apple Store (LIEN) ou sur Google Play (LIEN) et de la télécharger dès aujourd’hui!</p><p>
-						// 	<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
-						// 	<br></p><p>Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN) en utilisant l’un des différents modes de paiement:</p><p>
-						// 	<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
-						// 	<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
-						// 	<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par Western Union.</p><p>
-						// 	<br></p><p>4. RAI – vous pouvez payer vos frais par RAI en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par RAI.</p><p>
-						// 	<br></p><p>VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31st August 2023 </p><p>
-						// 	<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
-						// 	<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
-						// 	<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-						
-						// }elseif($resultSpouse->language == 'pt'){
-						
-						// 	$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
-						// 	$msg = '<p>Prezado '.$name.',</p><p>
-						// 	<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
-						// 	<br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na Apple Store (LINK) ou ao Google Play (LINK) e fazer o download hoje mesmo!</p><p>
-						// 	<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
-						// 	<br></p><p>Você pode pagar suas taxas em nosso site (https://www.gprocongress.org/payment) ou em nosso aplicativo (LINK) usando qualquer um dos vários métodos de pagamento:</p><p>
-						// 	<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
-						// 	<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
-						// 	<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela Western Union.</p><p>
-						// 	<br></p><p>4. RAI – você pode pagar suas taxas via RAI acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela RAI.</p><p>
-						// 	<br></p><p>OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31st August 2023 </p><p>
-						// 	<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
-						// 	<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
-						// 	<br></p><p>Calorosamente,</p><p>
-						// 	<br></p><p>Equipe do II CongressoGPro</p>';
-						
-						// }else{
-						
-						// 	$subject = 'Congratulations, '.$name.', your application has been approved!';
-						// 	$msg = '<p>Dear '.$name.',</p><p><br></p>
-						// 	<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
-						// 	<p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the Apple Store (LINK) or to Google Play (LINK) and download it today!</p><p>
-						// 	<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
-						// 	<br></p><p>You may pay your fees on our website (https://www.gprocongress.org/payment) or on our app (LINK) using any of several payment methods:</p><p><br>
-						// 	</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
-						// 	</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
-						// 	</p><p>3. Western Union – you can pay your fees via Western Union by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by Western Union. </p><p><br>
-						// 	</p><p>4. RAI – you can pay your fees via RAI by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by RAI.</p><p><br>
-						// 	</p><p>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before 31st August 2023 </p><p><br>
-						// 	</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
-						// 	</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
-						// 	<br></p><p>Warmly,</p><p>
-						// 	<br></p><p>The GProCongress II Team</p>';	
-						
-						// }
 
 						$to = $resultSpouse->email;
 						
@@ -2646,31 +2660,96 @@ class UserController extends Controller {
 							
 							$name= $result->name.' '.$result->last_name;
 							
+							if($request->post('amount')>0){
 							
-							if($result->language == 'sp'){
-		
-								$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
-								$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-							
-							}elseif($result->language == 'fr'){
-							
-								$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
-								$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-							
-							}elseif($result->language == 'pt'){
-							
-								$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
-								$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-							
+								$android = '<a href="https://play.google.com/store/apps/details?id=org.gprocommision">Google Play</a>';
+								$ios = '<a href="https://apps.apple.com/us/app/gpro-commission/id1664828059">App Store</a>';
+								$website = '<a href="https://www.gprocongress.org/payment">website</a>';
+
+								if($result->language == 'sp'){
+
+									$website = '<a href="https://www.gprocongress.org/payment">sitio web</a>';
+
+									$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+									$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
+										<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
+										<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a '.$ios.' o a '.$android.' y ¡descárguelo hoy!</p><p><br></p><p>
+										<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.' usando cualquiera de los distintos métodos de pago:</p><p>
+										<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+										<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+										<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.'. Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: </p><p>&nbsp;&nbsp;&nbsp;(1) su nombre completo, </p><p>&nbsp;&nbsp;&nbsp;(2) el país desde el que realiza el envío, </p><p>&nbsp;&nbsp;&nbsp;(3) la cantidad enviada en USD, y </p><p>&nbsp;&nbsp;&nbsp;(4) el código que Western Union le haya dado.</p><p>
+										<br></p><p>4. RIA: Puedes pagar su inscripción a través de Western Union en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.'. Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: </p><p>&nbsp;&nbsp;&nbsp;(1) su nombre completo, </p><p>&nbsp;&nbsp;&nbsp;(2) el país desde el que realiza el envío, </p><p>&nbsp;&nbsp;&nbsp;(3) la cantidad enviada en USD, y </p><p>&nbsp;&nbsp;&nbsp;(4) el código que Western Union le haya dado.</p><p>
+										<br></p><p style="background-color:yellow; display: inline;">TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31 de Mayo, 2023 </p><p>
+										<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
+										<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
+										<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
+								
+								}elseif($result->language == 'fr'){
+
+									$website = '<a href="https://www.gprocongress.org/payment">site Web</a>';
+
+									$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+									$msg = '<p>Cher '.$name.',&nbsp;</p><p>
+									<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
+									<br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’'.$ios.' ou sur '.$android.' et de la télécharger dès aujourd’hui!</p><p>
+									<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
+									<br></p><p>Vous pouvez payer vos frais sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.' en utilisant l’un des différents modes de paiement:</p><p>
+									<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
+									<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
+									<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.'. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : </p><p>&nbsp;&nbsp;&nbsp;(1) votre nom complet, </p><p>&nbsp;&nbsp;&nbsp;(2) le pays à partir duquel vous envoyez, </p><p>&nbsp;&nbsp;&nbsp;(3) le montant envoyé en USD et </p><p>&nbsp;&nbsp;&nbsp;(4) le code qui vous a été donné par Western Union.</p><p>
+									<br></p><p>4. RIA – vous pouvez payer vos frais par RIA en allant sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.'. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: </p><p>&nbsp;&nbsp;&nbsp;(1) votre nom complet, </p><p>&nbsp;&nbsp;&nbsp;(2) le pays à partir duquel vous envoyez, </p><p>&nbsp;&nbsp;&nbsp;(3) le montant envoyé en USD et </p><p>&nbsp;&nbsp;&nbsp;(4) le code qui vous a été donné par RIA.</p><p>
+									<br></p><p style="background-color:yellow; display: inline;">VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023 </p><p>
+									<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
+									<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
+									<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+								
+								}elseif($result->language == 'pt'){
+
+									$website = '<a href="https://www.gprocongress.org/payment">site</a>';
+
+									$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+									$msg = '<p>Prezado '.$name.',</p><p>
+									<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
+									<br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na '.$ios.' ou ao '.$android.' e fazer o download hoje mesmo!</p><p>
+									<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
+									<br></p><p>Você pode pagar suas taxas em nosso '.$website.' ou em nosso aplicativo '.$ios.' ou ao '.$android.' usando qualquer um dos vários métodos de pagamento:</p><p>
+									<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
+									<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
+									<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso '.$website.' ou nosso aplicativo '.$ios.' ou ao '.$android.'. Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: </p><p>&nbsp;&nbsp;&nbsp;(1) seu nome completo, </p><p>&nbsp;&nbsp;&nbsp;(2) o país de onde você está enviando, </p><p>&nbsp;&nbsp;&nbsp;(3) o valor enviado em USD e </p><p>&nbsp;&nbsp;&nbsp;(4) o código fornecido a você pela Western Union.</p><p>
+									<br></p><p>4. RIA – você pode pagar suas taxas via RIA acessando nosso '.$website.' ou nosso aplicativo '.$ios.' ou ao '.$android.'. Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: </p><p>&nbsp;&nbsp;&nbsp;(1) seu nome completo, </p><p>&nbsp;&nbsp;&nbsp;(2) o país de onde você está enviando, </p><p>&nbsp;&nbsp;&nbsp;(3) o valor enviado em USD e </p><p>&nbsp;&nbsp;&nbsp;(4) o código fornecido a você pela RIA.</p><p>
+									<br></p><p style="background-color:yellow; display: inline;">OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31 de Mayo, 2023 </p><p>
+									<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
+									<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
+									<br></p><p>Calorosamente,</p><p>
+									<br></p><p>Equipe do II CongressoGPro</p>';
+								
+								}else{
+								
+									$subject = 'Congratulations, '.$name.', your application has been approved!';
+									$msg = '<p>Dear '.$name.',</p><p><br></p>
+									<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
+									<p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the '.$ios.' or to '.$android.' and download it today!</p><p>
+									<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
+									<br></p><p>You may pay your fees on our '.$website.' or on our app '.$ios.' or to '.$android.' using any of several payment methods:</p><p><br>
+									</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
+									</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
+									</p><p>3. Western Union – you can pay your fees via Western Union by going to our '.$website.', or to our app '.$ios.' or to '.$android.'. Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: </p><p>&nbsp;&nbsp;&nbsp;(1) your full name, </p><p>&nbsp;&nbsp;&nbsp;(2) the country you are sending from, </p><p>&nbsp;&nbsp;&nbsp;(3) the amount sent in USD, and </p><p>&nbsp;&nbsp;&nbsp;(4) the code given to you by Western Union. </p><p><br>
+									</p><p>4. RIA – you can pay your fees via RIA by going to our '.$website.', or to our app '.$ios.' or to '.$android.'. Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: </p><p>&nbsp;&nbsp;&nbsp;(1) your full name, </p><p>&nbsp;&nbsp;&nbsp;(2) the country you are sending from, </p><p>&nbsp;&nbsp;&nbsp;(3) the amount sent in USD, and </p><p>&nbsp;&nbsp;&nbsp;(4) the code given to you by RIA.</p><p><br>
+									</p><p style="background-color:yellow; display: inline;">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023 </p><p><br>
+									</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
+									</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
+									<br></p><p>Warmly,</p><p>
+									<br></p><p>The GProCongress II Team</p>';	
+								
+								}
+			
+								\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+								\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
 							}else{
-							
-								$subject = 'Congratulations, '.$name.', your application has been approved!';
-								$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
-							
+
+								$result->stage = '3';
 							}
-		
-							\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
-							\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 						}
 
 					}else{
@@ -2698,109 +2777,97 @@ class UserController extends Controller {
 
 					$name= $result->name.' '.$result->last_name;
 					
-					
-					if($result->language == 'sp'){
+					if($request->post('amount')>0){
 
-						$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
-						$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>¡Nos da gran alegría confirmar que su solicitud para asistir al GProCongress II ha sido aceptada! Esperamos verle en Ciudad de Panamá en noviembre de 2023, Dios mediante.</p><p><br></p><p><br></p><p>Mientras usted se prepara para venir, por favor, únasenos en oración por los demás participantes.&nbsp;</p><p><br></p><p><br></p><p>¿Todavía tiene preguntas o necesita ayuda? Responda a este correo electrónico y nuestro equipo se pondrá en contacto con usted.</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
-					
-					}elseif($result->language == 'fr'){
-					
-						$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
-						$msg = '<p>Cher '.$name.',&nbsp;</p><p><br></p><p>C’est avec une grande joie que nous confirmons l’acceptation de votre candidature pour assister au GProCongrès II ! Nous avons hâte de vous voir à Panama City en novembre 2023, si le Seigneur le veut.&nbsp;</p><p><br></p><p>Pendant que vous vous préparez, joignez-vous à nous pour prier pour les autres participants.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ou avez-vous besoin d’aide ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-					
-					}elseif($result->language == 'pt'){
-					
-						$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
-						$msg = '<p>Prezado '.$name.',</p><p><br></p><p>É para nós um grande prazer confirmar a aceitação do seu pedido de participar no II CongressoGPro. Nós esperamos lhe ver na Cidade de Panamá em Novembro de 2023, se o Senhor permitir.</p><p><br></p><p>A medida que se prepara, por favor junte-se a nós em oração pelos outros participantes.</p><p><br></p><p>Ainda tem perguntas, ou precisa de alguma assistência? Simplesmente responda a este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
-					
-					}else{
-					
-						$subject = 'Congratulations, '.$name.', your application has been approved!';
-						$msg = '<p>Dear '.$name.',</p><p><br></p><p>It gives us great joy to confirm the acceptance of your application to attend the GProCongress II! We look forward to seeing you in Panama City in November 2023, the Lord willing.</p><p><br></p><p>As you prepare, please join us in praying for the other attendees.</p><p><br></p><p>Do you still have questions, or require any assistance? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';	
-					
-					}
+						$android = '<a href="https://play.google.com/store/apps/details?id=org.gprocommision">Google Play</a>';
+						$ios = '<a href="https://apps.apple.com/us/app/gpro-commission/id1664828059">App Store</a>';
+						$website = '<a href="https://www.gprocongress.org/payment">website</a>';
 
-					// if($result->language == 'sp'){
+						if($result->language == 'sp'){
 
-					// 	$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
-					// 	$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
-					// 	<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
-					// 	<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a Apple Store (LINK) o a Google Play (LINK) y ¡descárguelo hoy!</p><p><br></p><p>
-					// 	<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (link) usando cualquiera de los distintos métodos de pago:</p><p>
-					// 	<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
-					// 	<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
-					// 	<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
-					// 	<br></p><p>4. RAI: Puedes pagar su inscripción a través de Western Union en nuestro sitio web (https://www.gprocongress.org/payment) o en nuestra aplicación (LINK). Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: (1) su nombre completo, (2) el país desde el que realiza el envío, (3) la cantidad enviada en USD, y (4) el código que Western Union le haya dado.</p><p>
-					// 	<br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31st August 2023 </p><p>
-					// 	<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31st August 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
-					// 	<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
-					// 	<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
-					
-					// }elseif($result->language == 'fr'){
-					
-					// 	$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
-					// 	$msg = '<p>Cher '.$name.',&nbsp;</p><p>
-					// 	<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
-					// 	<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
-					// 	<br></p><p>Vous pouvez payer vos frais sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN) en utilisant l’un des différents modes de paiement:</p><p>
-					// 	<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
-					// 	<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
-					// 	<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par Western Union.</p><p>
-					// 	<br></p><p>4. RAI – vous pouvez payer vos frais par RAI en allant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: (1) votre nom complet, (2) le pays à partir duquel vous envoyez, (3) le montant envoyé en USD et (4) le code qui vous a été donné par RAI.</p><p>
-					// 	<br></p><p>VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31st August 2023 </p><p>
-					// 	<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
-					// 	<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
-					// 	<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
-					
-					// }elseif($result->language == 'pt'){
-					
-					// 	$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
-					// 	$msg = '<p>Prezado '.$name.',</p><p>
-					// 	<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
-					// 	<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
-					// 	<br></p><p>Você pode pagar suas taxas em nosso site (https://www.gprocongress.org/payment) ou em nosso aplicativo (LINK) usando qualquer um dos vários métodos de pagamento:</p><p>
-					// 	<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
-					// 	<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
-					// 	<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela Western Union.</p><p>
-					// 	<br></p><p>4. RAI – você pode pagar suas taxas via RAI acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: (1) seu nome completo, (2) o país de onde você está enviando, (3) o valor enviado em USD e (4) o código fornecido a você pela RAI.</p><p>
-					// 	<br></p><p>OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31st August 2023 </p><p>
-					// 	<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
-					// 	<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
-					// 	<br></p><p>Calorosamente,</p><p>
-					// 	<br></p><p>Equipe do II CongressoGPro</p>';
-					
-					// }else{
-					
-					// 	$subject = 'Congratulations, '.$name.', your application has been approved!';
-					// 	$msg = '<p>Dear '.$name.',</p><p><br></p>
-					// 	<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
-					// 	<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
-					// 	<br></p><p>You may pay your fees on our website (https://www.gprocongress.org/payment) or on our app (LINK) using any of several payment methods:</p><p><br>
-					// 	</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
-					// 	</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
-					// 	</p><p>3. Western Union – you can pay your fees via Western Union by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by Western Union. </p><p><br>
-					// 	</p><p>4. RAI – you can pay your fees via RAI by going to our website (https://www.gprocongress.org/payment), or to our app (LINK). Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: (1) your full name, (2) the country you are sending from, (3) the amount sent in USD, and (4) the code given to you by RAI.</p><p><br>
-					// 	</p><p>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before 31st August 2023 </p><p><br>
-					// 	</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
-					// 	</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
-					// 	<br></p><p>Warmly,</p><p>
-					// 	<br></p><p>The GProCongress II Team</p>';	
-					
-					// }
-					// En - </p><p>5. PayPal – if you have a PayPal account, you can pay your fees via PayPal by going to our website (https://www.gprocongress.org/payment), or to our app (LINK).  Please send your funds to: david@rreach.org (this is RREACH’s account).  In the transfer it should note the name of the registrant.</p><p><br>
-					// Pt - <br></p><p>5. PayPal – se você tiver uma conta PayPal, você pode pagar suas taxas via PayPal acessando nosso site (https://www.gprocongress.org/payment) ou nosso aplicativo (LINK). Por favor, envie seus recursos para: david@rreach.org (esta é a conta de RREACH). Na transferência deve anotar o nome do registante.</p><p>
-					// Fr-  <br></p><p>5. PayPal – si vous avez un compte PayPal, vous pouvez payer vos frais via PayPal en vous rendant sur notre site Web (https://www.gprocongress.org/payment) ou sur notre application (LIEN). Veuillez envoyer vos fonds à: david@rreach.org (c’est le compte de RREACH). Dans le transfert, vous devez noter le nom du titulaire.</p><p>
-					// Sp - <br></p><p>5. PayPal: Si tiene una cuenta de PayPal, puede pagar su inscripción a través de PayPal visitando nuestro sitio web (https://www.gprocongress.org/payment) o nuestra aplicación (ENLACE). Envíe sus fondos a: david@rreach.org (esta es la cuenta de RREACH). En la transferencia se debe hacer constar el nombre del registrante.</p><p><br></p><p>TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día de 31st August 2023,</p><p>
-					
-					// En - <p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the Apple Store (LINK) or to Google Play (LINK) and download it today!</p><p>
-					// pt - <br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na Apple Store (LINK) ou ao Google Play (LINK) e fazer o download hoje mesmo!</p><p>
-					// fr - <br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’Apple Store (LIEN) ou sur Google Play (LIEN) et de la télécharger dès aujourd’hui!</p><p>
+							$website = '<a href="https://www.gprocongress.org/payment">sitio web</a>';
+
+							$subject = "¡Felicidades, ".$name.", su solicitud ha sido aprobada!";
+							$msg = '<p>Estimado '.$name.'</p><p><br></p><p>
+								<br></p><p>¡Felicidades! Su aplicación para el GPorCongress II ha sido aprobada. Dios mediante esperamos verle en Panamá ciudad de Panamá, del 12 al 17 de noviembre del 2023.</p><p><br></p><p>
+								<br></p><p>¡Inscríbase en nuestra aplicación GProCongress! Querrá tener acceso a toda la información sobre el Congreso, y ahí es donde entra el app. Puede recibir notificaciones, completar su inscripción e incluso pagar en la aplicación. ¡Simplemente vaya a '.$ios.' o a '.$android.' y ¡descárguelo hoy!</p><p><br></p><p>
+								<br></p><p>Su pago por el Congreso vence ahora, y puede hacerse en cualquier momento. Siga las instrucciones que se detallan a continuación para realizar su pago.</p><p><br></p><p>Puede realizar los pagos en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.' usando cualquiera de los distintos métodos de pago:</p><p>
+								<br></p><p>1. Pago en línea con tarjeta de crédito: puede pagar su inscripción con cualquiera de las tarjetas de crédito más importantes.</p><p><br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+								<br></p><p>2. Transferencia bancaria: puede pagar mediante transferencia bancaria desde su banco. Si desea realizar una transferencia bancaria, envíe un correo electrónico a david@rreach.org. Recibirá instrucciones a través del correo electrónico de respuesta.</p><p>
+								<br></p><p>3. Western Union – Puedes pagar su inscripción a través de Western Union en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.'. Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: </p><p>&nbsp;&nbsp;&nbsp;(1) su nombre completo, </p><p>&nbsp;&nbsp;&nbsp;(2) el país desde el que realiza el envío, </p><p>&nbsp;&nbsp;&nbsp;(3) la cantidad enviada en USD, y </p><p>&nbsp;&nbsp;&nbsp;(4) el código que Western Union le haya dado.</p><p>
+								<br></p><p>4. RIA: Puedes pagar su inscripción a través de Western Union en nuestro '.$website.' o en nuestra aplicación '.$ios.' o a '.$android.'. Envíe sus fondos a David Brugger, Dallas, Texas, EE.UU.  Junto con los fondos, envíe la siguiente información: </p><p>&nbsp;&nbsp;&nbsp;(1) su nombre completo, </p><p>&nbsp;&nbsp;&nbsp;(2) el país desde el que realiza el envío, </p><p>&nbsp;&nbsp;&nbsp;(3) la cantidad enviada en USD, y </p><p>&nbsp;&nbsp;&nbsp;(4) el código que Western Union le haya dado.</p><p>
+								<br></p><p style="background-color:yellow; display: inline;">TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31 de Mayo, 2023 </p><p>
+								<br></p><p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p>
+								<br></p><p>Si tiene alguna pregunta sobre GProCongress II, responda a este correo electrónico para conectarse con uno de los miembros de nuestro equipo. ¡Le damos la bienvenida con alegría al GProCongress II, y estamos a la expectativa de todo lo que Dios va a hacer en y a través de nosotros para desarrollaruna comunidad, explorar oportunidades, descubrir recursos e brindarse ánimo mutuo con capacitadores de pastores en todo el mundo!</p><p>
+								<br></p><p>Atentamente</p><p><br></p><p>Equipo GProCongress II </p>';
 						
-					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+						}elseif($result->language == 'fr'){
 
-					// \App\Helpers\commonHelper::sendSMS($result->mobile);
+							$website = '<a href="https://www.gprocongress.org/payment">site Web</a>';
+
+							$subject = "Félicitations, ".$name.", votre demande a été approuvée !";
+							$msg = '<p>Cher '.$name.',&nbsp;</p><p>
+							<br></p><p>Félicitations! Votre candidature pour GProCongress II a été approuvée ! Nous sommes impatients de vous voir à Panama City, au Panama, du 12 au 17 novembre 2023, si le Seigneur le veut.</p><p>
+							<br></p><p>Inscrivez-vous à notre application GProCongress ! Vous voudrez avoir accès à toutes les informations sur le Congrès, et c’est là que l’application entre en jeu. Vous pouvez recevoir des notifications, terminer votre inscription et même payer vos frais d’inscription sur l’application. Il suffit d’aller sur l’'.$ios.' ou sur '.$android.' et de la télécharger dès aujourd’hui!</p><p>
+							<br></p><p>Votre paiement pour le Congrès est maintenant dû et peut être effectué à tout moment. Veuillez suivre les instructions ci-dessous pour effectuer votre paiement.</p><p>
+							<br></p><p>Vous pouvez payer vos frais sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.' en utilisant l’un des différents modes de paiement:</p><p>
+							<br></p><p>1. Paiement en ligne par carte de crédit – vous pouvez payer vos frais en utilisant n’importe quelle carte de crédit principale.</p><p>
+							<br></p><p>2. Virement bancaire – vous pouvez payer par virement bancaire depuis votre banque. Si vous souhaitez effectuer un virement bancaire, veuillez envoyer un e-mail à david@rreach.org . Vous recevrez des instructions par réponse de l’e-mail.</p><p>
+							<br></p><p>3. Western Union – vous pouvez payer vos frais par Western Union en allant sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.'. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes : </p><p>&nbsp;&nbsp;&nbsp;(1) votre nom complet, </p><p>&nbsp;&nbsp;&nbsp;(2) le pays à partir duquel vous envoyez, </p><p>&nbsp;&nbsp;&nbsp;(3) le montant envoyé en USD et </p><p>&nbsp;&nbsp;&nbsp;(4) le code qui vous a été donné par Western Union.</p><p>
+							<br></p><p>4. RIA – vous pouvez payer vos frais par RIA en allant sur notre '.$website.' ou sur notre application '.$ios.' ou sur '.$android.'. Veuillez envoyer vos fonds à David Brugger, Dallas, Texas, États-Unis. En plus de vos fonds, veuillez soumettre les informations suivantes: </p><p>&nbsp;&nbsp;&nbsp;(1) votre nom complet, </p><p>&nbsp;&nbsp;&nbsp;(2) le pays à partir duquel vous envoyez, </p><p>&nbsp;&nbsp;&nbsp;(3) le montant envoyé en USD et </p><p>&nbsp;&nbsp;&nbsp;(4) le code qui vous a été donné par RIA.</p><p>
+							<br></p><p style="background-color:yellow; display: inline;">VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023</p><p>
+							<br></p><p>VEUILLEZ NOTER: Si le paiement complet n’est pas reçu avant 31st August 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</p><p>
+							<br></p><p>Si vous avez des questions concernant GProCongress II, veuillez répondre à cet e-mail pour communiquer avec l’un des membres de notre équipe. Nous vous accueillons avec joie au GProCongress II, et nous attendons avec impatience tout ce que Dieu va faire en nous et à travers nous pour construire une communauté, explorer les opportunités, découvrir des ressources et échanger des encouragements avec les formateurs de pasteurs du monde entier!</p><p>
+							<br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+						
+						}elseif($result->language == 'pt'){
+
+							$website = '<a href="https://www.gprocongress.org/payment">site</a>';
+
+							$subject = "Parabéns, ".$name.", sua inscrição foi aprovada!";
+							$msg = '<p>Prezado '.$name.',</p><p>
+							<br></p><p>Parabéns! A sua inscrição para o GProCongress II foi aprovada! Esperamos vê-lo na Cidade do Panamá, Panamá, de 12 a 17 de novembro de 2023, se o Senhor permitir.</p><p>
+							<br></p><p>Por favor, inscreva-se no nosso aplicativo GProCongresso! Você vai querer ter acesso a todas as informações sobre o Congresso, e é aí que entra o app. Você pode receber notificações, fazer sua inscrição e até pagar sua inscrição no app. Basta ir na '.$ios.' ou ao '.$android.' e fazer o download hoje mesmo!</p><p>
+							<br></p><p>O pagamento do Congresso está vencido e pode ser feito a qualquer momento. Siga as instruções listadas abaixo para efetuar o pagamento.</p><p>
+							<br></p><p>Você pode pagar suas taxas em nosso '.$website.' ou em nosso aplicativo '.$ios.' ou ao '.$android.' usando qualquer um dos vários métodos de pagamento:</p><p>
+							<br></p><p>1. Pagamento online usando cartão de crédito – você pode pagar suas taxas usando qualquer cartão de crédito.</p><p>
+							<br></p><p>2. Transferência bancária – você pode pagar por transferência bancária do seu banco. Se você quiser fazer uma transferência eletrônica, envie um e-mail para david@rreach.org. Você receberá instruções por e-mail de resposta.</p><p>
+							<br></p><p>3. Western Union – você pode pagar suas taxas via Western Union acessando nosso '.$website.' ou nosso aplicativo '.$ios.' ou ao '.$android.'. Por favor, envie seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: </p><p>&nbsp;&nbsp;&nbsp;(1) seu nome completo, </p><p>&nbsp;&nbsp;&nbsp;(2) o país de onde você está enviando, </p><p>&nbsp;&nbsp;&nbsp;(3) o valor enviado em USD e </p><p>&nbsp;&nbsp;&nbsp;(4) o código fornecido a você pela Western Union.</p><p>
+							<br></p><p>4. RIA – você pode pagar suas taxas via RIA acessando nosso '.$website.' ou nosso aplicativo '.$ios.' ou ao '.$android.'. Por favor, envie seus recursos para David Brugger, Dallas, Texas, EUA. Juntamente com seus recursos, envie as seguintes informações: </p><p>&nbsp;&nbsp;&nbsp;(1) seu nome completo, </p><p>&nbsp;&nbsp;&nbsp;(2) o país de onde você está enviando, </p><p>&nbsp;&nbsp;&nbsp;(3) o valor enviado em USD e </p><p>&nbsp;&nbsp;&nbsp;(4) o código fornecido a você pela RIA.</p><p>
+							<br></p><p style="background-color:yellow; display: inline;">OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31 de Mayo, 2023 </p><p>
+							<br></p><p>ATENÇÃO: Se o pagamento integral não for recebido até 31st August 2023, sua inscrição será cancelada, sua vaga será cedida a outra pessoa e quaisquer valores pagos anteriormente por você serão perdidos.</p><p>
+							<br></p><p>Se você tiver alguma dúvida sobre o GProCongress II, responda a este e-mail para entrar em contato com um dos membros de nossa equipe. Damos as boas-vindas ao GProCongress II com alegria e esperamos tudo o que Deus fará em nós e através de nós para construir uma comunidade, explorar oportunidades, descobrir recursos e trocar encorajamento com treinadores de pastores em todo o mundo!</p><p>
+							<br></p><p>Calorosamente,</p><p>
+							<br></p><p>Equipe do II CongressoGPro</p>';
+						
+						}else{
+						
+							$subject = 'Congratulations, '.$name.', your application has been approved!';
+							$msg = '<p>Dear '.$name.',</p><p><br></p>
+							<p>Congratulations!  Your application for GProCongress II has been approved!  We look forward to seeing you in Panama City, Panama on November 12-17, 2023, the Lord willing.</p>
+							<p><br></p><p>Please sign up for our GProCongress app!  You will want to have access to all information about the Congress, and that’s where the app comes in.  You can receive notifications, complete your registration, and even pay your registration fees on the app.  Just go to the '.$ios.' or to '.$android.' and download it today!</p><p>
+							<br></p><p>Your payment for the Congress is now due, and can be made anytime.  Please follow the instructions listed below to make your payment.</p><p>
+							<br></p><p>You may pay your fees on our '.$website.' or on our app '.$ios.' or to '.$android.' using any of several payment methods:</p><p><br>
+							</p><p>1. Online payment using credit card – you can pay your fees using any major credit card.</p><p><br>
+							</p><p>2. Bank transfer – you can pay via wire transfer from your bank. If you want to make a wire transfer, please email david@rreach.org. You will receive instructions via reply email.</p><p><br>
+							</p><p>3. Western Union – you can pay your fees via Western Union by going to our '.$website.', or to our app '.$ios.' or to '.$android.'. Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: </p><p>&nbsp;&nbsp;&nbsp;(1) your full name, </p><p>&nbsp;&nbsp;&nbsp;(2) the country you are sending from, </p><p>&nbsp;&nbsp;&nbsp;(3) the amount sent in USD, and </p><p>&nbsp;&nbsp;&nbsp;(4) the code given to you by Western Union. </p><p><br>
+							</p><p>4. RIA – you can pay your fees via RIA by going to our '.$website.', or to our app '.$ios.' or to '.$android.'. Please send your funds to David Brugger, Dallas, Texas, USA.  Along with your funds, please submit the following information: </p><p>&nbsp;&nbsp;&nbsp;(1) your full name, </p><p>&nbsp;&nbsp;&nbsp;(2) the country you are sending from, </p><p>&nbsp;&nbsp;&nbsp;(3) the amount sent in USD, and </p><p>&nbsp;&nbsp;&nbsp;(4) the code given to you by RIA.</p><p><br>
+							</p><p style="background-color:yellow; display: inline;">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023 </p><p><br>
+							</p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited. </p><p><br>
+							</p><p>If you have any questions about GProCongress II, please reply to this email to connect with one of our team members. We welcome you with joy to GProCongress II, and we look forward to all that God is going to do in and through us to build community, explore opportunities, discover resources, and exchange encouragement with trainers of pastors worldwide! </p><p>
+							<br></p><p>Warmly,</p><p>
+							<br></p><p>The GProCongress II Team</p>';	
+						
+						}
+						
+						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
+						// \App\Helpers\commonHelper::sendSMS($result->mobile);
+					}else{
+
+						$result->stage = '3';
+					}
 				}
 
 				
@@ -2888,16 +2955,6 @@ class UserController extends Controller {
 			$UserHistory->action_id=\Auth::user()->id;
 			$UserHistory->action='User Profile '.$request->post('status');
 			$UserHistory->save();
-
-			if ($request->post('status') == 'Approved') {
-
-				$name = $result->name.' '.$result->last_name;
-
-				\App\Helpers\commonHelper::sendPaymentReminderMailSend($result->id,$result->email,$name);
-
-				// \App\Helpers\commonHelper::sendSMS($result->mobile);
-
-			}
 
 			return response(array('error'=>false, 'reload'=>true, 'message'=>'Profile status change successful'), 200);
 		
@@ -4813,5 +4870,2263 @@ class UserController extends Controller {
 		}
 		
 
+	}
+
+	
+	public function passportList(Request $request, $type) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('passport_infos');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			
+			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
+
+			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','!=','Approved')->orderBy('updated_at', 'desc');
+
+			if (request()->has('email')) {
+				$query->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+			
+			if (request()->has('email')) {
+				$totalData1->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+			
+			$totalData = $totalData1->count();
+
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('name', function($data){
+				return $data->name;
+		    })
+
+			->addColumn('passport_no', function($data){
+				return $data->passport_no;
+			})
+
+			->addColumn('dob', function($data){
+				return date('d-m-Y',strtotime($data->dob));
+		    })
+			->addColumn('citizenship', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->citizenship);
+		    })
+			->addColumn('country_id', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+		    })
+			->addColumn('passport_copy', function($data){
+
+				if($data->passport_copy!= ''){
+					$html = '';
+					foreach(explode(",",$data->passport_copy) as $key=>$img){
+
+						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img).'" target="_blank"> 
+								View '.($key+1).' </span>
+							</a></br>';
+
+					}
+				}
+				
+				
+				return $html;
+
+		    })
+
+			
+			
+			->addColumn('remark', function($data){
+
+					return '<button type="button" class="btn btn-sm btn ViewPassportRemark" data-remark="'.$data->admin_remark.'"> View </button>';
+				
+				
+		    })
+
+			->addColumn('admin_status', function($data){
+
+				if ($data->admin_status == 'Approved') {
+
+					return '<div class="badge rounded-pill pill-badge-success">Approved</div>';
+
+				} else if ($data->admin_status == 'Decline') {
+
+					return '<div class="badge rounded-pill pill-badge-danger">Decline</div>';
+
+				} else if ($data->admin_status === 'Pending') {
+
+					return '<div style="display:flex">
+								<a href="'.url('admin/user/passport/approve/'.$data->id).'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 ">Approve</a>
+								<a data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
+							</div>';
+				}
+
+
+		    })
+
+			->addColumn('user_type', function($data){
+				
+				$user = \App\Models\user::where('id', $data->user_id)->first();
+
+				if($user->parent_id != Null){
+
+					if($user->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($user->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
+				}
+				
+		    })
+
+			->addColumn('group_owner_name', function($data){
+				
+				$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->get();
+				$user = \App\Models\user::where('id', $data->user_id)->first();
+
+				if($user->parent_id != Null && $user->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($user->name.' '.$user->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
+				$user = \App\Models\user::where('id', $data->user_id)->first();
+
+				if($user->parent_id != Null && $user->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('action', function($data){
+				
+				if (\Auth::user()->designation_id == '1') {
+					return '<div style="display:flex">
+						<a href="'.route('admin.user.payment.history', ['id' => $data->user_id] ).'" title="User payment history" class="btn btn-sm btn-primary m-1"><i class="fas fa-money"></i></a><a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+				}
+		    })
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+
+	}
+	
+	public function sponsorshipList(Request $request, $type) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('passport_infos');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
+
+			
+			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
+			if (request()->has('email')) {
+				$query->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+			
+			if (request()->has('email')) {
+				$totalData1->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+			
+			$totalData = $totalData1->count();
+
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('name', function($data){
+				return $data->name;
+		    })
+
+			->addColumn('passport_no', function($data){
+				return $data->passport_no;
+			})
+
+			->addColumn('dob', function($data){
+				return date('d-m-Y',strtotime($data->dob));
+		    })
+			->addColumn('citizenship', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->citizenship);
+		    })
+			->addColumn('country_id', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+		    })
+			->addColumn('passport_copy', function($data){
+				if($data->passport_copy!= ''){
+					$html = '';
+					foreach(explode(",",$data->passport_copy) as $key=>$img){
+
+						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img).'" target="_blank"> 
+								View '.($key+1).' </span>
+							</a></br>';
+
+					}
+				}
+				
+				
+				return $html;
+		    })
+
+			->addColumn('sponsorship_letter', function($data){
+				
+				if($data->sponsorship_letter){
+
+					return '<a href="'.asset('uploads/file/'.$data->sponsorship_letter).'" target="_blank" class="btn btn-sm btn-outline-success m-1">View File</a>';
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
+
+				}
+			})
+			->addColumn('financial_letter', function($data){
+				
+				if($data->financial_letter){
+
+					return '<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> File 1</a>
+							<a href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> File 2</a>';
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
+
+				}
+			})
+			
+			->addColumn('remark', function($data){
+				
+					return '<button type="button" class="btn btn-sm btn ViewPassportRemark" data-remark="'.$data->remark.'"> View </button>';
+				
+		    })
+
+			->addColumn('user_status', function($data){
+				
+				if ($data->status == 'Approve') {
+					return '<div class="span badge rounded-pill pill-badge-success">Verify</div>';
+				} else if ($data->status == 'Reject') {
+					return '<div class="span badge rounded-pill pill-badge-danger">Decline</div>';
+				} else if ($data->status === 'Pending') {
+					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+				}
+				
+		    })
+
+			->addColumn('user_type', function($data){
+				
+				$user = \App\Models\user::where('id', $data->user_id)->first();
+
+				if($user->parent_id != Null){
+
+					if($user->added_as == 'Group'){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}elseif($user->added_as == 'Spouse'){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+						
+					}
+
+				}else {
+
+					$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->first();
+					$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
+				
+					if($groupName){
+
+						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+						
+					}else if($spouseName){
+
+						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+					}
+						
+
+				}
+				
+		    })
+
+			->addColumn('group_owner_name', function($data){
+				
+				$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->get();
+				$user = \App\Models\user::where('id', $data->user_id)->first();
+
+				if($user->parent_id != Null && $user->added_as == 'Group'){
+
+					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
+					
+				}else if(count($groupName) > 0) {
+
+					return ucfirst($user->name.' '.$user->last_name);
+
+				}else{
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('spouse_name', function($data){
+				
+				$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
+				$user = \App\Models\user::where('id', $data->user_id)->first();
+
+				if($user->parent_id != Null && $user->added_as == 'Spouse'){
+
+					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
+
+				}else if($spouseName) {
+
+					return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+				}else{
+
+					return 'N/A';
+				}
+				
+		    })
+
+			->addColumn('action', function($data){
+				
+				if($data->status == 'Reject'){
+
+					if (\Auth::user()->designation_id == '1') {
+						return '<div style="display:flex">
+									<a data-id="'.$data->id.'" title="Send Sponsorship letter" class="btn btn-sm btn-outline-success m-1 sendSponsorshipLetter">Send</a>
+									<a href="'.route('admin.user.payment.history', ['id' => $data->user_id] ).'" title="User payment history" class="btn btn-sm btn-primary m-1"><i class="fas fa-money"></i></a>
+									<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+								</div>';
+					}
+
+				}else{
+
+					if (\Auth::user()->designation_id == '1') {
+						return '<div style="display:flex">
+									<a href="'.route('admin.user.payment.history', ['id' => $data->user_id] ).'" title="User payment history" class="btn btn-sm btn-primary m-1"><i class="fas fa-money"></i></a>
+									<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+								</div>';
+					}
+				}
+				
+		    })
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+
+	}
+
+	public function PassportInfoApprove(Request $request,$id){
+	
+		$doNotRequireVisa = [6,7,10,11,12,14,15,17,20,22,23,26,21,27,28,29,31,33,34,40,37,39,44,48,49,53,55,57,58,59,61,64,66,69,73,74,75,79,81,82,87,85,90,94,97,99,100,105,106,107,108,109,113,114,117,125,126,127,129,130,132,133,133,137,140,142,143,144,145,146,147,152,152,156,158,159,165,168,171,172,173,176,177,179,181,115,182,244,185,186,188,191,192,194,196,197,199,200,201,202,204,116,207,213,214,216,219,222,223,225,228,230,231,232,233,235,237,238,240]; 
+		$diplomaticPassportNotRequireVisa = [56,62,95,102,174,45,239]; 
+		$authorizedVisa = [1,3,4,16,18,19,24,35,36,43,50,60,65,68,70,67,80,92,93,95,102,103,104,54,111,112,248,118,119,121,122,123,124,134,139,149,150,151,154,160,161,166,167,169,116,183,195,198,203,208,209,210,215,217,218,224,226,229,236,245,246]; 
+		$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
+		try{
+
+			$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+
+			$passportApprove->admin_status='Approved';
+			
+			$passportApprove->save();
+
+			if($passportApprove && $passportApprove->diplomatic_passport == 'No'){
+
+				if(in_array($passportApprove->citizenship,$doNotRequireVisa)){
+
+					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
+
+				}else{
+
+					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
+					\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);
+				}
+
+			}elseif($passportApprove && $passportApprove->diplomatic_passport == 'Yes'){
+				
+				if(in_array($passportApprove->citizenship,$doNotRequireVisa)){
+
+					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
+
+				}elseif(in_array($passportApprove->citizenship,$diplomaticPassportNotRequireVisa)){
+
+					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
+
+				}else{
+
+					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
+					\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);
+				}
+				
+			}
+
+			$userData= \App\Models\User::where('id',$passportApprove->user_id)->first();
+
+			$to = $userData->email;
+					
+			if($userData->language == 'sp'){
+
+				$subject = "Se adjunta una carta de visa para su revisión.";
+				$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$userData->name.' '.$userData->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Adjuntamos una carta de visa para su revisión. Lea atentamente esta carta y asegúrese de que toda la información contenida en ella sea correcta. Si es así, envíenos un correo electrónico confirmando su aprobación de la carta de visa. Si es necesario realizar algún cambio, envíenos un correo electrónico identificando esos cambios.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
+			
+			}elseif($userData->language == 'fr'){
+			
+				$subject = "Une lettre de visa est jointe pour votre avis.";
+				$msg = "<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Nous vous remercions de nous avoir soumis les informations de votre passeport. Nous joignons une lettre de visa pour votre avis. Veuillez l examiner attentivement et vous assurer que toutes les informations qu elle contient sont correctes. Si c est le cas, veuillez nous envoyer un courriel confirmant votre approbation de la lettre de visa. Si des modifications doivent être apportées, veuillez nous envoyer un courriel indiquant ces modifications.</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à ce mail.&nbsp;</p><p><br><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II &nbsp; &nbsp;&nbsp;</p>";
+	
+			}elseif($userData->language == 'pt'){
+			
+				$subject = "Uma carta de visto está anexada para sua revisão.";
+				$msg = '<p>Caro '.$userData->name.',&nbsp;</p><p><br></p><p>Obrigado por nos enviar as informações do seu passaporte. Estamos anexando uma carta de visto para sua análise. Por favor, leia esta carta cuidadosamente e certifique-se de que todas as informações nela contidas estão corretas. Em caso afirmativo, envie-nos um e-mail confirmando sua aprovação da carta de visto. Se alguma alteração precisar ser feita, envie-nos um e-mail identificando essas alterações.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
+			
+			}else{
+			
+				$subject = 'A visa letter is attached for your review';
+				$msg = '<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  We are attaching a visa letter for your review.  Please review this letter carefully and make sure all the information contained in it is correct.  If so, please send us an email confirming your approval of the visa letter.  If any changes need to be made, please send us an email identifying those changes.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+								
+			}
+
+			$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+
+			$sponsorshipLetter = '';
+
+			if($passportApprove->sponsorship_letter){
+				$sponsorshipLetter = public_path('uploads/file/'.$passportApprove->sponsorship_letter);
+			
+			}
+			$files = [
+				public_path('uploads/file/'.$passportApprove->financial_letter),
+				public_path('uploads/file/'.$passportApprove->financial_spanish_letter),
+				$sponsorshipLetter
+			];
+	
+			\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+				$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+				$message->subject($subject);
+				$message->to($to);
+				
+				foreach ($files as $file){
+					if($file != ''){
+						$message->attach($file);
+					}
+					
+				}
+				
+			});
+
+			\App\Helpers\commonHelper::userMailTrigger($userData->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($userData->id,$subject,$msg,'A visa letter is attached for your review');
+
+
+			return redirect()->back()->with(['5fernsadminsuccess'=>"Passport information approved successfully."]);
+			
+		}catch (\Exception $e){
+			
+			return redirect()->back()->with(['5fernsadminsuccess'=>$e->getMessage()]);
+			
+		}
+	}
+	
+	public function uploadSponsorshipLetter(Request $request){
+	
+		$rules = [
+			'file' => 'required|mimes:pdf',
+			'financial_english_letter' => 'required|mimes:pdf',
+			'financial_spanish_letter' => 'required|mimes:pdf',
+			'id' => 'numeric|required',
+			
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+            
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
+		
+			return response(array('message'=>$message,"error" => true),403);
+		
+	
+		}else{
+
+			// try{
+
+				$passportApprove= \App\Models\PassportInfo::where('id',$request->post('id'))->first();
+
+				$passportApprove->status='Pending';
+				
+				if($request->hasFile('file')){
+					$imageData = $request->file('file');
+					$image = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(1111,9999).'.'.$imageData->getClientOriginalExtension();
+					$destinationPath = public_path('/uploads/file');
+					$imageData->move($destinationPath, $image);
+
+					$passportApprove->sponsorship_letter = $image;
+				}
+				if($request->hasFile('financial_english_letter')){
+					$imageData = $request->file('financial_english_letter');
+					$financialImage = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(1111,9999).'.'.$imageData->getClientOriginalExtension();
+					$destinationPath = public_path('/uploads/file');
+					$imageData->move($destinationPath, $financialImage);
+
+					$passportApprove->financial_letter = $financialImage;
+				}
+				if($request->hasFile('financial_spanish_letter')){
+					$imageData = $request->file('financial_spanish_letter');
+					$financialSpanish = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(1111,9999).'.'.$imageData->getClientOriginalExtension();
+					$destinationPath = public_path('/uploads/file');
+					$imageData->move($destinationPath, $financialSpanish);
+
+					$passportApprove->financial_spanish_letter = $financialSpanish;
+				}
+
+
+				$passportApprove->save();
+
+				$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
+
+				$to = $user->email;
+				
+				$name = $user->name.' '.$user->last_name;
+
+				if($user->language == 'sp'){
+
+					$subject = "Se adjunta una carta de visado corregida para su revisión";
+					$msg = '<p>Estimado '.$name.' ,</p><p><br></p><p><br></p><p>Adjuntamos una carta de visa corregida para su revisión. Lea atentamente esta carta y asegúrese de que toda la información contenida en ella sea correcta. Si es así, envíenos un correo electrónico confirmando su aprobación de la carta de visa. Si es necesario realizar cambios adicionales, envíenos un correo electrónico identificando esos cambios.&nbsp;</p><p><br></p><p>Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo. </p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
+				
+				}elseif($user->language == 'fr'){
+				
+					$subject = "Une lettre de visa révisée est jointe pour votre revue.";
+					$msg = "<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Nous joignons une lettre de visa révisée pour votre revue.  Veuillez l'examiner attentivement et vous assurer que toutes les informations qu'elle contient sont correctes.  Si c'est le cas, veuillez nous envoyer un courriel confirmant votre approbation de la lettre de visa.  Si des modifications supplémentaires doivent être apportées, veuillez nous envoyer un courriel indiquant ces modifications.&nbsp;</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à ce courriel.&nbsp;</p><p><br></p><p><br></p><p>Chaleureusement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+		
+				}elseif($user->language == 'pt'){
+				
+					$subject = "Uma carta de visto revisada está anexada para sua revisão.";
+					$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Estamos anexando uma carta de visto revisada para sua análise. Por favor, leia esta carta cuidadosamente e certifique-se de que todas as informações contidas nela estão corretas. Em caso afirmativo, envie-nos um e-mail confirmando sua aprovação da carta de visto. Se quaisquer alterações adicionais precisarem ser feitas, envie-nos um e-mail identificando essas alterações.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II</p><div><br></div>';
+				
+				}else{
+				
+					$subject = 'A revised visa letter is attached for your review.';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>We are attaching a revised visa letter for your review.  Please review this letter carefully and make sure that all the information contained in it is correct.  If so, please send us an email confirming your approval of the visa letter.  If any additional changes need to be made, please send us an email identifying those changes.&nbsp;</p><p><br></p><pIf you have any questions, or if you need to speak with one of our team members, please reply to this email.</p><p></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+										
+				}
+
+				$file = public_path('uploads/file/'.$passportApprove->sponsorship_letter);
+
+				$files = [
+					public_path('uploads/file/'.$image),
+					public_path('uploads/file/'.$financialSpanish),
+					public_path('uploads/file/'.$financialImage),
+				];
+		
+				\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+					$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+					$message->subject($subject);
+					$message->to($to);
+					
+					foreach ($files as $file){
+						$message->attach($file);
+					}
+					
+				});
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id,$subject,$msg,'A revised visa letter is attached for your review.');
+				
+				return response(array('message'=>'Sponsorship letter upload successfully'),200);
+				
+			// }catch (\Exception $e){
+				
+			// 	return response(array('message'=>$e->getMessage()),403);
+			// }
+		}
+
+	}
+
+	public function PassportInfoReject(Request $request){
+	
+		$rules = [
+			'remark' => 'required',
+			'id' => 'required',
+			
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+            
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
+		
+			return response(array('message'=>$message,"error" => true),403);
+		
+	
+		}else{
+
+			try{
+
+				$passportReject= \App\Models\PassportInfo::where('id',$request->post('id'))->first();
+				$remarkarray = '';
+				$remarkarray.= $passportReject->admin_remark ? ''.$passportReject->admin_remark.'<br>' : '';
+				$remarkarray.= '<br>'.$request->post('remark');
+				$passportReject->admin_status='Decline';
+				$passportReject->admin_remark=$remarkarray;
+				
+				$passportReject->save();
+
+				$user= \App\Models\User::where('id',$passportReject->user_id)->first();
+
+				$url = '<a href="'.url('passport-info').'">Click here</a>';
+				$to = $user->email;
+				
+				$name = $user->name.' '.$user->last_name;
+
+				if($user->language == 'sp'){
+
+					$subject = "Se han recibido las correcciones solicitadas a su carta de visa.";
+					$msg = '<p>Estimado '.$name.',</p><p><br></p><p>Gracias por revisar su carta de visa y por solicitar correcciones a la carta. Nuestro equipo ahora está trabajando en una carta de visa revisada para usted, y le enviaremos la carta tan pronto como esté completa.&nbsp;&nbsp;</p><p><br></p><p>Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</p><p><br></p><p><br></p><p>Atentamente,</p><p>Equipo GProCongress II</p><div><br></div>';
+				
+				}elseif($user->language == 'fr'){
+				
+					$subject = "Les modifications que vous avez demandé d'apporter à votre lettre de visa ont été reçues.";
+					$msg = "<p>Cher '.$name.',</p><p><br></p><p>Nous vous remercions d'avoir révisé votre lettre de visa et d'avoir demandé que des corrections y soient apportées.  Notre équipe travaille actuellement à l'élaboration d'une lettre de visa révisée, que nous vous enverrons dès qu'elle sera terminée..&nbsp;&nbsp;</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p><p><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II </p><div><br></div>";
+
+				}elseif($user->language == 'pt'){
+				
+					$subject = "As correções solicitadas à sua carta de visto foram recebidas.";
+					$msg = '<p>Caro '.$name.',</p><p><br></p><p>Obrigado por revisar sua carta de visto e por solicitar correções na carta. Nossa equipe está trabalhando em uma carta de visto revisada para você e enviaremos a carta a você assim que estiver concluída.&nbsp;&nbsp;</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p><p><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II</p><div><br></div>';				
+				}else{
+				
+					$subject = 'Your requested corrections to your visa letter have been received.';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.&nbsp;&nbsp;</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+										
+				}
+
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your requested corrections to your visa letter have been received.');
+
+				return response(array('message'=>'Passport Information declined successfully'),200);
+					
+				
+			}catch (\Exception $e){
+			
+				return response(array("error"=>true, "message" => $e->getMessage()),200); 
+			
+			}
+		}
+	
+	}
+
+	public function ExhibitorUser(Request $request) {
+ 
+		$type = 'Pending';
+		
+        \App\Helpers\commonHelper::setLocale();
+		$stageno = 'all';
+        return view('admin.exhibitors.stage.stage-all', compact('type','stageno'));
+
+	}
+
+	public function ExhibitorSponsorship(Request $request) {
+ 
+        \App\Helpers\commonHelper::setLocale();
+		$stageno = 'sponsorship';
+        return view('admin.exhibitors.stage.stage-sponsorship', compact('stageno'));
+
+	}
+
+	public function ExhibitorPaymentPending(Request $request) {
+ 
+        \App\Helpers\commonHelper::setLocale();
+		$stageno = 'Payment-Pending';
+        return view('admin.exhibitors.stage.payment_pending', compact('stageno'));
+
+	}
+
+	public function ExhibitorQrCode(Request $request) {
+ 
+        \App\Helpers\commonHelper::setLocale();
+		$stageno = 'qrcode';
+        return view('admin.exhibitors.stage.stage-five', compact('stageno'));
+
+	}
+
+	public function exhibitorProfile(Request $request, $id) {
+
+		$results = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.id', '=', $id]])->first();
+		
+		$result = [
+			'id'=>$results->id,
+			'parent_id'=>$results->parent_id,
+			'business_owner'=>$results->parent_id,
+			'added_as'=>$results->added_as,
+			'salutation'=>$results->salutation,
+			'last_name'=>$results->last_name,
+			'name'=>$results->name,
+			'gender'=>$results->gender,
+			'last_name'=>$results->last_name,
+			'email'=>$results->email,
+			'phone_code'=>$results->phone_code,
+			'mobile'=>$results->mobile,
+			'reg_type'=>$results->reg_type,
+			'status'=>$results->status,
+			'profile_status'=>$results->profile_status,
+			'dob'=>$results->dob,
+			'citizenship'=>$results->citizenship,
+			'amount'=>$results->amount,
+			'payment_status'=>$results->payment_status,
+			'room'=>$results->room,
+			'business_name'=>$results->business_name,
+			'business_identification_no'=>$results->business_identification_no,
+			'website'=>$results->website,
+			'logo'=>'<a target="_blank" href="'.asset('uploads/logo/'.$results->logo).'">View</a>',
+			'passport_number'=>$results->passport_number,
+			'passport_copy'=>'<a target="_blank" href="'.asset('uploads/passport/'.$results->passport_copy).'">View</a>',
+			'any_one_coming_with_along'=>$results->any_one_coming_with_along,
+			'coming_with_spouse'=>$results->coming_with_spouse,
+			'number_of_room'=>$results->number_of_room,
+			'qrcode'=>$results->qrcode,
+			'spouse_id'=>$results->spouse_id,
+			'language'=>$results->language,
+			'spouse'=>\App\Models\User::where('parent_id',$results['id'])->where('added_as','Spouse')->first(),
+			'parent_name'=>\App\Helpers\commonHelper::getUserNameById($results['parent_id']),
+			'AmountInProcess'=>\App\Helpers\commonHelper::getTotalAmountInProcess($results['id']),
+			'AcceptedAmount'=>\App\Helpers\commonHelper::getTotalAcceptedAmount($results['id']),
+			'PendingAmount'=>\App\Helpers\commonHelper::getTotalPendingAmount($results['id']),
+			'WithdrawalBalance'=>\App\Helpers\commonHelper::userWithdrawalBalance($results['id']),
+			'RejectedAmount'=>\App\Helpers\commonHelper::getTotalRejectedAmount($results['id']),
+		];
+
+		\App\Helpers\commonHelper::setLocale();
+		return view('admin.exhibitors.profile', compact('result','id'));
+
+	}
+
+	public function exhibitorTransaction(Request $request, $id) {
+
+       
+		$result=\App\Helpers\commonHelper::callExhibitorAPI('GET', '/get-exhibitor-profile?id='.$id, array());
+        
+		$resultData=json_decode($result->content, true);
+		$result=$resultData['result'];
+		if(empty($resultData['result'])){
+			return redirect('admin/exhibitor/user');
+		}
+
+		\App\Helpers\commonHelper::setLocale();
+		return view('admin.exhibitors.payment-history', compact('result','id'));
+
+	}
+
+
+	// exhibitor
+
+	
+	public function getUserData(Request $request) {
+ 
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		
+		$query = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.designation_id', '=', '14'],['users.parent_id', '=', null]])->orderBy('users.id', 'desc');
+
+		if (request()->has('email')) {
+			$query->where(function ($query1) {
+				$query1->where('users.email', 'like', "%" . request('email') . "%")
+					  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+					  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+			});
+			
+		}
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData1 = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.designation_id', '=', '14'],['users.parent_id', '=', null]])->orderBy('users.id', 'desc');
+		
+		if (request()->has('email')) {
+
+			$totalData1->where(function ($query) {
+				$query->where('users.email', 'like', "%" . request('email') . "%")
+					  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+					  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+			});
+
+		}
+
+		$totalData = $totalData1->count();
+		
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		// ->setOffset($start)
+
+		->addColumn('name', function($data){
+			return $data->name.' '.$data->last_name;
+		})
+		->addColumn('user_name', function($data){
+
+			if(\App\Helpers\commonHelper::checkGroupUsers($data->email)){
+				return '<a href="javascript:void(0)" class="group-user-list" data-email="'.$data->email.'"></a> '.$data->email ;
+			} else {
+				return $data->email;
+			}
+
+		})
+
+		->addColumn('stage0', function($data){
+			return \App\Helpers\commonHelper::getCountryNameById($data->citizenship); 
+		})
+
+		->addColumn('stage1', function($data){
+			return ucfirst($data->business_name);
+		})
+
+		->addColumn('stage2', function($data){
+			return ucfirst($data->business_identification_no);
+		})
+
+		->addColumn('stage3', function($data){
+			return ($data->mobile);
+		})
+
+		->addColumn('stage4', function($data){
+			return ($data->passport_number);
+		})
+
+		->addColumn('stage5', function($data){
+			return '<a target="_blank" href="'.asset('uploads/passport/'.$data->passport_copy).'" >View</a>'; 
+		})
+
+		->addColumn('payment', function($data){
+			if($data->parent_id != null){
+				return '<div class="span badge rounded-pill pill-badge-secondary">N/A</div>';
+			}
+			if(\App\Helpers\commonHelper::getTotalPendingAmount($data->id)) {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			} else {
+				return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+			}
+		})
+
+		->addColumn('action', function($data){
+
+			if($data->profile_status == 'Approved'){
+
+				return '
+					<div style="display:flex">
+					<a href="'.url('admin/exhibitor/profile/'.$data->id).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+					</div>
+				';
+				
+			}else{
+
+				return '
+					<div style="display:flex">
+					<a data-id="'.$data->id.'" title="Send Sponsorship letter" class="btn btn-sm btn-outline-success m-1 sendSponsorshipLetter">Send</a>
+					<a href="'.url('admin/exhibitor/profile/'.$data->id).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+					<a href="javascript:void(0)" title="Approve Profile" data-id="'.$data->id.'" data-status="Approved" class="btn btn-sm btn-success px-3 m-1 text-white profile-status"><i class="fas fa-check"></i></a>
+					</div>
+				';
+			}
+			
+
+		})
+
+		
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function getGroupUsersList(Request $request) {
+
+		$id = \App\Models\User::where('email', $request->post('email'))->first()->id;
+		$results = \App\Models\User::select('users.*','exhibitors.passport_number','exhibitors.passport_copy')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.parent_id', $id]])->get();
+		
+		$html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"> 
+					<thead> 
+					<tr> 
+					<th class="text-center">'. \Lang::get('admin.id') .'</th> 
+					<th class="text-center">Added As</th> 
+					<th class="text-center">Name</th> 
+					<th class="text-center">Email</th> 
+					<th class="text-center">Mobile</th> 
+					<th class="text-center">Citizenship</th> 
+					<th class="text-center">Passport Number</th> 
+					<th class="text-center">DOB</th> 
+					<th class="text-center">Gender</th> 
+					<th class="text-center">Passport Copy</th> 
+					<th class="text-center">'. \Lang::get('admin.action') .'</th> </tr> </thead><tbody>';
+		
+		if (count($results) > 0) {
+			foreach ($results as $key=>$result) {
+
+				$spouse = \App\Models\User::select('users.*','exhibitors.passport_number','exhibitors.passport_copy')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.parent_id', $result->id]])->first();
+				
+				$key += 1;
+				$html .= '<tr>';
+				$html .= '<td class="text-center">'.$key.'.</td>';
+
+				$html .= '<td class="text-center">'.$result->added_as;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->added_as.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->name;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->name.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->email;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->email.'</p>' : '';
+				$html .= '</td>';
+
+				
+				$html .= '<td class="text-center">'.$result->mobile;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->mobile.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.\App\Helpers\commonHelper::getCountryNameById($result->citizenship);
+				$html .= $spouse ? '<hr><p class="text-danger">'.\App\Helpers\commonHelper::getCountryNameById($spouse->citizenship).'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->passport_number;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->passport_number.'</p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center">'.$result->dob;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$spouse->dob.'</p>' : '';
+				$html .= '</td>';
+
+				$gender = 'Male';
+				if($spouse && $spouse->gender == '2'){
+					$gender = 'Female';
+				}
+
+				$resultGender = 'Male';
+				if($result && $result->gender == '2'){
+					$resultGender = 'Female';
+				}
+
+				$html .= '<td class="text-center">'.$resultGender ;
+				$html .= $spouse ? '<hr><p class="text-danger">'.$gender : '</p>';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center"><a target="_blank" href="'.asset('uploads/passport/'.$result->passport_copy).'" >View</a></p>';
+				$html .= $spouse ? '<hr><p class="text-danger"><a target="_blank" href="'.asset('uploads/passport/'.$spouse->passport_copy).'" >View</a></p>' : '';
+				$html .= '</td>';
+
+				$html .= '<td class="text-center"><a href="'.url('admin/exhibitor/profile/'.$result->id).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a></p>';
+				$html .= $spouse ? '<hr><p class="text-danger"><a href="'.url('admin/exhibitor/profile/'.$spouse->id).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a></p>' : '';
+				$html .= '</td>';
+
+				$html .= '</tr>';
+			}
+		} else {
+			$html .= '<tr colspan="9"><td class="text-center">No Group Users Found</td></tr>';
+		}
+		$html .= '</tbody></table>';
+
+		return response()->json(array('html'=>$html));
+		
+
+	}
+
+	public function getExhibitorPaymentHistory(Request $request, $id) {
+		
+		$columns = \Schema::getColumnListing('transactions');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\Transaction::where('user_id', $id)->where('particular_id', '1')->orderBy('id','desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\Transaction::where('user_id', $id)->where('particular_id', '1')->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('user_name', function($data){
+			return \App\Helpers\commonHelper::getDataById('User', $data->user_id, 'name');
+		})
+		
+		->addColumn('created_at', function($data){
+			return date('d-M-Y H:i:s',strtotime($data->created_at));
+		})
+
+		
+		->addColumn('transaction', function($data){
+			return $data->order_id;
+		})
+
+		->addColumn('utr', function($data){
+			return $data->bank_transaction_id;
+		})
+
+		->addColumn('bank', function($data){
+			return $data->bank." Transfer";
+		})
+
+		->addColumn('type', function($data){
+			
+			return 'Credit';
+			
+		})
+
+
+		->addColumn('mode', function($data){
+			return $data->method;
+		})
+
+		->addColumn('amount', function($data){
+			return '$'.$data->amount;
+		})
+
+		->addColumn('payment_status', function($data){
+
+			if($data->payment_status == '0'){
+
+				return "Pending";
+
+			}elseif($data->payment_status == '2'){
+
+				return "Accepted";
+				
+			}else{
+				return "Failed";
+			}
+			
+		})
+
+		->addColumn('updated_at', function($data){
+			return date('d-M-Y H:i:s',strtotime($data->updated_at));
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function getExhibitorCommentHistory(Request $request) {
+		
+		$columns = \Schema::getColumnListing('comments');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('comment_by', function($data){
+
+			return 'Admin';
+		})
+
+		->addColumn('comment', function($data){
+			return $data->comment;
+		})
+
+		->addColumn('created_at', function($data){
+			return date('Y-m-d h:i', strtotime($data->created_at));
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function getExhibitorActionHistory(Request $request) {
+		
+		$columns = \Schema::getColumnListing('user_histories');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\UserHistory::where('user_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\UserHistory::where('user_id', $request->input('user_id'))->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+		->addColumn('action', function($data){
+			return $data->action;
+		})
+		->addColumn('admin', function($data){
+
+			if($data->action_id){
+
+				
+				return \App\Helpers\commonHelper::getUserNameById($data->action_id);
+			}else{
+
+				return \App\Helpers\commonHelper::getUserNameById($data->user_id);
+			}
+			
+		})
+		
+		->addColumn('date', function($data){
+			return date('d M Y', strtotime($data->created_at));
+		})
+
+		->addColumn('time', function($data){
+			return date('H:i a', strtotime($data->created_at));
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function getExhibitorMailTriggerList(Request $request) {
+		
+		$columns = \Schema::getColumnListing('user_mail_triggers');
+		
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		$order = $columns[$request->input('order.0.column')];
+		$dir = $request->input('order.0.dir');
+
+		$query = \App\Models\UserMailTrigger::where('user_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\UserMailTrigger::where('user_id', $request->input('user_id'))->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+		
+		->addColumn('subject', function($data){
+			return $data->subject;
+		})
+
+		->addColumn('date', function($data){
+			return date('d M Y', strtotime($data->created_at));
+		})
+
+		->addColumn('time', function($data){
+			return date('H:i a', strtotime($data->created_at));
+		})
+
+		->addColumn('action', function($data){
+				
+			
+				return '<div >
+							<button type="button" style="width:41px" title="View message" class="btn btn-sm btn-primary px-3 m-1 text-white messageGet" data-id="'.$data->id.'" ><i class="fas fa-eye"></i></button>
+						</div>';			
+			
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+	}
+
+	public function exhibitorCommentSubmit(Request $request) {
+		
+		if($request->isMethod('post')){
+			
+			$rules = [
+				'user_id' => 'required|numeric|exists:users,id',
+				'comment' => 'required',
+			];
+
+			$validator = \Validator::make($request->all(), $rules);
+			
+			if ($validator->fails()){
+				$message = "";
+				$messages_l = json_decode(json_encode($validator->messages()), true);
+				foreach ($messages_l as $msg) {
+					$message= $msg[0];
+					break;
+				}
+				
+				return response(array('message'=>$message),403);
+				
+			} else {
+
+				try {
+
+					$data=new \App\Models\Comment();
+					$data->sender_id = $request->post('admin_id');
+					$data->receiver_id = $request->post('user_id');
+					$data->comment = $request->post('comment');
+					$data->save();
+
+					$UserHistory=new \App\Models\UserHistory();
+					$UserHistory->action_id=$request->post('admin_id');
+					$UserHistory->user_id=$request->post('user_id');
+					$UserHistory->action='Comment';
+					$UserHistory->save();
+
+					return response(array('reset'=>true, 'comment' => true, 'message'=>'Comment has been sent successfully.'), 200);
+
+				} catch (\Throwable $th) {
+					return response(array('message'=>'Something went wrong, please try again'), 500);
+				}
+			
+			}
+
+
+		} else if($request->isMethod('get')) {
+			
+			$columns = \Schema::getColumnListing('comments');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			$order = $columns[$request->input('order.0.column')];
+			$dir = $request->input('order.0.dir');
+
+			$query = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->orderBy('id', 'desc');
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData = \App\Models\Comment::where('receiver_id', $request->input('user_id'))->count();
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));  
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('comment_by', function($data){
+
+				return 'Admin';
+			})
+
+			->addColumn('comment', function($data){
+				return $data->comment;
+			})
+
+			->addColumn('created_at', function($data){
+				return date('Y-m-d h:i', strtotime($data->created_at));
+			})
+
+			->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+			->make(true);
+
+		}
+
+	}
+
+	public function exhibitorMailTriggerListModel(Request $request) {
+
+		$UserMailTrigger = \App\Models\UserMailTrigger::where('id', $request->id)->first();
+
+		return response(array('message'=>$UserMailTrigger->message), 200);
+
+
+	}
+
+	public function exhibitorTransactionList(Request $request) {
+
+		$columns = \Schema::getColumnListing('transactions');
+			
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		// $order = $columns[$request->input('order.0.column')];
+		// $dir = $request->input('order.0.dir');
+
+		$query = \App\Models\Transaction::orderBy('created_at','desc');
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData = \App\Models\Transaction::orderBy('created_at','desc')->count();
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));  
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('user_name', function($data){
+			return '<a style="color: blue !important;" href="'.url('admin/user/user-profile/'.$data->user_id).'" target="_blank" title="User Profile">'.\App\Helpers\commonHelper::getUserNameById($data->user_id).'</a>';
+			
+		})
+
+		->addColumn('payment_by', function($data){
+			return $data->bank;
+		})
+
+		->addColumn('method', function($data){
+			return $data->method;
+		})
+		->addColumn('transaction_id', function($data){
+			return $data->order_id;
+		})
+		->addColumn('bank_transaction_id', function($data){
+			return $data->bank_transaction_id;
+		})
+
+
+		->addColumn('amount', function($data){
+			return '$'.$data->amount;
+		})
+
+		->addColumn('payment_status', function($data){
+			if($data->payment_status=='0' || $data->payment_status=='1' || $data->payment_status=='7' || $data->payment_status=='8' || $data->payment_status=='9') {
+				return '<div class="span badge rounded-pill pill-badge-danger">'.\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status).'</div>';
+			} else if($data->payment_status=='3' || $data->payment_status=='4' || $data->payment_status=='6') {
+				return '<div class="span badge rounded-pill pill-badge-orange">'.\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status).'</div>';
+			} else if($data->payment_status=='2' || $data->payment_status=='5') {
+				return '<div class="span badge rounded-pill pill-badge-success">'.\App\Helpers\commonHelper::getPaymentStatusName($data->payment_status).'</div>';
+			}
+		})
+
+		->addColumn('created_at', function($data){
+			return date('d-M-Y H:i:s',strtotime($data->created_at));
+		})
+		->addColumn('decline_remark', function($data){
+			return $data->decline_remark ?? '-';
+		})
+
+		->addColumn('action', function($data){
+			$msg = "' Are you sure to delete this transaction ?'";
+
+			if ($data->status == '1') {
+				return '<div class="badge rounded-pill pill-badge-success">Approved</div>';
+			} else if ($data->status == '2') {
+				return '<div class="badge rounded-pill pill-badge-danger">Decline</div>';
+			} else if ($data->status == '0' && $data->method != 'Online') {
+
+				return '<div style="display:flex"><a data-id="'.$data->id.'" data-type="1" title="Transaction Approve" class="btn btn-sm btn-outline-success m-1 -change">Approve</a>
+				<a data-id="'.$data->id.'" data-type="2" title="Transaction Decline" class="btn btn-sm btn-outline-danger m-1 declineRemark">Decline</a></div>';
+			}
+
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function getExhibitorQrcodeData(Request $request) {
+
+		$columns = \Schema::getColumnListing('users');
+			
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		// $order = $columns[$request->input('order.0.column')];
+		// $dir = $request->input('order.0.dir');
+
+		$query = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy')->join('exhibitors','users.id','=','exhibitors.user_id')->where('users.designation_id', '=', '14')->where([['users.stage', '=', '3']])->orderBy('users.updated_at', 'desc');
+
+		if (request()->has('email')) {
+			$query->where('users.email', 'like', "%" . request('email') . "%");
+		}
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData1 = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.stage', '=', '3']]);
+		
+		if (request()->has('email')) {
+			$totalData1->where('users.email', 'like', "%" . request('email') . "%");
+		}
+
+		$totalData = $totalData1->count();
+
+
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('user_name', function($data){
+			return $data->name;
+		})
+
+		->addColumn('profile', function($data){
+			if ($data->profile_update == '1') {
+				return '<div class="span badge rounded-pill pill-badge-success">Updated</div>';
+			} else if ($data->user_status == '0') {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			}
+		})
+
+		->addColumn('payment', function($data){
+			if(\App\Helpers\commonHelper::getTotalPendingAmount($data->id)) {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			} else {
+				return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+			}
+		})
+
+		->addColumn('session_info', function($data){
+			if (count($data->SessionInfo) > 0) {
+				if ($data->SessionInfo[0]->admin_status == '1') {
+					return '<div class="span badge rounded-pill pill-badge-success">Verify</div>';
+				} else if ($data->SessionInfo[0]->user_status == '0') {
+					return '<div class="span badge rounded-pill pill-badge-danger">Reject</div>';
+				} else if ($data->SessionInfo[0]->user_status === null) {
+					return '<div class="span badge rounded-pill pill-badge-warning">In Process</div>';
+				}
+			}else {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			}
+		})
+
+		->addColumn('user_type', function($data){
+			
+			if($data->parent_id != Null){
+
+				if($data->added_as == 'Group'){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}elseif($data->added_as == 'Spouse'){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+					
+				}
+
+			}else {
+
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+				if($groupName){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}else if($spouseName){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+				}
+					
+
+			}
+			
+		})
+
+		->addColumn('group_owner_name', function($data){
+			
+			$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+			
+			if($data->parent_id != Null && $data->added_as == 'Group'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+				
+			}else if(count($groupName) > 0) {
+
+				return ucfirst($data->name.' '.$data->last_name);
+
+			}else{
+				return 'N/A';
+			}
+			
+		})
+
+		->addColumn('spouse_name', function($data){
+			
+			$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+			if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+			}else if($spouseName) {
+
+				return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+			}else{
+
+				return 'N/A';
+			}
+			
+		})
+		->addColumn('action', function($data){
+			$msg = "' Are you sure to delete this user ?'";
+
+			return '<a href="'.route('admin.user.details', ['id' => $data->id] ).'" title="View user details" class="btn btn-sm btn-primary px-3" ><i class="fas fa-eye"></i></a>';
+			
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function getExhibitorSponsorshipData(Request $request) {
+
+		$columns = \Schema::getColumnListing('users');
+			
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		// $order = $columns[$request->input('order.0.column')];
+		// $dir = $request->input('order.0.dir');
+
+		$query = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.financial_letter','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy','exhibitors.sponsorship_letter')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.stage', '=', '3']])->orderBy('users.updated_at', 'desc');
+
+		if (request()->has('email')) {
+			$query->where('users.email', 'like', "%" . request('email') . "%");
+		}
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData1 = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy','exhibitors.sponsorship_letter')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.stage', '=', '3']]);
+		
+		if (request()->has('email')) {
+			$totalData1->where('users.email', 'like', "%" . request('email') . "%");
+		}
+
+		$totalData = $totalData1->count();
+
+
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('name', function($data){
+			return $data->name;
+		})
+
+		->addColumn('email', function($data){
+			return $data->email;
+		})
+
+		->addColumn('mobile', function($data){
+			return $data->mobile;
+		})
+
+		->addColumn('status', function($data){
+			if ($data->profile_status == 'Approved') {
+				return '<div class="span badge rounded-pill pill-badge-success">Approved</div>';
+			} else if ($data->profile_status == 'Pending') {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			}
+		})
+
+		->addColumn('payment', function($data){
+			if($data->parent_id != null){
+				return '<div class="span badge rounded-pill pill-badge-secondary">N/A</div>';
+			}
+			if(\App\Helpers\commonHelper::getTotalPendingAmount($data->id)) {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			} else {
+				return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+			}
+		})
+
+		->addColumn('sponsorship', function($data){
+			
+			return '<a target="_blank" href="'.asset('uploads/sponsorship/'.$data->sponsorship_letter).'" title="View Letter" class="btn btn-sm btn-success px-3" ><i class="fas fa-eye" style="color:#fff"></i></a>';
+			
+		})
+		->addColumn('financial', function($data){
+				
+			if($data->financial_letter){
+
+				$financialLetter = explode(',',$data->financial_letter);
+
+				return '<a href="'.asset('uploads/file/'.$financialLetter[0]).'" target="_blank" class="text-blue"> File 1</a>
+						<a href="'.asset('uploads/file/'.$financialLetter[1]).'" target="_blank" class="text-blue"> File 2</a>';
+			}else{
+
+				return '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
+
+			}
+		})
+
+
+		->addColumn('user_type', function($data){
+			
+			if($data->parent_id != Null){
+
+				if($data->added_as == 'Group'){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}elseif($data->added_as == 'Spouse'){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+					
+				}
+
+			}else {
+
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+				if($groupName){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}else if($spouseName){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+				}
+					
+
+			}
+			
+		})
+
+		->addColumn('group_owner_name', function($data){
+			
+			$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+			
+			if($data->parent_id != Null && $data->added_as == 'Group'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+				
+			}else if(count($groupName) > 0) {
+
+				return ucfirst($data->name.' '.$data->last_name);
+
+			}else{
+				return 'N/A';
+			}
+			
+		})
+
+		->addColumn('spouse_name', function($data){
+			
+			$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+			if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+			}else if($spouseName) {
+
+				return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+			}else{
+
+				return 'N/A';
+			}
+			
+		})
+		->addColumn('action', function($data){
+			
+			return '
+					<div style="display:flex">
+						<a data-id="'.$data->id.'" title="Send Sponsorship letter" class="btn btn-sm btn-outline-success m-1 sendSponsorshipLetter">Send</a>
+						<a href="'.env('Admin_URL').'/admin/exhibitor/profile/'.$data->id.'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+					</div>
+				';
+				
+			
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function getExhibitorPaymentPending(Request $request) {
+
+		$columns = \Schema::getColumnListing('users');
+			
+		$limit = $request->input('length');
+		$start = $request->input('start');
+		// $order = $columns[$request->input('order.0.column')];
+		// $dir = $request->input('order.0.dir');
+
+		$query = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.financial_letter','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy','exhibitors.sponsorship_letter')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.stage', '=', '2'],['users.parent_id', '=', null]])->orderBy('users.updated_at', 'desc');
+
+		if (request()->has('email')) {
+			$query->where('users.email', 'like', "%" . request('email') . "%");
+		}
+
+		$data = $query->offset($start)->limit($limit)->get();
+		
+		$totalData1 = \App\Models\User::select('users.*','exhibitors.business_name','exhibitors.business_identification_no','exhibitors.passport_number','exhibitors.passport_copy','exhibitors.sponsorship_letter')->join('exhibitors','users.id','=','exhibitors.user_id')->where([['users.stage', '=', '2'],['users.parent_id', '=', null]]);
+		
+		if (request()->has('email')) {
+			$totalData1->where('users.email', 'like', "%" . request('email') . "%");
+		}
+
+		$totalData = $totalData1->count();
+
+
+		$totalFiltered = $query->count();
+
+		$draw = intval($request->input('draw'));
+		$recordsTotal = intval($totalData);
+		$recordsFiltered = intval($totalFiltered);
+
+		return \DataTables::of($data)
+		->setOffset($start)
+
+		->addColumn('name', function($data){
+			return $data->name;
+		})
+
+		->addColumn('email', function($data){
+			return $data->email;
+		})
+
+		->addColumn('mobile', function($data){
+			return $data->mobile;
+		})
+
+		->addColumn('status', function($data){
+			if ($data->profile_status == 'Approved') {
+				return '<div class="span badge rounded-pill pill-badge-success">Approved</div>';
+			} else if ($data->profile_status == 'Pending') {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			}
+		})
+
+		->addColumn('payment', function($data){
+			if($data->parent_id != null){
+				return '<div class="span badge rounded-pill pill-badge-secondary">N/A</div>';
+			}
+			if(\App\Helpers\commonHelper::getTotalPendingAmount($data->id)) {
+				return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+			} else {
+				return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+			}
+		})
+
+		->addColumn('user_type', function($data){
+			
+			if($data->parent_id != Null){
+
+				if($data->added_as == 'Group'){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}elseif($data->added_as == 'Spouse'){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+					
+				}
+
+			}else {
+
+				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
+				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+				if($groupName){
+
+					return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
+					
+				}else if($spouseName){
+
+					return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
+
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
+				}
+					
+
+			}
+			
+		})
+
+		->addColumn('group_owner_name', function($data){
+			
+			$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
+			
+			if($data->parent_id != Null && $data->added_as == 'Group'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+				
+			}else if(count($groupName) > 0) {
+
+				return ucfirst($data->name.' '.$data->last_name);
+
+			}else{
+				return 'N/A';
+			}
+			
+		})
+
+		->addColumn('spouse_name', function($data){
+			
+			$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
+			
+			if($data->parent_id != Null && $data->added_as == 'Spouse'){
+
+				return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
+
+			}else if($spouseName) {
+
+				return ucfirst($spouseName->name.' '.$spouseName->last_name);
+
+			}else{
+
+				return 'N/A';
+			}
+			
+		})
+		->addColumn('action', function($data){
+			
+			return '
+					<div style="display:flex">
+						<a data-id="'.$data->id.'" title="Send Sponsorship letter" class="btn btn-sm btn-outline-success m-1 sendSponsorshipLetter">Send</a>
+						<a href="'.env('Admin_URL').'/admin/exhibitor/profile/'.$data->id.'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+					</div>
+				';
+				
+			
+		})
+
+		->escapeColumns([])	
+		->setTotalRecords($totalData)
+		->with('draw','recordsTotal','recordsFiltered')
+		->make(true);
+
+
+	}
+
+	public function exhibitorProfileBasePrice(Request $request) {
+
+		$basePrice = 0; $Spouse = [];
+
+		$user = \App\Models\User::select('users.*','exhibitors.room')->join('exhibitors','users.id','=','exhibitors.user_id')->where('users.id', $request->get('id'))->first();
+
+		if($user){
+
+			$additionalPerson = \App\Models\User::select('users.*')->join('exhibitors','users.id','=','exhibitors.user_id')->where('exhibitors.business_owner_id', $request->get('id'))->count();
+
+			if($user->room == 'No'){
+
+				if($additionalPerson > 0){
+
+					$basePrice = 850+($additionalPerson*350);
+
+				}else{
+
+					$basePrice = 850;
+				}
+				
+			}else if($user->room == 'Yes'){
+
+				$basePrice = 1500;
+
+				$Spouse = \App\Models\User::select('users.*')->join('exhibitors','users.id','=','exhibitors.user_id')->where('exhibitors.business_owner_id', $request->get('id'))->where('exhibitors.added_as', 'Spouse')->count();
+				if($Spouse>0){
+					$basePrice+= $Spouse*350;
+				}
+
+				$additionalPerson = \App\Models\User::select('users.*')->join('exhibitors','users.id','=','exhibitors.user_id')->where('exhibitors.business_owner_id', $request->get('id'))->where('exhibitors.added_as', 'Group')->count();
+				if($additionalPerson>0){
+					$basePrice+= $additionalPerson*1000;
+				}
+				
+			}
+
+			$html=view('admin.exhibitors.stage.stage_one_profile_status_model',compact('basePrice','user'))->render();
+
+			return response()->json(array('html'=>$html));
+			
+
+		}
+			
+	}
+
+	public function exhibitorProfileStatus(Request $request) {
+
+		$result = \App\Models\User::find($request->post('user_id'));
+		
+		if ($result) {
+
+			$to = $result->email;
+
+			if ($request->post('status') == 'Approved') {
+
+				$resultSpouse = \App\Models\User::select('users.*','exhibitors.diplomatic_passport')->join('exhibitors','users.id','=','exhibitors.user_id')->where('exhibitors.business_owner_id',$result->id)->get();
+				
+				if(!empty($resultSpouse)){
+					
+					foreach($resultSpouse as $user){
+
+						$additionalUser = \App\Models\User::select('users.*','exhibitors.diplomatic_passport')->join('exhibitors','users.id','=','exhibitors.user_id')->where('users.id',$user->id)->first();
+						if($additionalUser){
+
+							// $additionalUser = \App\Models\User::where('users.id',$user->id);
+						
+							$additionalUser->profile_status = $request->post('status');
+							$additionalUser->stage = 2;
+							$additionalUser->save();
+
+							$name= $additionalUser->name.' '.$additionalUser->last_name;
+
+							if($additionalUser && $result->id != $additionalUser->id){
+
+								$subject = 'Congratulations!  You have been approved!';
+								$msg = '<p>Dear '.$name.',</p>
+										<p>Our team has reviewed your submission, and we are pleased to inform you that you have been approved as an Exhibitor for GProCongress II.  We are looking forward to having you with us in Panama this November!  </p>
+										<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
+										<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.</i></p>
+										<p>Warmly,</p><p><br></p>
+										<p>The GProCongress II Team</p>';	
+							
+								$to = $additionalUser->email;
+								
+								\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+								\App\Helpers\commonHelper::userMailTrigger($additionalUser->id,$msg,$subject);
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($additionalUser->id, $subject, $msg, 'Congratulations!  You have been approved!');
+					
+							}
+							
+						}
+						
+					}
+
+				}
+
+				$result->profile_status = $request->post('status');
+				$result->remark = $request->post('remark');
+				$result->amount = $request->post('amount');
+				$result->stage = '2';
+				$name= $result->name.' '.$result->last_name;
+
+				$website = '<a href="'.url('/payment').'">website</a>';
+
+				$subject = 'Congratulations!  You have been approved!  Please make your payment now.';
+				$msg = '<p>Dear '.$name.',</p>
+				<p>Our team has reviewed your submission, and we are pleased to inform you that you have been approved as an Exhibitor for GProCongress II.  We are looking forward to having you with us in Panama this November!  </p>
+				<p>We would ask that you go ahead and make your payment as soon as possible. Please follow the instructions listed below to make your payment.</p>
+				<p>You may pay your fees on our '.$website.'&nbsp;</p>
+				<p>Online payment using credit card – you can pay your fees using any major credit card.</p>
+				<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
+				<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
+				<p>Warmly,</p>
+				<p>The GProCongress II Team</p>';	
+				
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
+				// \App\Helpers\commonHelper::sendSMS($result->mobile);
+
+			}else if ($request->post('status') == 'Decline') {
+
+				$result->profile_status = 'Rejected';
+
+				$faq = '<a href="'.url('faq').'">Click here</a>';
+				
+				$name= $result->name.' '.$result->last_name;
+				
+				if($result->language == 'sp'){
+
+					$url = '<a href="'.url('profile-update').'">clic aquí</a>';
+				
+					$subject = "Estado de su Solicitud para el GProCongress II";
+					$msg = '<p>Estimado '.$name.'</p><p><br></p><p><br></p><p>Gracias por registrarse para participar del GProCongress II.</p><p><br></p><p>Hemos evaluado muchas aplicaciones con varios nivels de participación en la capacitación de pastores, pero lamentablemente sentimos informale que su solicitud ha sido rechazada en esta ocación.&nbsp;</p><p><br></p><p><br></p><p>Sin embargo, esto no significa el fin de nuestra relación.&nbsp;</p><p><br></p><p>Por favor, manténgase conectado a la comunidad GProCommission haciendo : '.$url.'. Recibirá aliento continuo, ideas, apoyo en oración y mucho más mientras usted forma líderes pastorales.</p><p><br></p><p>Si todavía tiene preguntas, simplemente responda a este correo y nuestro equipo se conectará con usted.&nbsp;</p><p><br></p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p><p><br></p><p>El equipo del GProCongress II</p>';
+				
+				}elseif($result->language == 'fr'){
+				
+					$url = '<a href="'.url('profile-update').'">cliquant ici</a>';
+				
+					$subject = "Statut de votre demande GProCongrès II";
+					$msg = '<p>Cher '.$name.',</p><p><br></p><p><br></p><p>Merci d’avoir postulé pour assister au GProCongrès II.</p><p>Nous avons évalué de nombreuses candidatures avec différents niveaux d’implication de la formation des pasteurs, mais nous avons malheureusement le regret de vous informer que votre candidature a été refusée, cette fois-ci.&nbsp;&nbsp;</p><p><br></p><p>Cependant, ce n’est pas la fin de notre relation.&nbsp;</p><p>Veuillez rester connecté à la communauté GProCommission en : '.$url.'. Vous recevrez des encouragements continus, des idées, un soutien à la prière et autres alors que vous préparez les responsables pastoraux.&nbsp;</p><p><br></p><p>Avez-vous encore des questions ? Répondez simplement à cet e-mail et notre équipe communiquera avec vous.&nbsp;</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p><br></p><p>L’équipe GProCongrès II</p>';
+				
+				}elseif($result->language == 'pt'){
+				
+					$url = '<a href="'.url('profile-update').'">aqui</a>';
+				
+					$subject = "Estado do seu pedido para o II CongressoGPro";
+					$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos pelo seu pedido para participar no II CongressoGPro.</p><p>Nós avaliamos muitos pedidos com vários níveis de envolvimento no treinamento pastoral, mas infelizmente lamentamos informar que o seu pedido foi declinado esta vez.&nbsp;</p><p><br></p><p>Contudo, este não é o fim do nosso relacionamento.</p><p>&nbsp;</p><p>Por favor se mantenha conectado com a nossa ComunidadeGPro clicando : '.$url.'. Você continuará recebendo encorajamento contínuo, ideias, suporte em oração e muito mais, à medida que prepara os líderes pastorais.</p><p><br></p><p>Ainda tem perguntas? Simplesmente responda este e-mail, e nossa equipe irá se conectar com você.</p><p><br></p><p>Ore conosco, à medida que nos esforçamos para multiplicar os números, e desenvolvemos a capacidade de treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p><br></p><p>Equipe do II CongressoGPro</p>';
+				
+				}else{
+				
+					$url = '<a href="'.url('profile-update').'">Click here</a>';
+				
+					$subject = 'Your GProCongress II application status';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for applying to attend the GProCongress II.</p><p>We have evaluated many applications with various levels of pastor training involvement, but sadly regret to inform you that your application has been declined, this time.&nbsp;</p><p><br></p><p>However, this is not the end of our relationship.&nbsp;</p><p>Please stay connected to the GProCommission community by : '.$url.'. You will receive ongoing encouragement, ideas, prayer support, and more as you prepare pastoral leaders.&nbsp;</p><p><br></p><p>Do you still have questions? Simply respond to this email, and our team will connect with you.&nbsp;</p><p><br></p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p><br></p><p>The GProCongress II Team</p>';
+					
+				}
+
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
+				// \App\Helpers\commonHelper::sendSMS($result->mobile);
+
+			}
+			
+			$result->save();
+
+			$UserHistory=new \App\Models\UserHistory();
+			$UserHistory->user_id=$result->id;
+			$UserHistory->action_id=$request->post('admin_id');
+			$UserHistory->action='User Profile '.$request->post('status');
+			$UserHistory->save();
+
+			if ($request->post('status') == 'Approved') {
+
+				// \App\Helpers\commonHelper::sendExhibitorPaymentReminderMailSend($result->id);
+
+				// \App\Helpers\commonHelper::sendSMS($result->mobile);
+
+			}
+
+			return response(array('error'=>false, 'reload'=>true, 'message'=>'Profile approved successful'), 200);
+		
+		} else {
+			return response(array('error'=>true, 'reload'=>false, 'message'=>'Something went wrong. Please try again.'), 403);
+		}
+			
+	}
+
+	public function exhibitorUploadSponsorshipLetter(Request $request) {
+
+		$rules = [
+			'file' => 'required|mimes:pdf',
+			'id' => 'numeric|required',
+			
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+			
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
+		
+			return response(array('message'=>$message,"error" => true),403);
+		
+
+		}else{
+
+			try{
+
+				$user= \App\Models\User::where('id',$request->post('id'))->first();
+
+				if($request->hasFile('file')){
+					$imageData = $request->file('file');
+					$image = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+					$destinationPath = public_path('/uploads/sponsorship');
+					$imageData->move($destinationPath, $image);
+
+					$user->sponsorship_letter = $image;
+				}
+
+
+				$user->save();
+
+				$to = $user->email;
+				$subject = 'Please verify your sponsorship letter.';
+				$msg = '<p>Thank you for submitting your sponsorship letter.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link:  to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->admin_id,$subject,$msg,'Sponsorship letter upload');
+				
+				$name = $user->name.' '.$user->last_name;
+
+				if($user->language == 'sp'){
+
+					$subject = "Por favor, verifique su información de viaje";
+					$msg = '<p>Estimado '.$name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace:  para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
+				
+				}elseif($user->language == 'fr'){
+				
+					$subject = "Veuillez vérifier vos informations de voyage";
+					$msg = "<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien:  pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+		
+				}elseif($user->language == 'pt'){
+				
+					$subject = "Por favor verifique sua Informação de Viagem";
+					$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link:  para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
+				
+				}else{
+				
+					$subject = 'Please verify your sponsorship letter.';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link:  to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+										
+				}
+
+				$file = public_path('uploads/sponsorship/'.$user->sponsorship_letter);
+
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, false, $file);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				
+				return response(array('message'=>'Sponsorship letter upload successfully'),200);
+				
+			}catch (\Exception $e){
+				
+				return response(array('message'=>$e->getMessage()),403);
+			}
+		}
+			
 	}
 }

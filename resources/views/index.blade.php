@@ -66,7 +66,10 @@
                         @else
                             <li><a target="_blank" href="{{ asset('admin-assets/images/flyer_2022.pdf') }}" class="main-btn">@lang('web/home.know') @lang('web/home.more')</a></li>
                         @endif
+                        
+                        <li><a href="{{ route('donate') }}" class="main-btn" >Donate</a></li>
                     </ul>
+                    
                 </div>
             </div>
         </div>
@@ -219,6 +222,29 @@
     </div>
     <!-- attend-end -->
 
+    <!-- <div class="attend-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <h2 class="main-head">@lang('web/home.PreRecordedVideo')</h2>
+                <div class="attend-slider">
+                    <div class="owl-carousel owl-theme">
+                        @if(!empty($preRecordedVideo))
+                            @foreach($preRecordedVideo as $key=>$preRecorded)
+                        <div class="item">
+                            <h2 class="" style="font-size: 38px;">{{$preRecorded->name}}</h2>
+                            <div class="attend-box-wrap">
+                                <video width="320" height="240"  controls autoplay>
+                                    <source src="{{ asset('/uploads/pre-recorded-video/'.$preRecorded->video) }}" type="video/mp4">
+                                </video>
+                            </div>
+                        </div>
+                            @endforeach
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> -->
     <!-- counter-start -->
     <!-- <div class="counter-wrapper">
         <div class="container-fluid custom-container">
@@ -403,10 +429,12 @@
                 <div class="col-lg-8">
                     <div class="speaker-slider">
                         <div class="owl-carousel owl-theme">
+                        @if(!empty($speakers))
+                            @foreach($speakers as $key=>$speaker)
                             <div class="item">
                                 <div class="speaker-box">
                                     <div class="speaker-img">
-                                        <img src="{{ asset('assets/images/speaker-img-01.png') }}" alt="img">
+                                        <img src="{{ asset('/uploads/speaker/'.$speaker->image) }}" alt="img">
                                         <div class="main-share">
                                             <a class="click-me" href="javascript:;"><i class="fas fa-share-alt"></i></a>
                                             <ul class="group-icon">
@@ -423,70 +451,16 @@
                                         </div>
                                     </div>
                                     <div class="speaker-content">    
-                                        <h2>01</h2>
+                                        <h2>0 {{ $key+1}}</h2>
                                         <div>
-                                            <h5>Katayma Fumiki</h5>
+                                            <h5>{{ ucfirst($speaker->name) }}</h5>
                                             <span>Speaker</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="item">
-                                <div class="speaker-box">
-                                    <div class="speaker-img">
-                                        <img src="{{ asset('assets/images/speaker-img-02.png') }}" alt="img">
-                                        <div class="main-share">
-                                            <a class="click-me" href="javascript:;"><i class="fas fa-share-alt"></i></a>
-                                            <ul class="group-icon">
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-facebook-f"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-twitter"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-instagram"></i></a>
-                                               </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="speaker-content">
-                                        <h2>02</h2>
-                                        <div>
-                                            <h5>Solvina D Naliz</h5>
-                                            <span>Speaker</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="item">
-                                <div class="speaker-box">
-                                    <div class="speaker-img">
-                                        <img src="{{ asset('assets/images/speaker-img-03.png') }}" alt="img">
-                                        <div class="main-share">
-                                            <a class="click-me" href="javascript:;"><i class="fas fa-share-alt"></i></a>
-                                            <ul class="group-icon">
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-facebook-f"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-twitter"></i></a>
-                                               </li>
-                                               <li>
-                                                  <a href="javascript:;"><i class="fab fa-instagram"></i></a>
-                                               </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="speaker-content">
-                                        <h2>03</h2>
-                                        <div>
-                                            <h5>Michel Jain</h5>
-                                            <span>Speaker</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @endforeach
+                        @endif
                         </div>
                     </div>
                 </div>
@@ -530,7 +504,7 @@
     </div>
     <!-- gpro-end -->
     <!-- testimonial-start -->
-    <div class="testimonial-wrapper">
+    <div class="testimonial-wrapper" style="padding-bottom: 90px !important;">
         <div class="container-fluid">
             <h2 class="main-head">@lang('web/home.testimonials-title')</h2>
             <div class="testimonial-slider">
@@ -574,6 +548,22 @@
             </div>
         </div>
     </div>
+    @if(App::getLocale() == 'en')
+        <div class="testimonial-wrapper">
+            <div class="container">
+                <!-- <h2 class="main-head"></h2> -->
+                <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-8 text-center">
+                        
+                        <p style="font-size: 25px;">"In 2021, the GProCommission produced a Global Integrated Report: <br>Initiatives and Activities in the Training of Pastors Worldwide, 2016-2020," <br>documenting the follow-up from GProCongress I.</p>
+                        <p style="display: flex;justify-content: center;margin-top:20px"><a target="_blank" href="https://gprocommission.org/global-report" class="btn main-btn" style="background-color: #58595B;color: #ffffff;border: none;">Read the Global Report here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
     <br>
     <br>
     <!-- testimonial-end -->

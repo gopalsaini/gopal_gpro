@@ -57,7 +57,11 @@
             padding: 6px 9px !important;
             font-weight: 600;
         }
-        
+        .btn-outline-success:hover, .btn-outline-success:focus, .btn-outline-success:active, .btn-outline-success.active {
+            color: white !important;
+            background-color: #0e2622 !important;
+            border-color: #0e2622 !important;
+        }
         
 
     </style>

@@ -34,6 +34,8 @@ class LoginController extends Controller
             'last_name'=>$request->post('last_name'),
             'language'=>$request->post('language'),
             'email'=>$request->post('email'),
+            'phone_code'=>$request->post('phone_code'),
+            'mobile'=>$request->post('mobile'),
             'password'=>$request->post('password'),
             'password_confirmation'=>$request->post('password_confirmation'),
             'terms_and_condition'=>$request->post('terms_and_condition') == 'on' ? 1 : 0
@@ -155,8 +157,17 @@ class LoginController extends Controller
 
             if($resultData['otp_verified']=='Yes'){
 
-                Session::put('gpro_user',$resultData['token']);
-                Session::put('gpro_result',$resultData['result']);
+                if($resultData['result']['designation_id'] == '14'){
+
+                    \Session::put('gpro_exhibitor',$resultData['token']);
+                    \Session::put('gpro_result_exhibitor',$resultData['result']);
+
+                }else{
+
+                    \Session::put('gpro_user',$resultData['token']);
+                    \Session::put('gpro_result',$resultData['result']);
+                }
+                
                 
                 return response(array('message'=>$resultData['message'],'otp_verified'=>'Yes', 'token'=>$resultData['token']), $result->status);
 

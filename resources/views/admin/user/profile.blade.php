@@ -300,6 +300,7 @@
                 </div>
             </div>
         </div>
+        @if($result['designation_id'] != 3 && $result['designation_id'] != 4 && $result['designation_id'] != 15)
         <div class="col-sm-12">
             <div class="card mb-2">
                 <div class="card-body p-2">
@@ -378,6 +379,96 @@
                                             <td colspan="3"><strong>Comment :</strong> {{$result->doyouseek_postoralcomment}}</td>
                                         </tr>
                                     @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+        
+        <div class="col-sm-12">
+            <div class="card mb-2">
+                <div class="card-body p-2">
+                    <div class="card-header bg-primary p-2">
+                        <h5 class="mb-0 px-2">
+                            <button class="btn btn-link text-white collapsed" data-bs-toggle="collapse"
+                                data-bs-target="#Sponsorship" aria-expanded="false"
+                                aria-controls="collapse11"><i class="fas fa-file"></i>
+                                Sponsorship Letter</button>
+                        </h5>
+                    </div>
+                    <div class="collapse" id="Sponsorship" aria-labelledby="collapseicon2"
+                            data-bs-parent="#accordionoc" style="">
+                        <div class="table table-bordered table-hover table-responsive">
+                            <table class="table table-border table-hover table-responsive">
+                                <tbody>
+                                    @php $query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('user_id',$result->id)->first(); @endphp
+                                    @if($query)
+                                    <tr>
+                                        <td colspan="5"><strong>Given Name :</strong> {{$query->name}}</td>
+                                        <td colspan="5"><strong>Last Name :</strong> {{$query->salutation}}</td>
+                                        <td colspan="5"><strong>DOB :</strong> {{ date('d-m-Y',strtotime($query['dob'])) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5"><strong>Citizenship :</strong> {{\App\Helpers\commonHelper::getCountryNameById($query['citizenship'])}}</td>
+                                        <td colspan="5"><strong>Country :</strong> {{\App\Helpers\commonHelper::getCountryNameById($query['country_id'])}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5"><strong>Passport No :</strong> {{$query['passport_no']}}</td>
+                                        <td colspan="5"><strong>Passport Copy :</strong> 
+                                            @if($query['passport_copy'] != '')
+                                                @foreach(explode(",",rtrim($query['passport_copy'], ',')) as $key=>$img)
+                                                    <a href="{{ asset('/uploads/passport/'.$img) }}" target="_blank"> 
+                                                        <span>&nbsp; &nbsp; &nbsp; View {{$key+1}} </span>
+                                                    </a>
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5"><strong> Is this a diplomatic passport? : </strong>{{$query['diplomatic_passport']}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="5"><strong>Sponsorship :</strong> 
+                                            @php
+
+                                                if($query->sponsorship_letter){
+
+                                                    echo  '<a href="'.asset('uploads/file/'.$query->sponsorship_letter).'" target="_blank" class="btn btn-sm btn-outline-success m-1">View File</a>';
+                                                }else{
+
+                                                    echo  '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
+
+                                                }
+                                            @endphp
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Financial  :</strong></td>
+                                        <td>
+                                            @php
+                                                if($query->financial_letter){
+
+                                                $financialLetter = explode(',',$query->financial_letter);
+
+                                                echo  '<a href="'.asset('uploads/file/'.$financialLetter[0]).'" target="_blank" class="text-blue"> File 1,&nbsp; &nbsp; &nbsp;</a>
+                                                        <a href="'.asset('uploads/file/'.$financialLetter[1]).'" target="_blank" class="text-blue"> File 2</a>';
+                                                }else{
+
+                                                echo '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
+
+                                                }
+
+                                            @endphp
+
+                                        </td>
+                                            
+
+                                    </tr>
+                                    @endif
+
                                 </tbody>
                             </table>
                         </div>

@@ -29,31 +29,61 @@ class ProfileController extends Controller
  
     public function index(Request $request){
 
-       
-        $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
-       
-        $resultData=json_decode($result->content, true); 
-        $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
- 
-        if($resultData['result']['profile_submit_type'] == 'submit' || $resultData['result']['profile_submit_type'] == 'preview'  ){
-            
+        if(\Session::has('gpro_exhibitor')){
            
+            $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        
+            $resultData=json_decode($result->content, true); 
+            $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
+    
             \App\Helpers\commonHelper::setLocale();
-            return view('profile',compact('resultData','groupInfoResult'));
+            return view('exhibitors.profile',compact('resultData','groupInfoResult'));
+
 
         }else{
 
-            if($resultData['result']['spouse_confirm_token'] != ''){
+            
+            $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+       
+            $resultData=json_decode($result->content, true); 
+            $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
+    
+            if($resultData['result']['designation_id'] == 2){
 
-                return redirect('spouse-confirm-registration/'.$resultData['result']['spouse_confirm_token'])->with('gpro_success','Are you coming, too?');
+                if($resultData['result']['profile_submit_type'] == 'submit' || $resultData['result']['profile_submit_type'] == 'preview'  ){
+
+                    \App\Helpers\commonHelper::setLocale();
+
+                    $popUpModel=\App\Models\PopUpModel::where('type','1')->whereDate('expired_date','>=',date('Y-m-d'))->where('status','Approve')->first();
+
+                    return view('profile',compact('resultData','groupInfoResult','popUpModel'));
+    
+                }else{
+    
+                    if($resultData['result']['spouse_confirm_token'] != ''){
+    
+                        return redirect('spouse-confirm-registration/'.$resultData['result']['spouse_confirm_token'])->with('gpro_success','Are you coming, too?');
+    
+                    }else{
+    
+                        \App\Helpers\commonHelper::setLocale();
+
+                        $popUpModel=\App\Models\PopUpModel::where('type','1')->whereDate('expired_date','<=',date('Y-m-d'))->where('status','Approve')->first();
+
+                        return view('profile',compact('resultData','groupInfoResult','popUpModel'));
+                    }
+                    
+                }
 
             }else{
 
                 \App\Helpers\commonHelper::setLocale();
-                return view('profile',compact('resultData','groupInfoResult'));
+                $popUpModel=\App\Models\PopUpModel::where('type','1')->whereDate('expired_date','<=',date('Y-m-d'))->where('status','Approve')->first();
+                return view('profile',compact('resultData','groupInfoResult','popUpModel'));
             }
             
         }
+        
         
         
     }
@@ -80,26 +110,57 @@ class ProfileController extends Controller
     
     public function payment(Request $request){
 
-        $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        if(\Session::has('gpro_exhibitor')){
+           
+            $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
 
-        $resultData=json_decode($result->content, true); 
-       
-        if($resultData['result']['profile_status'] =='Approved'){
+            $resultData=json_decode($result->content, true); 
+        
+            if($resultData['result']['profile_status'] =='Approved'){
 
-            $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
-            
-            \App\Helpers\commonHelper::setLocale();
+                $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
+                
+                \App\Helpers\commonHelper::setLocale();
 
-            $transactions = \App\Models\Transaction::where('user_id',$resultData['result']['id'])->get();
+                $transactions = \App\Models\Transaction::where('user_id',$resultData['result']['id'])->get();
 
-            return view('payment',compact('resultData','groupInfoResult','transactions'));
+                return view('exhibitors.payment',compact('resultData','groupInfoResult','transactions'));
+
+            }else{
+
+                $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        
+                $resultData=json_decode($result->content, true); 
+                $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
+        
+                \App\Helpers\commonHelper::setLocale();
+                return view('exhibitors.profile',compact('resultData','groupInfoResult'));
+            }
+           
+
 
         }else{
 
-            \App\Helpers\commonHelper::setLocale();
-            return redirect('profile-update')->with('gpro_error',\Lang::get('web/home.Yourprofile-isunder-review'));
+            $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+
+            $resultData=json_decode($result->content, true); 
+           
+            if($resultData['result']['profile_status'] =='Approved'){
+    
+                $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
+                
+                \App\Helpers\commonHelper::setLocale();
+    
+                $transactions = \App\Models\Transaction::where('user_id',$resultData['result']['id'])->get();
+    
+                return view('payment',compact('resultData','groupInfoResult','transactions'));
+    
+            }else{
+    
+                \App\Helpers\commonHelper::setLocale();
+                return redirect('profile-update')->with('gpro_error',\Lang::get('web/home.Yourprofile-isunder-review'));
+            }
         }
-        
         
     }
 
@@ -118,10 +179,20 @@ class ProfileController extends Controller
             
             $travelInfo=json_decode($travelInfo->content, true); 
             // print_r($travelInfo); die;
-
             \App\Helpers\commonHelper::setLocale();
-            
-            return view('travel_info',compact('resultData','groupInfoResult','SpouseInfoResult','travelInfo'));
+           
+            $passportInfo = \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->first();
+            if(!$passportInfo){
+
+                return redirect('passport-info');
+
+            }else{
+
+                return view('travel_info',compact('resultData','groupInfoResult','SpouseInfoResult','travelInfo','passportInfo'));
+
+            }
+
+           
 
         }else if($resultData['result']['stage'] < 3){
 
@@ -196,7 +267,7 @@ class ProfileController extends Controller
        
         \Session::put('lang',$resultData['result']['language']);
         
-        if($resultData['result']['profile_status']=='Review'){ 
+        if($resultData['result']['profile_status']=='Review' || $resultData['result']['profile_status']=='Waiting'){ 
    
             return redirect('profile');
              
@@ -267,11 +338,20 @@ class ProfileController extends Controller
                 }
             }else{ 
     
-                $country=\App\Models\Country::get();
-                $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
-                $resultData=json_decode($result->content, true); 
-                \App\Helpers\commonHelper::setLocale();
-                return view('groupDetails',compact('resultData','country'));
+                if($resultData['result']['designation_id'] == 2){
+
+                    $country=\App\Models\Country::get();
+                    $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+                    $resultData=json_decode($result->content, true); 
+                    \App\Helpers\commonHelper::setLocale();
+                    return view('groupDetails',compact('resultData','country'));
+
+                }else{
+
+                    return redirect('profile-update');
+
+                }
+                
             }
 
         } 
@@ -616,6 +696,9 @@ class ProfileController extends Controller
         Session::forget('gpro_user');
         Session::forget('gpro_result');
 
+        Session::forget('gpro_exhibitor');
+        Session::forget('gpro_result_exhibitor');
+
         return redirect()->route('home');
 
     }
@@ -631,13 +714,14 @@ class ProfileController extends Controller
             );
               
             $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/change-password', json_encode($data));
- 
+           
             $resultData=json_decode($result->content, true);
     
             if($result->status==200){
                 
                 
                 Session::put('gpro_result', $resultData['result']);
+                Session::put('gpro_result_exhibitor', $resultData['result']);
 
                 return response(array('message'=>$resultData['message']), 200); 
     
@@ -647,7 +731,15 @@ class ProfileController extends Controller
         }
 
         \App\Helpers\commonHelper::setLocale();
-        return view('change_password');
+
+        if(\Session::has('gpro_exhibitor')){
+           
+            return view('exhibitors.change_password');
+        }else{
+            return view('change_password');
+        }
+       
+        
 
     }
 
@@ -786,17 +878,14 @@ class ProfileController extends Controller
                                 $Wallet->save();
                 
                                 $user = \App\Models\User::where('id',\Session::get('gpro_result')['id'])->first();
-
-                                $to = $user->email;
-                                $subject = 'Transaction Complete';
-                                $msg = 'Your '.$request->post('amount').' transaction has been send successfully';
-                                \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-                                \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+                                
+                                \App\Helpers\commonHelper::sendPaymentTriggeredMailSend($user->id,$request->post('amount'));
 
                                 $type = $request->post('type');
                                 
                                 $name = $user->name.' '.$user->last_name;
                                 $amount = $request->post('amount');
+                                $to = $user->email;
 
                                 $subject = '[GProCongress II Admin]  Payment Received';
                                 $msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$name.' has made Payment of&nbsp; '.$amount.' for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Payment Mode: '.$type.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team Gpro</font></span></p>';
@@ -954,7 +1043,6 @@ class ProfileController extends Controller
         
     }
 
-    
     public function travelInformationSubmit(Request $request){
 
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
@@ -1103,23 +1191,6 @@ class ProfileController extends Controller
 
     public function sponsorshipPassportInfo(Request $request){
 
-        if($request->ajax()){
-            
-            $data=array(
-                'name'=>$request->post('name'),
-                'passport_no'=>$request->post('passport_no'),
-                'dob'=>$request->post('dob'),
-                'citizenship'=>$request->post('citizenship'),
-                'country_id'=>$request->post('country_id'),
-            );
-           
-            $resultPassport=\App\Helpers\commonHelper::callAPI('userTokenpost','/sponsorship-passport-info',json_encode($data));
-            $resultDataPassport=json_decode($resultPassport->content,true); 
-            
-            return response(array('message'=>$resultDataPassport['message']),$resultPassport->status);
-
-        }
-
         $country=\App\Models\Country::select('id','name','phonecode')->get();
         $citizenship = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
     
@@ -1127,7 +1198,7 @@ class ProfileController extends Controller
         $resultData=json_decode($result->content, true); 
     
         \App\Helpers\commonHelper::setLocale();
-        $passportInfo = \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->first();
+        $passportInfo = \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->where('admin_status','!=','Decline')->first();
 
         if($passportInfo){
             return redirect('/');
@@ -1139,23 +1210,33 @@ class ProfileController extends Controller
 
     public function sponsorshipLetterApprove(Request $request){
 
-
+        
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
         $resultData=json_decode($result->content, true); 
     
+        $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
         \App\Helpers\commonHelper::setLocale();
+
+        $passportInfo = \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->where('status','!=','Pending')->first();
+        if($passportInfo){
+            return redirect('profile')->with('gpro_error','Confirmation already submitted');
+        }
+        
         $passportInfo = \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->first();
 
-		return view('sponsorship_letter_approve',compact('passportInfo'));
+       
+		return view('sponsorship_letter_approve',compact('passportInfo','groupInfoResult'));
 	}
 
 
     public function PassportInfoApprove(Request $request,$id){
 
+       
         $resultPassport=\App\Helpers\commonHelper::callAPI('userTokenget','/sponsorship-info-approve',array());
-        $resultDataPassport=json_decode($resultPassport->content,true); 
         
-        return response(array('message'=>$resultDataPassport['message']),$resultPassport->status);
+        $resultDataPassport=json_decode($resultPassport->content,true); 
+
+        return redirect('travel-information')->with('gpro_success',$resultDataPassport['message']);
 
     }
 
@@ -1169,11 +1250,86 @@ class ProfileController extends Controller
            
             $resultPassport=\App\Helpers\commonHelper::callAPI('userTokenpost','/sponsorship-info-reject',json_encode($data));
             $resultDataPassport=json_decode($resultPassport->content,true); 
-            
+
             return response(array('message'=>$resultDataPassport['message']),$resultPassport->status);
 
         }
 		
 	}
+
+    
+    public function sponsorshipLetter(Request $request){
+
+        $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        
+        $resultData=json_decode($result->content, true); 
+
+        $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
+                
+        \App\Helpers\commonHelper::setLocale();
+        return view('exhibitors.sponsorship_letter',compact('resultData','groupInfoResult'));
+
+    }
+    
+    public function QrCode(Request $request){
+
+        $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+         
+        $resultData=json_decode($result->content, true); 
+        $groupInfoResult=\App\Models\User::where('parent_id',$resultData['result']['id'])->where('added_as','Group')->first();
+        
+        \App\Helpers\commonHelper::setLocale();
+        return view('exhibitors.qrcode_stage5',compact('resultData','groupInfoResult'));
+
+    }
+
+    public function InviteUser(Request $request){
+ 
+        if($request->ajax()){
+ 
+            $data=array(
+                'name'=>$request->post('name'),  
+                'email'=>$request->post('email'),  
+                'language'=>$request->post('language'),  
+            );
+
+            $data['group_list']=[];
+           
+            $totalEmail=count($request->post('email')); 
+
+            if($totalEmail>0){
+
+                for($i=0;$i<$totalEmail;$i++){
+
+                    $data['group_list'][]=array(
+                        'name'=>$request->post('name')[$i],
+                        'email'=>$request->post('email')[$i],
+                        'language'=>$request->post('language')[$i],
+                    );
+
+                }
+
+            }
+
+            $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/invite-user', json_encode($data));
+            
+            $resultData=json_decode($result->content, true);
+            
+            if($result->status==200){
+
+                return response(array('message'=>$resultData['message']), 200); 
+
+            }else{
+                return response(array('message'=>$resultData['message']), $result->status);
+            }
+            
+        }else{ 
+
+            \App\Helpers\commonHelper::setLocale();
+            return view('invite_user');
+        }
+			
+        
+    }
 
 }

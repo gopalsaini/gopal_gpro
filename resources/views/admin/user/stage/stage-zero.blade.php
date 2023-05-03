@@ -44,11 +44,11 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> @lang('admin.stage') @lang('admin.zero') @lang('admin.'.$type) </h3>
+                <h3> @lang('admin.stage') @lang('admin.zero') {{$type}} </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.user')</li>
-                    <li class="breadcrumb-item" aria-current="page">@lang('admin.'.$type)</li>
+                    <li class="breadcrumb-item" aria-current="page">{{$type}}</li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.stage')</li>
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.zero')</li>
                 </ol>
@@ -76,6 +76,7 @@
                                     <th> @lang('admin.id') </th>
                                     <th> Name </th>
                                     <th> @lang('admin.email') </th>
+                                    <th> Mobile </th>
                                     <th> Status </th>
                                     <th> User Type </th>
                                     <th> Group Owner Name </th>
@@ -97,6 +98,7 @@
                                     <th> @lang('admin.id') </th>
                                     <th> Name </th>
                                     <th> @lang('admin.email') </th>
+                                    <th> Mobile </th>
                                     <th> Status </th>
                                     <th> User Type </th>
                                     <th> Group Owner Name </th>
@@ -212,6 +214,9 @@
                 },
                 {
                     "data": "email"
+                },
+                {
+                    "data": "mobile"
                 },
                 {
                     "data": "profile"

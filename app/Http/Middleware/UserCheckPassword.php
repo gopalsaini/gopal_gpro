@@ -18,7 +18,14 @@ class UserCheckPassword
     public function handle(Request $request, Closure $next)
     {
         
-		if(Session::get('gpro_result')['system_generated_password'] == '1'){
+		if(Session::has('gpro_result') && Session::get('gpro_result')['system_generated_password'] == '1'){
+			
+			
+			$request->session()->flash('gpro_error','Please update your password');
+			return redirect('change-password');
+
+		}elseif(Session::has('gpro_result_exhibitor') &&  Session::get('gpro_result_exhibitor')['system_generated_password'] == '1' && Session::get('gpro_result_exhibitor')['system_generated_password'] == '1'){
+			
 			
 			$request->session()->flash('gpro_error','Please update your password');
 			return redirect('change-password');

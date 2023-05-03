@@ -862,6 +862,12 @@ class PostLoginController extends Controller {
 		
 					}
 
+					if($request->user()->designation_id == 3 || $request->user()->designation_id == 4 || $request->user()->designation_id == 15){
+						$user->profile_submit_type = 'submit';
+						$user->profile_status = 'Review';
+						$user->stage = '1';
+					}
+
 
 					$user->save();
 
@@ -1916,15 +1922,18 @@ class PostLoginController extends Controller {
 					$name = $request->json()->get('name');
 					$userName = $request->user()->name.' '.$request->user()->last_name;
 
-					$msg = 'Payment link send successful';
-					$subject = 'Payment link send successful';
+					$url = '<a href="'.url('sponsor-payment-link/'.$token) .'" >click here</a>';
+
+					$msg = '<p>Dear '.$name.',&nbsp;</p><p><br></p>
+							<p>'.$userName.' has chosen you as sponsor. Thank you for sponsoring '.$userName.' to attend GProCongress II.  </p><p><br></p>
+							<p>Please '.$url.'  to make the payment.</p><p> <br></p>
+							<p>Pray with us toward multiplying the quantity and quality of pastor-trainers.</p><p> <br></p>
+							<p>Warmly,</p><p> <br></p>
+							<p>GProCongress II Team</p>';
+
+					$subject = 'Payment Requested by '.$userName;
 					
-					
-					\Mail::send('email_templates.sponsor_payments', compact('to', 'token', 'subject','name','userName'), function($message) use ($to, $subject) {
-						$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-						$message->subject($subject);
-						$message->to($to);
-					});
+					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Requested Sponsor Payment');
 					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
@@ -1951,13 +1960,11 @@ class PostLoginController extends Controller {
 											
 					}
 
-					\Mail::send('email_templates.mail', compact('to', 'token', 'subject','msg'), function($message) use ($userEmail, $subject) {
-						$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-						$message->subject($subject);
-						$message->to($userEmail);
-					});
+					\App\Helpers\commonHelper::emailSendToUser($request->user()->email, $subject, $msg);
 
-					
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id, $subject, $msg,  $subject,);
+
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Sponsor-Submitted-Payment');
 					return response(array("error"=>false, "message"=>$message, "result"=>$users->toArray()), 200);
 
@@ -1974,14 +1981,17 @@ class PostLoginController extends Controller {
 	public function fullPaymentOfflineSubmit(Request $request){
 		
 		$rules = [
-			'mode' => 'required|string|in:WU,MG,Wire,RAI',
+			'mode' => 'required|string|in:WU,MG,Wire,RIA',
 			'reference_number' => 'required',
             'amount' => 'required|numeric',
             'name' => 'required',
             'file' => 'required',
-            'country_of_sender' => 'required',
             'type' => 'required|in:Offline,Online',
 		];
+
+		if($request->post('mode') != 'Wire'){
+			$rules['country_of_sender'] = 'required';
+		}
 
 		$messages = array(
 			'mode.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mode_required'),
@@ -2003,7 +2013,7 @@ class PostLoginController extends Controller {
 				break;
 			}
 			
-			return response(array("error"=>true, 'message'=>$message), 403);
+			return response(array("error"=>true, 'message'=>$message), 200);
 			
 		}else{
 
@@ -2031,7 +2041,7 @@ class PostLoginController extends Controller {
 						$transaction->transaction_id = $transactionId;
 						$transaction->method = $request->post('type');
 						$transaction->amount = $request->post('amount');
-						$transaction->country_of_sender = $request->post('country_of_sender');
+						$transaction->country_of_sender = $request->post('country_of_sender') ?? '';
 						$transaction->name = $request->post('name');
 						$transaction->bank_transaction_id = $request->post('reference_number');
 						$transaction->status = '0';
@@ -2060,15 +2070,7 @@ class PostLoginController extends Controller {
 						$Wallet->status = 'Pending';
 						$Wallet->save();
 		
-						$to = $request->user()->email;
-						$name = $request->user()->name.' '.$request->user()->last_name;
-						$amount = $request->post('amount');
-						$subject = 'Transaction Complete';
-						$msg = 'Your '.$request->post('amount').' transaction has been send successfully';
-						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-
-						\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Offline payment added');
-						\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+						\App\Helpers\commonHelper::sendPaymentTriggeredMailSend($request->user()->id,$request->post('amount'));
 
 						$subject = '[GProCongress II Admin]  Payment Received';
 						$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Refund has been initiated for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Refund Amount : '.$amount.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
@@ -2098,7 +2100,7 @@ class PostLoginController extends Controller {
 	
 		$rules = [
             'amount' => 'required',
-			'mode' => 'required|string|in:WU,MG,Wire,RAI',
+			'mode' => 'required|string|in:WU,MG,Wire,RIA',
             'type' => 'required!in:Offline,Online',
             'reference_number' => 'required',
 		];
@@ -2518,14 +2520,12 @@ class PostLoginController extends Controller {
             'name' => 'required',
             'email' => 'required',
             'amount' => 'required',
-            'reference_number' => 'required',
 		];
 
 		$messages = array(
 			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
 			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_required'),
 			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
-			'reference_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'reference_number'),
 				
 		);
 
@@ -2545,44 +2545,27 @@ class PostLoginController extends Controller {
 
 			try {
 
-				$referenceNumberCheck = \App\Models\Transaction::where('bank_transaction_id',$request->post('reference_number'))->first();
-				if($referenceNumberCheck){
+				$Donation = new \App\Models\Donation();
+				$Donation->user_id = $request->user()->id;
+				$Donation->name = $request->json()->get('name');
+				$Donation->email = $request->json()->get('email');
+				$Donation->amount = $request->json()->get('amount');
+				$Donation->save();
 
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Transaction-already-exists');
-					return response(array("error"=>true, "message"=>$message), 403);
+				$data = \App\Helpers\commonHelper::paymentGateway($request->user()->id,$request->json()->get('amount'),3);
 
-				}else{
-
-					$Donation = new \App\Models\Donation();
-					$Donation->user_id = $request->user()->id;
-					$Donation->name = $request->json()->get('name');
-					$Donation->email = $request->json()->get('email');
-					$Donation->amount = $request->json()->get('amount');
-					$Donation->save();
-
-					$transactionId=strtotime("now").rand(11,99);
-
-					$orderId=strtotime("now").rand(11,99);
-
-					$transaction = new \App\Models\Transaction();
-					$transaction->user_id = $request->user()->id;
-					$transaction->order_id = $orderId;
-					$transaction->transaction_id = $transactionId;
-					$transaction->method = 'Online';
-					$transaction->amount = $request->get('amount');
-					$transaction->bank_transaction_id = $request->get('reference_number');
-					$transaction->status = '2';
-					$transaction->save();
-
-					$subject = 'Donation payments';
-					$msg = 'User donate payments';
-
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User donate payments');
-					
-					
-					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'payment-added-successful');
-					return response(array("error"=>false, "message"=>$message), 200);
-				}
+				$client_secret = $data['intent'];
+				$order_id = $data['order_id'];
+				$payment_intent = $data['payment_intent'];
+				
+				$subject='User Donate Amount Submited';
+				$msg='User Donate Amount Submited';
+				
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User donate payments');
+				
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'payment-added-successful');
+				return response(array("error"=>false, "message"=>$message, 'client_secret'=>$client_secret,'order_id'=>$order_id,'payment_intent'=>$payment_intent), 200);
+				
 
 			} catch (\Exception $e) {
 
@@ -3350,125 +3333,175 @@ class PostLoginController extends Controller {
 
 	public function passportInfo(Request $request){
 
+		$rules = [
+			'surname' => 'required',
+			'name' => 'required',
+			'passport_no' => 'required',
+			'dob' => 'required|date',
+			'citizenship' => 'required',
+			'country_id' => 'required',
+			'passport_copy' => 'required|array',
+			'diplomatic_passport' => 'required|in:Yes,No',
+			'passport_copy.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|min:5MB',
+		];
+
+		$messages = array(
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'), 
 			
-            $rules = [
-                'name' => 'required',
-                'passport_no' => 'required|unique:passport_infos,passport_no,'.$request->user()->id,
-                'dob' => 'required|date',
-                'citizenship' => 'required',
-                'country_id' => 'required',
-            ];
+		);
 
-            $messages = array(
-                'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'), 
-                
-            );
-
-            $validator = \Validator::make($request->json()->all(), $rules, $messages);
-            
-            if ($validator->fails()) {
-                $message = [];
-                $messages_l = json_decode(json_encode($validator->messages()), true);
-                foreach ($messages_l as $msg) {
-                    $message= $msg[0];
-                    break;
-                }
-                
-                return response(array('message'=>$message,"error" => true),403);
-                
-            }else{
-
-
-                try{
-                   
-                    $passportInfo = new \App\Models\PassportInfo;
-                    $passportInfo->name = $request->json()->get('name');
-                    $passportInfo->passport_no = $request->json()->get('passport_no');
-                    $passportInfo->dob =  $request->json()->get('dob');
-                    $passportInfo->citizenship = $request->json()->get('citizenship');
-                    $passportInfo->country_id = $request->json()->get('country_id');
-                    $passportInfo->user_id = $request->user()->id;
-                    $passportInfo->save();
-
-                    $url = '<a href="'.url('sponsorship-letter-approve').'">Click here</a>';
-					$to = $request->user()->email;
-					$subject = 'Please verify your sponsorship letter Information.';
-					$msg = '<p>Thank you for submitting your sponsorship letter information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
-
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'sponsorship information completed');
-					
-					$name = $request->user()->name.' '.$request->user()->last_name;
-
-					if($request->user()->language == 'sp'){
-
-						$subject = "Por favor, verifique su información de viaje";
-						$msg = '<p>Estimado '.$name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace: '.$url.' para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
-					
-					}elseif($request->user()->language == 'fr'){
-					
-						$subject = "Veuillez vérifier vos informations de voyage";
-						$msg = "<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien: '.$url.' pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+		$validator = \Validator::make($request->all(), $rules, $messages);
+		
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
 			
-					}elseif($request->user()->language == 'pt'){
-					
-						$subject = "Por favor verifique sua Informação de Viagem";
-						$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link: '.$url.' para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
-					
-					}else{
-					
-						$subject = 'Please verify your travel Information.';
-						$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
-											
+			return response(array('message'=>$message,"error" => true),403);
+			
+		}else{
+
+
+			try{
+
+				if(count($request->file('passport_copy'))>2){
+
+					return response(array("error" => true, "message" => 'File upload allow only 2'), 403);
+				}	
+				
+				$passportInfoData =  \App\Models\PassportInfo::where('user_id','!=',$request->user()->id)->where('passport_no',$request->post('passport_no'))->first();
+				if($passportInfoData){
+
+					return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Passport_Number_already_exists')), 403);
+				}
+
+				$passportInfo =  \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
+				if(!$passportInfo){
+
+					$passportInfo = new \App\Models\PassportInfo;
+					$passportInfo->user_id = $request->user()->id;
+
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information submit','sponsorship information submit','sponsorship information submit');
+				}else{
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information update','sponsorship information update','sponsorship information updates');
+
+				}
+
+				$passportInfo->name = $request->post('surname');
+				$passportInfo->passport_no = $request->post('passport_no');
+				$passportInfo->dob =  $request->post('dob');
+				$passportInfo->citizenship = $request->post('citizenship');
+				$passportInfo->country_id = $request->post('country_id');
+				$passportInfo->salutation = $request->post('name');
+				$passportInfo->diplomatic_passport = $request->post('diplomatic_passport');
+				$passportInfo->status = 'Pending';
+				$passportInfo->admin_status = 'Pending';
+				$passportInfo->user_confirm = $request->post('user_confirm') ? 'Yes' : 'No';
+				
+
+				$passportImage='';
+				$images = $request->file('passport_copy');
+				foreach ($images as $key=>$image) {
+					$new_name = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(1111,9999).'.'.$image->getClientOriginalExtension();
+					$image->move(public_path('/uploads/passport'),$new_name);
+					if($key != '0'){
+						$passportImage .= ',';
 					}
+					$passportImage .= $new_name;
 
-					$passportInfo = \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
+					$passportInfo->passport_copy= $passportImage;
 
-					$pdf = \PDF::loadView('email_templates.sponsorship_info_show', $passportInfo->toArray());
-					$pdf->setPaper('L');
-					$pdf->output();
-					$canvas = $pdf->getDomPDF()->getCanvas();
+				}
+
+				$passportInfo->save();
+
+				$to = $request->user()->email;
 					
-					$height = $canvas->get_height();
-					$width = $canvas->get_width();
-					$canvas->set_opacity(.2,"Multiply");
-					$canvas->page_text($width/5, $height/2, 'Draft', null,
-					70, array(0,0,0),2,2,-30);
+				if($request->user()->language == 'sp'){
 
-					$fileName = strtotime("now").rand(11,99).'.pdf';
+					$subject = "Hemos recibido la información de su pasaporte.";
+					$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$request->user()->name.' '.$request->user()->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Nuestro equipo ahora está trabajando en una carta de visa para usted, y le enviaremos la carta tan pronto como esté completa.</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""></p><p style=""></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
+				
+				}elseif($request->user()->language == 'fr'){
+				
+					$subject = "Les informations de votre passeport ont été reçues.";
+					$msg = '<div><font color="#000000"><span style="font-size: 14px;">Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Nous vous remercions de nous avoir envoyé les informations de votre passeport. Notre équipe travaille actuellement sur une lettre de visa pour vous, et nous vous l enverrons dès qu elle sera terminée.</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"></font></div><div><font color="#000000"></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Cordialement,&nbsp;</span></font></div><div><font color="#000000"><span style="font-size: 14px;">L’équipe du GProCongrès II</span></font></div><div><br></div>';
+		
+				}elseif($request->user()->language == 'pt'){
+				
+					$subject = "Assunto: Recebemos as informações de seu passaporte.";
+					$msg = '<div><div><span style="font-size: 14px;">Prezado '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Obrigada por nos enviar as informações de seu passaporte. Nossa equipe está agora trabalhando em uma carta de visa para você, lhe enviaremos quando a carta estiver pronta.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.</span></div><div></font></div><div><span style="font-size: 14px;">Atenciosamente,</span></div><div><span style="font-size: 14px;">Equipe do II CongressoGPro&nbsp;&nbsp;</span></div></div><div><br></div>';
+				
+				}else{
+				
+					$subject = 'Your passport information has been received';
+					$msg = '<p>Dear '.$request->user()->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  Our team is now working on a visa letter for you, and we will send the letter to you as soon as it is completed</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+									
+				}
 
-					$path = public_path('uploads/file/');
-					
-					$pdf->save($path . '/' . $fileName);
-					
-					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
-					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
 
-					return response(array("error" => false, "message" =>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your_submission_has_been_sent')), 200);
-					
-                }catch (\Exception $e){
-                    
-                    return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
-                
-                }
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Your passport information has been received');
+
+				return response(array("error" => false, "message" =>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your_submission_has_been_sent')), 200);
+				
+			}catch (\Exception $e){
+				
+			    return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			
+			}
 
         }
 
 	}
 
-    
-
 	public function PassportInfoApprove(Request $request){
 	
 		try{
+
 			$passportApprove= \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
 
 			$passportApprove->status='Approve';
 			
 			$passportApprove->save();
 			
-			return response(array('message'=>'Status Approved Successfully.'),200);
+
+			return response(array('message'=>'Passport confirmation approved successfully.'),200);
 				
+			$to = $request->user()->email;
+					
+			if($request->user()->language == 'sp'){
+
+				$subject = "Por favor, envíe su información de viaje para GProCongress II.";
+				$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$request->user()->name.' '.$request->user()->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Ahora que tiene su carta de visa, necesitamos obtener su información de viaje. Envíenos la información de su vuelo tan pronto como lo programe.</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
 			
+			}elseif($request->user()->language == 'fr'){
+			
+				$subject = "Veuillez soumettre vos informations de voyage pour GProCongress II.";
+				$msg = "<p>Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p><p>Maintenant que vous avez reçu votre lettre de visa, nous avons besoin de vos informations de voyage. Veuillez nous envoyer vos informations de vol dès que vous aurez programmé votre vol.</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet e-mail..&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>";
+	
+			}elseif($request->user()->language == 'pt'){
+			
+				$subject = "Por favor, envie suas informações de viagem para o GProCongress II";
+				$msg = '<p>Caro '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p><p>Agora que você tem sua carta de visto, precisamos obter suas informações de viagem. Por favor, envie-nos as informações do seu voo assim que agendar o seu voo.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
+			
+			}else{
+			
+				$subject = 'Please submit your travel information for GProCongress II';
+				$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p><p>Now that you have your visa letter, we need to get your travel information. Please send us your flight information as soon as you schedule your flight.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+								
+			}
+
+			\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+			\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Please submit your passport information for GProCongress II');
+
+
 		}catch (\Exception $e){
 			
 			return response(array("error"=>true, "message" => $e->getMessage()),200); 
@@ -3486,36 +3519,391 @@ class PostLoginController extends Controller {
 		$validator = \Validator::make($request->json()->all(), $rules);
             
 		if ($validator->fails()) {
-		$message = [];
-		$messages_l = json_decode(json_encode($validator->messages()), true);
-		foreach ($messages_l as $msg) {
-			$message= $msg[0];
-			break;
-		}
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
 		
-		return response(array('message'=>$message,"error" => true),403);
+			return response(array('message'=>$message,"error" => true),403);
 		
 	
-	}else{
+		}else{
 
-		try{
+			try{
 
-			$passportReject= \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
+				$passportReject= \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
 
-			$passportReject->status='Reject';
-			$passportReject->remark=$request->json()->get('remark');
-			
-			$passportReject->save();
-			
-			return response(array('message'=>'PassportInfo status changed successfully'),200);
+				$passportReject->status='Reject';
+				$passportReject->remark=$request->json()->get('remark');
 				
+				$passportReject->save();
+				
+				$to = $request->user()->email;
+					
+				if($request->user()->language == 'sp'){
+
+					$subject = "Su información de viaje está incompleta.";
+					$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$request->user()->name.' '.$request->user()->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">¡Nos alegramos de poder verle en el GProCongress en Ciudad de Panamá, Panamá!</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Para asistir a los delgados con la obtención de visas, necesitamos que nos envíen su información de viaje.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviar la suya.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Lamentablemente, la información que hemos recibido sobre el viaje está incompleta.&nbsp;&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Por favor, responda a este correo electrónico con la información completa de su viaje para que podamos ayudarle.&nbsp; Una vez recibida, le enviaremos un correo electrónico para confirmar que la información que hemos recibido es correcta.</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
+				
+				}elseif($request->user()->language == 'fr'){
+				
+					$subject = "Les informations sur votre voyage sont incomplètes.";
+					$msg = '<div><font color="#000000"><span style="font-size: 14px;">Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Nous sommes ravis de vous voir au GProCongrès à Panama City, au Panama !</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Pour aider les délégués à obtenir des visas, nous leur demandons de nous soumettre leurs informations de voyage.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Merci d’avoir soumis le vôtre.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Malheureusement, les informations de voyage que nous avons reçues sont incomplètes.&nbsp;&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Veuillez répondre à cet e-mail avec vos informations de voyage complètes, afin que nous puissions vous aider.&nbsp; Dès réception, nous vous enverrons un e-mail pour confirmer que les informations que nous avons reçues sont correctes.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Cordialement,&nbsp;</span></font></div><div><font color="#000000"><span style="font-size: 14px;">L’équipe du GProCongrès II</span></font></div><div><br></div>';
+		
+				}elseif($request->user()->language == 'pt'){
+				
+					$subject = "Sua informação de viagem está incompleta";
+					$msg = '<div><div><span style="font-size: 14px;">Prezado '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Nós estamos esperançosos em lhe ver no CongressoGPro na Cidade de Panamá, Panamá!</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Para ajudarmos os delegados a obter vistos, estamos solicitando que submetam sua informação de viagem a nós.</span></div><div><span style="font-size: 14px;">Agradecemos por ter submetido a sua informação</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Infelizmente, a informação de viagem que nós recebemos está incompleta.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Por favor responda este e-mail com sua informação de viagem completa, para que possamos lhe ajudar. Após o recebimento, nós lhe enviaremos um e-mail para confirmar que a informação que recebemos é correta.&nbsp;</span></div><div><span style="font-size: 14px;">Calorosamente,</span></div><div><span style="font-size: 14px;">Equipe do II CongressoGPro&nbsp;&nbsp;</span></div></div><div><br></div>';
+				
+				}else{
+				
+					$subject = 'Your requested corrections to your visa letter have been received';
+					$msg = '<p>Dear '.$request->user()->name.',&nbsp;</p><p><br></p><p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+									
+				}
+
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Your requested corrections to your visa letter have been received');
+
+				return response(array('message'=>'Passport Information declined successfully'),200);
+					
+			}catch (\Exception $e){
 			
-		}catch (\Exception $e){
-			
-			return response(array("error"=>true, "message" => $e->getMessage()),200); 
+				return response(array("error"=>true, "message" => $e->getMessage()),200); 
 			
 			}
 		}
 	
+	}
+
+	public function passportInfoDetails(Request $request) {
+		
+		$resultData = \App\Models\PassportInfo::where('user_id', $request->user()->id)->first();
+		
+		if (!$resultData) {
+			
+			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Data-not-available');
+			return response(array("error"=>true, "message" => $message), 200);
+
+		}else{
+
+			$PassportInfo=[
+				'id'=>$resultData['id'],
+				'name'=>ucfirst($resultData['salutation']),
+				'surname'=>ucfirst($resultData['name']),
+				'passport_no'=>$resultData['passport_no'],
+				'passport_copy'=>asset('uploads/passport/'.$resultData->passport_copy),
+				'dob'=>$resultData['dob'],
+				'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($resultData['citizenship']),
+				'country_id'=>\App\Helpers\commonHelper::getCountryNameById($resultData['country_id']),
+				'admin_remark'=>$resultData['admin_remark'],
+				'admin_status'=>$resultData['admin_status'],
+			];
+
+			$sponsorshipInfo=[];
+
+			if($resultData['admin_status'] == 'Approved'){
+
+				$financialLetter = explode(',',$resultData['financial_letter']);
+
+				$sponsorshipInfo=[
+					'id'=>$resultData['id'],
+					'name'=>ucfirst($resultData['salutation']),
+					'surname'=>ucfirst($resultData['name']),
+					'passport_no'=>$resultData['passport_no'],
+					'passport_copy'=>asset('uploads/passport/'.$resultData->passport_copy),
+					'dob'=>$resultData['dob'],
+					'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($resultData['citizenship']),
+					'country_id'=>\App\Helpers\commonHelper::getCountryNameById($resultData['country_id']),
+					'sponsorship_letter'=>asset('uploads/file/'.$resultData['sponsorship_letter']),
+					'financial_letter1'=>asset('uploads/file/'.$financialLetter[0]),
+					'financial_letter2'=>asset('uploads/file/'.$financialLetter[1]),
+					'remark'=>$resultData['remark'],
+					'status'=>$resultData['status'],
+				];
+			}
+
+			
+
+			return response(array("error"=>false, "message"=>'data fetche succesully', "PassportInfo"=>$PassportInfo, "sponsorshipInfo"=>$sponsorshipInfo), 200);
+
+		}
+		
+
+	}
+
+	public function InviteUser(Request $request){
+	
+		$rules['name']='required';
+		$rules['email']='required';
+		$rules['language']='required';
+		
+		$messages = array(
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_required'),
+			'language.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'language_required'), 
+			
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
+		 
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message = $msg[0];
+				break;
+			}
+			
+			return response(array("error"=>true, 'message'=>$message), 403);
+			
+		}else{
+
+			try {
+				
+				if(count($request->json()->get('group_list'))==0){
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Please-Group-Users');
+					return response(array("error"=>true, "message"=>$message), 403);
+
+				}else{
+
+					//check email address
+					$tempArr = array_unique(array_column($request->json()->get('group_list'), 'email'));
+					$uniqueGroupUsers=array_intersect_key($request->json()->get('group_list'), $tempArr);
+	
+					if(count($uniqueGroupUsers) != count($request->json()->get('group_list'))){
+
+						$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
+						return response(array( "message"=>$message), 403);
+					
+					}else{
+
+						$groupEmails = array_column($request->json()->get('group_list'), 'email'); 
+						$checkExistUsers=\App\Models\User::whereIn('email',$groupEmails)->get();
+
+						if($checkExistUsers->count()>0){
+
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
+							return response(array("message"=>$checkExistUsers[0]['email'].$message), 403);
+
+						}
+					}
+
+				}
+				
+				$users=[];
+
+				foreach($request->json()->get('group_list') as $group){
+
+					$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+					$password = substr(str_shuffle($chars),0,8);
+
+					$users[]=array(
+						'name'=>$group['name'],
+						'email'=>$group['email'],
+						'language'=>$group['language'],
+						'reg_type'=>'email',
+						'designation_id'=>'2',
+						'password'=>\Hash::make($password),
+						'otp_verified'=>'No',
+						'system_generated_password'=>'1',
+					);
+
+					
+					$to = $group['email'];
+
+					if($group['language'] == 'sp'){
+						$url = '<a href="'.url('login?lang='.$group['language']).'">aqui</a>';
+						$faq = '<a href="'.url('faq').'">aqui</a>';
+
+						$subject = "¡Su inscripción al GproCongress II ha iniciado!";
+						$msg = '<p>Estimado '.$group['name'].',</p><p>&nbsp;</p>
+								<p>'.$request->user()->name.' '.$request->user()->last_name.' ha inicado el proceso de inscripción al GproCongress II al ingresar tu nombre.</p>
+								<p>Quedamos a la espera de recibir su solicitud completa.</p>
+								<p>Por favor, utilice este enlace haga click '.$url.' para acceder, editar y completer su cuenta en cualquier momento.&nbsp;</p>
+								<p>Dirección de correo electrónico: '.$to.'<br>Contraseña: '.$password.'</p>
+								<p>Si usted desea más información sobre los criterios de admisibilidad para candidatos potenciales al congreso, antes de continuar, haga click, '.$faq.'</p>
+								<p>Para hablar con uno de los miembros de nuestro equipo, usted solo tiene que responder a este email. ¡Estamos aquí para ayudarle!&nbsp;</p>
+								<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p>
+								<p>El equipo del GProCongress II</p>';
+					
+					}elseif($group['language'] == 'fr'){
+					
+						$url = '<a href="'.url('login?lang='.$group['language']).'">aqui</a>';
+						$faq = '<a href="'.url('faq').'">cliquez ici</a>';
+
+						$subject = "Votre inscription au GProCongrès II a commencé!";
+						$msg = '<p>Cher '.$group['name'].',&nbsp;</p>
+								<p>'.$request->user()->name.' '.$request->user()->last_name.' a commencé le processus d’inscription au GProCongrès II, en soumettant votre nom!&nbsp;</p>
+								<p>Nous sommes impatients de recevoir votre demande complète. Veuillez utiliser ce lien '.$url.' pour accéder, modifier et compléter votre compte à tout moment.&nbsp;</p>
+								<p>E-mail: '.$to.'<br>Mot de passe: '.$password.'<br></p>
+								<p>Si vous souhaitez plus d’informations sur les critères d’éligibilité pour les participants potentiels au Congrès, avant de continuer,  '.$faq.'.</p>
+								<p>Pour parler à l’un des membres de notre équipe, vous pouvez simplement répondre à ce courriel. Nous sommes là pour vous aider !</p>
+								<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p>
+								<p>Cordialement,</p>
+								<p>L’équipe GProCongrès II</p>';
+					
+					}elseif($group['language'] == 'pt'){
+					
+						$url = '<a href="'.url('login?lang='.$group['language']).'">aqui</a>';
+						$faq = '<a href="'.url('faq').'">clique aqui</a>';
+
+						$subject = "A sua inscrição para o II CongressoGPro já Iniciou!";
+						$msg = '<p>Prezado '.$group['name'].',</p>
+								<p>'.$request->user()->name.' '.$request->user()->last_name.' iniciou com o processo de inscrição para o II CongressoGPro, por submeter o teu nome!&nbsp;</p>
+								<p>Nós esperamos receber a sua inscrição complete.</p>
+								<p>Por favor use este '.$url.' para aceder, editar e terminar a sua conta a qualquer momento.</p>
+								<p>Eletrónico: '.$to.'<br>Senha: '.$password.'</p>
+								<p>Se você precisa de mais informações sobre o critério de elegibilidade para participantes potenciais ao Congresso, antes de continuar,  '.$faq.'</p>
+								<p>Para falar com um dos nossos membros da equipe, você pode simplesmente responder a este e-mail. Estamos aqui para ajudar!</p>
+								<p>Ore conosco, a medida que nos esforçamos para multiplicar o número, e desenvolvemos a capacidade dos treinadores de pastores&nbsp;</p>
+								<p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+					
+					}else{
+					
+						$url = '<a href="'.url('login?lang='.$group['language']).'">link</a>';
+						$faq = '<a href="'.url('faq').'">click here</a>';
+
+						$subject = "Your registration for GProCongress II has begun!";
+						$msg = '<p>Dear '.$group['name'].',</p>
+								<p>'.$request->user()->name.' '.$request->user()->last_name.' has begun the registration process for the GProCongress II, by submitting your name!&nbsp;</p>
+								<p>We look forward to receiving your full application.</p>
+								<p>Please use this  '.$url.' to access, edit, and complete your account at any time.&nbsp;</p>
+								<p>Your registered email and password are:</p><p>Email: '.$to.'<br>Password: '.$password.'</p>
+								<p>If you want more information about the eligibility criteria for potential Congress attendees, before proceeding,  '.$faq.'.</p>
+								<p>To speak with one of our team members, you can simply respond to this email. We are here to help!</p>
+								<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p>
+								<p>Warmly,</p><p>The GProCongress II Team</p>';
+						
+					}
+
+					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Invite');
+					\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+					
+					// \App\Helpers\commonHelper::sendSMS($group['mobile']);
+
+				}
+
+				\App\Models\User::insert($users);
+
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Invitetion_send_successfully');
+				return response(array("error"=>true, "message"=>$message), 200);
+
+			} catch (\Exception $e) {
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			}
+		}
+
+    }
+
+	public function popUpModelList(Request $request){
+ 
+		try{
+
+			$Result=\App\Models\PopUpModel::whereDate('expired_date','>=',date('Y-m-d'))->where('status','Approve')->get();
+
+
+			if(empty($Result)){
+				
+				return response(array("message" => 'Result not found.','error'=>true),404); 
+			}else{
+				
+				$result=[];
+				
+				foreach($Result as $val){
+					
+					if($request->json()->get('lang') == 'fr'){
+
+						$result[]=[
+							'title'=>$val->fr_title,
+							'designation'=>$val->fr_designation
+						];
+
+					}elseif($request->json()->get('lang') == 'pt'){
+
+						$result[]=[
+							'title'=>$val->pt_title,
+							'designation'=>$val->pt_designation
+						];
+
+					}elseif($request->json()->get('lang') == 'sp'){
+
+						$result[]=[
+							'title'=>$val->sp_title,
+							'designation'=>$val->sp_designation
+						];
+						
+					}else{
+
+						$result[]=[
+							'title'=>$val->en_title,
+							'designation'=>$val->en_description
+						];
+					}
+				}
+				return response(array("message" => 'PopUp Model fetched successfully.','result'=>$result,'error'=>false),200); 
+				
+			}
+			
+		}catch (\Exception $e){
+			
+			return response(array("message" => $e->getMessage(),'error'=>true),403); 
+		
+		} 	 
+		
+	}
+
+	public function SiteSettingList(Request $request){
+ 
+		try{
+
+			$Result=\App\Models\SiteSetting::first();
+
+			if(empty($Result)){
+				
+				return response(array("message" => 'Result not found.','error'=>true),404); 
+			}else{
+				
+					if($request->json()->get('lang') == 'fr'){
+
+						$result[]=[
+							'title'=>$Result->fr_title,
+						];
+
+					}elseif($request->json()->get('lang') == 'pt'){
+
+						$result[]=[
+							'title'=>$Result->pt_title,
+						];
+
+					}elseif($request->json()->get('lang') == 'sp'){
+
+						$result[]=[
+							'title'=>$Result->sp_title,
+						];
+						
+					}else{
+
+						$result[]=[
+							'title'=>$Result->en_title,
+						];
+					}
+				return response(array("message" => 'Site Setting fetched successfully.','result'=>$result,'error'=>false),200); 
+				
+			}
+			
+		}catch (\Exception $e){
+			
+			return response(array("message" => $e->getMessage(),'error'=>true),403); 
+		
+		} 	 
+		
 	}
 }

@@ -444,7 +444,7 @@ setTimeout(() => {
             ['Credit/Debit Card', 11],
             ['PayPal', 2],
             ['Western Union', 2],
-            ['RAI', 2],
+            ['RIA', 2],
             ['Bank Wire Transfer', 7]
         ]);
 
