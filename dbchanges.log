@@ -1,0 +1,2 @@
+Sr. No| Date| Change Summary | Moved to Demo | Moved to Live
+1| 26/4/23| ALTER TABLE `users` ADD `email_reminder` ENUM('1','0') NOT NULL DEFAULT '1' AFTER `parent_spouse_stage`; | Yes | No

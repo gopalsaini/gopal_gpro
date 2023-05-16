@@ -17,6 +17,7 @@ class CreatePreRecordedVideosTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('video');
+            $table->longtext('description');
             $table->enum('status', ['0', '1'])->default(0)->comment('0=>Pending, 1=>Active');
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));

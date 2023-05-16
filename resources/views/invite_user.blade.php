@@ -41,9 +41,9 @@
                                     </div>
                                     <div class="col-lg-3">
                                         <label for="">@lang('web/group-details.email') <span>*</span></label>
-                                        <input type="text" placeholder="@lang('app.enter_email')" class="mt-2 requiredField"  name="email[]">
+                                        <input type="text" placeholder="@lang('web/app.enter_email')" class="mt-2 requiredField"  name="email[]">
                                     </div> 
-                                    <div class="col-lg-3">
+                                    <div class="col-lg-2">
                                         <label class="form-check-label">@lang('web/app.Languages') <span>*</span> </label>
                                         <div class="input-box">
                                             <select name="language[]" id="language" required class="selectLanguage">
@@ -55,6 +55,20 @@
                                         </div>
                                         
                                     </div>  
+                                    <div class="col-lg-3">
+                                        <label class="form-check-label">@lang('web/app.enter') @lang('web/help.mobile') <span>*</span> </label>
+                                        <div class="input-box d-flex">
+                                            <select class="form-control test phoneCode " name="phonecode[]" > 
+                                                <option value="" >-- @lang('web/app.select_code') --</option>
+                                                @foreach($country as $con)
+                                                    <option  value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
+                                                @endforeach
+                                            </select>
+                                            <input type="tel" name="mobile[]" placeholder="@lang('web/app.enter') @lang('web/help.mobile')" class="mt-2 requiredField ms-2" required>
+
+                                        </div>
+                                        
+                                    </div>
                                     <div class="col-lg-1">
                                         <a href="javascript:;" class="add-btn remove-btn" style="float:right;color:white;margin-top:50px">
                                             <span>

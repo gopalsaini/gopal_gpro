@@ -17,10 +17,12 @@ Route::get('/', 'HomeController@index')->name('home');
 Route::get('registration', 'HomeController@Registration')->name('registration');
 Route::get('login', 'HomeController@Registration')->name('login');
 Route::post('language','HomeController@localization')->name('language');
+Route::post('wizard-email-check','HomeController@WizardEmailCheck')->name('wizard-email-check');
 
 Route::get('get-state', "HomeController@getState");
 Route::get('map-country', "HomeController@mapCountry");
 Route::get('get-city', "HomeController@getCity");
+Route::get('visa-eligibility-wizard', "HomeController@visaEligibilityWizard");
 
 Route::get('pricing', "PricingController@index")->name('pricing');
 Route::get('donate', "HomeController@donate")->name('donate');
@@ -40,6 +42,8 @@ Route::match(['get','post'],'sponsor-payments-pay', "HomeController@sponsorPayme
 Route::match(['get','post'],'donate-payments-submit', "HomeController@donatePaymentsSubmit")->name('donate-payments-submit');
 Route::match(['get','post'],'stripe', 'HomeController@stripePost')->name('stripe.post');
 Route::match(['get','post'],'stripe/{id}', 'HomeController@stripePaymentPage')->name('stripe.page');
+
+Route::match(['get','post'],'exhibitor-payment/{token?}', "HomeController@exhibitorPaymentLink")->name('exhibitor.payment');
 
 
 Route::match(['get','post'],'spouse-confirm-registration/{token?}', "HomeController@SpouseConfirmRegistration")->name('spouse-confirm-registration');
@@ -262,6 +266,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get("get-exhibitor-user-data","Admin\UserController@getUserData");
 		Route::get("get-exhibitor-qrcode","Admin\UserController@getExhibitorQrcodeData");
 		Route::get("get-exhibitor-sponsorship","Admin\UserController@getExhibitorSponsorshipData");
+		Route::get("get-exhibitor-payment-success","Admin\UserController@getExhibitorPaymentSuccess");
 		Route::get("get-exhibitor-payment-pending","Admin\UserController@getExhibitorPaymentPending");
 		Route::post("get-group-user-data","Admin\UserController@getGroupUsersList");
 		Route::get("get-exhibitor-profile","Admin\UserController@exhibitorUserProfile");

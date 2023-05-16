@@ -38,7 +38,7 @@
                 <a href="{{ url('admin/exhibitor/user') }}" class="btn btn-outline-primary @if ($stageno == 'all') active @endif">All User</a>
                 <a href="{{ url('admin/exhibitor/payment-pending') }}" class="btn btn-outline-primary @if ($stageno == 'Payment-Pending') active @endif">Payment Pending</a>
                 <a href="{{ url('admin/exhibitor/sponsorship') }}" class="btn btn-outline-primary @if ($stageno == 'sponsorship') active @endif">Payment Paid</a>
-                <a href="{{ url('admin/exhibitor/qrcode') }}" class="btn btn-outline-primary @if ($stageno == 'qrcode') active @endif">QR Code </a>
+                <!-- <a href="{{ url('admin/exhibitor/qrcode') }}" class="btn btn-outline-primary @if ($stageno == 'qrcode') active @endif">QR Code </a> -->
                 
             </div>
         </div>
@@ -61,9 +61,6 @@
                                     <th> @lang('admin.mobile') </th>
                                     <th> Status </th>
                                     <th> Payment </th>
-                                    <th> User Type </th>
-                                    <th> Group Owner Name </th>
-                                    <th> Spouse Name </th>
                                     <!-- <th> @lang('admin.status') </th> -->
                                     <th> @lang('admin.action') </th>
                                 </tr>
@@ -83,9 +80,6 @@
                                     <th> @lang('admin.mobile') </th>
                                     <th> Status </th>
                                     <th> Payment </th>
-                                    <th> User Type </th>
-                                    <th> Group Owner Name </th>
-                                    <th> Spouse Name </th>
                                     <!-- <th> @lang('admin.status') </th> -->
                                     <th> @lang('admin.action') </th>
                                 </tr>
@@ -163,15 +157,6 @@
                 },
                 {
                     "data": "payment"
-                },
-                {
-                    "data": "user_type"
-                },
-                {
-                    "data": "group_owner_name"
-                },
-                {
-                    "data": "spouse_name"
                 },
                 {
                     "data": "action"

@@ -17,10 +17,10 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> Sponsorship Letter </h3>
+                <h3> Payment Success </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Sponsorship Letter</li>
+                    <li class="breadcrumb-item" aria-current="page">Payment Success</li>
                 </ol>
             </div>
             <div class="col-sm-6">
@@ -38,15 +38,13 @@
                 <a href="{{ url('admin/exhibitor/user') }}" class="btn btn-outline-primary @if ($stageno == 'all') active @endif">All User</a>
                 <a href="{{ url('admin/exhibitor/payment-pending') }}" class="btn btn-outline-primary @if ($stageno == 'Payment-Pending') active @endif">Payment Pending</a>
                 <a href="{{ url('admin/exhibitor/sponsorship') }}" class="btn btn-outline-primary @if ($stageno == 'sponsorship') active @endif">Payment Paid</a>
-                <a href="{{ url('admin/exhibitor/qrcode') }}" class="btn btn-outline-primary @if ($stageno == 'qrcode') active @endif">QR Code </a>
+                <!-- <a href="{{ url('admin/exhibitor/qrcode') }}" class="btn btn-outline-primary @if ($stageno == 'qrcode') active @endif">QR Code </a> -->
                 
             </div>
         </div>
         <div class="col-sm-12">
             <div class="card">
-                <div class="card-header">
-                    <h5>Sponsorship Letter</h5>
-                </div>
+                
                 <div class="card-body">
                     <input type="text" name="email" class="form-control searchEmail " placeholder="Search ...">
                     <br>
@@ -59,13 +57,11 @@
                                     <th> @lang('admin.name') </th>
                                     <th> @lang('admin.email') </th>
                                     <th> @lang('admin.mobile') </th>
+                                    <th> Citizenship </th>
+                                    <th> Business Name </th>
+                                    <!-- <th> Identification Number </th> -->
                                     <th> Status </th>
                                     <th> Payment </th>
-                                    <th> Sponsorship </th>
-                                    <th> Financial Letter </th>
-                                    <th> User Type </th>
-                                    <th> Group Owner Name </th>
-                                    <th> Spouse Name </th>
                                     <!-- <th> @lang('admin.status') </th> -->
                                     <th> @lang('admin.action') </th>
                                 </tr>
@@ -83,13 +79,11 @@
                                     <th> @lang('admin.name') </th>
                                     <th> @lang('admin.email') </th>
                                     <th> @lang('admin.mobile') </th>
+                                    <th> Citizenship </th>
+                                    <th> Business Name </th>
+                                    <!-- <th> Identification Number </th>  -->
                                     <th> Status </th>
                                     <th> Payment </th>
-                                    <th> Sponsorship </th>
-                                    <th> Financial Letter </th>
-                                    <th> User Type </th>
-                                    <th> Group Owner Name </th>
-                                    <th> Spouse Name </th>
                                     <!-- <th> @lang('admin.status') </th> -->
                                     <th> @lang('admin.action') </th>
                                 </tr>
@@ -117,7 +111,7 @@
             "ordering": false,
 
             "ajax": {
-                "url": "{{ url('admin/exhibitor/get-exhibitor-sponsorship') }}",
+                "url": "{{ url('admin/exhibitor/get-exhibitor-payment-success') }}",
                 "dataType": "json",
                 "async": false,
                 "type": "get",
@@ -163,25 +157,19 @@
                     "data": "mobile"
                 },
                 {
-                    "data": "status"
-                },
-                {
-                    "data": "payment"
+                    "data": "Citizenship"
                 },
                 {
                     "data": "sponsorship"
                 },
+                // {
+                //     "data": "financial"
+                // },
                 {
-                    "data": "financial"
+                    "data": "status"
                 },
                 {
-                    "data": "user_type"
-                },
-                {
-                    "data": "group_owner_name"
-                },
-                {
-                    "data": "spouse_name"
+                    "data": "payment"
                 },
                 {
                     "data": "action"

@@ -66,6 +66,7 @@ Route::group([
     Route::get('sponsorship-info-approve', "API\PostLoginController@PassportInfoApprove");
     Route::post('sponsorship-info-reject', "API\PostLoginController@PassportInfoReject");
     Route::post("invite-user","API\PostLoginController@InviteUser");
+    Route::post("mobile-invite-user","API\PostLoginController@MobileInviteUser");
 
 
 });
@@ -112,7 +113,7 @@ Route::any("send-early-bird-reminder-mail","API\PreLoginController@sendEarlyBird
 Route::any("spouse-reject-action-cron","API\PreLoginController@SpouseRejectActionCron");
 Route::any("setdateandSpouseReminder","API\PreLoginController@setdateandSpouseReminder");
 
-// Route::any("send-early-bird-reminder-first-mail","API\PreLoginController@sendEarlyBirdReminderFirstMail");
+Route::any("send-early-bird-reminder-new-mail","API\PreLoginController@sendEarlyBirdReminderNewEmail");
 
 
 
@@ -124,6 +125,8 @@ Route::get("pre-recorded-video-list","API\PreLoginController@PreRecordedVideoLis
 Route::get('get-popup-model', 'API\PostLoginController@popUpModelList');
 Route::get('get-site-setting', 'API\PostLoginController@SiteSettingList');
 Route::get('get-user-profile', 'API\PreLoginController@userProfile');
+Route::get('get-total-member-for-community', 'API\PreLoginController@getTotalMemberForCommunity');
+Route::get('sendcheckUserDetailsPendingAmount', 'API\PreLoginController@sendcheckUserDetailsPendingAmount');
 
 
 

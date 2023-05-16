@@ -27,5 +27,8 @@ return [
     'early-bird-cost' => "INSCRIPTION ANTICIPÉE",
     'deluxe-room-early-bird' => 'LES DEUX CONJOINTS SONT FORMATEURS | CHAMBRE DELUXE (INSCRIPTION ANTICIPÉE)',
     'deluxe-room-after-bird' => 'LES DEUX CONJOINTS SONT FORMATEURS | CHAMBRE DELUXE (NON INSCRIPTION ANTICIPÉE)',
-    
+    'early-bird-registration-ends-may' => "L'inscription anticipée prend fin le 31 mai (doit être payée en totalité avant cette date)",
+    'regular-registration-ends-on-august' => "L'inscription régulière prend fin le 31 août (doit être payée en totalité avant cette date)",
+    'no-registration-or-payment-will-be-accepted-after-october' => 'Aucune inscription ou paiement ne sera accepté après le 13 octobre',
+
 ];

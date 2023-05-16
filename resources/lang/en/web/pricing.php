@@ -26,6 +26,9 @@ return [
     'early-bird-cost' => 'EARLY BIRD COST',
     'deluxe-room-early-bird' => 'BOTH SPOUSES ARE TRAINERS | DELUXE ROOM ',
     'deluxe-room-after-bird' => 'BOTH SPOUSES ARE TRAINERS | DELUXE ROOM ',
+    'early-bird-registration-ends-may' => 'Early Bird registration ends May 31 (must be paid in full by that date)',
+    'regular-registration-ends-on-august' => 'Regular registration ends on August 31 (must be paid in full by that date)',
+    'no-registration-or-payment-will-be-accepted-after-october' => 'No registration or payment will be accepted after October 13',
 
 
 ];

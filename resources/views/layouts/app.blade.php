@@ -78,10 +78,9 @@
         .marq-link marquee a{
             color: #58595b;
         }
-        footer {
-           
-           padding-top: 354px !important;
-       }
+        .testimonial-wrapper .testimonial-slider {
+             margin-bottom: 100px !important;
+        }
     </style>
 
     @stack('custom_css')
@@ -126,17 +125,44 @@
                         @else
                         <li><a href="{{ url('groupinfo-update') }}">@lang('web/app.myprofile')</a></li>
                         @endif
-                        <li><a href="{{ url('/#contact-us') }}">@lang('web/app.contactus')</a></li>
+                        <li><a href="{{ route('pricing') }}" class="text-white" style="padding: 10px;font-size: 18px;">@lang('web/app.pricing')</a></li>
+                                
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                About
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                                <li><a href="{{ url('/#contact-us') }}" class="text-white" style="padding: 10px;font-size: 18px;">@lang('web/app.contactus')</a></li>
+                                <li><a href="{{ route('help') }}" class="text-white" style="padding: 10px;font-size: 18px;">@lang('web/app.help')</a></li>
+                            </ul>
+                        </li>
+                        @php 
+                            $totalPendingAmount = '';
 
-                        <!-- <li><a target="_blank" href="{{ url('exhibitor-index') }}">Exhibitor</a></li> -->
-                        <li><a href="{{ route('pricing') }}">@lang('web/app.pricing')</a></li>
-                        <li><a href="{{ route('help') }}">@lang('web/app.help')</a></li>
-                        <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
-                        @if(\Session::has('gpro_user'))
-                            @php $tokens = "http://127.0.0.1:8000/community?token=".\Session::get('gpro_user');  @endphp
-                        <li><a  href="{{$tokens}}">Community</a></li>
-                           
+                            $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+                            $resultData=json_decode($result->content, true); 
+                            if(isset($resultData['result'])){
+                                $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], true);
+
+                            }
+                        
+                        @endphp
+                        @if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0)
+
+                        
+                            @if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess())
+                                <li><a target="_blank" href="{{ url('exhibitor-index') }}">Exhibitor</a></li>
+                            @endif
+
                         @endif
+                        
+                        
+                        <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
+                        <!-- @if(\Session::has('gpro_user'))
+                            @php $tokens = "http://127.0.0.1:8000/community?token=".\Session::get('gpro_user');  @endphp
+                            <li><a  href="{{$tokens}}">Community</a></li>
+                           
+                        @endif -->
 
                     </ul>
                 </div>
@@ -507,7 +533,6 @@
                               <a href="{{ route('attend-the-congress') }}" class="main-btn">Why should I attend the Congress?</a>
                             @endif
                             </div>
-                            <p>Read the compelling reasons here</p>
                         </div>
                     </div>
                     
@@ -547,6 +572,18 @@
                     @endif
                     <li>
                         <a href="{{ route('faq') }}">@lang('web/app.FAQ')</a>
+                    </li>
+                    <li>
+
+                            @if(App::getLocale() == 'pt')
+                              <a href="{{ route('attend-the-congress') }}" >Compelling Reasons</a>
+                            @elseif(App::getLocale() == 'sp')
+                              <a href="{{ route('attend-the-congress') }}" >Compelling Reasons</a>
+                            @elseif(App::getLocale() == 'fr')
+                              <a href="{{ route('attend-the-congress') }}" >Compelling Reasons</a>
+                            @else
+                              <a href="{{ route('attend-the-congress') }}" >Compelling Reasons</a>
+                            @endif
                     </li>
                 </ul>
             </div>

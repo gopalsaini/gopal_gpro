@@ -28,6 +28,9 @@
         background-color: #ffcd34;
         border-color: #ffcd34;
     }
+    .list-group-item+.list-group-item {
+        border-top-width: 1px !important;
+    }
 </style>
 @endpush
 
@@ -66,6 +69,7 @@
                             <div class="list-group flex-row text-center" id="list-tab" role="tablist">
                                 <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
                                 <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
+                                <!-- <a class="list-group-item list-group-item-action" id="list-registration-list" data-bs-toggle="list" href="#list-registration" role="tab" aria-controls="list-registration">Late Registration ends on October 13</a> -->
                             </div>
                         </div>
                         <div class="col-sm-12">
@@ -89,6 +93,7 @@
                                             <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WEB">0</span></span>
                                         </li>
                                     </ul>
+                                    <!-- <p style="color:red"> @lang('web/pricing.early-bird-registration-ends-may')  </p> -->
                                 </div>
                                 <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
                                     <ul>
@@ -109,6 +114,29 @@
                                             <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WOEB">0</span></span>
                                         </li>
                                     </ul>
+                                    <!-- <p style="color:red"> @lang('web/pricing.regular-registration-ends-on-august')  </p> -->
+                              
+                                </div>
+                                 <div class="tab-pane fade" id="list-registration" role="tabpanel" aria-labelledby="list-registration-list">
+                                    <ul>
+                                        <li>
+                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB-registration">0</span></span>
+                                        </li>
+                                        <li>
+                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB-registration">0</span></span>
+                                        </li>
+                                        <li>
+                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.deluxe-room-early-bird')</p>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-after-WOEB-registration">0</span></span>
+                                        </li>
+                                        <li>
+                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_spouse_trainer')</p>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WOEB-registration">0</span></span>
+                                        </li>
+                                    </ul>
+                                    <!-- <p style="color:red"> @lang('web/pricing.no-registration-or-payment-will-be-accepted-after-october') </p> -->
                                 </div>
                             </div>
                         </div>
@@ -185,7 +213,17 @@
                     $('.detail-price-wrap').find('.single-trainer-WOEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))));
                     $('.detail-price-wrap').find('.early-bird').html(Math.trunc(filter[0].early_bird_cost));
                     $('.detail-price-wrap').find('.trainers-early').html(Math.trunc(filter[0].both_are_trainers_deluxe_room_early_bird));
-                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(Math.trunc(filter[0].both_are_trainers_deluxe_room_after_early_bird));
+                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(Math.trunc(filter[0].
+                    both_are_trainers_deluxe_room_after_early_bird));
+
+                    
+                    $('.detail-price-wrap').find('.twin-sharing-WOEB-registration').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room)+parseInt(100));
+                    $('.detail-price-wrap').find('.single-room-WOEB-registration').html(SingleRoomWOEB+parseInt(100));
+                    $('.detail-price-wrap').find('.trainers-after-WOEB-registration').html(Math.trunc(filter[0].
+                    both_are_trainers_deluxe_room_after_early_bird)+parseInt(100));
+                    $('.detail-price-wrap').find('.single-trainer-WOEB-registration').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1350))));
+
+                    
                 } else {
                     $('.detail-price-wrap').find('.price, .twin-sharing, .early-bird, .trainers-early, .trainers-after').html('0');
                 }

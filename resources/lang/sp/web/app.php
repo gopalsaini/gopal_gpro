@@ -103,4 +103,15 @@ return [
     'Day' => 'Day',
     'select_code' => "Seleccione Código",
 
+    //exhibitor
+    'business_name' => "Organization Name",
+    'business_number' => "Business Identification Number",
+    'Website' => "Business Website",
+    'approval_and_agree_to' => "I agree to Pay $800 on approval and Agree to",
+    'exhibitor_policy' => "Política de exhibidores",
+    'exhibitors_registration' => "Exhibitor Registration",
+    'exhibitor_portal' => "Portal del Exhibidor",
+    'Optional' => "Optional",
+    'become_exhibitor' => "Cómo convertirse en Exhibidor",
+
 ];

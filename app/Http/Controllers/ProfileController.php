@@ -1291,6 +1291,8 @@ class ProfileController extends Controller
                 'name'=>$request->post('name'),  
                 'email'=>$request->post('email'),  
                 'language'=>$request->post('language'),  
+                'phone_code'=>$request->post('phonecode'),  
+                'mobile'=>$request->post('mobile'),  
             );
 
             $data['group_list']=[];
@@ -1305,6 +1307,8 @@ class ProfileController extends Controller
                         'name'=>$request->post('name')[$i],
                         'email'=>$request->post('email')[$i],
                         'language'=>$request->post('language')[$i],
+                        'phone_code'=>$request->post('phonecode')[$i],
+                        'mobile'=>$request->post('mobile')[$i],
                     );
 
                 }
@@ -1325,8 +1329,10 @@ class ProfileController extends Controller
             
         }else{ 
 
+            $country=\App\Models\Country::select('id','name','phonecode')->get();
+
             \App\Helpers\commonHelper::setLocale();
-            return view('invite_user');
+            return view('invite_user',compact('country'));
         }
 			
         

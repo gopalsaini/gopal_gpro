@@ -1372,7 +1372,6 @@ class commonHelper{
 		
 	}
 
-	
     public static function userWithdrawalBalance($userId){
 		
 		return \App\Models\Wallet::select('wallets.*')
@@ -1407,7 +1406,6 @@ class commonHelper{
 		return $confirmBalance-$withdrawalBalance;
 	}
 
-
 	public static function sendNotificationAndUserHistory($userId,$title,$message,$action,$actionId='0'){
 		
 		$data=new \App\Models\Notification();
@@ -1423,7 +1421,6 @@ class commonHelper{
 		$UserHistory->save();
 	}
 
-	
 	public static function getCategoryName($id){
 		
 		$nameResult=\App\Models\Category::where('id',$id)->first();
@@ -1436,7 +1433,6 @@ class commonHelper{
 		
 	}
 
-	
 	public static function getFaqCategoryName($id,$lang){
 		
 		$nameResult=\App\Models\Category::where('id',$id)->first();
@@ -1724,6 +1720,7 @@ class commonHelper{
 				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
+				'mode_in'=> 'This payment type not support',
 				
 			);
 
@@ -1938,6 +1935,7 @@ class commonHelper{
 				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
+				'mode_in'=> 'This payment type not support',
 				
 			);
 
@@ -2149,6 +2147,7 @@ class commonHelper{
 				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
+				'mode_in'=> 'This payment type not support',
 
 				
 			);
@@ -2358,6 +2357,7 @@ class commonHelper{
 				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
+				'mode_in'=> 'This payment type not support',
 				
 				
 	
@@ -2421,7 +2421,7 @@ class commonHelper{
 
 				$subject = 'Pago recibido. ¡Gracias!';
 				$msg = '<p>Estimado  '.$result->name.' '.$result->last_name.' ,&nbsp;</p><p><br></p>
-						<p>Se ha recibido la cantidad de $'.$result->amount.' en su cuenta.  </p><p><br></p>
+						<p>Se ha recibido la cantidad de $'.$amount.' en su cuenta.  </p><p><br></p>
 						<p>Gracias por hacer este pago.</p><p> <br></p>
 						<p>Le notificaremos tan pronto como el pago sea aprobado en nuestro sistema. Hasta entonces, este pago se reflejará como Pago en proceso.</p><p> <br></p>
 						<p>Aquí tiene un resumen actual del estado de su pago:</p>
@@ -2552,7 +2552,6 @@ class commonHelper{
 
 	}
 
-	
 	public static function sendSponsorPaymentTriggeredToUserMail($id,$amount,$sponsorName) {
 		
 		$result = \App\Models\User::where('id',$id)->first();
@@ -2636,7 +2635,65 @@ class commonHelper{
 
 	}
 
-	
+	public static function sendExhibitorsPaymentTriggeredToUserMail($id,$amount,$name) {
+		
+		$result = \App\Models\User::where('id',$id)->first();
+		if($result){
+
+			if($result->language == 'sp'){
+
+				$subject = '¡Su pago ha sido recibido!';
+				$msg = '<p>Estimado  '.$name.',</p>
+				<p>Hemos recibido un pago suyo por valor de 800 USD.  Gracias por el pago.  El importe correspondiente a su participación como exhibidor en el GProCongress II ha sido pagado en su totalidad.</p>
+				<p>Adjuntamos a este correo electrónico una carta de patrocinio para que usted la entregue a quienes vengan de su organización a fin de ayudarlos a obtener sus visas para viajar a Panamá.</p>
+				<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+				<p><i>Ore con nosotros para que se multiplique la cantidad y calidad de capacitadores de pastores.</i></p>
+				<p>Cordialmente,</p>
+				<p>Equipo GProCongress II</p>';
+
+			}elseif($result->language == 'fr'){
+			
+				$subject = 'Votre paiement a été reçu!';
+				$msg = '<p>Cher  '.$name.',</p>
+				<p>Un paiement de $'.$amount.'. a été reçu de votre part.  Nous vous remercions pour votre paiement.  Votre compte exposant GProCongress II a maintenant été payé en totalité.</p>
+				<p>Nous joignons à cet e-mail une lettre de parrainage, que vous pouvez donner à quiconque venant de votre organisation, pour les aider à obtenir leurs visas pour voyager au Panama.</p>
+				<p>Si vous avez des questions, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à ce courriel.</p>
+				<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
+				<p>Cordialement,</p>
+				<p>L’équipe GProCongress II</p>';
+
+			}elseif($result->language == 'pt'){
+			
+				$subject = 'Seu pagamento foi recebido!';
+				$msg = '<p>Caro '.$name.',</p>
+				<p>Um pagamento foi recebido de você no valor de $'.$amount.'. Obrigado por seu pagamento. Sua conta de expositor do GProCongresso II foi paga integralmente.</p>
+				<p>Estamos anexando a este e-mail uma carta de patrocínio, para você entregar a quem vier de sua organização, para auxiliá-los na obtenção de seus vistos para viajar ao Panamá</p>
+				<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, basta responder a este e-mail.</p>
+				<p><i>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</i></p>
+				<p>Calorosamente,</p>
+				<p>Equipe GProCongresso II</p>';
+
+			}else{
+			
+				$subject = 'Your payment has been received!';
+				$msg = '<p>Dear '.$name.',</p>
+				<p>A payment has been received from you in the amount of $'.$amount.'.  Thank you for your payment.  Your GProCongress II exhibitor account has now been paid in full.</p>
+				<p>We are attaching to this email a sponsorship letter, for you to give to whoever is coming from your organization, to assist them in getting their visas for travel to Panama.</p>
+				<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
+				<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
+				<p>Warmly,</p>
+				<p>The GProCongress II Team</p>';
+
+			}
+
+			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg,  $subject,);
+		}		
+
+	}
+
 	public static function sendSponsorPaymentApprovedToUserMail($id,$amount,$type,$order_id) {
 		
 		$result = \App\Models\User::where('id',$id)->first();
@@ -3170,23 +3227,74 @@ class commonHelper{
 
 		$to = $result->email;
 		$website = '<a href="'.url('/payment').'">website</a>';
+				
+		if($result){
 
-		
-		$subject = 'REMINDER – Please make your GProCongress II payment today.';
-		$msg = '<p>Dear '.$result->name.' '.$result->last_name.',&nbsp;</p>
-				<p>Payment for your attendance as an Exhibitor at GProCongress II is now due in full, but we have not yet received your payment.  Please make your payment as soon as possible.</p>
-				<p>Please follow the instructions listed below to make your payment. You may pay your fees on our '.$website.'. Online payment using credit card – you can pay your fees using any major credit card.</p>
+			if($result->language == 'sp'){
+
+				$subject = 'RECORDATORIO: Por favor, realice hoy el pago de su inscripción como exhibidor en el GProCongress II.';
+				$msg = '<p>Estimado  '.$result->name.' '.$result->last_name.',&nbsp;</p>
+				<p>Su pago de $800 USD por su asistencia como Exhibidor en el GProCongress II vence ahora en su totalidad, pero aún no hemos recibido su pago. Por favor, realice su pago hoy.</p>
+				<p>Le recordamos que los exhibidores se eligen por orden de llegada, “primero en pagar, primero en entrar”. En consecuencia, si espera demasiado para realizar el pago, podría quedar fuera del Congreso como exhibidor, debido a que todos los cupos de exhibidores ya podrían estar llenos.</p>
+				<p>Puede pagar su tarifa de exhibición de $800 USD en nuestro sitio web '.$website.', o en nuestra aplicación (ENLACE), usando cualquier tarjeta de crédito permitida.</p>
+				<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+				<p><i>Ore con nosotros para que se multiplique la cantidad y calidad de capacitadores de pastores.<i></p>
+				<p>Cordialmente,</p>
+				<p>&nbsp;Equipo GProCongress II</p>';
+
+			}elseif($result->language == 'fr'){
+			
+				$subject = 'RAPPEL – Veuillez payer vos frais d’exposition GProCongress II aujourd’hui.';
+				$msg = '<p>Cher  '.$result->name.' '.$result->last_name.',&nbsp;</p>
+				<p>Votre paiement de 800 USD pour votre participation en tant qu’exposant au GProCongress II est maintenant dû en totalité, mais nous n’avons pas encore reçu votre paiement.  Veuillez effectuer votre paiement dès aujourd’hui.</p>
+				<p>Nous vous rappelons que les exposants sont choisis selon le principe du « premier à payer, premier arrivé ».  Par conséquent, si vous attendez trop longtemps pour effectuer le paiement, vous pourriez être exclu du Congrès en tant qu’exposant, car tous les créneaux d’exposants pourraient déjà être pris.</p>
+				<p>Vous pouvez payer vos frais d’exposition de 800 USD sur notre site Web '.$website.'. ou sur notre application (LIEN), en utilisant n’importe quelle carte de crédit majeure. </p>
+				<p>Si vous avez des questions sur votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à ce courriel.</p>
+				<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.<i></p>
+				<p>Cordialement,</p>
+				<p>&nbsp;L’équipe GProCongress II</p>';
+
+			}elseif($result->language == 'pt'){
+			
+				$subject = 'Assunto – LEMBRETE – Por favor, pague sua taxa de exibição do GProCongresso II hoje';
+				$msg = '<p>Caro  '.$result->name.' '.$result->last_name.',&nbsp;</p>
+				<p>Seu pagamento de $800 USD por sua participação como Expositor no GProCongresso II está vencido integralmente, mas ainda não recebemos seu pagamento. Por favor, faça seu pagamento hoje.</p>
+				<p>Lembramos que os expositores são escolhidos na base do “primeiro a pagar, primeiro a chegar”. Assim, se você esperar muito para efetuar o pagamento, poderá ficar de fora do Congresso como expositor, pois todas as vagas de expositor já poderão estar preenchidas.</p>
+				<p>Você pode pagar sua taxa de exibição de $ 800 USD em nosso site '.$website.'. ou em nosso aplicativo (LINK), usando qualquer cartão de crédito.</p>
+				<p>Se você tiver alguma dúvida sobre como efetuar seu pagamento ou se precisar falar com um dos membros de nossa equipe, basta responder a este e-mail.</p>
+				<p><i>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.<i></p>
+				<p>Calorosamente,</p>
+				<p>&nbsp;Equipe GProCongresso II</p>';
+
+			}else{
+			
+				$subject = 'REMINDER – Please pay your GProCongress II exhibition fee today.';
+				$msg = '<p>Dear '.$result->name.' '.$result->last_name.',&nbsp;</p>
+				<p>Your payment of $800 USD for your attendance as an Exhibitor at GProCongress II is now due in full, but we have not yet received your payment.  Please make your payment today.</p>
+				<p>We would remind you that exhibitors are chosen on a “first pay, first come” basis.  Accordingly, if you wait too long to make payment, you could be left out of the Congress as an exhibitor, because all exhibitor slots could already be full.</p>
+				<p>You may pay your $800 USD exhibition fee on our website '.$website.'. or on our app (LINK), using any major credit card.</p>
 				<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
-				<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.<i></p>
+				<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers<i></p>
 				<p>Warmly,</p>
 				<p>&nbsp;The GProCongress II Team</p>';
+
+			}
+			\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+
+			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg, 'REMINDER – Please make your GProCongress II payment today.');
+	
+		}
+	}
+
+	public static function countExhibitorPaymentSuccess(){
 		
-		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-
-		\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
-		\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg, 'REMINDER – Please make your GProCongress II payment today.');
-					
-
+		$result = \App\Models\Exhibitors::where('payment_status','Success')->count();
+		if($result <= 10){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 }

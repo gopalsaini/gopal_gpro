@@ -218,7 +218,7 @@
                                                         <p>@lang('web/payment.western-union_description')</p>
                                                     </div>
                                                 </div>
-                                                <div class="card-box dropdown-box">
+                                                <!-- <div class="card-box dropdown-box">
                                                     <div class="card-icon">
                                                         <span>
                                                             <svg width="37" height="37" viewBox="0 0 37 37" fill="none"
@@ -245,7 +245,7 @@
                                                         <h6>@lang('web/home.money-gram')</h6>
                                                         <p>@lang('web/payment.money-gram_description')</p>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                                 <!-- <div class="card-box dropdown-box">
                                                     <div class="card-icon">
                                                         <span>
@@ -633,7 +633,7 @@
                                     <select name="mode" class="mt-2 form-control addInFullAmountPaymentField" required>
                                         <option value="">--@lang('web/payment.transfer-type')--</option>
                                         <option value="Wire">Wire Transfer</option>
-                                        <option value="RIA">RIA</option>
+                                        <!-- <option value="RIA">RIA</option> -->
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>
@@ -717,7 +717,7 @@
                                     <select name="mode" class="mt-2 form-control addPaymentTypeInPartial" required>
                                         <option value="">--@lang('web/ministry-details.select')--</option>
                                         <option value="Wire">Wire Transfer</option>
-                                        <option value="RIA">RIA</option>
+                                        <!-- <option value="RIA">RIA</option> -->
                                         <option value="WU">Western Union</option>
                                     </select>
                                 </div>

@@ -67,7 +67,7 @@
                 <a href="{{ url('admin/exhibitor/user') }}" class="btn btn-outline-primary @if ($stageno == 'all') active @endif">All User</a>
                 <a href="{{ url('admin/exhibitor/payment-pending') }}" class="btn btn-outline-primary @if ($stageno == 'Payment-Pending') active @endif">Payment Pending</a>
                 <a href="{{ url('admin/exhibitor/sponsorship') }}" class="btn btn-outline-primary @if ($stageno == 'sponsorship') active @endif">Payment Paid</a>
-                <a href="{{ url('admin/exhibitor/qrcode') }}" class="btn btn-outline-primary @if ($stageno == 'qrcode') active @endif">QR Code </a>
+                <!-- <a href="{{ url('admin/exhibitor/qrcode') }}" class="btn btn-outline-primary @if ($stageno == 'qrcode') active @endif">QR Code </a> -->
                 
             </div>
         </div>
@@ -94,10 +94,10 @@
                                     <th> Email </th>
                                     <th> Citizenship </th> 
                                     <th> Business Name </th>  
-                                    <th> Identification Number </th>   
+                                    <!-- <th> Identification Number </th>    -->
                                     <th> Mobile  </th>   
-                                    <th> Passport Number </th>   
-                                    <th> Passport Copy </th>   
+                                    <th> Website </th>   
+                                    <th> Comment </th>   
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </thead>
@@ -115,10 +115,10 @@
                                     <th> Email </th>
                                     <th> Citizenship </th> 
                                     <th> Business Name </th>  
-                                    <th> Identification Number </th>   
+                                    <!-- <th> Identification Number </th>    -->
                                     <th> Mobile  </th>   
-                                    <th> Passport Number </th>   
-                                    <th> Passport Copy </th>     
+                                    <th> Website </th>   
+                                    <th> Comment </th>     
                                     <th> @lang('admin.action') </th>
                                 </tr>
                             </tfoot>
@@ -137,7 +137,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header px-3">
-                <h5 class="modal-title" id="exampleModalLongTitle">User Profile Status</h5>
+                <h5 class="modal-title" id="">Exhibitor information</h5>
                 <button type="button" class="close" onclick="modalHide()" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -237,9 +237,9 @@ $(document).ready(function() {
             {
                 "data": "stage2"
             },
-            {
-                "data": "stage3"
-            },
+            // {
+            //     "data": "stage3"
+            // },
             {
                 "data": "stage4"
             },

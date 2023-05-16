@@ -33,7 +33,14 @@ class TransactionController extends Controller {
 			->setOffset($start)
 
 			->addColumn('user_name', function($data){
-				return '<a style="color: blue !important;" href="'.url('admin/user/user-profile/'.$data->user_id).'" target="_blank" title="User Profile">'.\App\Helpers\commonHelper::getUserNameById($data->user_id).'</a>';
+
+				$exb = \App\Models\Exhibitors::where('user_id',$data->user_id)->where('payment_status','Success')->first();
+				if($exb){
+					$Exhibitors = 'Exhibitors';
+				}else{
+					$Exhibitors = '';
+				}
+				return '<a style="color: blue !important;" href="'.url('admin/user/user-profile/'.$data->user_id).'" target="_blank" title="User Profile">'.\App\Helpers\commonHelper::getUserNameById($data->user_id).'</a><br>'.$Exhibitors;
 				
 		    })
 

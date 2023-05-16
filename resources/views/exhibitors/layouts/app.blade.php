@@ -63,7 +63,7 @@
                 <div class="col-lg-6 col-xl-5 d-lg-block d-xl-block d-none">
                     <ul class="header-menu">
                         <li><a href="{{ url('exhibitor-index') }}">@lang('web/app.home')</a></li>
-                        @if(!\Session::has('gpro_exhibitor'))
+                        @if(!\Session::has('gpro_user'))
                         <li><a href="{{url('exhibitor-register')}}" >@lang('web/app.register')</a></li>
                         @else
                         <li><a href="{{ url('profile') }}">@lang('web/app.myprofile')</a></li>
@@ -77,7 +77,7 @@
                     <div class="header-icons">
                         
                         <ul class="toggle-login">
-                            @if(!\Session::has('gpro_exhibitor'))
+                            @if(!\Session::has('gpro_user'))
                                 <li class="d-xs-none d-none d-sm-block d-lg-block d-xl-block"><a href="javascript:void(0);" onclick="openLoginModal()" class="main-btn">@lang('web/app.login')</a></li>
                             @else
                                 <li class="d-xs-none d-none d-sm-block d-lg-block d-xl-block"><a href="{{url('logout')}}"  class="main-btn">@lang('web/app.logout')</a></li>
@@ -97,7 +97,37 @@
                                     </button>
                                 </div>
                             </li>
-                            
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-language" style="font-size: 30px;"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                                    <li>
+                                        <a class="dropdown-item language @if(App::getLocale() == 'en') active @endif" href="javascript:void(0);" data-lang="en">
+                                            <img class="img-fluid me-3" src="{{ asset('admin-assets/images/flag/english.png') }}" alt="">English @if(App::getLocale() == 'en')
+                                            <i class="fas fa-check"></i>@endif
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item language @if(App::getLocale() == 'sp') active @endif" href="javascript:void(0);" data-lang="sp">
+                                            <img class="img-fluid me-3" src="{{ asset('admin-assets/images/flag/spanish.png') }}" alt="">
+                                                Spanish @if(App::getLocale() == 'sp') <i class="fas fa-check"></i>@endif
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item language @if(App::getLocale() == 'fr') active @endif" href="javascript:void(0);" data-lang="fr">
+                                            <img style="max-width: 36%;" class="img-fluid me-3" src="{{ asset('admin-assets/images/flag/france.png') }}" alt="">
+                                                French  @if(App::getLocale() == 'fr') <i class="fas fa-check"></i>@endif
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item language @if(App::getLocale() == 'pt') active @endif" href="javascript:void(0);" data-lang="pt">
+                                            <img style="max-width: 36%;" class="img-fluid" src="{{ asset('images/Portuguese.jpg') }}" alt="">
+                                            &nbsp;&nbsp;Portuguese  @if(App::getLocale() == 'pt') <i class="fas fa-check"></i>@endif
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -112,7 +142,7 @@
         <div id="cssmenu">
             <ul>
                 <li><a href="{{ url('exhibitor-index') }}">@lang('web/app.home')</a></li>
-                @if(!\Session::has('gpro_exhibitor'))
+                @if(!\Session::has('gpro_user'))
                 <li><a href="{{url('exhibitor-register')}}" >@lang('web/app.register')</a></li>
                 @else
                 <li><a href="{{ url('profile') }}">@lang('web/app.myprofile')</a></li>
@@ -120,7 +150,7 @@
                 <li><a href="{{ url('/exhibitor-index#contact-us') }}">@lang('web/app.contactus')</a></li>
                 <!-- <li><a href="{{ route('pricing') }}">@lang('web/app.pricing')</a></li>
                 <li><a href="{{ route('help') }}">@lang('web/app.help')</a></li> -->
-                @if(!\Session::has('gpro_exhibitor'))
+                @if(!\Session::has('gpro_user'))
                     <li><a href="javascript:void(0);" onclick="openLoginModal()">@lang('web/app.login')</a></li>
                 @else
                     <li><a href="{{url('logout')}}">@lang('web/app.logout')</a></li>
@@ -268,7 +298,7 @@
                         </div>
                     </div>
                     <div class="requirement-right">
-                        @if(!\Session::has('gpro_exhibitor'))
+                        @if(!\Session::has('gpro_user'))
                             <a href="{{url('exhibitor-register')}}" class="main-btn">Register your space</a>
                         @endif
                     </div>
@@ -284,7 +314,7 @@
                     <li>
                         <a href="{{ url('exhibitor-index') }}">@lang('web/app.home')</a>
                     </li>
-                    @if(!\Session::has('gpro_exhibitor'))
+                    @if(!\Session::has('gpro_user'))
                     <li>
                         <a href="{{url('exhibitor-register')}}" >@lang('web/app.register')</a>
                     </li>

@@ -1981,7 +1981,7 @@ class PostLoginController extends Controller {
 	public function fullPaymentOfflineSubmit(Request $request){
 		
 		$rules = [
-			'mode' => 'required|string|in:WU,MG,Wire,RIA',
+			'mode' => 'required|string|in:WU,MG,Wire',
 			'reference_number' => 'required',
             'amount' => 'required|numeric',
             'name' => 'required',
@@ -1995,6 +1995,7 @@ class PostLoginController extends Controller {
 
 		$messages = array(
 			'mode.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mode_required'),
+			'mode.in' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mode_in'),
 			'reference_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'reference_number'),
 			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
 			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
@@ -2100,7 +2101,7 @@ class PostLoginController extends Controller {
 	
 		$rules = [
             'amount' => 'required',
-			'mode' => 'required|string|in:WU,MG,Wire,RIA',
+			'mode' => 'required|string|in:WU,MG,Wire',
             'type' => 'required!in:Offline,Online',
             'reference_number' => 'required',
 		];
@@ -2108,6 +2109,7 @@ class PostLoginController extends Controller {
 		$messages = array(
 			'amount.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'amount_required'),
 			'mode.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mode_required'),
+			'mode.in' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'mode_in'),
 			'type.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'type'),
 			'reference_number.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'reference_number'),
 				
@@ -3640,6 +3642,8 @@ class PostLoginController extends Controller {
 		$rules['name']='required';
 		$rules['email']='required';
 		$rules['language']='required';
+		$rules['phone_code']='required';
+		$rules['mobile']='required';
 		
 		$messages = array(
 			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
@@ -3707,6 +3711,8 @@ class PostLoginController extends Controller {
 						'name'=>$group['name'],
 						'email'=>$group['email'],
 						'language'=>$group['language'],
+						'phone_code'=>$group['phone_code'],
+						'mobile'=>$group['mobile'],
 						'reg_type'=>'email',
 						'designation_id'=>'2',
 						'password'=>\Hash::make($password),
@@ -3798,6 +3804,151 @@ class PostLoginController extends Controller {
 
 			} catch (\Exception $e) {
 				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			}
+		}
+
+    }
+
+	public function MobileInviteUser(Request $request){
+	
+		$rules['name']='required';
+		$rules['email']='required|email';
+		$rules['language']='required';
+		$rules['phone_code']='required';
+		$rules['mobile']='required|numeric';
+		
+		$messages = array(
+			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'),
+			'email.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'email_required'),
+			'language.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'language_required'), 
+			
+		);
+
+		$validator = \Validator::make($request->json()->all(), $rules, $messages);
+		 
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message = $msg[0];
+				break;
+			}
+			
+			return response(array("error"=>true, 'message'=>$message), 200);
+			
+		}else{
+
+			try {
+				
+				$checkExistUsers=\App\Models\User::where('email',$request->json()->get('email'))->first();
+
+				if($checkExistUsers){
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Wehave-duplicate-email-group-users');
+					return response(array("error"=>true,"message"=>$checkExistUsers['email'].$message), 200);
+
+				}
+				
+				$users=[];
+
+				$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+				$password = substr(str_shuffle($chars),0,8);
+
+				$users[]=array(
+					'name'=>$request->json()->get('name'),
+					'email'=>$request->json()->get('email'),
+					'language'=>$request->json()->get('language'),
+					'phone_code'=>$request->json()->get('phone_code'),
+					'mobile'=>$request->json()->get('mobile'),
+					'reg_type'=>'email',
+					'designation_id'=>'2',
+					'password'=>\Hash::make($password),
+					'otp_verified'=>'No',
+					'system_generated_password'=>'1',
+				);
+
+				
+				$to = $request->json()->get('email');
+
+				if($request->json()->get('language') == 'sp'){
+					$url = '<a href="'.url('login?lang='.$request->json()->get('language')).'">aqui</a>';
+					$faq = '<a href="'.url('faq').'">aqui</a>';
+
+					$subject = "¡Su inscripción al GproCongress II ha iniciado!";
+					$msg = '<p>Estimado '.$request->json()->get('name').',</p><p>&nbsp;</p>
+							<p>'.$request->user()->name.' '.$request->user()->last_name.' ha inicado el proceso de inscripción al GproCongress II al ingresar tu nombre.</p>
+							<p>Quedamos a la espera de recibir su solicitud completa.</p>
+							<p>Por favor, utilice este enlace haga click '.$url.' para acceder, editar y completer su cuenta en cualquier momento.&nbsp;</p>
+							<p>Dirección de correo electrónico: '.$to.'<br>Contraseña: '.$password.'</p>
+							<p>Si usted desea más información sobre los criterios de admisibilidad para candidatos potenciales al congreso, antes de continuar, haga click, '.$faq.'</p>
+							<p>Para hablar con uno de los miembros de nuestro equipo, usted solo tiene que responder a este email. ¡Estamos aquí para ayudarle!&nbsp;</p>
+							<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p>Atentamente,</p>
+							<p>El equipo del GProCongress II</p>';
+				
+				}elseif($request->json()->get('language') == 'fr'){
+				
+					$url = '<a href="'.url('login?lang='.$request->json()->get('language')).'">aqui</a>';
+					$faq = '<a href="'.url('faq').'">cliquez ici</a>';
+
+					$subject = "Votre inscription au GProCongrès II a commencé!";
+					$msg = '<p>Cher '.$request->json()->get('name').',&nbsp;</p>
+							<p>'.$request->user()->name.' '.$request->user()->last_name.' a commencé le processus d’inscription au GProCongrès II, en soumettant votre nom!&nbsp;</p>
+							<p>Nous sommes impatients de recevoir votre demande complète. Veuillez utiliser ce lien '.$url.' pour accéder, modifier et compléter votre compte à tout moment.&nbsp;</p>
+							<p>E-mail: '.$to.'<br>Mot de passe: '.$password.'<br></p>
+							<p>Si vous souhaitez plus d’informations sur les critères d’éligibilité pour les participants potentiels au Congrès, avant de continuer,  '.$faq.'.</p>
+							<p>Pour parler à l’un des membres de notre équipe, vous pouvez simplement répondre à ce courriel. Nous sommes là pour vous aider !</p>
+							<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p>
+							<p>Cordialement,</p>
+							<p>L’équipe GProCongrès II</p>';
+				
+				}elseif($request->json()->get('language') == 'pt'){
+				
+					$url = '<a href="'.url('login?lang='.$request->json()->get('language')).'">aqui</a>';
+					$faq = '<a href="'.url('faq').'">clique aqui</a>';
+
+					$subject = "A sua inscrição para o II CongressoGPro já Iniciou!";
+					$msg = '<p>Prezado '.$request->json()->get('name').',</p>
+							<p>'.$request->user()->name.' '.$request->user()->last_name.' iniciou com o processo de inscrição para o II CongressoGPro, por submeter o teu nome!&nbsp;</p>
+							<p>Nós esperamos receber a sua inscrição complete.</p>
+							<p>Por favor use este '.$url.' para aceder, editar e terminar a sua conta a qualquer momento.</p>
+							<p>Eletrónico: '.$to.'<br>Senha: '.$password.'</p>
+							<p>Se você precisa de mais informações sobre o critério de elegibilidade para participantes potenciais ao Congresso, antes de continuar,  '.$faq.'</p>
+							<p>Para falar com um dos nossos membros da equipe, você pode simplesmente responder a este e-mail. Estamos aqui para ajudar!</p>
+							<p>Ore conosco, a medida que nos esforçamos para multiplicar o número, e desenvolvemos a capacidade dos treinadores de pastores&nbsp;</p>
+							<p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+				
+				}else{
+				
+					$url = '<a href="'.url('login?lang='.$request->json()->get('language')).'">link</a>';
+					$faq = '<a href="'.url('faq').'">click here</a>';
+
+					$subject = "Your registration for GProCongress II has begun!";
+					$msg = '<p>Dear '.$request->json()->get('name').',</p>
+							<p>'.$request->user()->name.' '.$request->user()->last_name.' has begun the registration process for the GProCongress II, by submitting your name!&nbsp;</p>
+							<p>We look forward to receiving your full application.</p>
+							<p>Please use this  '.$url.' to access, edit, and complete your account at any time.&nbsp;</p>
+							<p>Your registered email and password are:</p><p>Email: '.$to.'<br>Password: '.$password.'</p>
+							<p>If you want more information about the eligibility criteria for potential Congress attendees, before proceeding,  '.$faq.'.</p>
+							<p>To speak with one of our team members, you can simply respond to this email. We are here to help!</p>
+							<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p>
+							<p>Warmly,</p><p>The GProCongress II Team</p>';
+					
+				}
+
+				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'User Invite');
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+				
+
+				\App\Models\User::insert($users);
+
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Invitetion_send_successfully');
+				return response(array("error"=>false, "message"=>$message), 200);
+
+			} catch (\Exception $e) {
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 200);
 			}
 		}
 
