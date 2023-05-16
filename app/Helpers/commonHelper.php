@@ -372,7 +372,6 @@ class commonHelper{
 		return $data[$id];
 	}
 	
-	
 	public static function getPaymentStatusName($id){
 		
 		$data=array(
@@ -391,7 +390,6 @@ class commonHelper{
 		return $data[$id];
 	}
 	
-	
 	public static function getStateNameById($id){
 		
 		$result=\App\Models\State::where('id',$id)->first();
@@ -402,7 +400,6 @@ class commonHelper{
 			return "N/A";
 		}
 	}
-	
 	
 	public static function getCityNameById($id){
 		
@@ -2645,7 +2642,6 @@ class commonHelper{
 				$subject = '¡Su pago ha sido recibido!';
 				$msg = '<p>Estimado  '.$name.',</p>
 				<p>Hemos recibido un pago suyo por valor de 800 USD.  Gracias por el pago.  El importe correspondiente a su participación como exhibidor en el GProCongress II ha sido pagado en su totalidad.</p>
-				<p>Adjuntamos a este correo electrónico una carta de patrocinio para que usted la entregue a quienes vengan de su organización a fin de ayudarlos a obtener sus visas para viajar a Panamá.</p>
 				<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
 				<p><i>Ore con nosotros para que se multiplique la cantidad y calidad de capacitadores de pastores.</i></p>
 				<p>Cordialmente,</p>
@@ -2656,7 +2652,6 @@ class commonHelper{
 				$subject = 'Votre paiement a été reçu!';
 				$msg = '<p>Cher  '.$name.',</p>
 				<p>Un paiement de $'.$amount.'. a été reçu de votre part.  Nous vous remercions pour votre paiement.  Votre compte exposant GProCongress II a maintenant été payé en totalité.</p>
-				<p>Nous joignons à cet e-mail une lettre de parrainage, que vous pouvez donner à quiconque venant de votre organisation, pour les aider à obtenir leurs visas pour voyager au Panama.</p>
 				<p>Si vous avez des questions, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à ce courriel.</p>
 				<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
 				<p>Cordialement,</p>
@@ -2667,7 +2662,6 @@ class commonHelper{
 				$subject = 'Seu pagamento foi recebido!';
 				$msg = '<p>Caro '.$name.',</p>
 				<p>Um pagamento foi recebido de você no valor de $'.$amount.'. Obrigado por seu pagamento. Sua conta de expositor do GProCongresso II foi paga integralmente.</p>
-				<p>Estamos anexando a este e-mail uma carta de patrocínio, para você entregar a quem vier de sua organização, para auxiliá-los na obtenção de seus vistos para viajar ao Panamá</p>
 				<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, basta responder a este e-mail.</p>
 				<p><i>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</i></p>
 				<p>Calorosamente,</p>
@@ -2678,7 +2672,6 @@ class commonHelper{
 				$subject = 'Your payment has been received!';
 				$msg = '<p>Dear '.$name.',</p>
 				<p>A payment has been received from you in the amount of $'.$amount.'.  Thank you for your payment.  Your GProCongress II exhibitor account has now been paid in full.</p>
-				<p>We are attaching to this email a sponsorship letter, for you to give to whoever is coming from your organization, to assist them in getting their visas for travel to Panama.</p>
 				<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
 				<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
 				<p>Warmly,</p>

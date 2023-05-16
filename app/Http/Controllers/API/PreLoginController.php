@@ -1695,7 +1695,6 @@ class PreLoginController extends Controller {
 
 	}
 	
-	
 	public function TravelInfoUpdateReminder(Request $request){
 		
 		try {
@@ -1758,7 +1757,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
 	public function sendSessionInfoReminder(Request $request) {
 		
 
@@ -1793,7 +1791,6 @@ class PreLoginController extends Controller {
 
 	}
 
-	
 	public function TestimonialList(Request $request){
  
 		try{
@@ -3903,7 +3900,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
 	public function getUserData(Request $request) {
  
 		$type = 'Pending';
@@ -5007,35 +5003,35 @@ class PreLoginController extends Controller {
 							$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
 						
 
-							if($additionalUser && $additionalUser->diplomatic_passport == 'No'){
+							// if($additionalUser && $additionalUser->diplomatic_passport == 'No'){
 
-								if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
+							// 	if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
 
-									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+							// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
 
-								}else{
+							// 	}else{
 
-									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id,);
-									\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($additionalUser->user_id);
-								}
+							// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id,);
+							// 		\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($additionalUser->user_id);
+							// 	}
 
-							}elseif($additionalUser && $additionalUser->diplomatic_passport == 'Yes'){
+							// }elseif($additionalUser && $additionalUser->diplomatic_passport == 'Yes'){
 								
-								if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
+							// 	if(in_array($additionalUser->citizenship,$doNotRequireVisa)){
 
-									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+							// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
 
-								}elseif(in_array($additionalUser->citizenship,$diplomaticPassportNotRequireVisa)){
+							// 	}elseif(in_array($additionalUser->citizenship,$diplomaticPassportNotRequireVisa)){
 
-									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+							// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
 
-								}else{
+							// 	}else{
 
-									\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
-									\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($additionalUser->user_id);
-								}
+							// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($additionalUser->user_id);
+							// 		\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($additionalUser->user_id);
+							// 	}
 								
-							}
+							// }
 								
 							
 							if($additionalUser->language == 'sp'){
@@ -5258,7 +5254,6 @@ class PreLoginController extends Controller {
 			
 	}
 
-	
 	public function exhibitorPaymentReminder(Request $request){
 		
 		try {
@@ -5339,7 +5334,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
 	public static function sendcheckUserDetailsPendingAmount() {
 		
 		$results = \App\Models\User::where([['user_type', '=', '2'],['designation_id', '!=', '14'], ['profile_status','=','Approved'],['stage', '=', '2'],['amount', '!=', '0']])->get();
