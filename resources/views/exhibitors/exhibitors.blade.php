@@ -46,7 +46,11 @@
     <div class="container">
         <div class="step-form">
             <h2 class="main-head">@lang('web/app.exhibitors_registration')</h2>
-            <h5 style="text-align:center;padding-top: 50px;"></h5>
+                <h5 style="text-align:center;padding-top: 50px;">
+                <p style="color: red">@lang('web/app.first_pay_first_serve')</p>
+
+            </h5>
+
             <form id="formSubmit" action="{{ route('exhibitors-register') }}" method="post" class="row" enctype="multipart/form-data">
                 @csrf
                 <div class="yes-table  table-show">
@@ -108,7 +112,7 @@
                             
                             <div class="col-lg-12">
                                 <div class="form-check">
-                                    <label class="form-check-label">@lang('web/ministry-details.enter-comments')  <span>*</span></label>
+                                    <label class="form-check-label">@lang('web/app.exhibitor_comment')  <span>*</span></label>
                                     <div class="input-box">
                                         <textarea type="text" class="form-control" name="comment" required id="Comment" placeholder="@lang('web/ministry-details.enter-comments')"></textarea>
 
@@ -117,7 +121,15 @@
                             </div>
                             <div class="col-lg-12">
                                 <div class="form-check d-flex">
-                                    <label for="checkbox"  class="form-check-label ps-4">@lang('web/app.approval_and_agree_to')  <a href="{{url('exhibitor-policy')}}" target="_blank">@lang('web/app.exhibitor_policy') </a><b style="color:red">*</b> </label>
+                                    <label for="checkbox"  class="form-check-label ps-4">@lang('web/app.approval_and_agree_to')  <b style="color:red">*</b> </label>
+                                    <div class="input-box" style="position:absolute;">
+                                        <input type="checkbox" name="checkbox" id="checkbox" checked required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="form-check d-flex">
+                                    <label for="checkbox"  class="form-check-label ps-4">@lang('web/app.i_agree')  <a href="{{url('exhibitor-policy')}}" target="_blank">@lang('web/app.exhibitor_policy') </a><b style="color:red">*</b> </label>
                                     <div class="input-box" style="position:absolute;">
                                         <input type="checkbox" name="checkbox" id="checkbox" checked required>
                                     </div>

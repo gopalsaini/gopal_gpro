@@ -3283,7 +3283,7 @@ class commonHelper{
 	public static function countExhibitorPaymentSuccess(){
 		
 		$result = \App\Models\Exhibitors::where('payment_status','Success')->count();
-		if($result <= 10){
+		if($result < 10){
 			return true;
 		}else{
 			return false;

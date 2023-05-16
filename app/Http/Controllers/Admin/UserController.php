@@ -5819,12 +5819,25 @@ class UserController extends Controller {
 				}
 
 			}else{
+
+				if($data->profile_status != 'Pending'){
+
+					return '
+						<div style="display:flex">
+						<a href="'.url('admin/user/user-profile/'.$data->user_id).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+						</div>
+					';
+					
+				}else{
+
+					return '
+						<div style="display:flex">
+						<a href="'.url('admin/user/user-profile/'.$data->user_id).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
+						<a href="javascript:void(0)" title="Decline Profile" data-id="'.$data->id.'" data-status="Declined" class="btn btn-sm btn-danger px-3 m-1 text-white profile-status"><i class="fas fa-ban"></i></a></div>
+					';
+				}
 				
-				return '
-					<div style="display:flex">
-					<a href="'.url('admin/user/user-profile/'.$data->user_id).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>
-					<a href="javascript:void(0)" title="Decline Profile" data-id="'.$data->id.'" data-status="Declined" class="btn btn-sm btn-danger px-3 m-1 text-white profile-status"><i class="fas fa-ban"></i></a></div>
-				';
+				
 			}
 			
 
@@ -6894,7 +6907,7 @@ class UserController extends Controller {
 					$msg = '<p>Estimado '.$name.',</p>
 					<p>Nuestro equipo ha revisado su solicitud y nos complace informarle que ha sido aprobado como exhibidor para el GProCongress II. ¡Esperamos tenerle con nosotros en Panamá este noviembre! </p>
 					<p>Le pedimos que realice su pago lo antes posible. Le recordamos que los exhibidores se eligen por orden de llegada, “primero en pagar, primero en entrar”. En consecuencia, si espera demasiado para realizar su pago, podría quedar fuera del Congreso como exhibidor, debido a que todos los cupos de exhibidores ya podrían estar llenos.</p>
-					<p>Puede pagar el costo de exhibición de $800 USD en nuestro sitio web '.$website.', usando cualquier tarjeta de crédito de las permitidas.</p>
+					<p>Puede pagar su inscripción como exhibidor de $800 USD utilizando este enlace en el que puede hacer clic una sola '.$website.', mediante cualquiera de las tarjetas de crédito permitidas.&nbsp;</p>
 					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
 					<p>Ore con nosotros para que se multiplique la cantidad y calidad de capacitadores de pastores.</p>
 					<p>Cordialmente,</p>
@@ -6906,8 +6919,8 @@ class UserController extends Controller {
 					$msg = '<p>Cher  '.$name.',</p>
 					<p>Notre équipe a examiné votre demande et nous sommes heureux de vous informer que vous avez été approuvé en tant qu’exposant pour GProCongress II.  Nous sommes impatients de vous avoir avec nous au Panama en novembre!</p>
 					<p>Nous vous demandons d’effectuer votre paiement dès que possible.  Nous vous rappelons que les exposants sont choisis selon le principe du « premier à payer, premier arrivé».  Par conséquent, si vous attendez trop longtemps pour effectuer votre paiement, vous pourriez être exclu du Congrès en tant qu’exposant, car tous les créneaux d’exposants pourraient déjà être pris.</p>
-					<p>Vous pouvez payer vos frais d’exposition de 800 USD sur notre site Web '.$website.', en utilisant n’importe quelle carte de crédit majeure.&nbsp;</p>
-					<p> Si vous avez des questions, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à ce courriel.</p>
+					<p>Vous pouvez payer vos frais d’exposition de 800 USD en utilisant une seule fois ce lien cliquable '.$website.', par l’intermédiaire de n’importe quelle carte de crédit majeure.&nbsp;</p>
+					<p>Si vous avez des questions, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à ce courriel.</p>
 					<p>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</p>
 					<p>Cordialement,</p>
 					<p>L’équipe GProCongress II</p>';
@@ -6918,7 +6931,7 @@ class UserController extends Controller {
 					$msg = "<p>Caro  '.$name.',</p>
 					<p>Nossa equipe revisou sua inscrição e temos o prazer de informar que você foi aprovado como Expositor do GProCongresso II. Estamos ansiosos para tê-lo conosco no Panamá em novembro! </p>
 					<p>Pedimos que efetue seu pagamento o quanto antes. Lembramos que os expositores são escolhidos na base do “primeiro a pagar, primeiro a chegar”. Dessa forma, se você demorar muito para efetuar o pagamento, poderá ficar de fora do Congresso como expositor, pois todas as vagas de expositor já podem estar preenchidas</p>
-					<p>Você pode pagar sua taxa de exibição de $ 800 USD em nosso site '.$website.', usando qualquer cartão de crédito.'&nbsp;</p>
+					<p>Você pode pagar sua taxa de exibição de $ 800 USD usando este '.$website.', usando qualquer cartão de crédito.'&nbsp;</p>
 					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, basta responder a este e-mail</p>
 					<p>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</p>
 					<p>Calorosamente,,</p>
@@ -6930,7 +6943,7 @@ class UserController extends Controller {
 					$msg = '<p>Dear '.$name.',</p>
 					<p>Our team has reviewed your submission, and we are pleased to inform you that you have been approved as an Exhibitor for GProCongress II.  We are looking forward to having you with us in Panama this November!  </p>
 					<p>We ask that you make your payment as soon as possible.  We would remind you that exhibitors are chosen on a “first pay, first come” basis.  Accordingly, if you wait too long to make your payment, you could be left out of the Congress as an exhibitor, because all exhibitor slots could already be full.</p>
-					<p>You may pay your $800 USD exhibition fee on our website '.$website.', using any major credit card.&nbsp;</p>
+					<p>You may pay your $800 USD exhibition fee using this one time clickable '.$website.', using any major credit card.&nbsp;</p>
 					<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
 					<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
 					<p>Warmly,</p>

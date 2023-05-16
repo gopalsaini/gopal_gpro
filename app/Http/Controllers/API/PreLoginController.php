@@ -1208,6 +1208,51 @@ class PreLoginController extends Controller {
 									
 									if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
 										
+										$results = \App\Models\Exhibitors::where('profile_status','Approved')
+																		->where('payment_status','Pending')
+																		->get();
+
+										if(!empty($results)){
+
+											foreach($results as $userData){
+												
+												$exhibitorsUser = \App\Models\User::where('id',$userData->user_id)->first();
+
+												$resultsData = \App\Models\Exhibitors::where('id',$userData->id)->first();
+
+												if($resultsData){
+											
+													$resultsData->profile_status = 'Declined';
+													$resultsData->save();
+
+													if($exhibitorsUser->language == 'sp'){
+
+														$subject = 'Su solicitud para ser Exhibidor ha sido ahora rechazada';
+														$msg = '<p>Estimado  '.$exhibitorsUser->name.' '.$exhibitorsUser->last_name.' ,&nbsp;</p><p><br></p><p>Lamentamos informarle que su solicitud para ser exhibidor en el GProCongress II ha sido rechazada. Como le dijimos cuando fue aceptado inicialmente, los exhibidores para el Congreso se eligen sobre la base de "primero en pagar, primero en entrar". Tenemos muy pocos lugares disponibles, y todos ellos ya estaban pagados, antes de que recibiéramos el pago de su parte.  No obstante, le agradecemos su interés y su deseo de formar parte de este evento como exhibidor.</p><p><br></p><p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p><p><br></p><p>Cordialmente,</p><p>Equipo GProCongress II</p>';
+				
+													}elseif($exhibitorsUser->language == 'fr'){
+													
+														$subject = "Votre demande d'inscription en tant qu'exposant a été refusée.";
+														$msg = "<p>Cher '.$exhibitorsUser->name.' '.$exhibitorsUser->last_name.' ,&nbsp;</p><p><br></p><p>Nous avons le regret de vous informer que votre demande d'inscription en tant qu'exposant au GProCongress II a été rejetée. Comme nous vous l’avons dit lorsque votre demande a été acceptée, les exposants du Congrès sont choisis sur la base du « premier à payer, premier arrivé ».  Nous avons très peu de places disponibles, et toutes ont déjà été payées, avant que nous recevions le paiement de votre part.  Nous vous remercions néanmoins de l'intérêt que vous portez à cet événement et de votre désir d'y participer en tant qu'exposant. </p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, il vous suffit de répondre à cet e-mail.</p><p><br></p><p>Cordialement,</p><p>L’équipe GProCongress II</p>";
+				
+													}elseif($exhibitorsUser->language == 'pt'){
+													
+														$subject = 'Sua inscrição para ser Expositor foi recusada.';
+														$msg = '<p>Caro  '.$exhibitorsUser->name.' '.$exhibitorsUser->last_name.' ,&nbsp;</p><p><br></p><p>Lamentamos informar que sua inscrição para ser Expositor no GProCongresso II foi recusada. Como dissemos quando você foi inicialmente aceito, os expositores do Congresso são escolhidos com base em “quem chegou primeiro e pagou primeiro”. Temos pouquíssimas vagas disponíveis, e todas já foram pagas, antes mesmo de recebermos o pagamento de vocês. No entanto, agradecemos seu interesse e desejo de fazer parte deste evento como expositor.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, basta responder a este e-mail.</p><p><br></p><p>Calorosamente,</p><p>Equipe GProCongresso II</p>';
+				
+													}else{
+													
+														$subject = 'Your application to be an Exhibitor has now been declined.';
+														$msg = '<p>Dear '.$exhibitorsUser->name.' '.$exhibitorsUser->last_name.' ,&nbsp;</p><p><br></p><p>We are sorry to inform you that your application to be an Exhibitor at GProCongress II has been declined.  As we told you when you were initially accepted, exhibitors for the Congress are chosen on a “first pay, first come” basis.  We have very few spaces available, and all of them  have already been paid for, before we received payment from you.  However, we are grateful for your interest in, and your desire to be a part of, this event as an exhibitor.</p><p><br></p><p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+										
+													}
+													
+													\App\Helpers\commonHelper::emailSendToUser($exhibitorsUser->email, $subject, $msg);
+													\App\Helpers\commonHelper::userMailTrigger($exhibitorsUser->id,$msg,$subject);
+													\App\Helpers\commonHelper::sendNotificationAndUserHistory($exhibitorsUser->id,$subject,$msg,'Your application to be an Exhibitor has now been declined.');
+												}
+											}
+										}								
 									}
 								}
 								

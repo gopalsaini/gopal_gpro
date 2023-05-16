@@ -107,11 +107,14 @@ return [
     'business_name' => "Organization Name",
     'business_number' => "Business Identification Number",
     'Website' => "Business Website",
-    'approval_and_agree_to' => "I agree to Pay $800 on approval and Agree to",
+    'approval_and_agree_to' => "I agree to Pay $800 on approval",
     'exhibitor_policy' => "Política do Expositor",
+    'i_agree' => "I Agree",
     'exhibitors_registration' => "Exhibitor Registration",
     'exhibitor_portal' => "Portal do Expositor",
     'Optional' => "Optional",
     'become_exhibitor' => "Como se tornar um expositor",
+    'first_pay_first_serve' => "First pay First serve",
+    'exhibitor_comment' => "What resources do you have to share at the Congress that will contribute to the training of pastors worldwide?",
 
 ];

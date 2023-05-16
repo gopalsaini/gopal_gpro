@@ -204,25 +204,34 @@ class HomeController extends Controller
     
     public function exhibitorPaymentLink(Request $request,$token){
 
-        $linkPayment = \App\Models\Exhibitors::where('payment_token',$token)->first();
+        if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
 
-        if($linkPayment && $linkPayment->amount >0){
+            $linkPayment = \App\Models\Exhibitors::where('payment_token',$token)->first();
 
-            $data = \App\Helpers\commonHelper::paymentGateway($linkPayment->user_id,$linkPayment->amount,2);
+            if($linkPayment && $linkPayment->amount >0){
 
-            $id = $data['order_id'];
-            
-            $intent = $data['intent'];
-            \Session::put('intent',$intent);
-            
-            $linkPayment->order_id = $id;
-            $linkPayment->save();
+                $data = \App\Helpers\commonHelper::paymentGateway($linkPayment->user_id,$linkPayment->amount,2);
 
-            return view('stripe',compact('intent','id'));
+                $id = $data['order_id'];
                 
+                $intent = $data['intent'];
+                \Session::put('intent',$intent);
+                
+                $linkPayment->order_id = $id;
+                $linkPayment->save();
+
+                return view('stripe',compact('intent','id'));
+                    
+            }else{
+
+                $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-link-hasbeen-expired');
+                \Session::flash('gpro_error', $message);
+
+                return redirect('/');
+            }
+
         }else{
 
-            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-link-hasbeen-expired');
             \Session::flash('gpro_error', $message);
 
             return redirect('/');
