@@ -1071,7 +1071,7 @@ class PreLoginController extends Controller {
 
 								$user = \App\Models\User::find($transaction->user_id);
 
-								if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) == 0) {
+								if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
 
 									$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
 									$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
@@ -2082,111 +2082,146 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['designation_id', '!=', '14'],['stage', '=', '2'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
+			$results = \App\Models\User::where([['user_type', '=', '2'], ['designation_id', '!=', '14'],['stage', '=', '2'], ['amount', '>', 0], ['early_bird', '=', 'Yes'], ['email', '=', 'gopalsaini.img@gmail.com']])->get();
 			
 			if(count($results) > 0){
 
 				foreach ($results as $result) {
 				
-					$user = \App\Models\User::where('id', $result->id)->first();
-					if($user){
+					if(\App\Helpers\commonHelper::getTotalPendingAmount($result->id) > 0) {
 
-						$user->amount = $result->amount+100;
-						$user->early_bird = 'No';
-						$user->save();
+						$user = \App\Models\User::where('id', $result->id)->first();
+						
+						if($user){
 
-						$name = $user->salutation.' '.$user->name.' '.$user->last_name;
-                
+							$Spouse = \App\Models\User::where('parent_id', $user->id)->where('added_as', 'Spouse')->first();
+							
+							if($user->marital_status == 'Unmarried'){
 
-						if($user->language == 'sp'){
+								$trainer = 'No';
+
+							}else if($user->marital_status == 'Married' && !$Spouse){
+
+								$trainer = 'No';
+
+							}else if($user->marital_status == 'Married' && $Spouse){
+
+								if($user->parent_spouse_stage >= 2){
+
+									$trainer = 'No';
+
+								}else{
+
+									
+									$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$user->amount);
+
+									$trainer = $data ['trainer'];
+								}
+								
+							}
+							
+							if($trainer == 'Yes'){
+								$amount = $result->amount+200;
+							}else{
+								$amount = $result->amount+100;
+							}
+
+							$user->amount = $amount;
+							$user->early_bird = 'No';
+							$user->save();
+
+							$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+					
+
+							if($user->language == 'sp'){
+							
+								$url = '<a href="'.url('payment').'" target="_blank">enlace</a>';
+								$subject = 'RECORDATORIO: El pago para asistir al GProCongress II ha vencido.';
+								$msg = '<p>Estimado '.$name.',</p>
+								<p></p>
+								<p>El pago para asistir al GProCongress II ha vencido.  Por favor, vaya a '.$url.', y realice su pago ahora.</p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b><i>POR FAVOR, TENGA EN CUENTA: Debido a que no recibió su pago el 31 de mayo de 2023 o antes, ha perdido su descuento de "inscripción anticipada" y ahora tendrá que pagar $100 más para poder asistir al Congreso.</i></b></p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b>Su nuevo monto de pago es $'.$user->amount.'. ATENCIÓN: Este importe debe pagarse antes del 31 de agosto de 2023, o aumentará aún más su costo.</b></p>
+								<p></p>
+								<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+								<p></p>
+								<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores. </i></p>
+								<p><br></p>
+								<p>Cordialmente,</p>
+								<p>&nbsp;Equipo GProCongress II</p><div><br></div>';
+		
+		
+							}elseif($user->language == 'fr'){
+							
+								$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
+								$subject = 'RAPPEL - Votre paiement GProCongress II est maintenant dû.';
+								$msg = '<p>Cher '.$name.',</p>
+								<p></p>
+								<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant.</p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b><i>VEUILLEZ NOTER : Parce que le paiement n’a pas été reçu de votre part avant le 31 mai 2023, vous avez perdu votre rabais « inscription anticipée » et vous devrez payer 100 $ de plus pour assister au Congrès.</i></b></p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b>Le montant de votre nouveau paiement est de $'.$user->amount.'.   VEUILLEZ NOTER: Ce montant doit être payé avant le 31 août 2023, sinon votre coût augmentera encore plus.</b></p>
+								<p></p>
+								<p>Si vous avez des questions sur votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+								<p></p>
+								<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs. </i></p>
+								<p><br></p>
+								<p>Cordialement,</p>
+								<p>&nbsp;L’équipe GProCongress II</p><div><br></div>';
+		
+							}elseif($user->language == 'pt'){
+							
+								$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+								$subject = 'LEMBRETE - O pagamento do GProCongress II está ainda em aberto.';
+								$msg = '<p>Caro  '.$name.',</p>
+								<p></p>
+								<p>O pagamento da sua participação no GProCongress II está em aberto.  Por favor, visite o'.$url.', e faça o seu pagamento agora.</p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b><i>Uma vez que o pagamento não for recebido até 31 de Maio de 2023, perderá o  desconto de "early bird" e tem agora de pagar mais $100 para participar no Congresso.</i></b></p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b>O seu novo montante de pagamento é de $'.$user->amount.'.  ATENÇÃO: Esse valor deve ser pago até 31 de agosto de 2023, ou seu custo aumentará ainda mais.</b></p>
+								<p></p>
+								<p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipa, basta responder a este e-mail.</p>
+								<p></p>
+								<p><i>Ore conosco para multiplicar a quantidade e a qualidade dos pastores-formadores. </i></p>
+								<p><br></p>
+								<p>Cordialmente,</p>
+								<p>&nbsp;Equipe do GProCongress II.</p><div><br></div>';
+		
+							}else{
+							
+								$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+		
+								$subject = 'REMINDER – Your GProCongress II payment is now due.';
+								$msg = '<p>Dear '.$name.',</p>
+								<p></p>
+								<p>Payment for your attendance at GProCongress II is now due.  Please go to '.$url.', and make your payment now.</p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b><i>Because payment was not received from you by May 31, 2023, you have lost your “early bird” discount, and you must now pay an additional $100 to attend the Congress.</i></b></p>
+								<p></p>
+								<p style="background-color:yellow; display: inline;"><b>Your new payment amount is $'.$user->amount.'.  PLEASE NOTE: This amount must be paid by August 31, 2023, or your cost will go up even more.</b></p>
+								<p></p>
+								<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email. </p>
+								<p></p>
+								<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
+								<p><br></p>
+								<p>Warmly,</p>
+								<p>&nbsp;The GProCongress II Team</p><div><br></div>';
+							
+							}
+		
+							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		
+							\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+		
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – Your “<b>EARLY BIRD</b>” discount is expiring on <b>MAY 31, 2023!</b>');
 						
-							$url = '<a href="'.url('payment').'" target="_blank">enlace</a>';
-							$subject = 'RECORDATORIO: El pago para asistir al GProCongress II ha vencido.';
-							$msg = '<p>Estimado '.$name.',</p>
-							<p></p>
-							<p>El pago para asistir al GProCongress II ha vencido.  Por favor, vaya a '.$url.', y realice su pago ahora.</p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b><i>POR FAVOR, TENGA EN CUENTA: Debido a que no recibió su pago el 31 de mayo de 2023 o antes, ha perdido su descuento de "inscripción anticipada" y ahora tendrá que pagar $100 más para poder asistir al Congreso.</i></b></p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b>Su nuevo monto de pago es $'.$user->amount.'. ATENCIÓN: Este importe debe pagarse antes del 31 de agosto de 2023, o aumentará aún más su costo.</b></p>
-							<p></p>
-							<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
-							<p></p>
-							<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores. </i></p>
-							<p><br></p>
-							<p>Cordialmente,</p>
-							<p>&nbsp;Equipo GProCongress II</p><div><br></div>';
-	
-	
-						}elseif($user->language == 'fr'){
-						
-							$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
-							$subject = 'RAPPEL - Votre paiement GProCongress II est maintenant dû.';
-							$msg = '<p>Cher '.$name.',</p>
-							<p></p>
-							<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant.</p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b><i>VEUILLEZ NOTER : Parce que le paiement n’a pas été reçu de votre part avant le 31 mai 2023, vous avez perdu votre rabais « inscription anticipée » et vous devrez payer 100 $ de plus pour assister au Congrès.</i></b></p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b>Le montant de votre nouveau paiement est de $'.$user->amount.'.   VEUILLEZ NOTER: Ce montant doit être payé avant le 31 août 2023, sinon votre coût augmentera encore plus.</b></p>
-							<p></p>
-							<p>Si vous avez des questions sur votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
-							<p></p>
-							<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs. </i></p>
-							<p><br></p>
-							<p>Cordialement,</p>
-							<p>&nbsp;L’équipe GProCongress II</p><div><br></div>';
-	
-						}elseif($user->language == 'pt'){
-						
-							$url = '<a href="'.url('payment').'" target="_blank">link</a>';
-							$subject = 'LEMBRETE - O pagamento do GProCongress II está ainda em aberto.';
-							$msg = '<p>Caro  '.$name.',</p>
-							<p></p>
-							<p>O pagamento da sua participação no GProCongress II está em aberto.  Por favor, visite o'.$url.', e faça o seu pagamento agora.</p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b><i>Uma vez que o pagamento não for recebido até 31 de Maio de 2023, perderá o  desconto de "early bird" e tem agora de pagar mais $100 para participar no Congresso.</i></b></p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b>O seu novo montante de pagamento é de $'.$user->amount.'.  ATENÇÃO: Esse valor deve ser pago até 31 de agosto de 2023, ou seu custo aumentará ainda mais.</b></p>
-							<p></p>
-							<p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipa, basta responder a este e-mail.</p>
-							<p></p>
-							<p><i>Ore conosco para multiplicar a quantidade e a qualidade dos pastores-formadores. </i></p>
-							<p><br></p>
-							<p>Cordialmente,</p>
-							<p>&nbsp;Equipe do GProCongress II.</p><div><br></div>';
-	
-						}else{
-						
-							$url = '<a href="'.url('payment').'" target="_blank">Click HERE</a>';
-	
-							$subject = 'REMINDER – Your GProCongress II payment is now due.';
-							$msg = '<p>Dear '.$name.',</p>
-							<p></p>
-							<p>Payment for your attendance at GProCongress II is now due.  Please go to '.$url.', and make your payment now.</p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b><i>Because payment was not received from you by May 31, 2023, you have lost your “early bird” discount, and you must now pay an additional $100 to attend the Congress.</i></b></p>
-							<p></p>
-							<p style="background-color:yellow; display: inline;"><b>Your new payment amount is $'.$user->amount.'.  PLEASE NOTE: This amount must be paid by August 31, 2023, or your cost will go up even more.</b></p>
-							<p></p>
-							<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email. </p>
-							<p></p>
-							<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
-							<p><br></p>
-							<p>Warmly,</p>
-							<p>&nbsp;The GProCongress II Team</p><div><br></div>';
-						
+							
 						}
-	
-						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-	
-						\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-	
-						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – Your “<b>EARLY BIRD</b>” discount is expiring on <b>MAY 31, 2023!</b>');
-					
-						
 					}
-					
 				}
 				
 				
@@ -3592,108 +3627,112 @@ class PreLoginController extends Controller {
 	public function sendEarlyBirdReminderNewEmail(Request $request){
 		
 		try {
-			
+
 			$results = \App\Models\User::where([['stage', '=', '2'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
 			
 			if(count($results) > 0){
-
+				$emails= [];$name = '';
 				foreach ($results as $key => $user) {
-					$emails= [];
-					$name = '';
-					$emails[]= $user->email;
-					$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+					
+					if(\App\Helpers\commonHelper::getTotalPendingAmount($user->id) > 0) {
+
+						$emails[]= $user->email;
+						$name = $user->salutation.' '.$user->name.' '.$user->last_name;
                     
                     
-					if($user->language == 'sp'){
+						if($user->language == 'sp'){
+							
+							$url = '<a href="'.url('payment').'" target="_blank">enlace</a>';
+							$subject = 'RECORDATORIO: ¡El descuento por inscripción anticipada está por vencer pronto MAYO 31, 2023! ';
+							$msg = '<p>Estimado '.$name.',</p>
+							<p></p>
+							<p>El pago de su asistencia al GProCongress II vence ahora. Vaya a '.$url.' y realice su pago en este momento.</p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b><i>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de mayo de 2023, perderá su descuento por "inscripción anticipada" y tendrá que pagar 100 dólares adicionales para asistir al Congreso.</i></b></p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b>TAMBIÉN TOME NOTA: ¡Si no paga antes del 31 de agosto de 2023, el costo aumentará mucho más! </b></p>
+							<p></p>
+							<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico. </p>
+							<p></p>
+							<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores. </i></p>
+							<p><br></p>
+							<p>Cordialmente,</p>
+							<p>&nbsp;Equipo GProCongress II</p><div><br></div>';
+
+
+						}elseif($user->language == 'fr'){
 						
-						$url = '<a href="'.url('payment').'" target="_blank">enlace</a>';
-						$subject = 'RECORDATORIO: ¡El descuento por inscripción anticipada está por vencer pronto MAYO 31, 2023! ';
-						$msg = '<p>Estimado '.$name.',</p>
-						<p></p>
-						<p>El pago de su asistencia al GProCongress II vence ahora. Vaya a '.$url.' y realice su pago en este momento.</p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b><i>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de mayo de 2023, perderá su descuento por "inscripción anticipada" y tendrá que pagar 100 dólares adicionales para asistir al Congreso.</i></b></p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b>TAMBIÉN TOME NOTA: ¡Si no paga antes del 31 de agosto de 2023, el costo aumentará mucho más! </b></p>
-						<p></p>
-						<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico. </p>
-						<p></p>
-						<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores. </i></p>
-						<p><br></p>
-						<p>Cordialmente,</p>
-						<p>&nbsp;Equipo GProCongress II</p><div><br></div>';
+							$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
+							$subject = 'Rappel- Votre rabais de “ l’inscription anticipée ” expire bientôt   31 MAI 2023! ';
+							$msg = '<p>Cher '.$name.',</p>
+							<p></p>
+							<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant. </p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b><i>VEUILLEZ NOTER: Si le paiement total n’est pas reçu avant le 31 mai 2023, vous perdrez votre rabais « inscription anticipée » et vous devrez payer 100 $ de plus pour assister au Congrès. </i></b></p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b>NOTEZ AUSSI: Si vous ne payez pas avant le 31 août 2023, votre coût augmentera beaucoup plus!  </b></p>
+							<p></p>
+							<p>Si vous avez des questions sur votre paiement, ou si vous avez souhaitez parler à l’un des membres de notre équipe, répondez simplement à cet e-mail. </p>
+							<p></p>
+							<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs. </i></p>
+							<p><br></p>
+							<p>Cordialement,</p>
+							<p>&nbsp;L’équipe GProCongress II</p><div><br></div>';
 
+						}elseif($user->language == 'pt'){
+						
+							$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+							$subject = 'LEMBRETE - O seu desconto " antecipado " está a expirar em breve  31 de maio de 2023! ';
+							$msg = '<p>Caro  '.$name.',</p>
+							<p></p>
+							<p>O pagamento da sua participação no GProCongress II está a vencer.  Por favor, vá ao '.$url.', e efetue o seu pagamento agora.</p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b><i>POR FAVOR NOTE: Se o pagamento total não for recebido até 31 de Maio de 2023, perderá o seu desconto "antecipado" e terá de pagar mais 100 dólares para participar no Congresso. </i></b></p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b>NOTA TAMBÉM: Se não pagar até 31 de Agosto de 2023, o seu custo aumentará muito mais! </b></p>
+							<p></p>
+							<p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipa, basta responder a este e-mail.</p>
+							<p></p>
+							<p><i>Ore conosco para multiplicar a quantidade e a qualidade dos pastores-formadores. </i></p>
+							<p><br></p>
+							<p>Cordialmente,</p>
+							<p>&nbsp;Equipe do GProCongress II.</p><div><br></div>';
 
-					}elseif($user->language == 'fr'){
-					
-						$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
-						$subject = 'Rappel- Votre rabais de “ l’inscription anticipée ” expire bientôt   31 MAI 2023! ';
-						$msg = '<p>Cher '.$name.',</p>
-						<p></p>
-						<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant. </p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b><i>VEUILLEZ NOTER: Si le paiement total n’est pas reçu avant le 31 mai 2023, vous perdrez votre rabais « inscription anticipée » et vous devrez payer 100 $ de plus pour assister au Congrès. </i></b></p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b>NOTEZ AUSSI: Si vous ne payez pas avant le 31 août 2023, votre coût augmentera beaucoup plus!  </b></p>
-						<p></p>
-						<p>Si vous avez des questions sur votre paiement, ou si vous avez souhaitez parler à l’un des membres de notre équipe, répondez simplement à cet e-mail. </p>
-						<p></p>
-						<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs. </i></p>
-						<p><br></p>
-						<p>Cordialement,</p>
-						<p>&nbsp;L’équipe GProCongress II</p><div><br></div>';
+						}else{
+						
+						    $url = '<a href="'.url('payment').'" target="_blank">link</a>';
 
-					}elseif($user->language == 'pt'){
-					
-						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
-						$subject = 'LEMBRETE - O seu desconto " antecipado " está a expirar em breve  31 de maio de 2023! ';
-						$msg = '<p>Caro  '.$name.',</p>
-						<p></p>
-						<p>O pagamento da sua participação no GProCongress II está a vencer.  Por favor, vá ao '.$url.', e efetue o seu pagamento agora.</p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b><i>POR FAVOR NOTE: Se o pagamento total não for recebido até 31 de Maio de 2023, perderá o seu desconto "antecipado" e terá de pagar mais 100 dólares para participar no Congresso. </i></b></p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b>NOTA TAMBÉM: Se não pagar até 31 de Agosto de 2023, o seu custo aumentará muito mais! </b></p>
-						<p></p>
-						<p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipa, basta responder a este e-mail.</p>
-						<p></p>
-						<p><i>Ore conosco para multiplicar a quantidade e a qualidade dos pastores-formadores. </i></p>
-						<p><br></p>
-						<p>Cordialmente,</p>
-						<p>&nbsp;Equipe do GProCongress II.</p><div><br></div>';
+							$subject = 'REMINDER – Your “EARLY BIRD” discount is expiring on MAY 31, 2023!';
+							$msg = '<p>Dear '.$name.',</p>
+							<p></p>
+							<p>Payment for your attendance at GProCongress II is now due.  Please go to '.$url.', and make your payment now.</p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b><i>PLEASE NOTE: If full payment is not received by May 31, 2023, you will lose your “early bird” discount, and you will have to pay an additional $100 to attend the Congress. </i></b></p>
+							<p></p>
+							<p style="background-color:yellow; display: inline;"><b>ALSO NOTE: If you don’t pay by August 31, 2023, your cost will go up a lot more! </b></p>
+							<p></p>
+							<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email. </p>
+							<p></p>
+							<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
+							<p><br></p>
+							<p>Warmly,</p>
+							<p>&nbsp;The GProCongress II Team</p><div><br></div>';
+						
+						}
 
-					}else{
-					
-                        $url = '<a href="'.url('payment').'" target="_blank">link</a>';
+						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 
-						$subject = 'REMINDER – Your “EARLY BIRD” discount is expiring on MAY 31, 2023!';
-						$msg = '<p>Dear '.$name.',</p>
-						<p></p>
-						<p>Payment for your attendance at GProCongress II is now due.  Please go to '.$url.', and make your payment now.</p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b><i>PLEASE NOTE: If full payment is not received by May 31, 2023, you will lose your “early bird” discount, and you will have to pay an additional $100 to attend the Congress. </i></b></p>
-						<p></p>
-						<p style="background-color:yellow; display: inline;"><b>ALSO NOTE: If you don’t pay by August 31, 2023, your cost will go up a lot more! </b></p>
-						<p></p>
-						<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email. </p>
-						<p></p>
-						<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
-						<p><br></p>
-						<p>Warmly,</p>
-						<p>&nbsp;The GProCongress II Team</p><div><br></div>';
-					
+						\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – Your “<b>EARLY BIRD</b>” discount is expiring on <b>MAY 31, 2023!</b>');
 					}
-
-					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-
-					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – Your “<b>EARLY BIRD</b>” discount is expiring on <b>MAY 31, 2023!</b>');
-				
 					
 				}
+
+				echo "<pre>";
+				print_r($emails); 
 				
-				return response(array('message'=>' Reminders has been sent successfully.All Emails : '.print_r($emails)), 200);
+				return response(array('message'=>' Reminders has been sent successfully.All Emails'), 200);
 			}
 
 			return response(array("message"=>'No results found for reminder.'), 200);
