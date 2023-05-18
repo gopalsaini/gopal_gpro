@@ -30,7 +30,7 @@ return [
     'regular-registration-ends-on-august' => "As demais inscrições  terminam em 31 de Agosto (devem ser pagas integralmente até essa data)",
     'no-registration-or-payment-will-be-accepted-after-october' => 'Nenhuma inscrição ou pagamento será aceito após 13 de Outubro',
 
-    'Early_Bird' => 'Early Bird',
+    'Early_Bird' => 'Com preço promocional',
     'Regular_Registration' => 'Regular Registration',
     'Late_Registration' => 'Late Registration',
 ];

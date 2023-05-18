@@ -15,7 +15,7 @@ return [
 
     'pricing' => 'Cost',
     'select_one' => 'Select One',
-    'with_early_bird' => 'With arly bird',
+    'with_early_bird' => 'With early bird',
     'with_out_early_bird' => 'With out early bird',
     'single_room_per_person' => 'SINGLE ROOM | PER PERSON |  DELUXE ROOM',
     'single_spouse_trainer' => 'SINGLE SPOUSE TRAINER | DOUBLE DELUXE ROOM ',

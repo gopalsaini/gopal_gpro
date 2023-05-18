@@ -29,7 +29,7 @@ return [
     'early-bird-registration-ends-may' => "La inscripción anticipada finaliza el 31 de mayo (debe pagar la totalidad antes de esa fecha)",
     'regular-registration-ends-on-august' => "La inscripción oficial finaliza el 31 de agosto (debe pagar la totalidad antes de esa fecha)",
     'no-registration-or-payment-will-be-accepted-after-october' => 'No se aceptarán inscripciones ni pagos después del 13 de octubre',
-    'Early_Bird' => 'Early Bird',
+    'Early_Bird' => 'Con Reserva Anticipada',
     'Regular_Registration' => 'Regular Registration',
     'Late_Registration' => 'Late Registration',
 ];
