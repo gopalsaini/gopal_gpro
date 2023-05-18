@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class PricingController extends Controller
 {
@@ -30,7 +31,15 @@ class PricingController extends Controller
         
         $pricing = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
         \App\Helpers\commonHelper::setLocale();
-        return view('pricing', compact('pricing'));
+
+        if (date('d-m-Y') === '01-06-2023') {  
+
+            return view('pricing2', compact('pricing'));
+
+        } else {
+
+            return view('pricing', compact('pricing'));
+        }
 
     }
 }

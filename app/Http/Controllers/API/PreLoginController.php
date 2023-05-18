@@ -3713,11 +3713,11 @@ class PreLoginController extends Controller {
 							<p></p>
 							<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant. </p>
 							<p></p>
-							<p style="background-color:yellow; display: inline;"><b><i>VEUILLEZ NOTER: Si le paiement total n’est pas reçu avant le 31 mai 2023, vous perdrez votre rabais « inscription anticipée » et vous devrez payer 100 $ de plus pour assister au Congrès. </i></b></p>
+							<p style="background-color:yellow; display: inline;"><b><i>VEUILLEZ NOTER: Si le paiement total n’est pas reçu avant le 31 mai 2023, vous perdrez votre rabais « inscription anticipée » et vous devrez payer 100 $ de plus pour participer au Congrès. </i></b></p>
 							<p></p>
 							<p style="background-color:yellow; display: inline;"><b>NOTEZ AUSSI: Si vous ne payez pas avant le 31 août 2023, votre coût augmentera beaucoup plus!  </b></p>
 							<p></p>
-							<p>Si vous avez des questions sur votre paiement, ou si vous avez souhaitez parler à l’un des membres de notre équipe, répondez simplement à cet e-mail. </p>
+							<p>Si vous avez des questions sur votre paiement, ou si vous souhaitez parler à l’un des membres de notre équipe, répondez simplement à cet e-mail. </p>
 							<p></p>
 							<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs. </i></p>
 							<p><br></p>
