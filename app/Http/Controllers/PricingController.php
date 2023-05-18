@@ -34,11 +34,11 @@ class PricingController extends Controller
 
         if (date('d-m-Y') === '01-06-2023') {  
 
-            return view('pricing2', compact('pricing'));
+            return view('pricing', compact('pricing'));
 
         } else {
 
-            return view('pricing', compact('pricing'));
+            return view('pricing2', compact('pricing'));
         }
 
     }
