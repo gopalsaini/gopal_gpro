@@ -104,18 +104,21 @@ return [
     'select_code' => "Seleccione Código",
 
     //exhibitor
-    'business_name' => "Organization Name",
+    'business_name' => "Nombre de la Organización ",
+    'enter_business_name' => "Ingrese el nombre de la Organización",
     'business_number' => "Business Identification Number",
-    'Website' => "Business Website",
-    'approval_and_agree_to' => "I agree to Pay $800 on approval",
-    'exhibitor_policy' => "Política de exhibidores",
-    'i_agree' => "I Agree",
-    'exhibitors_registration' => "Exhibitor Registration",
+    'Website' => "Pagina Web de la organización (opcional)",
+    'enter_Website' => "Ingrese el nombre de la pagina web de la organización ",
+    'approval_and_agree_to' => "Estoy de acuerdo en pagar $800.00 tras aprobación ",
+    'exhibitor_policy' => "Politica para Exhibidor",
+    'i_agree' => "Estoy de acuerdo con la ",
+    'exhibitors_registration' => "Inscripción como Exhibidores",
     'exhibitor_portal' => "Portal del Exhibidor",
-    'Optional' => "Optional",
+    'Optional' => "Pagina Web de la organización (opcional)",
     'become_exhibitor' => "Cómo convertirse en Exhibidor",
-    'first_pay_first_serve' => "First pay First serve",
-    'exhibitor_comment' => "What resources do you have to share at the Congress that will contribute to the training of pastors worldwide?",
-
+    'first_pay_first_serve' => "Primero en Pagar Primero en Entrar",
+    'exhibitor_comment' => "¿Qué recursos tiene para compartir en el Congreso que contribuirán a la formación de pastores en todo el mundo? ",
+    'exhibition_fee' => "Pagar su tarifa de exhibición de $800 USD",
+    'Credit_Card_Payment' => "Credit Card Payment",
 
 ];

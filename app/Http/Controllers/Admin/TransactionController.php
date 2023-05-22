@@ -34,7 +34,7 @@ class TransactionController extends Controller {
 
 			->addColumn('user_name', function($data){
 
-				$exb = \App\Models\Exhibitors::where('user_id',$data->user_id)->where('payment_status','Success')->first();
+				$exb = \App\Models\Exhibitors::where('user_id',$data->user_id)->first();
 				if($exb){
 					$Exhibitors = 'Exhibitors';
 				}else{

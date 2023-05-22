@@ -216,10 +216,12 @@ class HomeController extends Controller
                 
                 $intent = $data['intent'];
                 \Session::put('intent',$intent);
+                \Session::put('exhibitionUser',$linkPayment);
                 
                 $linkPayment->order_id = $id;
                 $linkPayment->save();
 
+                \App\Helpers\commonHelper::setLocale();
                 return view('stripe',compact('intent','id'));
                     
             }else{
@@ -916,8 +918,33 @@ class HomeController extends Controller
 
     public function exhibitorsHome(Request $request){
  
-        \App\Helpers\commonHelper::setLocale();
-        return view('exhibitors.index');
+        $totalPendingAmount = '';
+
+        $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+        $resultData=json_decode($result->content, true); 
+        if(isset($resultData['result'])){
+            $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], true);
+
+        }
+        
+        if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0){
+
+            if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
+
+                \App\Helpers\commonHelper::setLocale();
+                return view('exhibitors.index');
+
+            }else{
+
+                return redirect('/');
+            }
+
+        }else{
+
+            return redirect('/');
+        }
+
+        
         
     }
 
@@ -1034,8 +1061,31 @@ class HomeController extends Controller
         
         if(\Session::has('gpro_user')){
 
-            \App\Helpers\commonHelper::setLocale();
-            return view('exhibitors.exhibitors');
+            $totalPendingAmount = '';
+
+            $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
+            $resultData=json_decode($result->content, true); 
+            if(isset($resultData['result'])){
+                $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($resultData['result']['id'], true);
+
+            }
+            
+            if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0){
+
+                if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
+
+                    \App\Helpers\commonHelper::setLocale();
+                    return view('exhibitors.exhibitors');
+
+                }else{
+
+                    return redirect('/');
+                }
+
+            }else{
+
+                return redirect('/');
+            }
 
         }else{
 

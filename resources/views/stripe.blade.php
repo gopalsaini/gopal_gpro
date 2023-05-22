@@ -41,8 +41,17 @@
                 <div class="col-md-8 col-md-offset-2">
                     <div class="panel panel-default credit-card-box">
                         <div class="panel-heading   " >
-                            <div class="row display-tr text-center" >
-                                <h3 class="panel-title display-td">@lang('web/stripe.payment-by-card')</h3>
+                            <div class="row text-center" >
+                              
+                                
+                                @if(\Session::has('exhibitionUser'))
+                                  <p><h3 class="panel-title ">@lang('web/app.Credit_Card_Payment')</h3></p>
+                                  <br>
+                                  <p><h6 class="panel-title ">@lang('web/app.exhibition_fee')</h6></p>
+
+                                @else
+                                  <p><h3 class="panel-title ">@lang('web/stripe.payment-by-card')</h3></p>
+                                @endif
                                
                             </div>                    
                         </div>

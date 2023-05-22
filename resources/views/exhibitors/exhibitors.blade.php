@@ -85,7 +85,7 @@
                                 <div class="form-check">
                                     <label class="form-check-label">@lang('web/app.business_name') <span>*</span></label>
                                     <div class="input-box">
-                                        <input type="text" required onkeypress="return /[a-z A-Z ]/i.test(event.key)" name="business_name" id="businessName" placeholder="@lang('web/app.enter') @lang('web/app.business_name')">
+                                        <input type="text" required onkeypress="return /[a-z A-Z ]/i.test(event.key)" name="business_name" id="businessName" placeholder="@lang('web/app.enter_business_name')">
 
                                     </div>
                                 </div>
@@ -102,9 +102,9 @@
                             
                             <div class="col-lg-4">
                                 <div class="form-check">
-                                    <label class="form-check-label">@lang('web/app.Website')  <span style="color:black">(@lang('web/app.Optional'))</span></label>
+                                    <label class="form-check-label">@lang('web/app.Website') </label>
                                     <div class="input-box">
-                                        <input type="text" name="website" id="Website" placeholder="@lang('web/app.enter') @lang('web/app.Website')">
+                                        <input type="text" name="website" id="Website" placeholder="@lang('web/app.enter_Website')">
 
                                     </div>
                                 </div>

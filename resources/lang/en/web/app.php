@@ -105,18 +105,24 @@ return [
     'select_code' => "Select code",
 
     //exhibitor
-    'business_name' => "Organization Name",
+    
+    'business_name' => "Organization Name ",
+    'enter_business_name' => "Enter Organization Name",
     'business_number' => "Business Identification Number",
-    'Website' => "Business Website",
+    'Website' => "Organization Website (Optional)",
+    'enter_Website' => "Enter Organization Website Name",
     'approval_and_agree_to' => "I agree to Pay $800 on approval",
     'exhibitor_policy' => "Exhibitor Policy",
-    'i_agree' => "I Agree",
+    'i_agree' => "I Agree to",
     'exhibitors_registration' => "Exhibitor Registration",
-    'become_exhibitor' => "Become an Exhibitor",
     'exhibitor_portal' => "Exhibitor Portal",
-    'Optional' => "Optional",
-    'first_pay_first_serve' => "First pay First serve",
-    'exhibitor_comment' => "What resources do you have to share at the Congress that will contribute to the training of pastors worldwide?",
+    'become_exhibitor' => "Become an Exhibitor",
+    'first_pay_first_serve' => "First Pay First Serve",
+    'exhibitor_comment' => "What resources do you have to share at the Congress that will contribute to the training of pastors worldwide? ",
+    'exhibition_fee' => "Pay $800 Exhibitor Fee",
+    'Credit_Card_Payment' => "Credit Card Payment",
+
+
 
 
 ];
