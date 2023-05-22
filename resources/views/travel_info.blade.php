@@ -96,10 +96,10 @@
                             {{$passportInfo['name']}} {{$passportInfo['last_name']}}</span>
                         </li>
                         
-                        <li>
+                        <!-- <li>
                             <p>@lang('web/profile.dob')</p>
                             <span>:&nbsp; &nbsp; &nbsp; @if($passportInfo['dob']!=''){{ date('d-m-Y',strtotime($passportInfo['dob'])) }}@endif</span>
-                        </li>
+                        </li> -->
                         <li>
                             <p>Passport No</p>
                             <span>:&nbsp; &nbsp; &nbsp; {{$passportInfo['passport_no']}} </span>
@@ -130,10 +130,10 @@
                         @endif
                     </ul>
                     <ul>
-                        <li>
+                        <!-- <li>
                             <p>@lang('web/profile.citizenship')</p>
                             <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($passportInfo['citizenship'])}}</span>
-                        </li>
+                        </li> -->
                         <li>
                             <p>@lang('web/profile.country')</p>
                             <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($passportInfo['country_id'])}}</span>

@@ -81,6 +81,10 @@
         .testimonial-wrapper .testimonial-slider {
              margin-bottom: 100px !important;
         }
+
+        .header .header-menu li a {
+            font-size: 16px !important;
+        }
     </style>
 
     @stack('custom_css')
@@ -151,18 +155,18 @@
 
                         
                             @if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess())
-                                <li><a target="_blank" href="{{ url('exhibitor-index') }}">Exhibitor</a></li>
+                                <li><a target="_blank" href="{{ url('exhibitor-index') }}">@lang('web/app.Exhibitor')</a></li>
                             @endif
 
                         @endif
                         
                         
                         <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
-                        <!-- @if(\Session::has('gpro_user'))
-                            @php $tokens = "http://127.0.0.1:8000/community?token=".\Session::get('gpro_user');  @endphp
+                        @if(\Session::has('gpro_user'))
+                        @php $tokens = "https://demo.d2rtech.com/GProCommunity/community?token=".\Session::get('gpro_user');  @endphp
                             <li><a  href="{{$tokens}}">Community</a></li>
                            
-                        @endif -->
+                        @endif
 
                     </ul>
                 </div>
@@ -241,8 +245,13 @@
                 <li><a href="{{ url('groupinfo-update') }}">@lang('web/app.myprofile')</a></li>
                 @endif
                 <li><a href="{{ url('/#contact-us') }}">@lang('web/app.contactus')</a></li>
-                <!-- <li><a target="_blank" href="{{ url('exhibitor-index') }}">Exhibitor</a></li> -->
+                @if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0)
 
+                    @if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess())
+                        <li><a target="_blank" href="{{ url('exhibitor-index') }}">@lang('web/app.Exhibitor')</a></li>
+                    @endif
+
+                @endif
                 <li><a href="{{ route('pricing') }}">@lang('web/app.pricing')</a></li>
                 <li><a href="{{ route('help') }}">@lang('web/app.help')</a></li>
                 <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>

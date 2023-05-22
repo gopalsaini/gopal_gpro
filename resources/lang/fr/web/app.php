@@ -119,5 +119,6 @@ return [
     'exhibitor_comment' => "Quelles ressources avez-vous à partager au Congrès qui contribueront à la formation des pasteurs dans le monde entier ? ",
     'exhibition_fee' => "Payer vos frais d’exposition de 800 USD",
     'Credit_Card_Payment' => "Credit Card Payment",
+    'Exhibitor' => "Exhibidor",
 
 ];

@@ -121,6 +121,7 @@ return [
     'exhibitor_comment' => "What resources do you have to share at the Congress that will contribute to the training of pastors worldwide? ",
     'exhibition_fee' => "Pay $800 Exhibitor Fee",
     'Credit_Card_Payment' => "Credit Card Payment",
+    'Exhibitor' => "Exhibitor",
 
 
 

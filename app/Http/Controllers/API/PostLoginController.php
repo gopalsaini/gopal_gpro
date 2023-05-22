@@ -3339,8 +3339,8 @@ class PostLoginController extends Controller {
 			'surname' => 'required',
 			'name' => 'required',
 			'passport_no' => 'required',
-			'dob' => 'required|date',
-			'citizenship' => 'required',
+			// 'dob' => 'required|date',
+			// 'citizenship' => 'required',
 			'country_id' => 'required',
 			'passport_copy' => 'required|array',
 			'diplomatic_passport' => 'required|in:Yes,No',
@@ -3394,8 +3394,8 @@ class PostLoginController extends Controller {
 
 				$passportInfo->name = $request->post('surname');
 				$passportInfo->passport_no = $request->post('passport_no');
-				$passportInfo->dob =  $request->post('dob');
-				$passportInfo->citizenship = $request->post('citizenship');
+				// $passportInfo->dob =  $request->post('dob');
+				// $passportInfo->citizenship = $request->post('citizenship');
 				$passportInfo->country_id = $request->post('country_id');
 				$passportInfo->salutation = $request->post('name');
 				$passportInfo->diplomatic_passport = $request->post('diplomatic_passport');
@@ -3439,8 +3439,12 @@ class PostLoginController extends Controller {
 				
 				}else{
 				
-					$subject = 'Your passport information has been received';
-					$msg = '<p>Dear '.$request->user()->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  Our team is now working on a visa letter for you, and we will send the letter to you as soon as it is completed</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+					$subject = 'Thank you for submitting your passport information for GProCongress II';
+					$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>We have received your passport information!  Thank you for submitting it promptly.</p><p><br></p>
+					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+					<p>Warmly,</p>
+					<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 									
 				}
 
@@ -3448,7 +3452,7 @@ class PostLoginController extends Controller {
 
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 				
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Your passport information has been received');
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Thank you for submitting your passport information for GProCongress II');
 
 				return response(array("error" => false, "message" =>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your_submission_has_been_sent')), 200);
 				

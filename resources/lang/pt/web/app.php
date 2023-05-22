@@ -120,5 +120,6 @@ return [
     'exhibitor_comment' => "Quais recursos você tem para compartilhar no Congresso que contribuirão para a formação de pastores em todo o mundo?",
     'exhibition_fee' => "Pagar sua taxa de exibição de $ 800 USD",
     'Credit_Card_Payment' => "Credit Card Payment",
+    'Exhibitor' => "Exhibidor",
 
 ];

@@ -56,14 +56,14 @@
                         <input type="file" name="passport_copy[]" placeholder="Upload passport copy" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg" multiple>
                     </div>
 
-                    <div class="col-sm-4">
+                    <!-- <div class="col-sm-4">
                         <div class="form-group">
                             <label for="input">@lang('admin.dob'):</label>
                             <input type="date" value="{{$resultData['result']['dob']}}" placeholder="DD/ MM/ YYYY" class="active-input mt-2" required name="dob" >
                         </div>
-                    </div>
+                    </div> -->
                    
-                    <div class="col-lg-4">
+                    <!-- <div class="col-lg-4">
                         <label for="citizen">@lang('web/profile-details.citizenship') <span>*</span></label>
                         <div class="common-select">
                             <select id="citizen" class="mt-2 test" name="citizenship" >
@@ -75,7 +75,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>
+                    </div> -->
                     
                     <div class="col-lg-4">
                         <label for="country">Country Currently Staying <span>*</span></label>

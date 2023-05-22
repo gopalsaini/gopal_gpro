@@ -120,5 +120,6 @@ return [
     'exhibitor_comment' => "¿Qué recursos tiene para compartir en el Congreso que contribuirán a la formación de pastores en todo el mundo? ",
     'exhibition_fee' => "Pagar su tarifa de exhibición de $800 USD",
     'Credit_Card_Payment' => "Credit Card Payment",
+    'Exhibitor' => "Exhibidor",
 
 ];
