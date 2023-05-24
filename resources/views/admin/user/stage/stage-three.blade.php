@@ -97,9 +97,9 @@
                                                     <th> #ID </th>
                                                     <th> Name </th>
                                                     <th> Passport No </th>
-                                                    <th> DOB </th>
-                                                    <th> Citizenship </th>
                                                     <th> Country  </th>
+                                                    <th> Passport Valid  </th>
+                                                    <th> Valid Residence Country </th>
                                                     <th> Passport Copy  </th>
                                                     <th> Remark  </th>
                                                     <th> Admin Status </th>
@@ -121,9 +121,9 @@
                                                     <th> #ID </th>
                                                     <th> Name </th>
                                                     <th> Passport No </th>
-                                                    <th> DOB </th>
-                                                    <th> Citizenship </th>
                                                     <th> Country  </th>
+                                                    <th> Passport Valid  </th>
+                                                    <th> Valid Residence Country  </th>
                                                     <th> Passport Copy  </th>
                                                     <th> Remark  </th>
                                                     <th> admin Status </th>
@@ -155,12 +155,10 @@
                                                     <th> #ID </th>
                                                     <th> Name </th>
                                                     <th> Passport No </th>
-                                                    <th> DOB </th>
-                                                    <th> Citizenship </th>
                                                     <th> Country  </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Sponsorship Letter  </th>
-                                                    <th> Financial Letter  </th>
+                                                    <th> Attachment Letter  </th>
+                                                    <th> Valid Residence Country  </th>
                                                     <th> Remark  </th>
                                                     <th> User Status </th>
                                                     <th> User Type </th>
@@ -181,12 +179,10 @@
                                                     <th> #ID </th>
                                                     <th> Name </th>
                                                     <th> Passport No </th>
-                                                    <th> DOB </th>
-                                                    <th> Citizenship </th>
                                                     <th> Country  </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Sponsorship Letter  </th>
-                                                    <th> Financial Letter   </th>
+                                                    <th> Attachment Letter   </th>
+                                                    <th> Valid Residence Country  </th>
                                                     <th> Remark  </th>
                                                     <th> User Status </th>
                                                     <th> User Type </th>
@@ -539,13 +535,13 @@ $(document).ready(function() {
                 "data": "passport_no"
             },
             {
-                "data": "dob"
-            },
-            {
-                "data": "citizenship"
-            },
-            {
                 "data": "country_id"
+            }, 
+            {
+                "data": "passport_valid"
+            }, 
+            {
+                "data": "valid_residence_country"
             },
             {
                 "data": "passport_copy"
@@ -620,22 +616,16 @@ $(document).ready(function() {
                 "data": "passport_no"
             },
             {
-                "data": "dob"
-            },
-            {
-                "data": "citizenship"
-            },
-            {
                 "data": "country_id"
             },
             {
                 "data": "passport_copy"
             },
             {
-                "data": "sponsorship_letter"
+                "data": "financial_letter"
             },
             {
-                "data": "financial_letter"
+                "data": "valid_residence_country"
             },
             {
                 "data": "remark"

@@ -85,6 +85,37 @@
         .header .header-menu li a {
             font-size: 16px !important;
         }
+        .blink{
+            text-decoration: blink;
+            letter-spacing: 0.5px;
+            animation: Color 1s linear infinite;
+            }
+
+@keyframes Color {
+  0% {
+    color: #fff;
+  }
+
+  20% {
+    color: #ffce54;;
+  }
+
+  40% {
+    color: #fff;
+  }
+
+  60% {
+    color: #ffce54;
+  }
+
+  80% {
+    color: #fff;
+  }
+
+  100% {
+    color: #ffce54;
+  }
+}
     </style>
 
     @stack('custom_css')
@@ -97,13 +128,13 @@
             <marquee onmouseover="this.stop();" onmouseout="this.start();" behavior="" direction="left" height="54px" width="100%">
             <a target="_blank" href="#">
                 @if(App::getLocale() == 'pt')
-                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->pt_title }}  @endif</span>
+                <span class="" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->pt_title }}  @endif</span>
                 @elseif(App::getLocale() == 'sp')
-                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->sp_title }}  @endif</span>
+                <span class="" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->sp_title }}  @endif</span>
                 @elseif(App::getLocale() == 'fr')
-                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->fr_title }}  @endif</span>
+                <span class="" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->fr_title }}  @endif</span>
                 @else
-                <span class="blink" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->en_title }}  @endif</span>
+                <span class="" target="blank">@if(!empty($siteSetting)) {{ $siteSetting->en_title }}  @endif</span>
                 @endif
             </a>
             </marquee>
@@ -129,7 +160,7 @@
                         @else
                         <li><a href="{{ url('groupinfo-update') }}">@lang('web/app.myprofile')</a></li>
                         @endif
-                        <li><a href="{{ route('pricing') }}" class="text-white" style="padding: 10px;font-size: 18px;">@lang('web/app.pricing')</a></li>
+                        <li><a href="{{ route('pricing') }}" class=" blink fw-bold" style="padding: 10px;font-size: 18px;">@lang('web/app.pricing')</a></li>
                                 
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -162,11 +193,11 @@
                         
                         
                         <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
-                        @if(\Session::has('gpro_user'))
+                        <!-- @if(\Session::has('gpro_user'))
                         @php $tokens = "https://demo.d2rtech.com/GProCommunity/community?token=".\Session::get('gpro_user');  @endphp
                             <li><a  href="{{$tokens}}">Community</a></li>
                            
-                        @endif
+                        @endif -->
 
                     </ul>
                 </div>

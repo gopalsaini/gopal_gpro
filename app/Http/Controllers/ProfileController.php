@@ -267,7 +267,7 @@ class ProfileController extends Controller
        
         \Session::put('lang',$resultData['result']['language']);
         
-        if($resultData['result']['profile_status']=='Review' || $resultData['result']['profile_status']=='Waiting'){ 
+        if($resultData['result']['profile_status']=='Review' || $resultData['result']['profile_status']=='Waiting' || $resultData['result']['profile_status']=='ApprovedNotComing'){ 
    
             return redirect('profile');
              

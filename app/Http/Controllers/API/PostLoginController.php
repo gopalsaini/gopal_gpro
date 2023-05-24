@@ -3341,11 +3341,22 @@ class PostLoginController extends Controller {
 			'passport_no' => 'required',
 			// 'dob' => 'required|date',
 			// 'citizenship' => 'required',
-			'country_id' => 'required',
+			
 			'passport_copy' => 'required|array',
 			'diplomatic_passport' => 'required|in:Yes,No',
 			'passport_copy.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|min:5MB',
 		];
+
+		if($request->passport_valid == 'Yes'){
+
+			$rules = ['country_id' => 'required'];
+			$rules = ['countries_doc' => 'required'];
+
+		}else{
+
+			$rules = ['country_id' => 'nullable'];
+			$rules = ['countries_doc' => 'nullable'];
+		}
 
 		$messages = array(
 			'name.required' => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'name_required'), 
@@ -3367,8 +3378,19 @@ class PostLoginController extends Controller {
 		}else{
 
 
-			try{
+			// try{
 
+				$country = [];
+
+				if($request->passport_valid == 'Yes'){
+
+					if(count($request->post('countries')) != count($request->file('countries_doc'))){
+
+						return response(array("error" => true, "message" => 'countries doc not match'), 403);
+					}
+
+				}	
+				
 				if(count($request->file('passport_copy'))>2){
 
 					return response(array("error" => true, "message" => 'File upload allow only 2'), 403);
@@ -3386,9 +3408,9 @@ class PostLoginController extends Controller {
 					$passportInfo = new \App\Models\PassportInfo;
 					$passportInfo->user_id = $request->user()->id;
 
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information submit','sponsorship information submit','sponsorship information submit');
+					// \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information submit','sponsorship information submit','sponsorship information submit');
 				}else{
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information update','sponsorship information update','sponsorship information updates');
+					// \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information update','sponsorship information update','sponsorship information updates');
 
 				}
 
@@ -3399,24 +3421,49 @@ class PostLoginController extends Controller {
 				$passportInfo->country_id = $request->post('country_id');
 				$passportInfo->salutation = $request->post('name');
 				$passportInfo->diplomatic_passport = $request->post('diplomatic_passport');
+				$passportInfo->visa_residence = $request->post('visa_residence');
+				$passportInfo->multiple_entry_visa = $request->post('multiple_entry_visa');
+				$passportInfo->multiple_entry_visa_country = $request->post('multiple_entry_visa_country');
+				$passportInfo->diplomatic_passport = $request->post('diplomatic_passport');
 				$passportInfo->status = 'Pending';
 				$passportInfo->admin_status = 'Pending';
 				$passportInfo->user_confirm = $request->post('user_confirm') ? 'Yes' : 'No';
 				
 
 				$passportImage='';
-				$images = $request->file('passport_copy');
-				foreach ($images as $key=>$image) {
-					$new_name = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(1111,9999).'.'.$image->getClientOriginalExtension();
-					$image->move(public_path('/uploads/passport'),$new_name);
+				$passport_copy = $request->file('passport_copy');
+				foreach ($passport_copy as $key=>$image1) {
+					$new_name1 = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(1111,9999).'.'.$image1->getClientOriginalExtension();
+					$image1->move(public_path('/uploads/passport'),$new_name1);
 					if($key != '0'){
 						$passportImage .= ',';
 					}
-					$passportImage .= $new_name;
+					$passportImage .= $new_name1;
 
 					$passportInfo->passport_copy= $passportImage;
 
 				}
+				
+				if($request->passport_valid == 'Yes'){
+
+					foreach($request->post('countries') as $key=>$countries){
+
+						$images = $request->file('countries_doc')[$key];
+						
+						$new_name = 'image_'.strtotime(date('Y-m-d H:i:s')).rand(1111,9999).'.'.$images->getClientOriginalExtension();
+						$images->move(public_path('/uploads/passport'),$new_name);
+
+						$country[] = [
+										'id'=> $countries,
+										'file'=> $new_name,
+									];
+					}
+
+				}
+				
+				$passportInfo->passport_valid = $request->post('passport_valid');
+
+				$passportInfo->valid_residence_country = json_encode($country);
 
 				$passportInfo->save();
 
@@ -3424,26 +3471,41 @@ class PostLoginController extends Controller {
 					
 				if($request->user()->language == 'sp'){
 
-					$subject = "Hemos recibido la información de su pasaporte.";
-					$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$request->user()->name.' '.$request->user()->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Nuestro equipo ahora está trabajando en una carta de visa para usted, y le enviaremos la carta tan pronto como esté completa.</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""></p><p style=""></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
-				
+					$subject = "Gracias por enviar la información de su pasaporte para GProCongress II.";
+					$msg = '<p>Estimado '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>¡Hemos recibido la información de su pasaporte! Gracias por enviarlo a la brevedad.</p><p><br></p>
+					<p>Nuestro equipo ahora está revisando su información. Una vez que finalice nuestra revisión, le daremos más instrucciones sobre lo que deberá hacer para ingresar al país de Panamá.&nbsp;</p><p><br><br></p>
+					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br><br></p>
+					<p>Atentamente</p>
+					<p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
 				}elseif($request->user()->language == 'fr'){
 				
-					$subject = "Les informations de votre passeport ont été reçues.";
-					$msg = '<div><font color="#000000"><span style="font-size: 14px;">Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Nous vous remercions de nous avoir envoyé les informations de votre passeport. Notre équipe travaille actuellement sur une lettre de visa pour vous, et nous vous l enverrons dès qu elle sera terminée.</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"></font></div><div><font color="#000000"></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Cordialement,&nbsp;</span></font></div><div><font color="#000000"><span style="font-size: 14px;">L’équipe du GProCongrès II</span></font></div><div><br></div>';
-		
+					$subject = "Merci d’avoir soumis les informations de votre passeport pour GProCongress II.";
+					$msg = '<p>Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>Nous avons reçu les informations de votre passeport !  Nous vous remercions de les avoir soumis rapidement.</p><p><br></p>
+					<p>Notre équipe examine actuellement vos informations.  Une fois notre examen terminé, nous vous donnerons des instructions supplémentaires sur ce que vous devrez faire pour entrer au Panama.&nbsp;</p><p><br><br></p>
+					<p>Si vous avez des questions ou si vous souhaitez  parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br><br></p>
+					<p>Cordialement</p>
+					<p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
 				}elseif($request->user()->language == 'pt'){
 				
-					$subject = "Assunto: Recebemos as informações de seu passaporte.";
-					$msg = '<div><div><span style="font-size: 14px;">Prezado '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Obrigada por nos enviar as informações de seu passaporte. Nossa equipe está agora trabalhando em uma carta de visa para você, lhe enviaremos quando a carta estiver pronta.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.</span></div><div></font></div><div><span style="font-size: 14px;">Atenciosamente,</span></div><div><span style="font-size: 14px;">Equipe do II CongressoGPro&nbsp;&nbsp;</span></div></div><div><br></div>';
-				
+					$subject = "Obrigado por enviar as informações do seu passaporte para o GProCongresso II.";
+					$msg = '<p>Caro '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>Recebemos as informações do seu passaporte! Obrigado por nos enviar tão prontamente.</p><p><br></p>
+					<p>Nossa equipe está analisando suas informações. Após a conclusão de nossa análise, forneceremos mais instruções sobre o que você precisará fazer para entrar no país do Panamá.&nbsp;</p><p><br><br></p>
+					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p>
+					<p>Calorosamente</p>
+					<p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';				
 				}else{
 				
 					$subject = 'Thank you for submitting your passport information for GProCongress II';
 					$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
 					<p>We have received your passport information!  Thank you for submitting it promptly.</p><p><br></p>
+					<p>Our team is now reviewing your information.  After our review is complete, we will give you further instructions about what you will need to do to enter the country of Panama.&nbsp;</p><p><br><br></p>
 					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
-					<p>Warmly,</p>
+					<p>Warmly</p>
 					<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 									
 				}
@@ -3456,11 +3518,11 @@ class PostLoginController extends Controller {
 
 				return response(array("error" => false, "message" =>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your_submission_has_been_sent')), 200);
 				
-			}catch (\Exception $e){
+			// }catch (\Exception $e){
 				
-			    return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			//     return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			
-			}
+			// }
 
         }
 

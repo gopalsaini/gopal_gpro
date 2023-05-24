@@ -2923,50 +2923,99 @@ class commonHelper{
 		$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
 
 		$user= \App\Models\User::where('id',$user_id)->first();
-		$name = $user->name.' '.$user->last_name;
-
-		$url = '<a href="'.url('sponsorship-letter-approve').'">Click here</a>';
+		
 		$to = $user->email;
 
-		$subject = 'Please verify your sponsorship letter.';
-		$msg = '<p>Thank you for submitting your sponsorship letter.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+		$subject = 'Financial letter.';
 
-		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'sponsorship information completed');
-		
-		if($user->language == 'sp'){
+		$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
 
-			$subject = "Por favor, verifique su información de viaje";
-			$msg = '<p>Estimado '.$name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace: '.$url.' para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
-		
-		}elseif($user->language == 'fr'){
-		
-			$subject = "Veuillez vérifier vos informations de voyage";
-			$msg = "<p>Cher '.$name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien: '.$url.' pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+		$msg = '<p>Dear '.$passportApprove->salutation.' '.$passportApprove->name.',</p><p><br></p><p><br></p>
+		<p>Passport Number: '.$passportApprove->passport_no.'</p><p><br></p>
+		<p>Country: '.\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship).'</p><p><br></p>
+		<p>This letter will confirm that your application to GProCongress II has been accepted, and that you are invited to attend the Congress in Panama City, Panama, from November 12-17, 2023.</p><p><br></p>
+		<p>RREACH is providing you with significant financial assistance, so that you can attend the Congress. First, your registration fee has been discounted to ___________. (RREACH’s cost for each delegate to attend the Congress is around $1,750.00.) In addition, RREACH will cover the following expenses: </p><p><br></p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Airport transfers to/from the hotel.</p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	A room for five nights at the Westin Playa Bonita Panama Hotel.</p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	All meals during the Congress; and</p>
+		<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	All materials for the Congress.</p><p><br></p>
+		<p>Therefore, the only costs you are responsible for are your registration fee listed above, and your airfare to Panama. All other incidental expenses and visa fee (if applicable) will be borne by you.</p><p><br></p>
+		<p>This is a unique opportunity for you to <b>connect with like-minded peers</b>, who serve undertrained pastors everywhere, and to <b>build new relationships</b> with current and emerging leaders in pastor training.  Secondly, it’s a wonderful time for you to <b>reflect</b> on your ministry calling, to <b>envision</b> the next season of your life and ministry, to <b>think</b> strategically about implementation, and to assess your ministry effectiveness. Thirdly, it’s a great place for you to <b>find resources</b> for your future ministry – learn how to receive <b>strength from the Lord Jesus Christ</b> to continue your work, find committed partners for mutual encouragement in coming years; and gather <b>proven ideas and new models</b> in pastor training partnerships, support, and delivery.</p><p><br</p>
+		<p>We hope that you will come to Panama this November, and be part of this global gathering of pastor trainers, designed to enhance pastoral health and advance church health in 200+ nations, and ultimately to reach the <b>next billion individuals</b> with spiritual health.  </p><p><br></p>
+		<p>For the glory of Christ, and for the beauty of His Bride,</p><p><br></p>
+		<p>'.$rajiv_richard.'</p><p><br></p>
+		<p>Rajiv Richard</p>
+		<p>GProCongress II Coordinator</p>
+		<p>Email: info@gprocongress.org</p>';
 
-		}elseif($user->language == 'pt'){
-		
-			$subject = "Por favor verifique sua Informação de Viagem";
-			$msg = '<p>Prezado '.$name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link: '.$url.' para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
-		
-		}else{
-		
-			$subject = 'Please verify your sponsorship letter.';
-			$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
-								
-		}
+		$passportApproveArray= [
+			'salutation'=>$passportApprove->salutation,
+			'name'=>$passportApprove->name,
+			'passport_no'=>$passportApprove->passport_no,
+			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
+			'rajiv_richard'=>$rajiv_richard,
+			'amount'=>$user->amount,
+			'lang'=>$user->language,
+		];
 
-		$pdf = \PDF::loadView('email_templates.sponsorship_info_show', $passportApprove->toArray());
+		
+		$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
 		$pdf->setPaper('L');
 		$pdf->output();
-		$fileName = strtotime("now").rand(11,99).'.pdf';
+		$fileName = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
 		$path = public_path('uploads/file/');
-		$passportApprove->sponsorship_letter=$fileName;
-		$passportApprove->save();
 		
 		$pdf->save($path . '/' . $fileName);
+
+		// $passportApproveArray= [
+		// 	'salutation'=>$passportApprove->salutation,
+		// 	'name'=>$passportApprove->name,
+		// 	'passport_no'=>$passportApprove->passport_no,
+		// 	'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
+		// 	'rajiv_richard'=>$rajiv_richard,
+		// 	'amount'=>$user->amount,
+		// 	'lang'=>$user->language,
+		// ];
+
+		// $pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
+		// $pdf->setPaper('L');
+		// $pdf->output();
+		// $financialSpanishLetter = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		// $path = public_path('uploads/file/');
 		
-		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
-		// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		// $pdf->save($path . '/' . $financialSpanishLetter);
+
+		$passportApprove->financial_letter=$fileName;
+		// $passportApprove->financial_spanish_letter=$financialSpanishLetter;
+
+		// if($financial == 'financial'){
+
+			$passportApprove->status='Approve';
+		// }
+		
+		$passportApprove->save();
+
+		$files = [
+            public_path('uploads/file/'.$fileName),
+            public_path('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
+            public_path('uploads/file/Visa_Request_Form.pdf'),
+            public_path('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
+        ];
+
+		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+			$message->subject($subject);
+			$message->to($to);
+			
+			foreach ($files as $file){
+                $message->attach($file);
+            }
+			
+		});
+		
+		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
 		
 	}
 
@@ -3004,9 +3053,10 @@ class commonHelper{
 			'salutation'=>$passportApprove->salutation,
 			'name'=>$passportApprove->name,
 			'passport_no'=>$passportApprove->passport_no,
-			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship),
+			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
 			'rajiv_richard'=>$rajiv_richard,
 			'amount'=>$user->amount,
+			'lang'=>$user->language,
 		];
 
 		
@@ -3018,25 +3068,27 @@ class commonHelper{
 		
 		$pdf->save($path . '/' . $fileName);
 
-		$passportApproveArray= [
-			'salutation'=>$passportApprove->salutation,
-			'name'=>$passportApprove->name,
-			'passport_no'=>$passportApprove->passport_no,
-			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship),
-			'rajiv_richard'=>$rajiv_richard,
-			'amount'=>$user->amount,
-		];
+		// $passportApproveArray= [
+		// 	'salutation'=>$passportApprove->salutation,
+		// 	'name'=>$passportApprove->name,
+		// 	'passport_no'=>$passportApprove->passport_no,
+		// 	'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
+		// 	'rajiv_richard'=>$rajiv_richard,
+		// 	'amount'=>$user->amount,
+		// 	'lang'=>$user->language,
+		// ];
 
-		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
-		$pdf->setPaper('L');
-		$pdf->output();
-		$financialSpanishLetter = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
-		$path = public_path('uploads/file/');
+		// $pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
+		// $pdf->setPaper('L');
+		// $pdf->output();
+		// $financialSpanishLetter = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		// $path = public_path('uploads/file/');
 		
-		$pdf->save($path . '/' . $financialSpanishLetter);
+		// $pdf->save($path . '/' . $financialSpanishLetter);
 
 		$passportApprove->financial_letter=$fileName;
-		$passportApprove->financial_spanish_letter=$financialSpanishLetter;
+		// $passportApprove->financial_spanish_letter=$financialSpanishLetter;
+
 		if($financial == 'financial'){
 
 			$passportApprove->status='Approve';
@@ -3044,25 +3096,25 @@ class commonHelper{
 		
 		$passportApprove->save();
 
-		// $files = [
-        //     public_path('uploads/file/'.$fileName),
-        //     public_path('uploads/file/'.$financialSpanishLetter),
-        // ];
+		$files = [
+            public_path('uploads/file/'.$fileName),
+            public_path('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
+        ];
 
-		// \Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
-		// 	$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-		// 	$message->subject($subject);
-		// 	$message->to($to);
+		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+			$message->subject($subject);
+			$message->to($to);
 			
-		// 	foreach ($files as $file){
-        //         $message->attach($file);
-        //     }
+			foreach ($files as $file){
+                $message->attach($file);
+            }
 			
-		// });
+		});
 		
-		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
-		// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-		// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
+		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
 		
 		
 	}

@@ -4,7 +4,11 @@
 @section('title',__('travel-information'))
 
 @section('content')
-
+<style>
+    .step-form .detail-wrap {
+        display: block !important;
+    }
+</style>
 <div class="inner-banner-wrapper">
         <div class="container">
             <div class="step-form-wrap step-preview-wrap">
@@ -114,9 +118,32 @@
                                 @endforeach
                             @endif
                         </li>
+
                         <li>
                             <p>Is this a diplomatic passport? : {{$passportInfo['diplomatic_passport']}}</p>
                         </li>
+
+                        @if($passportInfo['diplomatic_passport'] == 'Yes' && in_array($passportInfo['country_id'],['39', '5', '14', '116', '109', '232', '105', '199']))
+                           
+                            <li>
+                                <p>Valid Residence Country</p>
+                                @if($passportInfo['valid_residence_country'] != '')
+
+                                    @php $countryDoc = json_decode($passportInfo['valid_residence_country'],true); @endphp
+
+                                    @foreach($countryDoc as $key=>$img)
+                                        <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                            <span>&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
+                                        </a>
+                                    @endforeach
+                                @endif
+                            </li>
+
+                        @else
+                            <li>
+                                <p>Is your passport valid until May 31, 2024? : {{$passportInfo['passport_valid']}}</p>
+                            </li>
+                        @endif
                         @if($passportInfo['admin_status'] =='Decline')
                             
                                 <p style="color:red">Passport Information Declined By admin.</p><br>
@@ -153,32 +180,35 @@
                 </div>
                     
                 @if($passportInfo['admin_status'] =='Approved')
-                    <h4 class="inner-head section-gap">Sponsorship Info</h4>
-                
                     <div class="detail-wrap">
                         
                             <div class="row">
                                 
                                 <div class="col-md-12" >
-                                    @if($passportInfo['financial_letter'])
+
+                                @php $doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+		
+                                @endphp
+                                    @if(in_array($passportInfo['country_id'],$doNotRequireVisa))
                                         <div class="row">
                                             <div class="alphabet-vd-box">
-                                                <h4>Financial Letter</h4><br>
+                                                <h4>Attachment Letter</h4><br>
                                                 
                                                 <div class="step-next" style="display: flex;">
-                                                    <a style="margin-right: 50px;" href="{{asset('uploads/file/'.$passportInfo['financial_letter'])}}" target="_blank" class="main-btn">File 1</a>
-                                                    <a style="" href="{{asset('uploads/file/'.$passportInfo['financial_spanish_letter'])}}" target="_blank" class="main-btn">File 2</a>
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue"> Bank </a>
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue"> Acceptance</a>
                                                 </div>
                                             </div>
                                         </div>
                                         <br><br>
-                                    @endif
-
-                                    @if($passportInfo['sponsorship_letter'])
+                                    @else
                                         <div class="row">
-                                        <h4>Sponsorship Letter</h4><br><br>
+                                        <h4>Attachment Letter</h4><br><br>
                                             <div class="step-next">
-                                                <a style="" href="{{asset('uploads/file/'.$passportInfo['sponsorship_letter'])}}" target="_blank" class="main-btn">File</a>
+                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue"> Bank</a> 
+                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue"> Visa request</a>
+                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue"> Acceptance </a>
+                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue"> Visa processing</a>
                                             </div>
                                         </div>
                                     @endif
@@ -225,7 +255,7 @@
                                 <div class="row step-form">   
                                 
                                     <!-- <h4>visa letter file</h4> -->
-                                    <div class="row">
+                                    <!-- <div class="row">
                                         <div class="alphabet-vd-box">
                                             <iframe width="100%" height="400"  src="{{asset('uploads/file/'.$result['final_file'])}}#toolbar=0" title="Phonics Song for Children (Official Video) Alphabet Song | Letter Sounds | Signing for babies | ASL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                         </div>
@@ -235,7 +265,7 @@
                                             <a href="{{asset('uploads/file/'.$result['final_file'])}}" target="_blank" class="main-btn bg-gray-btn" >Download</a>
                                         
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             @else
                                 <div class="row step-form">  
@@ -293,17 +323,18 @@
                                 <h4>@lang('web/home.admin-verifying-visa-info')</h4>
                             </div>
                         @elseif($result)
-                            <div class="step-form" style="display: @if($travelInfo['result'] && $travelInfo['result']['arrival_flight_number']) block @else none @endif">
+                            <!-- <div class="step-form" style="display: @if($travelInfo['result'] && $travelInfo['result']['arrival_flight_number']) block @else none @endif"> -->
+                            <div class="step-form" style="display: none">
                                 <h4>@lang('web/home.verify-visa-letter-info')</h4>
                                 
                                     @if ($result && $result['draft_file'] != '')
                                         <br> <br> <br>
-                                        <div class="row">
+                                        <!-- <div class="row">
                                             <div class="alphabet-vd-box">
                                                 <iframe width="100%" height="400
                                                 "  src="{{asset('uploads/file/'.$result['draft_file'])}}#toolbar=0" title="Phonics Song for Children (Official Video) Alphabet Song | Letter Sounds | Signing for babies | ASL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                                             </div>
-                                        </div>
+                                        </div> -->
                                             
 
                                     @elseif($result)
@@ -358,7 +389,7 @@
                                         </div>
                                     @endif
 
-                                <div class="information-wrapper">
+                                <!-- <div class="information-wrapper">
                                     <div class="row">
                                         <div class="col-lg-3">
                                             <div class="step-next">
@@ -382,7 +413,7 @@
                                         
                                         @endif
                                         
-                                    </div>
+                                    </div> -->
                                 </div>
                             @endif
 

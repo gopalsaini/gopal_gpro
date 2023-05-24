@@ -4915,15 +4915,30 @@ class UserController extends Controller {
 				return $data->passport_no;
 			})
 
-			->addColumn('dob', function($data){
-				return date('d-m-Y',strtotime($data->dob));
-		    })
-			->addColumn('citizenship', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->citizenship);
-		    })
 			->addColumn('country_id', function($data){
 				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
 		    })
+
+			->addColumn('passport_valid', function($data){
+				return $data->passport_valid;
+		    })
+
+
+			->addColumn('valid_residence_country', function($data){
+
+				$countryDoc = json_decode($data->valid_residence_country,true);
+				$html = '';
+
+				foreach($countryDoc as $key=>$img){
+
+					$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
+								'.\App\Helpers\commonHelper::getCountryNameById($img['id']).' </span>
+							</a></br>';
+				}
+					
+				return $html;
+		    })
+
 			->addColumn('passport_copy', function($data){
 
 				if($data->passport_copy!= ''){
@@ -5121,12 +5136,6 @@ class UserController extends Controller {
 				return $data->passport_no;
 			})
 
-			->addColumn('dob', function($data){
-				return date('d-m-Y',strtotime($data->dob));
-		    })
-			->addColumn('citizenship', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->citizenship);
-		    })
 			->addColumn('country_id', function($data){
 				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
 		    })
@@ -5146,30 +5155,44 @@ class UserController extends Controller {
 				return $html;
 		    })
 
-			->addColumn('sponsorship_letter', function($data){
-				
-				if($data->sponsorship_letter){
-
-					return '<a href="'.asset('uploads/file/'.$data->sponsorship_letter).'" target="_blank" class="btn btn-sm btn-outline-success m-1">View File</a>';
-				}else{
-
-					return '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
-
-				}
-			})
+			
 			->addColumn('financial_letter', function($data){
 				
-				if($data->financial_letter){
+				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+		
 
-					return '<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> File 1</a>
-							<a href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> File 2</a>';
+				if(in_array($data->country_id,$doNotRequireVisa)){
+
+
+						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank </a>
+								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance</a>';
+					
 				}else{
 
-					return '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
-
+						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank</a>
+								<a href="'.asset('uploads/file/Visa_Request_Form.pdf').'" target="_blank" class="text-blue"> Visa request</a>
+								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance </a>
+								<a href="'.asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf').'" target="_blank" class="text-blue"> Visa processing</a>';
+					
 				}
+				
 			})
 			
+			->addColumn('valid_residence_country', function($data){
+
+				$countryDoc = json_decode($data->valid_residence_country,true);
+				$html = '';
+
+				foreach($countryDoc as $key=>$img){
+
+					$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
+								'.\App\Helpers\commonHelper::getCountryNameById($img['id']).' </span>
+							</a></br>';
+				}
+					
+				return $html;
+		    })
+
 			->addColumn('remark', function($data){
 				
 					return '<button type="button" class="btn btn-sm btn ViewPassportRemark" data-remark="'.$data->remark.'"> View </button>';
@@ -5302,7 +5325,7 @@ class UserController extends Controller {
 
 	public function PassportInfoApprove(Request $request,$id){
 	
-		$doNotRequireVisa = [6,7,10,11,12,14,15,17,20,22,23,26,21,27,28,29,31,33,34,40,37,39,44,48,49,53,55,57,58,59,61,64,66,69,73,74,75,79,81,82,87,85,90,94,97,99,100,105,106,107,108,109,113,114,117,125,126,127,129,130,132,133,133,137,140,142,143,144,145,146,147,152,152,156,158,159,165,168,171,172,173,176,177,179,181,115,182,244,185,186,188,191,192,194,196,197,199,200,201,202,204,116,207,213,214,216,219,222,223,225,228,230,231,232,233,235,237,238,240]; 
+		$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
 		$diplomaticPassportNotRequireVisa = [56,62,95,102,174,45,239]; 
 		$authorizedVisa = [1,3,4,16,18,19,24,35,36,43,50,60,65,68,70,67,80,92,93,95,102,103,104,54,111,112,248,118,119,121,122,123,124,134,139,149,150,151,154,160,161,166,167,169,116,183,195,198,203,208,209,210,215,217,218,224,226,229,236,245,246]; 
 		$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
@@ -5313,90 +5336,87 @@ class UserController extends Controller {
 			$passportApprove->admin_status='Approved';
 			
 			$passportApprove->save();
-
-			if($passportApprove && $passportApprove->diplomatic_passport == 'No'){
-
-				if(in_array($passportApprove->citizenship,$doNotRequireVisa)){
-
-					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
-
-				}else{
-
-					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
-					\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);
-				}
-
-			}elseif($passportApprove && $passportApprove->diplomatic_passport == 'Yes'){
-				
-				if(in_array($passportApprove->citizenship,$doNotRequireVisa)){
-
-					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
-
-				}elseif(in_array($passportApprove->citizenship,$diplomaticPassportNotRequireVisa)){
-
-					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
-
-				}else{
-
-					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
-					\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);
-				}
-				
-			}
-
 			$userData= \App\Models\User::where('id',$passportApprove->user_id)->first();
 
-			$to = $userData->email;
+			// if($passportApprove && $passportApprove->diplomatic_passport == 'No'){
+
+				if(in_array($passportApprove->country_id,$doNotRequireVisa)){
+
+					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');  // 2 letter acc, bank
+
+					if($userData->language == 'sp'){
+
+						$subject = "Se adjunta una carta de visa para su revisión.";
+						$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$userData->name.' '.$userData->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Adjuntamos una carta de visa para su revisión. Lea atentamente esta carta y asegúrese de que toda la información contenida en ella sea correcta. Si es así, envíenos un correo electrónico confirmando su aprobación de la carta de visa. Si es necesario realizar algún cambio, envíenos un correo electrónico identificando esos cambios.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
 					
-			if($userData->language == 'sp'){
-
-				$subject = "Se adjunta una carta de visa para su revisión.";
-				$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$userData->name.' '.$userData->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Adjuntamos una carta de visa para su revisión. Lea atentamente esta carta y asegúrese de que toda la información contenida en ella sea correcta. Si es así, envíenos un correo electrónico confirmando su aprobación de la carta de visa. Si es necesario realizar algún cambio, envíenos un correo electrónico identificando esos cambios.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
+					}elseif($userData->language == 'fr'){
+					
+						$subject = "Une lettre de visa est jointe pour votre avis.";
+						$msg = "<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Nous vous remercions de nous avoir soumis les informations de votre passeport. Nous joignons une lettre de visa pour votre avis. Veuillez l examiner attentivement et vous assurer que toutes les informations qu elle contient sont correctes. Si c est le cas, veuillez nous envoyer un courriel confirmant votre approbation de la lettre de visa. Si des modifications doivent être apportées, veuillez nous envoyer un courriel indiquant ces modifications.</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à ce mail.&nbsp;</p><p><br><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II &nbsp; &nbsp;&nbsp;</p>";
 			
-			}elseif($userData->language == 'fr'){
-			
-				$subject = "Une lettre de visa est jointe pour votre avis.";
-				$msg = "<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Nous vous remercions de nous avoir soumis les informations de votre passeport. Nous joignons une lettre de visa pour votre avis. Veuillez l examiner attentivement et vous assurer que toutes les informations qu elle contient sont correctes. Si c est le cas, veuillez nous envoyer un courriel confirmant votre approbation de la lettre de visa. Si des modifications doivent être apportées, veuillez nous envoyer un courriel indiquant ces modifications.</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à ce mail.&nbsp;</p><p><br><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II &nbsp; &nbsp;&nbsp;</p>";
-	
-			}elseif($userData->language == 'pt'){
-			
-				$subject = "Uma carta de visto está anexada para sua revisão.";
-				$msg = '<p>Caro '.$userData->name.',&nbsp;</p><p><br></p><p>Obrigado por nos enviar as informações do seu passaporte. Estamos anexando uma carta de visto para sua análise. Por favor, leia esta carta cuidadosamente e certifique-se de que todas as informações nela contidas estão corretas. Em caso afirmativo, envie-nos um e-mail confirmando sua aprovação da carta de visto. Se alguma alteração precisar ser feita, envie-nos um e-mail identificando essas alterações.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
-			
-			}else{
-			
-				$subject = 'A visa letter is attached for your review';
-				$msg = '<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  We are attaching a visa letter for your review.  Please review this letter carefully and make sure all the information contained in it is correct.  If so, please send us an email confirming your approval of the visa letter.  If any changes need to be made, please send us an email identifying those changes.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-								
-			}
-
-			$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
-
-			$sponsorshipLetter = '';
-
-			if($passportApprove->sponsorship_letter){
-				$sponsorshipLetter = public_path('uploads/file/'.$passportApprove->sponsorship_letter);
-			
-			}
-			$files = [
-				public_path('uploads/file/'.$passportApprove->financial_letter),
-				public_path('uploads/file/'.$passportApprove->financial_spanish_letter),
-				$sponsorshipLetter
-			];
-	
-			\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
-				$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-				$message->subject($subject);
-				$message->to($to);
-				
-				foreach ($files as $file){
-					if($file != ''){
-						$message->attach($file);
+					}elseif($userData->language == 'pt'){
+					
+						$subject = "Uma carta de visto está anexada para sua revisão.";
+						$msg = '<p>Caro '.$userData->name.',&nbsp;</p><p><br></p><p>Obrigado por nos enviar as informações do seu passaporte. Estamos anexando uma carta de visto para sua análise. Por favor, leia esta carta cuidadosamente e certifique-se de que todas as informações nela contidas estão corretas. Em caso afirmativo, envie-nos um e-mail confirmando sua aprovação da carta de visto. Se alguma alteração precisar ser feita, envie-nos um e-mail identificando essas alterações.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
+					
+					}else{
+					
+						$subject = 'A visa letter is attached for your review';
+						$msg = '<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  We are attaching a visa letter for your review.  Please review this letter carefully and make sure all the information contained in it is correct.  If so, please send us an email confirming your approval of the visa letter.  If any changes need to be made, please send us an email identifying those changes.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+										
 					}
 					
+				}else{
+
+					// \App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
+					\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);  // 4 letter
+
+					if($userData->language == 'sp'){
+
+						$subject = "Se adjunta una carta de visa para su revisión.";
+						$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$userData->name.' '.$userData->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Adjuntamos una carta de visa para su revisión. Lea atentamente esta carta y asegúrese de que toda la información contenida en ella sea correcta. Si es así, envíenos un correo electrónico confirmando su aprobación de la carta de visa. Si es necesario realizar algún cambio, envíenos un correo electrónico identificando esos cambios.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
+					
+					}elseif($userData->language == 'fr'){
+					
+						$subject = "Une lettre de visa est jointe pour votre avis.";
+						$msg = "<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Nous vous remercions de nous avoir soumis les informations de votre passeport. Nous joignons une lettre de visa pour votre avis. Veuillez l examiner attentivement et vous assurer que toutes les informations qu elle contient sont correctes. Si c est le cas, veuillez nous envoyer un courriel confirmant votre approbation de la lettre de visa. Si des modifications doivent être apportées, veuillez nous envoyer un courriel indiquant ces modifications.</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à ce mail.&nbsp;</p><p><br><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II &nbsp; &nbsp;&nbsp;</p>";
+			
+					}elseif($userData->language == 'pt'){
+					
+						$subject = "Uma carta de visto está anexada para sua revisão.";
+						$msg = '<p>Caro '.$userData->name.',&nbsp;</p><p><br></p><p>Obrigado por nos enviar as informações do seu passaporte. Estamos anexando uma carta de visto para sua análise. Por favor, leia esta carta cuidadosamente e certifique-se de que todas as informações nela contidas estão corretas. Em caso afirmativo, envie-nos um e-mail confirmando sua aprovação da carta de visto. Se alguma alteração precisar ser feita, envie-nos um e-mail identificando essas alterações.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
+					
+					}else{
+					
+						$subject = 'A visa letter is attached for your review';
+						$msg = '<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  We are attaching a visa letter for your review.  Please review this letter carefully and make sure all the information contained in it is correct.  If so, please send us an email confirming your approval of the visa letter.  If any changes need to be made, please send us an email identifying those changes.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+										
+					}
 				}
+
+			// }elseif($passportApprove && $passportApprove->diplomatic_passport == 'Yes'){
 				
-			});
+			// 	if(in_array($passportApprove->citizenship,$doNotRequireVisa)){
+
+			// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
+
+			// 	}elseif(in_array($passportApprove->citizenship,$diplomaticPassportNotRequireVisa)){
+
+			// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
+
+			// 	}else{
+
+			// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
+			// 		\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);
+			// 	}
+				
+			// }
+
+			
+			$to = $userData->email;
+					
+			$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+
 
 			\App\Helpers\commonHelper::userMailTrigger($userData->id,$msg,$subject);
 			\App\Helpers\commonHelper::sendNotificationAndUserHistory($userData->id,$subject,$msg,'A visa letter is attached for your review');
@@ -5573,28 +5593,28 @@ class UserController extends Controller {
 
 				if($user->language == 'sp'){
 
-					$subject = "Se han recibido las correcciones solicitadas a su carta de visa.";
-					$msg = '<p>Estimado '.$name.',</p><p><br></p><p>Gracias por revisar su carta de visa y por solicitar correcciones a la carta. Nuestro equipo ahora está trabajando en una carta de visa revisada para usted, y le enviaremos la carta tan pronto como esté completa.&nbsp;&nbsp;</p><p><br></p><p>Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</p><p><br></p><p><br></p><p>Atentamente,</p><p>Equipo GProCongress II</p><div><br></div>';
+					$subject = "Por favor, aclare la información de su pasaporte para GProCongress II";
+					$msg = '<p>Estimado '.$name.',</p><p><br></p><p>Recibimos la información de su pasaporte. Sin embargo, la información proporcionada no coincide con la que figura en la copia del pasaporte que nos envió. Por favor, vuelva a verificar su pasaporte y envíenos la información correcta respondiendo a este correo electrónico.&nbsp;&nbsp;</p><p><br></p><p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br></p><p><br></p><p>Atentamente,</p><p>Equipo GProCongress II</p><div><br></div>';
 				
 				}elseif($user->language == 'fr'){
 				
-					$subject = "Les modifications que vous avez demandé d'apporter à votre lettre de visa ont été reçues.";
-					$msg = "<p>Cher '.$name.',</p><p><br></p><p>Nous vous remercions d'avoir révisé votre lettre de visa et d'avoir demandé que des corrections y soient apportées.  Notre équipe travaille actuellement à l'élaboration d'une lettre de visa révisée, que nous vous enverrons dès qu'elle sera terminée..&nbsp;&nbsp;</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p><p><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II </p><div><br></div>";
+					$subject = "Veuillez clarifier les informations relatives à votre passeport pour GProCongress II.";
+					$msg = "<p>Cher '.$name.',</p><p><br></p><p>Nous avons reçu les informations relatives à votre passeport.  Cependant, les informations écrites que vous avez fournies ne correspondent pas à celles qui figurent sur la copie du passeport que vous avez fournie.  Veuillez vérifier à nouveau votre passeport et nous envoyer les informations correctes en répondant à cet e-mail.&nbsp;&nbsp;</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p><p><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II </p><div><br></div>";
 
 				}elseif($user->language == 'pt'){
 				
-					$subject = "As correções solicitadas à sua carta de visto foram recebidas.";
-					$msg = '<p>Caro '.$name.',</p><p><br></p><p>Obrigado por revisar sua carta de visto e por solicitar correções na carta. Nossa equipe está trabalhando em uma carta de visto revisada para você e enviaremos a carta a você assim que estiver concluída.&nbsp;&nbsp;</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p><p><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II</p><div><br></div>';				
+					$subject = "Por favor,  verifique as informações do seu passaporte para o GProCongresso II.";
+					$msg = '<p>Caro '.$name.',</p><p><br></p><p>Recebemos as informações do seu passaporte. No entanto, as informações escritas que você forneceu não correspondem ao que está na cópia do passaporte que você forneceu. Verifique seu passaporte e nos envie  as informações corretas respondendo a este e-mail..&nbsp;</p><p><br><p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail</p></p><p><br></p><p>Calorosamente,</p><p>Equipe GProCongresso II</p><div><br></div>';				
 				}else{
 				
-					$subject = 'Your requested corrections to your visa letter have been received.';
-					$msg = '<p>Dear '.$name.',</p><p><br></p><p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.&nbsp;&nbsp;</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+					$subject = 'Please clarify your passport information for GProCongress II';
+					$msg = '<p>Dear '.$name.',</p><p><br></p><p>We received your passport information.  However, the written information that you provided does not match what is on the copy of the passport that you provided.  Please double check your passport, and send us the correct information by replying to this email.&nbsp;</p><p><br><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p></p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
 										
 				}
 
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your requested corrections to your visa letter have been received.');
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Please clarify your passport information for GProCongress II');
 
 				return response(array('message'=>'Passport Information declined successfully'),200);
 					
