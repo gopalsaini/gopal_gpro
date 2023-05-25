@@ -61,7 +61,7 @@ class SubAdminController extends Controller {
 		
         \App\Helpers\commonHelper::setLocale();
 		
-		$designations = \App\Models\Designation::where('slug','recruiter')->orWhere('slug','registrar')->orWhere('slug','admin')->orWhere('slug','finances')->where('status','1')->get();
+		$designations = \App\Models\Designation::where('slug','recruiter')->orWhere('slug','registrar')->orWhere('slug','admin')->orWhere('slug','finances')->orWhere('slug','exhibitor')->where('status','1')->get();
 		
 		$result = array();
         return view('admin.subadmin.add', compact('result','designations'));

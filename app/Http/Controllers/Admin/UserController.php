@@ -4861,7 +4861,7 @@ class UserController extends Controller {
 	}
 
 	
-	public function passportList(Request $request, $type) {
+	public function passportList(Request $request, $countryType, $type) {
 		
 		if ($request->ajax()) {
 			
@@ -4869,6 +4869,8 @@ class UserController extends Controller {
 			
 			$limit = $request->input('length');
 			$start = $request->input('start');
+
+			
 			
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
@@ -4881,6 +4883,26 @@ class UserController extends Controller {
 						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
 				});
 				
+			}
+
+			if($countryType  == 'no-visa-needed'){
+
+				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+		
+				$query->whereIn('passport_infos.country_id', $doNotRequireVisa);
+
+			}elseif($countryType  == 'visa-needed'){
+
+				$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
+		
+				$query->whereIn('passport_infos.country_id', $RequireVisa);
+
+			}elseif($countryType  == 'restricted'){
+
+				$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+		
+				$query->whereIn('passport_infos.country_id', $restricted);
+
 			}
 
 			$data = $query->offset($start)->limit($limit)->get();
@@ -4966,7 +4988,7 @@ class UserController extends Controller {
 				
 		    })
 
-			->addColumn('admin_status', function($data){
+			->addColumn('admin_status', function($data) use($countryType){
 
 				if ($data->admin_status == 'Approved') {
 
@@ -4978,91 +5000,23 @@ class UserController extends Controller {
 
 				} else if ($data->admin_status === 'Pending') {
 
-					return '<div style="display:flex">
+					if($countryType  == 'restricted'){
+
+						return '<div style="display:flex">
+						<a data-id="'.$data->id.'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveRestricted">Approve</a>
+								<a data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
+							</div>';
+					}else{
+
+						return '<div style="display:flex">
 								<a href="'.url('admin/user/passport/approve/'.$data->id).'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 ">Approve</a>
 								<a data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
 							</div>';
-				}
-
-
-		    })
-
-			->addColumn('user_type', function($data){
-				
-				$user = \App\Models\user::where('id', $data->user_id)->first();
-
-				if($user->parent_id != Null){
-
-					if($user->added_as == 'Group'){
-
-						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
-						
-					}elseif($user->added_as == 'Spouse'){
-
-						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
-						
 					}
-
-				}else {
-
-					$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->first();
-					$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
-				
-					if($groupName){
-
-						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
-						
-					}else if($spouseName){
-
-						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
-
-					}else{
-
-						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
-					}
-						
-
-				}
-				
-		    })
-
-			->addColumn('group_owner_name', function($data){
-				
-				$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->get();
-				$user = \App\Models\user::where('id', $data->user_id)->first();
-
-				if($user->parent_id != Null && $user->added_as == 'Group'){
-
-					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
 					
-				}else if(count($groupName) > 0) {
-
-					return ucfirst($user->name.' '.$user->last_name);
-
-				}else{
-					return 'N/A';
 				}
-				
-		    })
 
-			->addColumn('spouse_name', function($data){
-				
-				$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
-				$user = \App\Models\user::where('id', $data->user_id)->first();
 
-				if($user->parent_id != Null && $user->added_as == 'Spouse'){
-
-					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
-
-				}else if($spouseName) {
-
-					return ucfirst($spouseName->name.' '.$spouseName->last_name);
-
-				}else{
-
-					return 'N/A';
-				}
-				
 		    })
 
 			->addColumn('action', function($data){
@@ -5083,7 +5037,7 @@ class UserController extends Controller {
 
 	}
 	
-	public function sponsorshipList(Request $request, $type) {
+	public function sponsorshipList(Request $request, $countryType, $type) {
 		
 		if ($request->ajax()) {
 			
@@ -5102,6 +5056,26 @@ class UserController extends Controller {
 						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
 				});
 				
+			}
+
+			if($countryType  == 'no-visa-needed'){
+
+				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+		
+				$query->whereIn('passport_infos.country_id', $doNotRequireVisa);
+
+			}elseif($countryType  == 'visa-needed'){
+
+				$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
+		
+				$query->whereIn('passport_infos.country_id', $RequireVisa);
+
+			}elseif($countryType  == 'restricted'){
+
+				$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+		
+				$query->whereIn('passport_infos.country_id', $restricted);
+
 			}
 
 			$data = $query->offset($start)->limit($limit)->get();
@@ -5211,83 +5185,6 @@ class UserController extends Controller {
 				
 		    })
 
-			->addColumn('user_type', function($data){
-				
-				$user = \App\Models\user::where('id', $data->user_id)->first();
-
-				if($user->parent_id != Null){
-
-					if($user->added_as == 'Group'){
-
-						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
-						
-					}elseif($user->added_as == 'Spouse'){
-
-						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
-						
-					}
-
-				}else {
-
-					$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->first();
-					$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
-				
-					if($groupName){
-
-						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
-						
-					}else if($spouseName){
-
-						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
-
-					}else{
-
-						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
-					}
-						
-
-				}
-				
-		    })
-
-			->addColumn('group_owner_name', function($data){
-				
-				$groupName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Group')->get();
-				$user = \App\Models\user::where('id', $data->user_id)->first();
-
-				if($user->parent_id != Null && $user->added_as == 'Group'){
-
-					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
-					
-				}else if(count($groupName) > 0) {
-
-					return ucfirst($user->name.' '.$user->last_name);
-
-				}else{
-					return 'N/A';
-				}
-				
-		    })
-
-			->addColumn('spouse_name', function($data){
-				
-				$spouseName = \App\Models\user::where('parent_id', $data->user_id)->where('added_as','Spouse')->first();
-				$user = \App\Models\user::where('id', $data->user_id)->first();
-
-				if($user->parent_id != Null && $user->added_as == 'Spouse'){
-
-					return \App\Helpers\commonHelper::getUserNameById($user->parent_id);
-
-				}else if($spouseName) {
-
-					return ucfirst($spouseName->name.' '.$spouseName->last_name);
-
-				}else{
-
-					return 'N/A';
-				}
-				
-		    })
 
 			->addColumn('action', function($data){
 				
@@ -5320,15 +5217,140 @@ class UserController extends Controller {
 
         }
 
+	}
+	
+	public function visaIsNotGranted(Request $request, $type) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('passport_infos');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
+
+			
+			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
+			if (request()->has('email')) {
+				$query->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+
+			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+	
+			$query->whereIn('passport_infos.country_id', $restricted);
+
+			$query->where('passport_infos.visa_not_ranted_comment','!=', null)->where('passport_infos.visa_granted','No');
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+			
+			if (request()->has('email')) {
+				$totalData1->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+			
+			$totalData = $totalData1->count();
+
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('name', function($data){
+				return $data->name;
+		    })
+
+			->addColumn('passport_no', function($data){
+				return $data->passport_no;
+			})
+
+			->addColumn('country_id', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+		    })
+			->addColumn('passport_copy', function($data){
+				if($data->passport_copy!= ''){
+					$html = '';
+					foreach(explode(",",$data->passport_copy) as $key=>$img){
+
+						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img).'" target="_blank"> 
+								View '.($key+1).' </span>
+							</a></br>';
+
+					}
+				}
+				
+				
+				return $html;
+		    })
+
+			
+			->addColumn('financial_letter', function($data){
+				
+				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+		
+
+				if(in_array($data->country_id,$doNotRequireVisa)){
+
+
+						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank </a>
+								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance</a>';
+					
+				}else{
+
+						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank</a>
+								<a href="'.asset('uploads/file/Visa_Request_Form.pdf').'" target="_blank" class="text-blue"> Visa request</a>
+								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance </a>
+								<a href="'.asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf').'" target="_blank" class="text-blue"> Visa processing</a>';
+					
+				}
+				
+			})
+
+			->addColumn('remark', function($data){
+				
+					return $data->visa_not_ranted_comment;
+				
+		    })
+
+			->addColumn('action', function($data){
+				
+				if (\Auth::user()->designation_id == '1') {
+					return '<div style="display:flex">
+								<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+							</div>';
+				}
+				
+		    })
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
 
 	}
 
 	public function PassportInfoApprove(Request $request,$id){
 	
 		$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-		$diplomaticPassportNotRequireVisa = [56,62,95,102,174,45,239]; 
-		$authorizedVisa = [1,3,4,16,18,19,24,35,36,43,50,60,65,68,70,67,80,92,93,95,102,103,104,54,111,112,248,118,119,121,122,123,124,134,139,149,150,151,154,160,161,166,167,169,116,183,195,198,203,208,209,210,215,217,218,224,226,229,236,245,246]; 
-		$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
+		$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
+		$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247'];
+
 		try{
 
 			$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
@@ -5336,91 +5358,63 @@ class UserController extends Controller {
 			$passportApprove->admin_status='Approved';
 			
 			$passportApprove->save();
-			$userData= \App\Models\User::where('id',$passportApprove->user_id)->first();
+			$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
 
-			// if($passportApprove && $passportApprove->diplomatic_passport == 'No'){
+			if(in_array($passportApprove->country_id,$doNotRequireVisa)){
 
-				if(in_array($passportApprove->country_id,$doNotRequireVisa)){
+				\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');  // 2 letter acc, bank
 
-					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');  // 2 letter acc, bank
+			}elseif(in_array($passportApprove->country_id,$RequireVisa)){
 
-					if($userData->language == 'sp'){
-
-						$subject = "Se adjunta una carta de visa para su revisión.";
-						$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$userData->name.' '.$userData->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Adjuntamos una carta de visa para su revisión. Lea atentamente esta carta y asegúrese de que toda la información contenida en ella sea correcta. Si es así, envíenos un correo electrónico confirmando su aprobación de la carta de visa. Si es necesario realizar algún cambio, envíenos un correo electrónico identificando esos cambios.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
-					
-					}elseif($userData->language == 'fr'){
-					
-						$subject = "Une lettre de visa est jointe pour votre avis.";
-						$msg = "<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Nous vous remercions de nous avoir soumis les informations de votre passeport. Nous joignons une lettre de visa pour votre avis. Veuillez l examiner attentivement et vous assurer que toutes les informations qu elle contient sont correctes. Si c est le cas, veuillez nous envoyer un courriel confirmant votre approbation de la lettre de visa. Si des modifications doivent être apportées, veuillez nous envoyer un courriel indiquant ces modifications.</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à ce mail.&nbsp;</p><p><br><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II &nbsp; &nbsp;&nbsp;</p>";
-			
-					}elseif($userData->language == 'pt'){
-					
-						$subject = "Uma carta de visto está anexada para sua revisão.";
-						$msg = '<p>Caro '.$userData->name.',&nbsp;</p><p><br></p><p>Obrigado por nos enviar as informações do seu passaporte. Estamos anexando uma carta de visto para sua análise. Por favor, leia esta carta cuidadosamente e certifique-se de que todas as informações nela contidas estão corretas. Em caso afirmativo, envie-nos um e-mail confirmando sua aprovação da carta de visto. Se alguma alteração precisar ser feita, envie-nos um e-mail identificando essas alterações.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
-					
-					}else{
-					
-						$subject = 'A visa letter is attached for your review';
-						$msg = '<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  We are attaching a visa letter for your review.  Please review this letter carefully and make sure all the information contained in it is correct.  If so, please send us an email confirming your approval of the visa letter.  If any changes need to be made, please send us an email identifying those changes.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-										
-					}
-					
-				}else{
-
-					// \App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
-					\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);  // 4 letter
-
-					if($userData->language == 'sp'){
-
-						$subject = "Se adjunta una carta de visa para su revisión.";
-						$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$userData->name.' '.$userData->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviarnos la información de su pasaporte. Adjuntamos una carta de visa para su revisión. Lea atentamente esta carta y asegúrese de que toda la información contenida en ella sea correcta. Si es así, envíenos un correo electrónico confirmando su aprobación de la carta de visa. Si es necesario realizar algún cambio, envíenos un correo electrónico identificando esos cambios.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Si tiene alguna pregunta, o si necesita hablar con algún miembro de nuestro equipo, por favor, responda este correo.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
-					
-					}elseif($userData->language == 'fr'){
-					
-						$subject = "Une lettre de visa est jointe pour votre avis.";
-						$msg = "<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Nous vous remercions de nous avoir soumis les informations de votre passeport. Nous joignons une lettre de visa pour votre avis. Veuillez l examiner attentivement et vous assurer que toutes les informations qu elle contient sont correctes. Si c est le cas, veuillez nous envoyer un courriel confirmant votre approbation de la lettre de visa. Si des modifications doivent être apportées, veuillez nous envoyer un courriel indiquant ces modifications.</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l un des membres de notre équipe, veuillez répondre à ce mail.&nbsp;</p><p><br><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II &nbsp; &nbsp;&nbsp;</p>";
-			
-					}elseif($userData->language == 'pt'){
-					
-						$subject = "Uma carta de visto está anexada para sua revisão.";
-						$msg = '<p>Caro '.$userData->name.',&nbsp;</p><p><br></p><p>Obrigado por nos enviar as informações do seu passaporte. Estamos anexando uma carta de visto para sua análise. Por favor, leia esta carta cuidadosamente e certifique-se de que todas as informações nela contidas estão corretas. Em caso afirmativo, envie-nos um e-mail confirmando sua aprovação da carta de visto. Se alguma alteração precisar ser feita, envie-nos um e-mail identificando essas alterações.</p><p><br></p><p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p><p>Atenciosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
-					
-					}else{
-					
-						$subject = 'A visa letter is attached for your review';
-						$msg = '<p>Dear '.$userData->name.',&nbsp;</p><p><br></p><p>Thank you for submitting your passport information to us.  We are attaching a visa letter for your review.  Please review this letter carefully and make sure all the information contained in it is correct.  If so, please send us an email confirming your approval of the visa letter.  If any changes need to be made, please send us an email identifying those changes.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-										
-					}
-				}
-
-			// }elseif($passportApprove && $passportApprove->diplomatic_passport == 'Yes'){
 				
-			// 	if(in_array($passportApprove->citizenship,$doNotRequireVisa)){
+				\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);  // 4 letter
 
-			// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
-
-			// 	}elseif(in_array($passportApprove->citizenship,$diplomaticPassportNotRequireVisa)){
-
-			// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');
-
-			// 	}else{
-
-			// 		\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'');
-			// 		\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);
-			// 	}
 				
-			// }
+			}elseif(in_array($passportApprove->country_id,$restricted)){
 
+				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$id);  // 4 letter
+
+			}
+
+			if($user->language == 'sp'){
+
+				$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
+				$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
+				<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
+				<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+	
+			}elseif($user->language == 'fr'){
 			
-			$to = $userData->email;
-					
-			$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+				$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
+				$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
+				<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+				<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+	
+			}elseif($user->language == 'pt'){
+			
+				$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
+				$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
+				<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+				<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
+	
+			}else{
+			
+				$subject = 'Please submit your flight information for GProCongress II';
+				$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
+				<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+				<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+								
+			}
 
+			\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
-			\App\Helpers\commonHelper::userMailTrigger($userData->id,$msg,$subject);
-			\App\Helpers\commonHelper::sendNotificationAndUserHistory($userData->id,$subject,$msg,'A visa letter is attached for your review');
-
+			\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
+	
 
 			return redirect()->back()->with(['5fernsadminsuccess'=>"Passport information approved successfully."]);
 			
@@ -5617,6 +5611,96 @@ class UserController extends Controller {
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Please clarify your passport information for GProCongress II');
 
 				return response(array('message'=>'Passport Information declined successfully'),200);
+					
+				
+			}catch (\Exception $e){
+			
+				return response(array("error"=>true, "message" => $e->getMessage()),200); 
+			
+			}
+		}
+	
+	}
+
+	public function PassportApproveRestricted(Request $request){
+	
+		$rules = [
+			'name' => 'required',
+			'email' => 'required',
+			'id' => 'required',
+			
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+            
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
+		
+			return response(array('message'=>$message,"error" => true),403);
+		
+	
+		}else{
+
+			try{
+
+				$passportApprove= \App\Models\PassportInfo::where('id',$request->post('id'))->first();
+				
+				$passportApprove->admin_status='Approved';
+				$passportApprove->admin_provide_name=$request->post('name');
+				$passportApprove->admin_provide_email=$request->post('email');
+				
+				$passportApprove->save();
+
+				$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
+
+				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$passportApprove->id);  // 4 letter
+
+				if($user->language == 'sp'){
+
+					$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
+					$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
+					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
+					<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}elseif($user->language == 'fr'){
+				
+					$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
+					$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
+					<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+					<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}elseif($user->language == 'pt'){
+				
+					$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
+					$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
+					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+					<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}else{
+				
+					$subject = 'Please submit your flight information for GProCongress II';
+					$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
+					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+					<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+									
+				}
+	
+				\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+	
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
+		
+	
+				return response(array('message'=>'Passport Information Approved successfully'),200);
 					
 				
 			}catch (\Exception $e){
@@ -6973,6 +7057,7 @@ class UserController extends Controller {
 				
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				\App\Helpers\commonHelper::emailSendToAdminExhibitor($subject,$msg);
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Exhibitor information approved');
 				
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);
@@ -7024,6 +7109,7 @@ class UserController extends Controller {
 
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				\App\Helpers\commonHelper::emailSendToAdminExhibitor($subject,$msg);
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Your application to be an Exhibitor has now been declined.');
 
 				// \App\Helpers\commonHelper::sendSMS($result->mobile);

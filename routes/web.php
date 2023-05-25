@@ -101,6 +101,7 @@ Route::group(['middleware'=>'Userauth'],function(){
 		Route::match(['get','post'], 'sponsorship-letter-approve', "ProfileController@sponsorshipLetterApprove")->name('sponsorshipLetter');
 		Route::get('sponsorship-confirm/confirm/{id}', "ProfileController@PassportInfoApprove")->name('sponsorshipLetterApprove');
 		Route::post('sponsorship-confirm/decline/', "ProfileController@PassportInfoReject")->name('sponsorshipLetterReject');
+		Route::post('visa-is-not-granted', "ProfileController@visaIsNotGranted")->name('visa-is-not-granted');
 
 
 	});
@@ -196,11 +197,14 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 
 		Route::match(['get', 'post'], 'recover/user', 'Admin\UserController@userRecover')->name('recover');
 		Route::match(['get', 'post'], 'get-ministry-data/user', 'Admin\UserController@getMinistryData')->name('get-ministry-data');
-		Route::match(['get', 'post'], 'passport/list/{type}', 'Admin\UserController@passportList')->name('passport');
-		Route::match(['get', 'post'], 'passport/sponsorship/{type}', 'Admin\UserController@sponsorshipList')->name('sponsorship');
+		Route::match(['get', 'post'], 'passport/list/{countryType}/{type}', 'Admin\UserController@passportList')->name('passport');
+		Route::match(['get', 'post'], 'passport/sponsorship/{countryType}/{type}', 'Admin\UserController@sponsorshipList')->name('sponsorship');
+		Route::match(['get', 'post'], 'passport/visa-is-not-granted/{type}', 'Admin\UserController@visaIsNotGranted')->name('visa-is-not-granted');
 		Route::get('passport/approve/{id}', 'Admin\UserController@PassportInfoApprove')->name('approve');
 		Route::match(['get', 'post'], 'passport/decline', 'Admin\UserController@PassportInfoReject')->name('decline');
+		Route::match(['get', 'post'], 'passport/approve/restricted', 'Admin\UserController@PassportApproveRestricted')->name('approve.restricted');
 
+		
 		Route::group(['prefix'=>'{type}'], function() {
 			Route::get('stage/all', 'Admin\UserController@stageAll')->name('list.stage.all');
 			Route::get('stage/zero', 'Admin\UserController@stageZero')->name('list.stage.zero');

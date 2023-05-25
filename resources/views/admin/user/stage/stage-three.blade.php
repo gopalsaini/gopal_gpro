@@ -84,14 +84,14 @@
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                     <div class="row">
-                       
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-body">
+                                    <h5>No Visa Needed</h5>
                                     <input type="text" name="email" class="form-control passportEmail " placeholder="Search ...">
                                     <br>
                                     <div class="table-responsive">
-                                        <table class="display datatables" id="passportlist">
+                                        <table class="display datatables" id="passportListNoVisaNeeded">
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
@@ -103,9 +103,6 @@
                                                     <th> Passport Copy  </th>
                                                     <th> Remark  </th>
                                                     <th> Admin Status </th>
-                                                    <th> User Type </th>
-                                                    <th> Group Owner Name </th>
-                                                    <th> Spouse Name </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -127,9 +124,104 @@
                                                     <th> Passport Copy  </th>
                                                     <th> Remark  </th>
                                                     <th> admin Status </th>
-                                                    <th> User Type </th>
-                                                    <th> Group Owner Name </th>
-                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Visa Needed</h5>
+                                    <input type="text" name="email" class="form-control passportVisaNeededEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="passportListVisaNeeded">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Valid  </th>
+                                                    <th> Valid Residence Country </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Remark  </th>
+                                                    <th> Admin Status </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Valid  </th>
+                                                    <th> Valid Residence Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Remark  </th>
+                                                    <th> admin Status </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Restricted countries</h5>
+                                    <input type="text" name="email" class="form-control passportRestrictedCountriesEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="passportListRestrictedCountries">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Valid  </th>
+                                                    <th> Valid Residence Country </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Remark  </th>
+                                                    <th> Admin Status </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Valid  </th>
+                                                    <th> Valid Residence Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Remark  </th>
+                                                    <th> admin Status </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -146,10 +238,11 @@
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <input type="text" name="email" class="form-control sponsorshipEmail " placeholder="Search ...">
+                                    <h5>No Visa Needed</h5>
+                                    <input type="text" name="email" class="form-control sponsorshipNoVisaNeededEmail " placeholder="Search ...">
                                     <br>
                                     <div class="table-responsive">
-                                        <table class="display datatables" id="sponsorshipList">
+                                        <table class="display datatables" id="sponsorshipListNoVisaNeeded">
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
@@ -161,9 +254,6 @@
                                                     <th> Valid Residence Country  </th>
                                                     <th> Remark  </th>
                                                     <th> User Status </th>
-                                                    <th> User Type </th>
-                                                    <th> Group Owner Name </th>
-                                                    <th> Spouse Name </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -185,9 +275,146 @@
                                                     <th> Valid Residence Country  </th>
                                                     <th> Remark  </th>
                                                     <th> User Status </th>
-                                                    <th> User Type </th>
-                                                    <th> Group Owner Name </th>
-                                                    <th> Spouse Name </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Visa Needed</h5>
+                                    <input type="text" name="email" class="form-control sponsorshipVisaNeededEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="sponsorshipListVisaNeeded">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Attachment Letter  </th>
+                                                    <th> Valid Residence Country  </th>
+                                                    <th> Remark  </th>
+                                                    <th> User Status </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Attachment Letter   </th>
+                                                    <th> Valid Residence Country  </th>
+                                                    <th> Remark  </th>
+                                                    <th> User Status </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Restricted Countries</h5>
+                                    <input type="text" name="email" class="form-control sponsorshipRestrictedCountriesEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="sponsorshipListRestrictedCountries">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Attachment Letter  </th>
+                                                    <th> Valid Residence Country  </th>
+                                                    <th> Remark  </th>
+                                                    <th> User Status </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Attachment Letter   </th>
+                                                    <th> Valid Residence Country  </th>
+                                                    <th> Remark  </th>
+                                                    <th> User Status </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Visa is not Granted</h5>
+                                    <input type="text" name="email" class="form-control visaIsNotGrantedEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="visaIsNotGranted">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Attachment Letter  </th>
+                                                    <th> Comment  </th>
+                                                    <th> @lang('admin.action') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Name </th>
+                                                    <th> Passport No </th>
+                                                    <th> Country  </th>
+                                                    <th> Passport Copy  </th>
+                                                    <th> Attachment Letter   </th>
+                                                    <th> Comment  </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -423,6 +650,51 @@
   </div>
 </div>
 
+<div class="modal fade" id="passportApproveRestricted" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Need to provide Name and email ID of the person who will coordinate with Candidate </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+            <form id="passportRestrictedSubmit" action="{{ url('admin/user/passport/approve/restricted') }}" class="row" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="id" required value="" placeholder="id" id="finalId" class="mt-2" >
+
+                <div class="information-wrapper">
+                    <div class="row">
+                        <input type="hidden" id="Upload" name="type" value="2">
+                        <div class="col-lg-12" >
+                            <div class="info">
+                                <div class="information-box">
+                                    <input type="hidden" name="id" id="passportId" cols="10" rows="5" class="form-control" required />
+
+                                    <h6>Enter Name <span style="color:red">*</span></h6>
+                                    <p><input name="name" id="fileData" type="text" class="form-control" /></p>
+
+                                    <h6>Enter Email <span style="color:red">*</span></h6>
+                                    <p><input name="email" id="fileData" type="email" class="form-control" /></p>
+                            
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="col-lg-12">
+                    <div class="step-next">
+                        <button type="submit" class="btn btn-sm btn-primary m-1 text-white" form="passportRestrictedSubmit">Submit</button>
+                    </div>
+                </div>
+            </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
     aria-hidden="true">
@@ -466,388 +738,752 @@
 
 <script>
 
-$(document).ready(function () {
-        $('input:radio[name=type]').change(function () {
-          
-            if ($("input[name='type']:checked").val() == '1') {
-
-                $('#UploadFileDiv').hide();
-                $('#fileData').attr('required',false);
-                
-            }else{
-                $('#UploadFileDiv').show();
-                $('#fileData').attr('required',true);
-            }
+    $(document).ready(function () {
+            $('input:radio[name=type]').change(function () {
             
+                if ($("input[name='type']:checked").val() == '1') {
+
+                    $('#UploadFileDiv').hide();
+                    $('#fileData').attr('required',false);
+                    
+                }else{
+                    $('#UploadFileDiv').show();
+                    $('#fileData').attr('required',true);
+                }
+                
+            });
         });
-    });
 
 
-$(document).ready(function() {
-
-    
-    var passport = $('#passportlist').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "searching": false,
-        "ordering": false,
-
-        "ajax": {
-            "url": "{{ url('admin/user/passport/list/'.$type) }}",
-            "dataType": "json",
-            "async": false,
-            "type": "get",
-            data: function (d) {
-                d.email = $('.passportEmail').val()
-            },
-            "error": function(xhr, textStatus) {
-                if (xhr && xhr.responseJSON.message) {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
-                } else {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
-                }
-            },
-        },
-        "fnDrawCallback": function() {
-            fill_datatable();
-        },
-        "order": [0, 'desc'],
-        "columnDefs": [{
-                className: "text-left",
-                targets: "_all"
-            },
-            {
-                orderable: false,
-                targets: [-1]
-            },
-        ],
-        "columns": [{
-                "data": null,
-                render: function(data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
-                },
-                className: "text-center font-weight-bold"
-            },
-            {
-                "data": "name"
-            },
-            {
-                "data": "passport_no"
-            },
-            {
-                "data": "country_id"
-            }, 
-            {
-                "data": "passport_valid"
-            }, 
-            {
-                "data": "valid_residence_country"
-            },
-            {
-                "data": "passport_copy"
-            },
-            {
-                "data": "remark"
-            },
-            {
-                "data": "admin_status"
-            },
-            {
-                "data": "user_type"
-            },
-            {
-                "data": "group_owner_name"
-            },
-            {
-                "data": "spouse_name"
-            },
-            {
-                "data": "action"
-            }
-        ]
-    });
-
-    var sponsorship = $('#sponsorshipList').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "searching": false,
-        "ordering": false,
-
-        "ajax": {
-            "url": "{{ url('admin/user/passport/sponsorship/'.$type) }}",
-            "dataType": "json",
-            "async": false,
-            "type": "get",
-            data: function (d) {
-                d.email = $('.sponsorshipEmail').val()
-            },
-            "error": function(xhr, textStatus) {
-                if (xhr && xhr.responseJSON.message) {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
-                } else {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
-                }
-            },
-        },
-        "fnDrawCallback": function() {
-            fill_datatable();
-        },
-        "order": [0, 'desc'],
-        "columnDefs": [{
-                className: "text-left",
-                targets: "_all"
-            },
-            {
-                orderable: false,
-                targets: [-1]
-            },
-        ],
-        "columns": [{
-                "data": null,
-                render: function(data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
-                },
-                className: "text-center font-weight-bold"
-            },
-            {
-                "data": "name"
-            },
-            {
-                "data": "passport_no"
-            },
-            {
-                "data": "country_id"
-            },
-            {
-                "data": "passport_copy"
-            },
-            {
-                "data": "financial_letter"
-            },
-            {
-                "data": "valid_residence_country"
-            },
-            {
-                "data": "remark"
-            },
-            {
-                "data": "user_status"
-            },
-            {
-                "data": "user_type"
-            },
-            {
-                "data": "group_owner_name"
-            },
-            {
-                "data": "spouse_name"
-            },
-            {
-                "data": "action"
-            }
-        ]
-    });
-
-
-    var table = $('#tablelist').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "searching": false,
-        "ordering": false,
-
-        "ajax": {
-            "url": "{{ route('admin.user.list.stage.three', ["$type"]) }}",
-            "dataType": "json",
-            "async": false,
-            "type": "get",
-            data: function (d) {
-                d.email = $('.searchEmail').val()
-            },
-            "error": function(xhr, textStatus) {
-                if (xhr && xhr.responseJSON.message) {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
-                } else {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
-                }
-            },
-        },
-        "fnDrawCallback": function() {
-            fill_datatable();
-        },
-        "order": [0, 'desc'],
-        "columnDefs": [{
-                className: "text-left",
-                targets: "_all"
-            },
-            {
-                orderable: false,
-                targets: [-1]
-            },
-        ],
-        "columns": [{
-                "data": null,
-                render: function(data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
-                },
-                className: "text-center font-weight-bold"
-            },
-            {
-                "data": "user_name"
-            },
-            {
-                "data": "email"
-            },
-            {
-                "data": "mobile"
-            },
-            {
-                "data": "remark"
-            },
-            {
-                "data": "user_status"
-            },
-            {
-                "data": "admin_status"
-            },
-            {
-                "data": "user_type"
-            },
-            {
-                "data": "group_owner_name"
-            },
-            {
-                "data": "spouse_name"
-            },
-            {
-                "data": "action"
-            }
-        ]
-    });
-    
-    $(".searchEmail").keyup(function(){
-        table.draw();
-    });
-
-    $(".passportEmail").keyup(function(){
-        passport.draw();
-    });
-
-    $(".sponsorshipEmail").keyup(function(){
-        sponsorship.draw();
-    });
-
-});
-
-function fill_datatable() {
-
-    $('.ViewRemark').click(function() {
-    
-        $('#exampleModal').modal('show');
-        $('#Remark').html($(this).data('remark'));
-    });
-
-    $('.ViewPassportRemark').click(function() {
-    
-        $('#passportRemarkModal').modal('show');
-        $('#PassportRemark').html($(this).data('remark'));
-    });
-
-    $('.sendDraftLetter').click(function() {
-    
-        $('#draftLetterModal').modal('show');
-        $('#travelId').val($(this).data('id'));
-    });
-
-    $('.sendSponsorshipLetter').click(function() {
-    
-        $('#sendSponsorshipLetterModal').modal('show');
-        $('#SponsorshipId').val($(this).data('id'));
-    });
-
-    $('.sendFinalLetter').click(function() {
-    
-        $('#finalLetterModal').modal('show');
-        $('#finalId').val($(this).data('id'));
-    });
-
-    $('.sendEmail').click(function() {
-        var id = $(this).data('id');
-
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "{{ route('admin.user.send.travel.info.reminder') }}",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                'id': id
-            },
-            beforeSend: function() {
-                $('#preloader').css('display', 'block');
-            },
-            error: function(xhr, textStatus) {
-
-                if (xhr && xhr.responseJSON.message) {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
-                } else {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
-                }
-                $('#preloader').css('display', 'none');
-            },
-            success: function(data) {
-                $('#preloader').css('display', 'none');
-                sweetAlertMsg('success', data.message);
-            }
-        });
-    });
-
-    $('.-change').click(function() {
-        var status = $(this).data('type');
-        var id = $(this).data('id');
-
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "{{ route('admin.user.travel.info.status') }}",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                'id': id,
-                'status': status,
-            },
-            beforeSend: function() {
-                $('#preloader').css('display', 'block');
-            },
-            error: function(xhr, textStatus) {
-
-                if (xhr && xhr.responseJSON.message) {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
-                } else {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
-                }
-                $('#preloader').css('display', 'none');
-            },
-            success: function(data) {
-                $('#preloader').css('display', 'none');
-                sweetAlertMsg('success', data.message);
-                $('#tablelist').DataTable().ajax.reload(null, false);
-            }
-        });
-    });
+    $(document).ready(function() {
 
         
-    $('.passportReject').click(function() {
-        var id = $(this).data('id');
+        var passport = $('#passportListNoVisaNeeded').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
 
-        $('#exampleModalCenter').modal('show');
-        $('#row_id').val(id);
-        $('#remark').val(null);
+            "ajax": {
+                "url": "{{ url('admin/user/passport/list/no-visa-needed/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.passportEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                }, 
+                {
+                    "data": "passport_valid"
+                }, 
+                {
+                    "data": "valid_residence_country"
+                },
+                {
+                    "data": "passport_copy"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "admin_status"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+        var passportVisaNeeded = $('#passportListVisaNeeded').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ url('admin/user/passport/list/visa-needed/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.passportVisaNeededEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                }, 
+                {
+                    "data": "passport_valid"
+                }, 
+                {
+                    "data": "valid_residence_country"
+                },
+                {
+                    "data": "passport_copy"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "admin_status"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+
+        var passportRestrictedCountries = $('#passportListRestrictedCountries').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ url('admin/user/passport/list/restricted/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.passportRestrictedCountriesEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                }, 
+                {
+                    "data": "passport_valid"
+                }, 
+                {
+                    "data": "valid_residence_country"
+                },
+                {
+                    "data": "passport_copy"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "admin_status"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+
+        var sponsorshipListNoVisaNeeded = $('#sponsorshipListNoVisaNeeded').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ url('admin/user/passport/sponsorship/no-visa-needed/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.sponsorshipEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                },
+                {
+                    "data": "passport_copy"
+                },
+                {
+                    "data": "financial_letter"
+                },
+                {
+                    "data": "valid_residence_country"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "user_status"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+        var sponsorshipListVisaNeeded = $('#sponsorshipListVisaNeeded').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ url('admin/user/passport/sponsorship/visa-needed/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.sponsorshipEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                },
+                {
+                    "data": "passport_copy"
+                },
+                {
+                    "data": "financial_letter"
+                },
+                {
+                    "data": "valid_residence_country"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "user_status"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+        var sponsorshipListRestrictedCountries = $('#sponsorshipListRestrictedCountries').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ url('admin/user/passport/sponsorship/restricted/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.sponsorshipEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                },
+                {
+                    "data": "passport_copy"
+                },
+                {
+                    "data": "financial_letter"
+                },
+                {
+                    "data": "valid_residence_country"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "user_status"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+        var visaIsNotGranted = $('#visaIsNotGranted').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ url('admin/user/passport/visa-is-not-granted/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.sponsorshipEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                },
+                {
+                    "data": "passport_copy"
+                },
+                {
+                    "data": "financial_letter"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
+
+        var table = $('#tablelist').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ route('admin.user.list.stage.three', ["$type"]) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.searchEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "user_name"
+                },
+                {
+                    "data": "email"
+                },
+                {
+                    "data": "mobile"
+                },
+                {
+                    "data": "remark"
+                },
+                {
+                    "data": "user_status"
+                },
+                {
+                    "data": "admin_status"
+                },
+                {
+                    "data": "user_type"
+                },
+                {
+                    "data": "group_owner_name"
+                },
+                {
+                    "data": "spouse_name"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+        
+        $(".searchEmail").keyup(function(){
+            table.draw();
+        });
+
+        $(".passportEmail").keyup(function(){
+            passport.draw();
+        });
+
+        $(".passportVisaNeededEmail").keyup(function(){
+            passportVisaNeeded.draw();
+        });
+
+        $(".passportRestrictedCountriesEmail").keyup(function(){
+            RestrictedCountries.draw();
+        });
+
+        $(".sponsorshipNoVisaNeededEmail").keyup(function(){
+            sponsorshipListNoVisaNeeded.draw();
+        });
+
+        $(".sponsorshipVisaNeededEmail").keyup(function(){
+            sponsorshipListVisaNeeded.draw();
+        });
+
+        $(".sponsorshipRestrictedCountriesEmail").keyup(function(){
+            sponsorshipListRestrictedCountries.draw();
+        });
+
+        $(".visaIsNotGrantedEmail").keyup(function(){
+            visaIsNotGranted.draw();
+        });
 
     });
 
-}
+    function fill_datatable() {
+
+        $('.ViewRemark').click(function() {
+        
+            $('#exampleModal').modal('show');
+            $('#Remark').html($(this).data('remark'));
+        });
+
+        $('.ViewPassportRemark').click(function() {
+        
+            $('#passportRemarkModal').modal('show');
+            $('#PassportRemark').html($(this).data('remark'));
+        });
+
+        $('.sendDraftLetter').click(function() {
+        
+            $('#draftLetterModal').modal('show');
+            $('#travelId').val($(this).data('id'));
+        });
+
+        $('.sendSponsorshipLetter').click(function() {
+        
+            $('#sendSponsorshipLetterModal').modal('show');
+            $('#SponsorshipId').val($(this).data('id'));
+        });
+
+        $('.sendFinalLetter').click(function() {
+        
+            $('#finalLetterModal').modal('show');
+            $('#finalId').val($(this).data('id'));
+        });
+
+        $('.passportApproveRestricted').click(function() {
+        
+            $('#passportApproveRestricted').modal('show');
+            $('#passportId').val($(this).data('id'));
+        });
+
+        $('.sendEmail').click(function() {
+            var id = $(this).data('id');
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{{ route('admin.user.send.travel.info.reminder') }}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'id': id
+                },
+                beforeSend: function() {
+                    $('#preloader').css('display', 'block');
+                },
+                error: function(xhr, textStatus) {
+
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                    $('#preloader').css('display', 'none');
+                },
+                success: function(data) {
+                    $('#preloader').css('display', 'none');
+                    sweetAlertMsg('success', data.message);
+                }
+            });
+        });
+
+        $('.-change').click(function() {
+            var status = $(this).data('type');
+            var id = $(this).data('id');
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{{ route('admin.user.travel.info.status') }}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'id': id,
+                    'status': status,
+                },
+                beforeSend: function() {
+                    $('#preloader').css('display', 'block');
+                },
+                error: function(xhr, textStatus) {
+
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                    $('#preloader').css('display', 'none');
+                },
+                success: function(data) {
+                    $('#preloader').css('display', 'none');
+                    sweetAlertMsg('success', data.message);
+                    $('#tablelist').DataTable().ajax.reload(null, false);
+                }
+            });
+        });
+
+            
+        $('.passportReject').click(function() {
+            var id = $(this).data('id');
+
+            $('#exampleModalCenter').modal('show');
+            $('#row_id').val(id);
+            $('#remark').val(null);
+
+        });
+
+    }
 
  
     $("form#formSubmit").submit(function(e) {
@@ -1025,6 +1661,45 @@ function fill_datatable() {
         $('#row_id').val(0);
         $('#remark').val(null);
     }
+
+    $("form#passportRestrictedSubmit").submit(function(e) {
+        e.preventDefault();
+        
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+
+        $.ajax({
+            url: formAction,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                $('#preloader').css('display', 'block');
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+                $('#preloader').css('display', 'none');
+            },
+            success: function(data) {
+
+                $('#preloader').css('display', 'none');
+                sweetAlertMsg('success', data.message);
+                $('#passportApproveRestricted').modal('hide');
+                $('#passportId').val(null);
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
 
 
 </script>

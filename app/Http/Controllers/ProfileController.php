@@ -1257,6 +1257,23 @@ class ProfileController extends Controller
 		
 	}
 
+    public function visaIsNotGranted(Request $request){
+
+        if($request->ajax()){
+            
+            $data=array(
+                'remark'=>$request->post('remark'),
+            );
+           
+            $resultPassport=\App\Helpers\commonHelper::callAPI('userTokenpost','/visa-is-not-granted',json_encode($data));
+            $resultDataPassport=json_decode($resultPassport->content,true); 
+
+            return response(array('message'=>$resultDataPassport['message']),$resultPassport->status);
+
+        }
+		
+	}
+
     
     public function sponsorshipLetter(Request $request){
 

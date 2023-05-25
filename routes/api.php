@@ -67,6 +67,7 @@ Route::group([
     Route::post('sponsorship-info-reject', "API\PostLoginController@PassportInfoReject");
     Route::post("invite-user","API\PostLoginController@InviteUser");
     Route::post("mobile-invite-user","API\PostLoginController@MobileInviteUser");
+    Route::post("visa-is-not-granted","API\PostLoginController@visaIsNotGranted");
 
 
 });

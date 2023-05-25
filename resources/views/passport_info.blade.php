@@ -167,8 +167,8 @@
                     </div>
 
 
-                    <div class="col-lg-4 classHideDiv step9" id="multiCountrySelect" style="display:none;">
-                         <label for="">Which countries<span>*</span></label>
+                    <div class="col-lg-12 classHideDiv step9" id="multiCountrySelect" style="display:none;">
+                         <label for="">What countries among Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union you hold the Valid Visa?<span>*</span></label>
                          <div class="common-select">
                             <select id="country1" class="mt-2 test"  name="countries[]" multiple>
                                 @foreach($country as $con)
@@ -346,7 +346,7 @@ $(document).ready(function() {
 
                 selectedCountries.forEach(function(countryId) {
                     var countryName = $('#country option[value="' + countryId + '"]').text();
-                    var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="">'+countryName+'<span>*</span></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
+                    var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="">Visa/Residence Proof for '+countryName+'<span>*</span></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
 
                     $('#country-info').append(countryDiv);
                 });

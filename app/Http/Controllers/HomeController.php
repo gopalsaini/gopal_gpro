@@ -1042,6 +1042,7 @@ class HomeController extends Controller
                         }
 
                         \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+                        \App\Helpers\commonHelper::emailSendToAdminExhibitor($subject,$msg);
                         \App\Helpers\commonHelper::userMailTrigger(\Session::get('gpro_result')['id'],$msg,$subject);
                         \App\Helpers\commonHelper::sendNotificationAndUserHistory(\Session::get('gpro_result')['id'],$subject,$msg,'Thank you for applying to be an Exhibitor for GProCongress II');
 

@@ -408,16 +408,14 @@
                                     @if($query)
                                     <tr>
                                         <td colspan="5"><strong>Given Name :</strong> {{$query->name}}</td>
-                                        <td colspan="5"><strong>Last Name :</strong> {{$query->salutation}}</td>
-                                        <td colspan="5"><strong>DOB :</strong> {{ date('d-m-Y',strtotime($query['dob'])) }}</td>
+                                        <td colspan="10"><strong>Last Name :</strong> {{$query->salutation}}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5"><strong>Citizenship :</strong> {{\App\Helpers\commonHelper::getCountryNameById($query['citizenship'])}}</td>
-                                        <td colspan="5"><strong>Country :</strong> {{\App\Helpers\commonHelper::getCountryNameById($query['country_id'])}}</td>
+                                        <td colspan="15"><strong>Country :</strong> {{\App\Helpers\commonHelper::getCountryNameById($query['country_id'])}}</td>
                                     </tr>
                                     <tr>
                                         <td colspan="5"><strong>Passport No :</strong> {{$query['passport_no']}}</td>
-                                        <td colspan="5"><strong>Passport Copy :</strong> 
+                                        <td colspan="10"><strong>Passport Copy :</strong> 
                                             @if($query['passport_copy'] != '')
                                                 @foreach(explode(",",rtrim($query['passport_copy'], ',')) as $key=>$img)
                                                     <a href="{{ asset('/uploads/passport/'.$img) }}" target="_blank"> 
@@ -431,38 +429,58 @@
                                         <td colspan="5"><strong> Is this a diplomatic passport? : </strong>{{$query['diplomatic_passport']}}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="5"><strong>Sponsorship :</strong> 
-                                            @php
-
-                                                if($query->sponsorship_letter){
-
-                                                    echo  '<a href="'.asset('uploads/file/'.$query->sponsorship_letter).'" target="_blank" class="btn btn-sm btn-outline-success m-1">View File</a>';
-                                                }else{
-
-                                                    echo  '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
-
-                                                }
+                                        
+                                        <td colspan="15">
+                                            @php 
+                                    
+                                                $doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+                                                $RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
+                                                $restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+                    
                                             @endphp
+                                            <p><strong>Attachment Letter  :</strong></p>
+                                            <br>
+                                            @if($query->financial_letter && in_array($query['country_id'],$doNotRequireVisa))
+                                                
+                                                <div class="step-next" style="display: flex;">
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank </a>
+                                                    <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance</a>
+                                                </div>
+
+                                            @elseif($query->financial_letter && in_array($query['country_id'],$RequireVisa))
+                                               
+                                                <div class="step-next">
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank</a> 
+                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa request</a>
+                                                    <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance </a>
+                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa processing</a>
+                                                </div>
+
+                                            @elseif($query->financial_letter && in_array($query['country_id'],$restricted))
+                                               
+                                                <div class="step-next">
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank</a> 
+                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa request</a>
+                                                    <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance </a>
+                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa processing</a>
+                                                </div>
+                                                
+                                                <p class="pt-5">You will need to work with one of our team members to get your visa.  The person assigned to help you is <b>{{$query['admin_provide_name']}}</b>. His/her email address is <b>{{$query['admin_provide_email']}}</b>. Please contact them as soon as possible to begin working on your visa.</p>
+
+                                            @endif
+
                                         </td>
+                                            
+
                                     </tr>
                                     <tr>
-                                        <td><strong>Financial  :</strong></td>
-                                        <td>
-                                            @php
-                                                if($query->financial_letter){
-
-                                                $financialLetter = explode(',',$query->financial_letter);
-
-                                                echo  '<a href="'.asset('uploads/file/'.$financialLetter[0]).'" target="_blank" class="text-blue"> File 1,&nbsp; &nbsp; &nbsp;</a>
-                                                        <a href="'.asset('uploads/file/'.$financialLetter[1]).'" target="_blank" class="text-blue"> File 2</a>';
-                                                }else{
-
-                                                echo '<div class="span badge rounded-pill pill-badge-success">N/A</div>';
-
-                                                }
-
-                                            @endphp
-
+                                        
+                                        <td colspan="15">
+                                            
+                                            <p class=""><strong>Is your Visa Granted :</strong> {{$query['visa_granted']}}</p>
+                                            @if($query['visa_granted'] == 'No')
+                                                <p class="pt-1"><strong>Comment</strong> : {{$query['visa_not_ranted_comment']}}</p>
+                                            @endif
                                         </td>
                                             
 

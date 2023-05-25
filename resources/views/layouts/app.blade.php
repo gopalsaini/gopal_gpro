@@ -463,7 +463,7 @@
                                 </div>
                                 <div class="col-lg-12">
                                     <div>
-                                        <button type="submit" class="login-btn" form="registration">@lang('web/app.register-modal')</button>
+                                        <button type="submit" class="login-btn" form="registration">@lang('web/app.register')</button>
                                         <!-- //Vineet - 080123 -->
                                         <!-- <a href="javascript:void(0);" class="forget" onclick="openForgotPasswordModal()">@lang('web/app.forgot') @lang('web/app.passowrd')?</a> -->
                                         <a href="javascript:void(0);" class="forget" onclick="openForgotPasswordModal()">@lang('web/app.forgot-password')</a>
@@ -578,8 +578,7 @@
                     
                     <div class="requirement-right">
                         @if(!\Session::has('gpro_exhibitor'))
-                            <!-- <a href="javascript:void(0)" onclick="openRegistrationModal()" class="main-btn">@lang('web/app.register') @lang('web/app.now')</a> -->
-                            <a href="javascript:void(0)" onclick="openRegistrationModal()" class="main-btn">@lang('web/app.register')</a>
+                            <a href="javascript:void(0)" onclick="openRegistrationModal()" class="main-btn">@lang('web/app.register') @lang('web/app.now')</a>
                         @endif
                     </div>
                    

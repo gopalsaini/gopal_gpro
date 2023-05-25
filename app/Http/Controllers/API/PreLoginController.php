@@ -1247,6 +1247,7 @@ class PreLoginController extends Controller {
 										
 													}
 													
+													\App\Helpers\commonHelper::emailSendToAdminExhibitor($subject,$msg);
 													\App\Helpers\commonHelper::emailSendToUser($exhibitorsUser->email, $subject, $msg);
 													\App\Helpers\commonHelper::userMailTrigger($exhibitorsUser->id,$msg,$subject);
 													\App\Helpers\commonHelper::sendNotificationAndUserHistory($exhibitorsUser->id,$subject,$msg,'Your application to be an Exhibitor has now been declined.');

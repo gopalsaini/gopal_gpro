@@ -749,6 +749,7 @@ class commonHelper{
 		});
 	}
 
+
 	public static function emailSendToAdmin($subject, $msg, $template = false, $result = false){
 
 		if (!$template) {
@@ -796,6 +797,26 @@ class commonHelper{
 		// 	$message->subject($subject);
 		// 	$message->to($to);
 		// });
+	}
+
+	public static function emailSendToAdminExhibitor($subject, $msg){
+
+		$template = 'mail';
+	
+		$result = array();
+	
+		$admins = ['exhibitors@gprocongress.org'];
+
+		foreach($admins as $admin){
+
+			$to = $admin;
+			\Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
+				$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
+				$message->subject($subject);
+				$message->to($to);
+			});
+		}
+
 	}
 
 	public static function getTotalPendingAmount($user_id, $number_format = false){
@@ -2681,6 +2702,7 @@ class commonHelper{
 
 			\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
 
+			\App\Helpers\commonHelper::emailSendToAdminExhibitor($subject,$msg);
 			\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
 			\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id, $subject, $msg,  $subject,);
 		}		
@@ -2930,23 +2952,59 @@ class commonHelper{
 
 		$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
 
-		$msg = '<p>Dear '.$passportApprove->salutation.' '.$passportApprove->name.',</p><p><br></p><p><br></p>
-		<p>Passport Number: '.$passportApprove->passport_no.'</p><p><br></p>
-		<p>Country: '.\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship).'</p><p><br></p>
-		<p>This letter will confirm that your application to GProCongress II has been accepted, and that you are invited to attend the Congress in Panama City, Panama, from November 12-17, 2023.</p><p><br></p>
-		<p>RREACH is providing you with significant financial assistance, so that you can attend the Congress. First, your registration fee has been discounted to ___________. (RREACH’s cost for each delegate to attend the Congress is around $1,750.00.) In addition, RREACH will cover the following expenses: </p><p><br></p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Airport transfers to/from the hotel.</p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	A room for five nights at the Westin Playa Bonita Panama Hotel.</p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	All meals during the Congress; and</p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	All materials for the Congress.</p><p><br></p>
-		<p>Therefore, the only costs you are responsible for are your registration fee listed above, and your airfare to Panama. All other incidental expenses and visa fee (if applicable) will be borne by you.</p><p><br></p>
-		<p>This is a unique opportunity for you to <b>connect with like-minded peers</b>, who serve undertrained pastors everywhere, and to <b>build new relationships</b> with current and emerging leaders in pastor training.  Secondly, it’s a wonderful time for you to <b>reflect</b> on your ministry calling, to <b>envision</b> the next season of your life and ministry, to <b>think</b> strategically about implementation, and to assess your ministry effectiveness. Thirdly, it’s a great place for you to <b>find resources</b> for your future ministry – learn how to receive <b>strength from the Lord Jesus Christ</b> to continue your work, find committed partners for mutual encouragement in coming years; and gather <b>proven ideas and new models</b> in pastor training partnerships, support, and delivery.</p><p><br</p>
-		<p>We hope that you will come to Panama this November, and be part of this global gathering of pastor trainers, designed to enhance pastoral health and advance church health in 200+ nations, and ultimately to reach the <b>next billion individuals</b> with spiritual health.  </p><p><br></p>
-		<p>For the glory of Christ, and for the beauty of His Bride,</p><p><br></p>
-		<p>'.$rajiv_richard.'</p><p><br></p>
-		<p>Rajiv Richard</p>
-		<p>GProCongress II Coordinator</p>
-		<p>Email: info@gprocongress.org</p>';
+		if($user->language == 'sp'){
+
+			$subject = 'Usted necesita una visa para GProCongress II.';
+			$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Según la información que envió, necesitará  visa para entrar a Panamá en noviembre para el GProCongress II. Adjuntamos los siguientes documentos que deberá presentar al gobierno panameño en relación con el proceso de visa:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Carta de aceptación: confirmando la invitación de RREACH para que asista al Congreso;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Carta de certificación bancaria: que confirma la intención y la capacidad de RREACH de pagar todos sus costos de viaje mientras se encuentre en Panamá;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulario de Solicitud de Visa; y</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Lista de Documentos requeridos para trámite de visa.</p>
+			<p>También se pueden encontrar copias de estos documentos en su perfil de GProCongress en nuestro sitio web.</p>
+			<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br></p>
+			<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
+		}elseif($user->language == 'fr'){
+		
+			$subject = 'Vous avez besoin d’un visa pour GProCongress II.';
+			$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>D’après les informations que vous avez fournies, vous aurez besoin d’un visa pour vous rendre au Panama en novembre pour le GProCongress II. Vous trouverez ci-joint les documents suivants, que vous devrez présenter au gouvernement panaméen dans le cadre du processus d’obtention du visa:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Lettre d’acceptation – confirmant l’invitation de RREACH pour participer au Congrès; </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Lettre de certification bancaire – confirmant l’intention et la capacité de RREACH de payer tous vos frais de séjour au Panama;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulaire de demande de visa; et </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Liste des documents requis pour le traitement des visas.</p>
+			<p>Des copies de ces documents peuvent également être trouvées dans votre profil GProCongress sur notre site Web.</p>
+			<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+			<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
+		}elseif($user->language == 'pt'){
+		
+			$subject = 'Você precisa de um visto para o GProCongresso II';
+			$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Com base nas informações que você enviou, você precisará de um visto para ir ao Panamá em novembro para o GProCongresso II. Anexamos os seguintes documentos, que você precisará enviar ao governo do Panamá  em conexão com o processo de visto:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Carta de aceitação – confirmando o convite da RREACH para você participar do Congresso; </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Carta de Certificação Bancária - confirmando a intenção e capacidade da RREACH de pagar todos os seus custos de viagem enquanto estiver no Panamá;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulário de Solicitação de Visto; e</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Lista de documentos necessários para o processamento do visto.</p>
+			<p>Cópias desses documentos também podem ser encontradas em seu perfil do GProCongresso em nosso site.</p>
+			<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+			<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
+
+		}else{
+		
+			$subject = 'You need a visa for GProCongress II';
+			$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Based on the information you submitted, you will need a visa to go to Panama in November for GProCongress II.  We have attached the following documents, which you will need to submit to the Panamanian government in connection with the visa process: </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Acceptance letter – confirming RREACH’s invitation to you to attend the Congress;  </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Bank Certification letter – confirming RREACH’s intention and ability to pay for all your travel costs while in Panama; </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Visa Request Form; and </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	List of Documents required for visa processing.</p>
+			<p>Copies of these documents can also be found in your GProCongress profile on our website.</p>
+			<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+			<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+							
+		}
 
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
@@ -2967,31 +3025,8 @@ class commonHelper{
 		
 		$pdf->save($path . '/' . $fileName);
 
-		// $passportApproveArray= [
-		// 	'salutation'=>$passportApprove->salutation,
-		// 	'name'=>$passportApprove->name,
-		// 	'passport_no'=>$passportApprove->passport_no,
-		// 	'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
-		// 	'rajiv_richard'=>$rajiv_richard,
-		// 	'amount'=>$user->amount,
-		// 	'lang'=>$user->language,
-		// ];
-
-		// $pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
-		// $pdf->setPaper('L');
-		// $pdf->output();
-		// $financialSpanishLetter = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
-		// $path = public_path('uploads/file/');
-		
-		// $pdf->save($path . '/' . $financialSpanishLetter);
-
 		$passportApprove->financial_letter=$fileName;
-		// $passportApprove->financial_spanish_letter=$financialSpanishLetter;
-
-		// if($financial == 'financial'){
-
-			$passportApprove->status='Approve';
-		// }
+		$passportApprove->status='Approve';
 		
 		$passportApprove->save();
 
@@ -3013,13 +3048,13 @@ class commonHelper{
 			
 		});
 		
-		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
 		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
 		
-	}
-
-	public static function sendFinancialLetterMailSend($user_id,$id,$financial) {
+	}		
+	
+	public static function sendSponsorshipLetterRestrictedMailSend($user_id,$id) {
 		
 		$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
 
@@ -3031,23 +3066,63 @@ class commonHelper{
 
 		$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
 
-		$msg = '<p>Dear '.$passportApprove->salutation.' '.$passportApprove->name.',</p><p><br></p><p><br></p>
-		<p>Passport Number: '.$passportApprove->passport_no.'</p><p><br></p>
-		<p>Country: '.\App\Helpers\commonHelper::getCountryNameById($passportApprove->citizenship).'</p><p><br></p>
-		<p>This letter will confirm that your application to GProCongress II has been accepted, and that you are invited to attend the Congress in Panama City, Panama, from November 12-17, 2023.</p><p><br></p>
-		<p>RREACH is providing you with significant financial assistance, so that you can attend the Congress. First, your registration fee has been discounted to ___________. (RREACH’s cost for each delegate to attend the Congress is around $1,750.00.) In addition, RREACH will cover the following expenses: </p><p><br></p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Airport transfers to/from the hotel.</p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	A room for five nights at the Westin Playa Bonita Panama Hotel.</p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	All meals during the Congress; and</p>
-		<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	All materials for the Congress.</p><p><br></p>
-		<p>Therefore, the only costs you are responsible for are your registration fee listed above, and your airfare to Panama. All other incidental expenses and visa fee (if applicable) will be borne by you.</p><p><br></p>
-		<p>This is a unique opportunity for you to <b>connect with like-minded peers</b>, who serve undertrained pastors everywhere, and to <b>build new relationships</b> with current and emerging leaders in pastor training.  Secondly, it’s a wonderful time for you to <b>reflect</b> on your ministry calling, to <b>envision</b> the next season of your life and ministry, to <b>think</b> strategically about implementation, and to assess your ministry effectiveness. Thirdly, it’s a great place for you to <b>find resources</b> for your future ministry – learn how to receive <b>strength from the Lord Jesus Christ</b> to continue your work, find committed partners for mutual encouragement in coming years; and gather <b>proven ideas and new models</b> in pastor training partnerships, support, and delivery.</p><p><br</p>
-		<p>We hope that you will come to Panama this November, and be part of this global gathering of pastor trainers, designed to enhance pastoral health and advance church health in 200+ nations, and ultimately to reach the <b>next billion individuals</b> with spiritual health.  </p><p><br></p>
-		<p>For the glory of Christ, and for the beauty of His Bride,</p><p><br></p>
-		<p>'.$rajiv_richard.'</p><p><br></p>
-		<p>Rajiv Richard</p>
-		<p>GProCongress II Coordinator</p>
-		<p>Email: info@gprocongress.org</p>';
+		if($user->language == 'sp'){
+
+			$subject = 'Usted necesita una visa para GProCongress II.';
+			$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Según la información que envió, usted va a necesitar visa para ingresar a Panamá en noviembre para el GProCongress II. Adjuntamos los siguientes documentos, que deberá presentar al gobierno panameño en relación con el proceso de visa:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Carta de aceptación: confirmando la invitación de RREACH para que asista al Congreso;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Carta de certificación bancaria: que confirma la intención y la capacidad de RREACH de pagar todos sus costos de viaje mientras esté en Panamá;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulario de Solicitud de Visa; y</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Lista de Documentos requeridos para trámite de visa.</p>
+			<p>También se pueden encontrar copias de estos documentos en su perfil de GProCongress en nuestro sitio web.</p>
+			<p>Deberá trabajar con uno de los miembros de nuestro equipo para obtener su visa. La persona asignada para ayudarlo es '.$passportApprove->admin_provide_name.'. Su dirección de correo electrónico es '.$passportApprove->admin_provide_email.'. Comuníquese con ellos lo antes posible para comenzar a trabajar en su visa.</p>
+			<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br></p>
+			<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
+		}elseif($user->language == 'fr'){
+		
+			$subject = 'Vous avez besoin d’un visa pour GProCongress II.';
+			$msg = '<p>Cher '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>D’après les informations que vous avez fournies, vous aurez besoin d’un visa pour vous rendre au Panama en novembre pour le GProCongress II. Vous trouverez ci-joint les documents suivants, que vous devrez présenter au gouvernement panaméen dans le cadre du processus d’obtention du visa:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Lettre d’acceptation – confirmant l’invitation de RREACH pour participer au Congrès;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Lettre de certification bancaire – confirmant l’intention et la capacité de RREACH de payer tous vos frais de séjour au Panama;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulaire de demande de visa; et</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Liste des documents requis pour le traitement des visas.</p>
+			<p>Des copies de ces documents peuvent également être trouvées dans votre profil GProCongress sur notre site Web.</p>
+			<p>Vous devrez collaborer avec l’un des membres de notre équipe pour obtenir votre visa.  La personne désignée pour vous aider est '.$passportApprove->admin_provide_name.'. Son adresse e-mail est  '.$passportApprove->admin_provide_email.'. Veuillez la contacter dès que possible pour commencer à travailler sur votre visa.</p>
+			<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+			<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
+		}elseif($user->language == 'pt'){
+		
+			$subject = 'Você precisa de um visto para ir ao GProCongresso II.';
+			$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Com base nas informações que enviou, você precisará de um visto para ir ao II CongressoGPro em Panamá no mês de Novembro. Anexamos os seguintes documentos, que você precisará enviar ao governo panamenho ligados ao processo de visto:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Carta de aceitação – confirmando o convite da RREACH para você participar do Congresso;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Carta de Certificação Bancária - confirmando a intenção e capacidade da RREACH de pagar todos os seus custos de viagem enquanto estiver no Panamá;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulário de Solicitação de Visto; e</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Lista de documentos necessários para o processamento do visto.</p>
+			<p>Cópias desses documentos também podem ser encontradas em seu perfil do GProCongresso em nosso site.</p>
+			<p>Você precisará trabalhar com um dos membros da nossa equipe para obter seu visto. A pessoa designada para ajudá-lo é '.$passportApprove->admin_provide_name.'. Seu endereço de e-mail é '.$passportApprove->admin_provide_email.'. Entre em contato com eles o mais rápido possível para começar a trabalhar no seu visto.</p>
+			<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+			<p>Calorosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
+
+		}else{
+		
+			$subject = 'You need a visa for GProCongress II.';
+			$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Based on the information you submitted, you will need a visa to go to Panama in November for GProCongress II.  We have attached the following documents, which you will need to submit to the Panamanian government in connection with the visa process:</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Acceptance letter – confirming RREACH’s invitation to you to attend the Congress;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Bank Certification letter – confirming RREACH’s intention and ability to pay for all your travel costs while in Panama;</p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Visa Request Form; and </p>
+			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	List of Documents required for visa processing.</p>
+			<p>Copies of these documents can also be found in your GProCongress profile on our website.</p>
+			<p>You will need to work with one of our team members to get your visa.  The person assigned to help you is '.$passportApprove->admin_provide_name.'. His/her email address is '.$passportApprove->admin_provide_email.'. Please contact them as soon as possible to begin working on your visa.</p>
+			<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+			<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+							
+		}
 
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
@@ -3068,31 +3143,111 @@ class commonHelper{
 		
 		$pdf->save($path . '/' . $fileName);
 
-		// $passportApproveArray= [
-		// 	'salutation'=>$passportApprove->salutation,
-		// 	'name'=>$passportApprove->name,
-		// 	'passport_no'=>$passportApprove->passport_no,
-		// 	'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
-		// 	'rajiv_richard'=>$rajiv_richard,
-		// 	'amount'=>$user->amount,
-		// 	'lang'=>$user->language,
-		// ];
-
-		// $pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
-		// $pdf->setPaper('L');
-		// $pdf->output();
-		// $financialSpanishLetter = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
-		// $path = public_path('uploads/file/');
+		$passportApprove->financial_letter=$fileName;
+		$passportApprove->status='Approve';
 		
-		// $pdf->save($path . '/' . $financialSpanishLetter);
+		$passportApprove->save();
+
+		$files = [
+            public_path('uploads/file/'.$fileName),
+            public_path('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
+            public_path('uploads/file/Visa_Request_Form.pdf'),
+            public_path('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
+        ];
+
+		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+			$message->subject($subject);
+			$message->to($to);
+			
+			foreach ($files as $file){
+                $message->attach($file);
+            }
+			
+		});
+		
+		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
+		
+	}
+
+	public static function sendFinancialLetterMailSend($user_id,$id,$financial) {
+		
+		$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+
+		$user= \App\Models\User::where('id',$user_id)->first();
+		
+		$to = $user->email;
+		$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
+
+		if($user->language == 'sp'){
+
+			$subject = '¡Buenas noticias! No necesita una visa para GProCongress II';
+			$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Según la información que envió, no necesita una visa para ingresar a Panamá en noviembre para el GProCongress II. Adjuntamos los siguientes documentos que deberá entregar a los funcionarios panameños a su llegada:</p>
+			<p>&nbsp;&nbsp;&nbsp;1.	Carta de aceptación: confirmando la invitación de RREACH para que asista al Congreso; y</p>
+			<p>&nbsp;&nbsp;&nbsp;2.	Carta de certificación bancaria: que confirma la intención y la capacidad de RREACH de pagar todos sus costos de viaje mientras usted esté en Panamá.</p>
+			<p>También se pueden encontrar copias de estos dos documentos en su perfil de GProCongress en nuestro sitio web.</p>
+			<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p>
+			<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
+		}elseif($user->language == 'fr'){
+		
+			$subject = 'Bonne nouvelle!  Vous n’avez pas besoin de visa pour GProCongress II';
+			$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>D’après les informations que vous avez fournies, vous n’avez pas besoin de visa pour vous rendre au Panama en novembre pour le GProCongress II.  Nous avons joint les documents suivants, que vous devrez remettre aux autorités panaméennes à votre arrivée :</p>
+			<p>&nbsp;&nbsp;&nbsp;1.	Lettre d’acceptation – confirmant l’invitation de RREACH à participer au Congrès ;et</p>
+			<p>&nbsp;&nbsp;&nbsp;2.	Lettre de certification bancaire - confirmant l’intention et la capacité de RREACH  à payer tous vos frais de séjour au Panama.</p>
+			<p>Des copies de ces deux documents peuvent également être trouvées dans votre profil GProCongress sur notre site Web.</p>
+			<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.</p>
+			<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
+		}elseif($user->language == 'pt'){
+		
+			$subject = 'Boas notícias! Você não precisa de visto para o GProCongresso II';
+			$msg = '<p>Caro  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Com base nas informações que você enviou, você não precisa de visto para ir ao Panamá em novembro para o GProCongresso II. Anexamos os seguintes documentos, que você deverá entregar aos funcionários panamenhos na sua chegada: </p>
+			<p>&nbsp;&nbsp;&nbsp;1.	Carta de aceitação – confirmando o convite da RREACH para você participar do Congresso; e</p>
+			<p>&nbsp;&nbsp;&nbsp;2.	Carta de Certificação Bancária - confirmando a intenção e a capacidade da RREACH de pagar todos os seus custos de viagem enquanto estiver no Panamá.</p>
+			<p>Cópias desses dois documentos também podem ser encontradas em seu perfil do GProCongresso em nosso site.</p>
+			<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+			<p>Calorosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
+
+		}else{
+		
+			$subject = 'Good news!  You don’t need a visa for GProCongress II.';
+			$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+			<p>Based on the information you submitted, you do not need a visa to go to Panama in November for GProCongress II.  We have attached the following documents, which you will need to give to the Panamanian officials upon your arrival: </p>
+			<p>&nbsp;&nbsp;&nbsp;1.	Acceptance letter – confirming RREACH’s invitation to you to attend the Congress; and  </p>
+			<p>&nbsp;&nbsp;&nbsp;2.	Bank Certification letter – confirming RREACH’s intention and ability to pay for all your travel costs while in Panama.</p>
+			<p>Copies of these two documents can also be found in your GProCongress profile on our website.</p>
+			<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+			<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+							
+		}
+
+		$passportApproveArray= [
+			'salutation'=>$passportApprove->salutation,
+			'name'=>$passportApprove->name,
+			'passport_no'=>$passportApprove->passport_no,
+			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
+			'rajiv_richard'=>$rajiv_richard,
+			'amount'=>$user->amount,
+			'lang'=>$user->language,
+		];
+
+		
+		$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+		$pdf->setPaper('L');
+		$pdf->output();
+		$fileName = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$path = public_path('uploads/file/');
+		
+		$pdf->save($path . '/' . $fileName);
 
 		$passportApprove->financial_letter=$fileName;
-		// $passportApprove->financial_spanish_letter=$financialSpanishLetter;
-
-		if($financial == 'financial'){
-
-			$passportApprove->status='Approve';
-		}
+		$passportApprove->status='Approve';
 		
 		$passportApprove->save();
 
@@ -3112,7 +3267,6 @@ class commonHelper{
 			
 		});
 		
-		\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
 		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
 		
