@@ -15,7 +15,7 @@ return [
 
     //header
     'home' => "Page d'Accueil",
-    'register' => "S'inscrire",
+    'register' => "REJOIGNEZ NOUS",
     'myprofile' => 'Mon profil',
     'contactus' => 'Contactez-nous',
     'pricing' => 'Tarif',
@@ -32,6 +32,7 @@ return [
     'last_name_label' => 'Nom de famille',
     'enter_email' => "Entrer l’adresse e-mail",
     'enter_name' => "Écrire votre nom ici",
+    'Submit_for_Approval' => "Soumettre pour la validation",
 
     //login 
     'login-heading' => 'Bienvenue !',
@@ -46,7 +47,8 @@ return [
 
     //register 
     'register-heading' => "S’inscrire",
-    'register-description' => 'Commencez votre candidature en vous inscrivant ci-dessous',
+    // 'register-description' => 'Commencez votre candidature en vous inscrivant ci-dessous',
+    'register-description' => 'Créez votre compte pour appliquer',
     'confirm' => 'Confirmer',
     'terms-and-conditions' => 'Termes et Conditions',
     'already-have-account' => 'Avez-vous déjà un compte?',

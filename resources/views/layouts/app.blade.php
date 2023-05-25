@@ -361,13 +361,13 @@
                     <div class="modal-body row">
                         <div class="col-md-6" style="padding-top:45px" >
                             @if(App::getLocale() == 'pt')
-                                <img id="registrationImage" src="{{ asset('images/registrationimage_pt.webp') }}" style="width: 100%;height: 84%;">
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_pt.png') }}" style="width: 100%;height: 84%;">
                             @elseif(App::getLocale() == 'sp')
-                                <img id="registrationImage" src="{{ asset('images/registrationimage_sp.webp') }}" style="width: 100%;height: 84%;">
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_sp.png') }}" style="width: 100%;height: 84%;">
                             @elseif(App::getLocale() == 'fr')
-                                <img id="registrationImage" src="{{ asset('images/registrationimage_fr.webp') }}" style="width: 100%;height: 84%;">
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_fr.png') }}" style="width: 100%;height: 84%;">
                             @else
-                                <img id="registrationImage" src="{{ asset('images/registrationimage_en.webp') }}" style="width: 100%;height: 84%;">
+                                <img id="registrationImage" src="{{ asset('images/registrationimage_en.jpg') }}" style="width: 100%;height: 84%;">
                             @endif
                             
                         </div>

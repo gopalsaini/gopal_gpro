@@ -422,7 +422,7 @@
                                     <input type="hidden" name="type" class="active-input mt-2" value="submit">
                                 
                                     <div class="step-next">
-                                        <button type="submit" class="main-btn" form="formSubmit">@lang('web/home.submit')</button>
+                                        <button type="submit" class="main-btn" form="formSubmit">@lang('web/app.Submit_for_Approval')</button>
                                     </div>
                                 </form>
                             </div>

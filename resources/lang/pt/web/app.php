@@ -15,7 +15,7 @@ return [
 
     //header
     'home' => 'Domicílio',
-    'register' => 'Cadastrar-se',
+    'register' => 'JUNTE-SE A NÓS',
     'myprofile' => 'Meu Perfil',
     'contactus' => 'Contacte-nos',
     'pricing' => 'Custo',
@@ -32,6 +32,8 @@ return [
     'last_name_label' => 'Sobrenome',
     'enter_email' => "Insira o endereço de e-mail",
     'enter_name' => "Introduzir",
+    'Submit_for_Approval' => "Enviar para aprovação",
+
     //login 
     'login-heading' => 'Bem-vindo a Te!',
     'login-description' => 'Faça login para enviar sua inscrição',
@@ -45,7 +47,8 @@ return [
 
     //register 
     'register-heading' => 'Increva-se',
-    'register-description' => 'Comece seu pedido se inscrevendo abaixo',
+    // 'register-description' => 'Comece seu pedido se inscrevendo abaixo',
+    'register-description' => 'Crie sua conta para se candidatar',
     'confirm' => 'Confirme',
     'terms-and-conditions' => 'Termos e Condições',
     'already-have-account' => 'Já Tem uma Conta?',

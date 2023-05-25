@@ -15,7 +15,7 @@ return [
 
     //header
     'home' => 'Home',
-    'register' => 'Register',
+    'register' => 'Join Us',
     'myprofile' => 'My Profile',
     'contactus' => 'Contact Us',
     'pricing' => 'Cost',
@@ -32,6 +32,7 @@ return [
     'last_name_label' => 'Last Name',
     'enter_email' => 'Enter email address',
     'enter_name' => "Enter name here",
+    'Submit_for_Approval' => "Submit for Approval",
 
     //login 
     'login-heading' => 'Welcome You !',
@@ -46,7 +47,8 @@ return [
 
     //register 
     'register-heading' => 'Sign Up',
-    'register-description' => 'Start your application by signing up below',
+    // 'register-description' => 'Start your application by signing up below',
+    'register-description' => 'Create your Account to Apply',
     'confirm' => 'Confirm',
     'terms-and-conditions' => 'Terms and Conditions',
     'already-have-account' => 'Already Have an Account?',

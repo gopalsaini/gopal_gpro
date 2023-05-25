@@ -24,7 +24,7 @@ return [
     'hours' => 'Horas',
     'minutes' => 'Minutos',
     'seconds' => 'Segundos',
-    'register' => 'Regístrese',
+    'register' => 'Únase a nosotros',
     'now' => 'Ahora',
     'know' => 'Conozca',
     'more' => 'Más',
