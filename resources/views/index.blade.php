@@ -55,7 +55,8 @@
                 <div class="banner-btn">
                     <ul>
                         @if(!\Session::has('gpro_user'))
-                        <li><a href="javascript:;" class="main-btn" onclick="openRegistrationModal()">@lang('web/home.register') @lang('web/home.now')</a></li>
+                        <!-- <li><a href="javascript:;" class="main-btn" onclick="openRegistrationModal()">@lang('web/home.register') @lang('web/home.now')</a></li> -->
+                        <li><a href="javascript:;" class="main-btn" onclick="openRegistrationModal()">@lang('web/home.register')</a></li>
                         @endif
                         @if(App::getLocale() == 'pt')
                             <li><a target="_blank" href="{{ asset('images/pt_flyer.pdf') }}" class="main-btn">@lang('web/home.know') @lang('web/home.more')</a></li>

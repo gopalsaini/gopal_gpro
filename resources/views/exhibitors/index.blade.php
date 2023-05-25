@@ -77,7 +77,8 @@
                
                 <div class="banner-btn">
                     <ul>
-                        <li><a href="{{url('exhibitor-register')}}" class="main-btn" >@lang('web/home.register') @lang('web/home.now')</a></li>
+                        <!-- <li><a href="{{url('exhibitor-register')}}" class="main-btn" >@lang('web/home.register') @lang('web/home.now')</a></li> -->
+                        <li><a href="{{url('exhibitor-register')}}" class="main-btn" >@lang('web/home.register')</a></li>
                         
                         <li><a href="{{ url('exhibitor-policy') }}" class="main-btn">@lang('web/app.exhibitor_policy')</a></li>
                     </ul>

@@ -47,8 +47,9 @@ return [
 
     //register 
     'register-heading' => 'Sign Up',
-    // 'register-description' => 'Start your application by signing up below',
-    'register-description' => 'Create your Account to Apply',
+    'register-description' => 'Start your application by signing up below',
+    // 'register-description' => 'Create your Account to Apply',
+    'register-modal' => 'Create your Account to Apply',
     'confirm' => 'Confirm',
     'terms-and-conditions' => 'Terms and Conditions',
     'already-have-account' => 'Already Have an Account?',

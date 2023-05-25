@@ -153,7 +153,7 @@
                                 <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($exhibitors['citizenship'])}}</span>
                             </li>
                             <li>
-                                <p>Business Name</p>
+                                <p>Organization Name</p>
                                 <span>:&nbsp; &nbsp; &nbsp; 
                                     @if($exhibitors['business_name'])
                                     {{$exhibitors['business_name']}}

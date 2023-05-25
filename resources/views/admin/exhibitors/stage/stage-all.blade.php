@@ -93,7 +93,7 @@
                                     <th> Name </th>
                                     <th> Email </th>
                                     <th> Citizenship </th> 
-                                    <th> Business Name </th>  
+                                    <th> Organization Name </th>  
                                     <!-- <th> Identification Number </th>    -->
                                     <th> Mobile  </th>   
                                     <th> Website </th>   
@@ -114,7 +114,7 @@
                                     <th> Name </th>
                                     <th> Email </th>
                                     <th> Citizenship </th> 
-                                    <th> Business Name </th>  
+                                    <th> Organization Name </th>  
                                     <!-- <th> Identification Number </th>    -->
                                     <th> Mobile  </th>   
                                     <th> Website </th>   

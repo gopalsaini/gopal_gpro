@@ -47,8 +47,9 @@ return [
 
     //register 
     'register-heading' => 'Increva-se',
-    // 'register-description' => 'Comece seu pedido se inscrevendo abaixo',
-    'register-description' => 'Crie sua conta para se candidatar',
+    'register-description' => 'Comece seu pedido se inscrevendo abaixo',
+    // 'register-description' => 'Crie sua conta para se candidatar',
+    'register-modal' => 'Crie sua conta para se candidatar',
     'confirm' => 'Confirme',
     'terms-and-conditions' => 'Termos e Condições',
     'already-have-account' => 'Já Tem uma Conta?',

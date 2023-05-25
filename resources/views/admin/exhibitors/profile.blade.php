@@ -82,7 +82,7 @@
                                         </tr>
                                         @if($result['business_name'])
                                             <tr>
-                                                <td><strong>Business Name :</strong> {{$result['business_name'] ?? '-'}}</td>
+                                                <td><strong>Organization Name :</strong> {{$result['business_name'] ?? '-'}}</td>
                                                 <td><strong>Business Identification No :</strong> {!! $result['business_identification_no'] ?? '-' !!}</td>
                                                 
                                             </tr>

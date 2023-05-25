@@ -47,8 +47,9 @@ return [
 
     //register 
     'register-heading' => 'Regístrese',
-    // 'register-description' => 'Comience su solicitud registrándose a continuación',
-    'register-description' => 'Cree su cuenta para aplicar',
+    'register-description' => 'Comience su solicitud registrándose a continuación',
+    // 'register-description' => 'Cree su cuenta para aplicar',
+    'register-modal' => 'Cree su cuenta para aplicar',
     'confirm' => 'Confirmar',
     'terms-and-conditions' => 'Términos y Condiciones',
     'already-have-account' => '¿Ya tiene una cuenta?',

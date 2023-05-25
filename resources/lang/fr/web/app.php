@@ -47,8 +47,9 @@ return [
 
     //register 
     'register-heading' => "S’inscrire",
-    // 'register-description' => 'Commencez votre candidature en vous inscrivant ci-dessous',
-    'register-description' => 'Créez votre compte pour appliquer',
+    'register-description' => 'Commencez votre candidature en vous inscrivant ci-dessous',
+    // 'register-description' => 'Créez votre compte pour appliquer',
+    'register-modal' => 'Créez votre compte pour appliquer',
     'confirm' => 'Confirmer',
     'terms-and-conditions' => 'Termes et Conditions',
     'already-have-account' => 'Avez-vous déjà un compte?',

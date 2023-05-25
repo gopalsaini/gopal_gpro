@@ -58,7 +58,7 @@
                                     <th> @lang('admin.email') </th>
                                     <th> @lang('admin.mobile') </th>
                                     <th> Citizenship </th>
-                                    <th> Business Name </th>
+                                    <th> Organization Name </th>
                                     <!-- <th> Identification Number </th> -->
                                     <th> Status </th>
                                     <th> Payment </th>
@@ -80,7 +80,7 @@
                                     <th> @lang('admin.email') </th>
                                     <th> @lang('admin.mobile') </th>
                                     <th> Citizenship </th>
-                                    <th> Business Name </th>
+                                    <th> Organization Name </th>
                                     <!-- <th> Identification Number </th>  -->
                                     <th> Status </th>
                                     <th> Payment </th>
