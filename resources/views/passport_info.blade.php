@@ -86,7 +86,7 @@
                     </div> -->
                     
                     <div class="col-lg-4">
-                        <label for="country">Which country's passport will you use to come to Panama? <span>*</span></label>
+                        <label for="country">@lang('web/wizard.which_country_passport_will_you_use_to_come_to_panama') <span>*</span></label>
                         <div class="common-select">
                             <select id="country" class="mt-2 test"  name="country_id">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
@@ -98,44 +98,44 @@
                     </div>
                     <div class="col-lg-12">
                         
-                        <label class="form-check-label">is this a diplomatic passport ?? <span>*</span></label>
+                        <label class="form-check-label">@lang('web/wizard.is_this_a_diplomatic_passport') <span>*</span></label>
                         <div class="radio-wrap">
                             <div class="form__radio-group">
                                 <input type="radio" name="diplomatic_passport" value="Yes" id="yes" class="form__radio-input">
                                 <label class="form__label-radio" for="yes" class="form__radio-label" value="Yes">
-                                    <span class="form__radio-button" style="border:1px solid #dc3545"></span> Yes
+                                    <span class="form__radio-button" style="border:1px solid #dc3545"></span> @lang('web/wizard.yes') 
                                 </label>
                             </div>
                             <div class="form__radio-group">
                                 <input type="radio" name="diplomatic_passport" value="No" id="no" class="form__radio-input">
                                 <label class="form__label-radio" for="no" class="form__radio-label">
-                                    <span class="form__radio-button" style="border:1px solid #dc3545"></span> No
+                                    <span class="form__radio-button" style="border:1px solid #dc3545"></span> @lang('web/wizard.no') 
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-12 classHideDiv" id="validVisaResidence" style="display:none;">
                         
-                        <label class="form-check-label">Do you have a valid Visa or Residence, duly issued by Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union?<span>*</span></label>
+                        <label class="form-check-label">@lang('web/wizard.do_you_have_a_valid_visa_or_residence')<span>*</span></label>
                         
                         <div class="form__radio-group">
                             <select id="VisaResidence" class="mt-2 form-control active-input"  name="visa_residence">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
-                                <option  class="active-input mt-2" value="Yes">Yes </option>
-                                <option  class="active-input mt-2" value="NO">No </option>
+                                <option  class="active-input mt-2" value="Yes">@lang('web/wizard.yes') </option>
+                                <option  class="active-input mt-2" value="NO">@lang('web/wizard.no') </option>
                             </select>
                         </div>
                     </div>
                     <div class="col-lg-12 classHideDiv" id="step6" style="display:none;">
                         
-                        <label class="form-check-label">Is your visa from one of the countries identified in the previous step a multiple entry visa, and is it valid until May 31, 2024?<span>*</span></label>
+                        <label class="form-check-label">@lang('web/wizard.do_you_have_a_valid_visa_or_residence_yes')<span>*</span></label>
                         
                         <div class="form__radio-group">
                             <select id="step6Value" class="mt-2 form-control active-input stepValue6"  name="multiple_entry_visa_country">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
                                 
-                                <option  class="active-input mt-2" value="Yes">Yes </option>
-                                <option  class="active-input mt-2" value="NO">No </option>
+                                <option  class="active-input mt-2" value="Yes">@lang('web/wizard.yes')  </option>
+                                <option  class="active-input mt-2" value="NO">@lang('web/wizard.no') </option>
                                 
                             </select>
                         </div>
@@ -143,25 +143,25 @@
                     </div>
                     <div class="col-lg-12 classHideDiv step7" id="multiple_entry_visa_granted" style="display:none;">
                        
-                        <label class="form-check-label">Have you used your multiple entry visa at least once before to enter the country that granted it? <span>*</span></label>
+                        <label class="form-check-label">@lang('web/wizard.step_7_question')<span>*</span></label>
                         
                         <div class="form__radio-group">
                             <select id="multipleEntryVisaGranted" class="mt-2 form-control active-input stepValue7"  name="multiple_entry_visa">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
-                                <option  class="active-input mt-2" value="Yes">Yes </option>
-                                <option  class="active-input mt-2" value="NO">No </option>
+                                <option  class="active-input mt-2" value="Yes">@lang('web/wizard.yes')  </option>
+                                <option  class="active-input mt-2" value="NO">@lang('web/wizard.no') </option>
                             </select>
                         </div>
                         
                     </div>
                     <div class="col-lg-12 classHideDiv step8" id="passportValid" style="display:none;">
                        
-                        <label class="form-check-label">Is your passport valid until May 31, 2024? <span>*</span></label>
+                        <label class="form-check-label">@lang('web/wizard.is_your_passport_valid_until')<span>*</span></label>
                         
                         <select id="passportValidValue" class="mt-2 form-control active-input stepValue8"  name="passport_valid">
                             <option value="">--@lang('web/ministry-details.select')--</option>
-                            <option  class="active-input mt-2" value="Yes">Yes </option>
-                            <option  class="active-input mt-2" value="No">No </option>
+                            <option  class="active-input mt-2" value="Yes">@lang('web/wizard.yes') </option>
+                            <option  class="active-input mt-2" value="No">@lang('web/wizard.no') </option>
                         </select>
                         
                     </div>
@@ -190,7 +190,7 @@
                         <div class="form-check">
                             <input class="form-check-input form-control" type="checkbox" value="Yes" id="flexCheckDefault" name="user_confirm">
                             <label class="form-check-label" for="flexCheckDefault">
-                            &nbsp; &nbsp; &nbsp; I confirm the Details given above are accurate.
+                            &nbsp; &nbsp; &nbsp;  @lang('web/wizard.is_your_passport_valid_until')
                             </label>
                         </div>
                     </div>

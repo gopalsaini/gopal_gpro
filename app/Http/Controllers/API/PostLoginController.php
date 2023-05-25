@@ -3378,7 +3378,7 @@ class PostLoginController extends Controller {
 		}else{
 
 
-			// try{
+			try{
 
 				$country = [];
 
@@ -3468,46 +3468,89 @@ class PostLoginController extends Controller {
 				$passportInfo->save();
 
 				$to = $request->user()->email;
+				
+				if(!$passportInfo){
+
+					if($request->user()->language == 'sp'){
+
+						$subject = "Gracias por enviar la información de su pasaporte para GProCongress II.";
+						$msg = '<p>Estimado '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>¡Hemos recibido la información de su pasaporte! Gracias por enviarlo a la brevedad.</p><p><br></p>
+						<p>Nuestro equipo ahora está revisando su información. Una vez que finalice nuestra revisión, le daremos más instrucciones sobre lo que deberá hacer para ingresar al país de Panamá.&nbsp;</p><p><br><br></p>
+						<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br><br></p>
+						<p>Atentamente</p>
+						<p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+
+					}elseif($request->user()->language == 'fr'){
 					
-				if($request->user()->language == 'sp'){
+						$subject = "Merci d’avoir soumis les informations de votre passeport pour GProCongress II.";
+						$msg = '<p>Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>Nous avons reçu les informations de votre passeport !  Nous vous remercions de les avoir soumis rapidement.</p><p><br></p>
+						<p>Notre équipe examine actuellement vos informations.  Une fois notre examen terminé, nous vous donnerons des instructions supplémentaires sur ce que vous devrez faire pour entrer au Panama.&nbsp;</p><p><br><br></p>
+						<p>Si vous avez des questions ou si vous souhaitez  parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br><br></p>
+						<p>Cordialement</p>
+						<p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
 
-					$subject = "Gracias por enviar la información de su pasaporte para GProCongress II.";
-					$msg = '<p>Estimado '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-					<p>¡Hemos recibido la información de su pasaporte! Gracias por enviarlo a la brevedad.</p><p><br></p>
-					<p>Nuestro equipo ahora está revisando su información. Una vez que finalice nuestra revisión, le daremos más instrucciones sobre lo que deberá hacer para ingresar al país de Panamá.&nbsp;</p><p><br><br></p>
-					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br><br></p>
-					<p>Atentamente</p>
-					<p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+					}elseif($request->user()->language == 'pt'){
+					
+						$subject = "Obrigado por enviar as informações do seu passaporte para o GProCongresso II.";
+						$msg = '<p>Caro '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>Recebemos as informações do seu passaporte! Obrigado por nos enviar tão prontamente.</p><p><br></p>
+						<p>Nossa equipe está analisando suas informações. Após a conclusão de nossa análise, forneceremos mais instruções sobre o que você precisará fazer para entrar no país do Panamá.&nbsp;</p><p><br><br></p>
+						<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p>
+						<p>Calorosamente</p>
+						<p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';				
+					}else{
+					
+						$subject = 'Thank you for submitting your passport information for GProCongress II';
+						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>We have received your passport information!  Thank you for submitting it promptly.</p><p><br></p>
+						<p>Our team is now reviewing your information.  After our review is complete, we will give you further instructions about what you will need to do to enter the country of Panama.&nbsp;</p><p><br><br></p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+						<p>Warmly</p>
+						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+										
+					}
 
-				}elseif($request->user()->language == 'fr'){
-				
-					$subject = "Merci d’avoir soumis les informations de votre passeport pour GProCongress II.";
-					$msg = '<p>Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-					<p>Nous avons reçu les informations de votre passeport !  Nous vous remercions de les avoir soumis rapidement.</p><p><br></p>
-					<p>Notre équipe examine actuellement vos informations.  Une fois notre examen terminé, nous vous donnerons des instructions supplémentaires sur ce que vous devrez faire pour entrer au Panama.&nbsp;</p><p><br><br></p>
-					<p>Si vous avez des questions ou si vous souhaitez  parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br><br></p>
-					<p>Cordialement</p>
-					<p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
-
-				}elseif($request->user()->language == 'pt'){
-				
-					$subject = "Obrigado por enviar as informações do seu passaporte para o GProCongresso II.";
-					$msg = '<p>Caro '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-					<p>Recebemos as informações do seu passaporte! Obrigado por nos enviar tão prontamente.</p><p><br></p>
-					<p>Nossa equipe está analisando suas informações. Após a conclusão de nossa análise, forneceremos mais instruções sobre o que você precisará fazer para entrar no país do Panamá.&nbsp;</p><p><br><br></p>
-					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br><br></p>
-					<p>Calorosamente</p>
-					<p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';				
 				}else{
-				
-					$subject = 'Thank you for submitting your passport information for GProCongress II';
-					$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-					<p>We have received your passport information!  Thank you for submitting it promptly.</p><p><br></p>
-					<p>Our team is now reviewing your information.  After our review is complete, we will give you further instructions about what you will need to do to enter the country of Panama.&nbsp;</p><p><br><br></p>
-					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
-					<p>Warmly</p>
-					<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-									
+
+					if($request->user()->language == 'sp'){
+
+						$subject = 'Your requested corrections to your visa letter have been received';
+						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+						<p>Warmly</p>
+						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+
+					}elseif($request->user()->language == 'fr'){
+					
+						$subject = 'Your requested corrections to your visa letter have been received';
+						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+						<p>Warmly</p>
+						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+
+					}elseif($request->user()->language == 'pt'){
+					
+						$subject = 'Your requested corrections to your visa letter have been received';
+						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+						<p>Warmly</p>
+						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+					}else{
+					
+						$subject = 'Your requested corrections to your visa letter have been received';
+						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+						<p>Warmly</p>
+						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+										
+					}
+
 				}
 
 				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
@@ -3518,11 +3561,11 @@ class PostLoginController extends Controller {
 
 				return response(array("error" => false, "message" =>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your_submission_has_been_sent')), 200);
 				
-			// }catch (\Exception $e){
+			}catch (\Exception $e){
 				
-			//     return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			    return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			
-			// }
+			}
 
         }
 
