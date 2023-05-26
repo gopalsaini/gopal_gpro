@@ -42,10 +42,13 @@
         
         width: 100% !important;
     }
-    #valid_visa_or_residence_yes_class ,#valid_visa_or_residence_class_remove{
-        overflow-y: scroll;
-        height: 263px;
+   
+   @media only screen and (max-width: 768px){
+    .wz_form-wrap{
+        overflow: auto !important;
+        height: 74vh;
     }
+   }
 </style>
 
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

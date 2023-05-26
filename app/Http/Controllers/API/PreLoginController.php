@@ -5451,5 +5451,57 @@ class PreLoginController extends Controller {
 
 	}
 
+	public function SendEmailsToPaymentCompleteDone(Request $request){
+		
+		$emails = array('jesusperezreina@gmail.com',
+					'nour_challita@wycliffeassociates.org',);
+
+		// $emails = array('gopalsaini.img@gmail.com');
+		foreach ($emails as $email) {
+		
+			$user = \App\Models\User::where('email',$email)->first();
+			if($user){
+
+				$name = $user->salutation.' '.$user->name.' '.$user->last_name;
+				$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($user->id, true);
+				$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($user->id, true);
+				$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($user->id, true);
+				$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, true);
+
+
+				if($user->language == 'sp'){
+
+					$subject = 'Pago recibido. ¡Gracias!';
+					$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha recibido la cantidad de $'.$user->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p><p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
+
+				}elseif($user->language == 'fr'){
+				
+					$subject = 'Paiement intégral reçu.  Merci !';
+					$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de '.$user->amount.'$ a été reçu sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+				}elseif($user->language == 'pt'){
+				
+					$subject = 'Pagamento recebido na totalidade. Obrigado!';
+					$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Uma quantia de $'.$user->amount.' foi recebido na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p><p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+
+				}else{
+				
+					$subject = 'Payment received in full. Thank you!';
+					$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$user->amount.' has been received on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+	
+				}
+				
+				\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Payment received in full. Thank you!');
+
+			}
+			
+		}
+			
+		return response(array('message'=>'Reminders has been sent successfully. All Emails : '.print_r($emails)), 200);
+
+	}
+
 
 }

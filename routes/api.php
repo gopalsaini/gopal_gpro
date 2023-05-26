@@ -128,6 +128,7 @@ Route::get('get-site-setting', 'API\PostLoginController@SiteSettingList');
 Route::get('get-user-profile', 'API\PreLoginController@userProfile');
 Route::get('get-total-member-for-community', 'API\PreLoginController@getTotalMemberForCommunity');
 Route::get('sendcheckUserDetailsPendingAmount', 'API\PreLoginController@sendcheckUserDetailsPendingAmount');
+Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmailsToPaymentCompleteDone');
 
 
 
