@@ -1,6 +1,6 @@
 @extends('layouts/app')
 
-@section('title',__(Lang::get('web/app.donate')))
+@section('title',__(Lang::get('web/wizard.Visa_Wizard')))
 
 @section('content')
 
@@ -44,10 +44,17 @@
     }
    
    @media only screen and (max-width: 768px){
-    .wz_form-wrap{
-        overflow: auto !important;
-        height: 74vh;
-    }
+        .wz_form-wrap{
+            overflow: auto !important;
+            height: 74vh;
+        }
+   }
+
+   @media only screen and (min-width:768px) and (max-width:1180px){
+        .wz_form-wrap{
+            overflow: auto !important;
+            height: 50vh;
+        }
    }
 </style>
 
@@ -64,8 +71,7 @@
                     <div class="row">
 
                         <div class="col-md-12 ml-auto mr-auto">
-                            <h2 id="ques" class="wz-title fadeInUp animated a-duration-5 a-delay-05 pr-settings-title">Gpro Visa
-                                Eligibility Wizard</h2>
+                            <h2 id="ques" class="wz-title fadeInUp animated a-duration-5 a-delay-05 pr-settings-title">@lang('web/wizard.Gpro_Visa_Eligibility_Wizard')</h2>
 
                             <br>
                             <div class="">

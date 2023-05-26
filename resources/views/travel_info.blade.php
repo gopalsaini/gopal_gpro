@@ -6,7 +6,7 @@
 @section('content')
 <style>
     .step-form .detail-wrap {
-        display: block !important;
+        /* display: block !important; */
     }
     form {
         padding: 20px 0 0 !important;
@@ -64,22 +64,21 @@
                         
                         @endif 
 
-                    <h5>
-                        @if($passportInfo['admin_status']=='Pending')
+                        <h5>
+                            @if($passportInfo['admin_status']=='Pending')
 
-                            Admin Approval Pending 
-                            
-                        @elseif($passportInfo['admin_status']=='Decline')
-                            
-                            Passport Information Declined By Admin
- 
-                        @elseif($passportInfo['status']=='Approve')
-                            
-                            Submit your travel info
-                        @endif
-                    </h5>
+                                Admin Approval Pending 
+                                
+                            @elseif($passportInfo['admin_status']=='Decline')
+                                
+                                Passport Information Declined By Admin
+    
+                            @elseif($passportInfo['status']=='Approve')
+                                
+                                Submit your travel info
+                            @endif
+                        </h5>
 
-                    
                     </div>
                     
                 </div>
@@ -103,17 +102,18 @@
                     <p>{{\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'requirements_for_authorized_and_stamped_visa')}}: <a target="_blank" href="{{ asset('pdf/IMMIGRATION_REPUBLIC_OF_PANAMA_English.pdf') }}" >Click Here</a></p>
                 @endif
       
-                <h4 class="inner-head section-gap">Passport Info</h4>
+                <h4 class="inner-head section-gap">@lang('web/wizard.Passport_Info')</h4>
                 <div class="detail-wrap">
                     <ul>
                         <li>
-                            <p>Given Name</p>
+                            <p>@lang('web/wizard.Given_name')</p>
                             <span>:&nbsp; &nbsp; &nbsp; 
                             {{$passportInfo['salutation']}} 
                              
                         </li>
+                        
                         <li>
-                            <p>Surname</p>
+                            <p>@lang('web/wizard.Surname')</p>
                             <span>:&nbsp; &nbsp; &nbsp; 
                             
                             {{$passportInfo['name']}} {{$passportInfo['last_name']}}</span>
@@ -124,68 +124,38 @@
                             <span>:&nbsp; &nbsp; &nbsp; @if($passportInfo['dob']!=''){{ date('d-m-Y',strtotime($passportInfo['dob'])) }}@endif</span>
                         </li> -->
                         <li>
-                            <p>Passport No</p>
+                            <p>@lang('web/wizard.Passport_Number')</p>
                             <span>:&nbsp; &nbsp; &nbsp; {{$passportInfo['passport_no']}} </span>
                         </li>
+                    
                         <li>
-                            <p>Passport Copy</p>
+                            <p>@lang('web/wizard.Passport_Copy') :</p>
                             @if($passportInfo['passport_copy'] != '')
                                 @foreach(explode(",",rtrim($passportInfo['passport_copy'], ',')) as $key=>$img)
                                     <a href="{{ asset('/uploads/passport/'.$img) }}" target="_blank"> 
-                                        <span>:&nbsp; &nbsp; &nbsp; View {{$key+1}} </span>
+                                        <span>&nbsp; &nbsp; &nbsp; File {{$key+1}} </span>
                                     </a>
                                 @endforeach
                             @endif
                         </li>
-
-                        <li>
-                            <p>Is this a diplomatic passport? : {{$passportInfo['diplomatic_passport']}}</p>
-                        </li>
-
-                        @if($passportInfo['passport_valid'] == 'Yes')
-                           
-                            <li>
-                                <!-- <p>Valid Residence Country</p> -->
-                                @if($passportInfo['valid_residence_country'] != '')
-
-                                    @php $countryDoc = json_decode($passportInfo['valid_residence_country'],true); @endphp
-
-                                    @foreach($countryDoc as $key=>$img)
-                                        <p>Visa/Residence Proof for 
-                                            <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
-                                                <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
-                                            </a>
-                                            </p>&nbsp; &nbsp; &nbsp;
-                                    @endforeach
-                                @endif
-                            </li>
-
-                        @else
-                            <li>
-                                <p>Is your passport valid until May 31, 2024? : {{$passportInfo['passport_valid']}}</p>
-                            </li>
-                        @endif
-                        @if($passportInfo['admin_status'] =='Decline')
-                            
-                                <p style="color:red">Passport Information Declined By admin.</p><br>
-                                <p>Decline remark : {!! $passportInfo['admin_remark'] !!}</p><br>
-                                <div class="col-lg-12 mt-5">
-                                    <div class="step-next">
-                                        <a style="margin: 0 auto;" href="{{url('passport-info')}}" class="main-btn">Resubmit Passport Info</a>
-                                    </div>
-                                </div>
-                            
-                        @endif
+                    
+                        
                     </ul>
+                    
                     <ul>
+                        <li>
+                            <p>@lang('web/wizard.which_country_passport_will_you_use_to_come_to_panama')</p>
+                            <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($passportInfo['country_id'])}}</span>
+                        </li>
+                        <li>
+                            <p>@lang('web/wizard.is_this_a_diplomatic_passport') : {{$passportInfo['diplomatic_passport']}}</p>
+                        </li>
+                        
                         <!-- <li>
                             <p>@lang('web/profile.citizenship')</p>
                             <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($passportInfo['citizenship'])}}</span>
                         </li> -->
-                        <li>
-                            <p>@lang('web/profile.country')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($passportInfo['country_id'])}}</span>
-                        </li>
+                        
                         <li>
                             <p>Admin Status</p>
                             @if($passportInfo['admin_status'] =='Pending')
@@ -199,7 +169,82 @@
                         
                     </ul>
                 </div>
-                    
+                <div class="detail-wrap">
+                    <ul>
+                        @if($passportInfo['visa_residence'])
+                            <li >
+                                <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence') : </p>
+                                <p>{{$passportInfo['visa_residence']}}</p>
+                            </li>
+                        @endif
+
+                        @if($passportInfo['multiple_entry_visa_country'])
+                            <li>
+                                <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence_yes') : </p>
+                                <p>{{$passportInfo['multiple_entry_visa_country']}}</p>
+                            </li>
+                        @endif
+
+                        @if($passportInfo['multiple_entry_visa'])
+                            <li>
+                                <p >@lang('web/wizard.step_7_question') : </p>
+                                <p>{{$passportInfo['multiple_entry_visa']}}</p>
+                            </li> 
+                        @endif
+
+                        @if($passportInfo['passport_valid'])
+                            <li>
+                                <p>@lang('web/wizard.is_your_passport_valid_until') : {{$passportInfo['passport_valid']}}</p>
+                            </li>
+                        @endif
+                       
+                        @if($passportInfo['passport_valid'] == 'Yes')
+                            <li>
+                                <p >@lang('web/wizard.What_countries_among') : </p>
+                                @if($passportInfo['valid_residence_country'] != '')
+
+                                    @php $countryDoc = json_decode($passportInfo['valid_residence_country'],true); @endphp
+
+                                    @foreach($countryDoc as $key=>$img)
+                                    
+                                        @if($img['id'] == '15')
+                                            <p>Visa/Residence Proof for 
+                                                <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                                    <span>&nbsp;  European Union  </span>
+                                                </a>
+                                            </p>&nbsp; &nbsp; &nbsp;
+                                        @else
+
+                                            <p>Visa/Residence Proof for 
+                                                <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                                    <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
+                                                </a>
+                                            </p>&nbsp; &nbsp; &nbsp;
+
+                                        @endif
+                                        
+                                    @endforeach
+                                @endif
+                            </li>
+                        @endif
+
+                        @if($passportInfo['admin_status'] =='Decline')
+                            <li>
+                                <p style="color:red">Passport Information Declined By admin.</p><br>
+                            </li>
+                            <li>
+                                <p>Decline remark : {!! $passportInfo['admin_remark'] !!}</p><br>
+                                <div class="col-lg-12 mt-5">
+                                    <div class="step-next">
+                                        <a style="margin: 0 auto;" href="{{url('passport-info')}}" class="main-btn">Resubmit Passport Info</a>
+                                    </div>
+                                </div>
+                            </li>
+                        @endif
+                            
+                        
+                    </ul>
+                </div>
                 @if($passportInfo['admin_status'] =='Approved')
                     <div class="detail-wrap">
                         
@@ -219,11 +264,15 @@
                                         @php $TravelInfoShow = true; @endphp
                                         <div class="row">
                                             <div class="alphabet-vd-box">
-                                                <h4>Attachment Letter</h4><br>
+                                                <h4>Document required for Visa/Travel </h4><br>
                                                 
                                                 <div class="step-next" style="display: flex;">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank </a>
-                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance</a>
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Bank Letter Certification </a>
+                                                    @if($passportInfo['financial_letter'])
+                                                        <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter English Version</a>
+                                                    @endif
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter Spanish Version</a>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -232,12 +281,17 @@
 
                                         @php $TravelInfoShow = false; @endphp
                                         <div class="row">
-                                        <h4>Attachment Letter</h4><br><br>
+                                        <h4>Document required for Visa/Travel </h4><br><br>
                                             <div class="step-next">
-                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank</a> 
-                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa request</a>
-                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance </a>
-                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa processing</a>
+                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Bank Letter Certification</a> 
+                                                @if($passportInfo['financial_letter'])
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter English Version</a>
+                                                @endif
+                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter  Spanish Version</a>
+                                            </div>
+                                            <div class="alphabet-vd-box mt-2">
+                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Visa Request Form</a>
+                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Documents Required for Visa Processing</a>
                                             </div>
                                         </div>
                                         <br><br>
@@ -267,12 +321,17 @@
 
                                         @php $TravelInfoShow = false; @endphp
                                         <div class="row">
-                                            <h4>Attachment Letter</h4><br><br>
+                                            <h4>Document required for Visa/Travel </h4><br><br>
                                             <div class="step-next">
-                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank</a> 
-                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa request</a>
-                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance </a>
-                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa processing</a>
+                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Bank Letter Certification</a> 
+                                                @if($passportInfo['financial_letter'])
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter English Version</a>
+                                                @endif
+                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter Spanish Version </a>
+                                            </div>
+                                            <div class="alphabet-vd-box mt-2">
+                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Visa Request Form</a>
+                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Documents Required for Visa Processing</a>
                                             </div>
                                         </div>
                                         <br>

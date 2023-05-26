@@ -2946,7 +2946,7 @@ class commonHelper{
 
 		$user= \App\Models\User::where('id',$user_id)->first();
 		
-		$to = $user->email;
+		$to = $user->email; $fileEnName = '';
 
 		$subject = 'Financial letter.';
 
@@ -3005,6 +3005,21 @@ class commonHelper{
 			<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 							
 		}
+		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->first(); 
+
+        $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
+
+		if($Spouse){
+			$amount = $user->amount/2;
+
+		}elseif($SpouseParent && $user->added_as == 'Spouse'){
+
+			$amount = $SpouseParent->amount/2;
+
+		}else{
+
+			$amount = $user->amount;
+		}
 
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
@@ -3012,20 +3027,35 @@ class commonHelper{
 			'passport_no'=>$passportApprove->passport_no,
 			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
 			'rajiv_richard'=>$rajiv_richard,
-			'amount'=>$user->amount,
+			'amount'=>$amount,
 			'lang'=>$user->language,
 		];
 
+		if($user->language == 'en'){
+
+			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+			$pdf->setPaper('L');
+			$pdf->output();
+			$fileEnNameFl = $user->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$path = public_path('uploads/file/');
+			
+			$pdf->save($path . '/' . $fileEnNameFl);
+
+			$passportApprove->financial_letter=$fileEnNameFl;
+
+			$fileEnName = public_path('uploads/file/'.$fileEnNameFl);
+
+		}
 		
-		$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
 		$pdf->setPaper('L');
 		$pdf->output();
-		$fileName = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$fileName = $user->name.'_financial_Sp_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
 		$path = public_path('uploads/file/');
 		
 		$pdf->save($path . '/' . $fileName);
 
-		$passportApprove->financial_letter=$fileName;
+		$passportApprove->financial_spanish_letter=$fileName;
 		$passportApprove->status='Approve';
 		
 		$passportApprove->save();
@@ -3037,7 +3067,7 @@ class commonHelper{
             public_path('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
         ];
 
-		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files,$fileEnName) {
 			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 			$message->subject($subject);
 			$message->to($to);
@@ -3045,6 +3075,9 @@ class commonHelper{
 			foreach ($files as $file){
                 $message->attach($file);
             }
+			if($fileEnName){
+				$message->attach($fileEnName);
+			}
 			
 		});
 		
@@ -3060,7 +3093,7 @@ class commonHelper{
 
 		$user= \App\Models\User::where('id',$user_id)->first();
 		
-		$to = $user->email;
+		$to = $user->email; $fileEnName = '';
 
 		$subject = 'Financial letter.';
 
@@ -3124,26 +3157,57 @@ class commonHelper{
 							
 		}
 
+		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->first(); 
+
+        $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
+
+		if($Spouse){
+			$amount = $user->amount/2;
+
+		}elseif($SpouseParent && $user->added_as == 'Spouse'){
+
+			$amount = $SpouseParent->amount/2;
+
+		}else{
+
+			$amount = $user->amount;
+		}
+
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
 			'name'=>$passportApprove->name,
 			'passport_no'=>$passportApprove->passport_no,
 			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
 			'rajiv_richard'=>$rajiv_richard,
-			'amount'=>$user->amount,
+			'amount'=>$amount,
 			'lang'=>$user->language,
 		];
 
+		if($user->language == 'en'){
+
+			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+			$pdf->setPaper('L');
+			$pdf->output();
+			$fileEnNameFl = $user->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$path = public_path('uploads/file/');
+			
+			$pdf->save($path . '/' . $fileEnNameFl);
+
+			$passportApprove->financial_letter=$fileEnNameFl;
+
+			$fileEnName = public_path('uploads/file/'.$fileEnNameFl);
+
+		}
 		
-		$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
 		$pdf->setPaper('L');
 		$pdf->output();
-		$fileName = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$fileName = $user->name.'_financial_Sp_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
 		$path = public_path('uploads/file/');
 		
 		$pdf->save($path . '/' . $fileName);
 
-		$passportApprove->financial_letter=$fileName;
+		$passportApprove->financial_spanish_letter=$fileName;
 		$passportApprove->status='Approve';
 		
 		$passportApprove->save();
@@ -3155,7 +3219,7 @@ class commonHelper{
             public_path('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
         ];
 
-		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files,$fileEnName) {
 			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 			$message->subject($subject);
 			$message->to($to);
@@ -3163,6 +3227,9 @@ class commonHelper{
 			foreach ($files as $file){
                 $message->attach($file);
             }
+			if($fileEnName){
+				$message->attach($fileEnName);
+			}
 			
 		});
 		
@@ -3178,7 +3245,7 @@ class commonHelper{
 
 		$user= \App\Models\User::where('id',$user_id)->first();
 		
-		$to = $user->email;
+		$to = $user->email; $fileEnName = '';
 		$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
 
 		if($user->language == 'sp'){
@@ -3227,26 +3294,56 @@ class commonHelper{
 							
 		}
 
+		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->first(); 
+
+        $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
+
+		if($Spouse){
+			$amount = $user->amount/2;
+
+		}elseif($SpouseParent && $user->added_as == 'Spouse'){
+
+			$amount = $SpouseParent->amount/2;
+
+		}else{
+
+			$amount = $user->amount;
+		}
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
 			'name'=>$passportApprove->name,
 			'passport_no'=>$passportApprove->passport_no,
 			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
 			'rajiv_richard'=>$rajiv_richard,
-			'amount'=>$user->amount,
+			'amount'=>$amount,
 			'lang'=>$user->language,
 		];
 
+		if($user->language == 'en'){
+
+			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+			$pdf->setPaper('L');
+			$pdf->output();
+			$fileEnNameFl = $user->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$path = public_path('uploads/file/');
+			
+			$pdf->save($path . '/' . $fileEnNameFl);
+
+			$passportApprove->financial_letter=$fileEnNameFl;
+
+			$fileEnName = public_path('uploads/file/'.$fileEnNameFl);
+
+		}
 		
-		$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
 		$pdf->setPaper('L');
 		$pdf->output();
-		$fileName = $passportApprove->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$fileName = $user->name.'_financial_Sp_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
 		$path = public_path('uploads/file/');
 		
 		$pdf->save($path . '/' . $fileName);
 
-		$passportApprove->financial_letter=$fileName;
+		$passportApprove->financial_spanish_letter=$fileName;
 		$passportApprove->status='Approve';
 		
 		$passportApprove->save();
@@ -3256,7 +3353,7 @@ class commonHelper{
             public_path('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
         ];
 
-		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files,$fileEnName) {
 			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
 			$message->subject($subject);
 			$message->to($to);
@@ -3264,6 +3361,10 @@ class commonHelper{
 			foreach ($files as $file){
                 $message->attach($file);
             }
+
+			if($fileEnName){
+				$message->attach($fileEnName);
+			}
 			
 		});
 		

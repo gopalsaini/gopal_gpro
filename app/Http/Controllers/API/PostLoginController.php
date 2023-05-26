@@ -3408,9 +3408,13 @@ class PostLoginController extends Controller {
 					$passportInfo = new \App\Models\PassportInfo;
 					$passportInfo->user_id = $request->user()->id;
 
-					// \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information submit','sponsorship information submit','sponsorship information submit');
+					
+
+					$passportInfoAlready = true;
+
 				}else{
-					// \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,'sponsorship information update','sponsorship information update','sponsorship information updates');
+
+					$passportInfoAlready = false;
 
 				}
 
@@ -3469,7 +3473,7 @@ class PostLoginController extends Controller {
 
 				$to = $request->user()->email;
 				
-				if(!$passportInfo){
+				if($passportInfoAlready){
 
 					if($request->user()->language == 'sp'){
 

@@ -396,7 +396,7 @@
                             <button class="btn btn-link text-white collapsed" data-bs-toggle="collapse"
                                 data-bs-target="#Sponsorship" aria-expanded="false"
                                 aria-controls="collapse11"><i class="fas fa-file"></i>
-                                Sponsorship Letter</button>
+                                Passport Info & Visa Letter</button>
                         </h5>
                     </div>
                     <div class="collapse" id="Sponsorship" aria-labelledby="collapseicon2"
@@ -428,6 +428,52 @@
                                     <tr>
                                         <td colspan="5"><strong> Is this a diplomatic passport? : </strong>{{$query['diplomatic_passport']}}</td>
                                     </tr>
+                                    
+                                    <tr >
+                                        <td colspan="15">
+                                            <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence') : </p>
+                                            <p>{{$query['visa_residence']}}</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td colspan="15">
+                                            <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence_yes') : </p>
+                                            <p>{{$query['multiple_entry_visa_country']}}</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td colspan="15">
+                                            <p >@lang('web/wizard.step_7_question') : </p>
+                                            <p>{{$query['multiple_entry_visa']}}</p>
+                                        </td> 
+                                    </tr> 
+                                    
+                                    <tr>
+                                        <td colspan="15">
+                                            <p>@lang('web/wizard.is_your_passport_valid_until') : {{$query['passport_valid']}}</p>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td colspan="15">
+                                            <p >@lang('web/wizard.What_countries_among') : </p>
+                                            @if($query['valid_residence_country'] != '')
+
+                                                @php $countryDoc = json_decode($query['valid_residence_country'],true); @endphp
+
+                                                @foreach($countryDoc as $key=>$img)
+                                                    <p>Visa/Residence Proof for 
+                                                        <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                                            <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
+                                                        </a>
+                                                    </p>&nbsp; &nbsp; &nbsp;
+                                                @endforeach
+                                            @endif
+                                        </td>
+                                    </tr>
+                                        
                                     <tr>
                                         
                                         <td colspan="15">
@@ -438,31 +484,42 @@
                                                 $restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
                     
                                             @endphp
-                                            <p><strong>Attachment Letter  :</strong></p>
+                                            <p><strong>Document Required for Visa/ Travel  :</strong></p>
                                             <br>
-                                            @if($query->financial_letter && in_array($query['country_id'],$doNotRequireVisa))
+                                            @if(in_array($query['country_id'],$doNotRequireVisa))
                                                 
                                                 <div class="step-next" style="display: flex;">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank </a>
-                                                    <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance</a>
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter </a>
+                                                    <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                    @if($query['financial_letter'])
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                    @endif
                                                 </div>
 
-                                            @elseif($query->financial_letter && in_array($query['country_id'],$RequireVisa))
+                                            @elseif(in_array($query['country_id'],$RequireVisa))
                                                
                                                 <div class="step-next">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank</a> 
-                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa request</a>
-                                                    <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance </a>
-                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa processing</a>
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
+                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
+                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
+                                                    <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                    
+                                                    @if($query['financial_letter'])
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                    @endif
                                                 </div>
 
-                                            @elseif($query->financial_letter && in_array($query['country_id'],$restricted))
+                                            @elseif(in_array($query['country_id'],$restricted))
                                                
                                                 <div class="step-next">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank</a> 
-                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa request</a>
-                                                    <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance </a>
-                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa processing</a>
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
+                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
+                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
+                                                    <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                    
+                                                    @if($query['financial_letter'])
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                    @endif
                                                 </div>
                                                 
                                                 <p class="pt-5">You will need to work with one of our team members to get your visa.  The person assigned to help you is <b>{{$query['admin_provide_name']}}</b>. His/her email address is <b>{{$query['admin_provide_email']}}</b>. Please contact them as soon as possible to begin working on your visa.</p>

@@ -175,14 +175,23 @@
 
                         @php $SpouseParent = \App\Models\User::where('id',$resultData['result']['parent_id'])->first(); @endphp
                         <ul>
-                            @if($SpouseParent)
+                            @if($Spouse)
 
                                 <!-- //Vineet - 080123 -->
                                 <!-- <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') :</strong> @lang('web/profile-details.yes') -->
                                 <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> &nbsp;@lang('web/profile-details.yes')
                                 <!-- //Vineet - 080123 -->
                                 </li>
+                                <li>@lang('web/home.spouse') : {{$Spouse->name}} {{$Spouse->last_name}}</li>
+
+                            @elseif($SpouseParent && $resultData['result']['added_as'] == 'Spouse' )
+                                <!-- //Vineet - 080123 -->
+                                <!-- <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') :</strong> @if($Spouse) @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif -->
+                                <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') : </strong> &nbsp; @lang('web/profile-details.yes') 
+                                <!-- //Vineet - 080123 -->
+                                </li>
                                 <li>@lang('web/home.spouse') : {{$SpouseParent->name}} {{$SpouseParent->last_name}}</li>
+
                             @else
                                 <!-- //Vineet - 080123 -->
                                 <!-- <li colspan="2"><strong>@lang('web/home.coming-along-with-spouse') :</strong> @if($Spouse) @lang('web/profile-details.yes') @else @lang('web/profile-details.no') @endif -->

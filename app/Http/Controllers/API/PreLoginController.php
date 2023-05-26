@@ -5503,5 +5503,79 @@ class PreLoginController extends Controller {
 
 	}
 
+	public function takingApplicationsForExhibitors(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('profile_status','Approved')->where('stage','3')->get();
+			
+			if(count($results) > 0){
+
+				foreach ($results as $key => $user) {
+				
+					if($user->language == 'sp'){
+
+						$url = '<a href="'.url('exhibitor-index').'" target="_blank">sitio web</a>';
+						$subject = 'GProCongress II está aceptando solicitudes para ser Exhibidor.';
+						$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Usted está recibiendo este correo electrónico porque se ha inscrito y ha pagado la totalidad de la inscripción al GProCongress II.  Ahora tiene la oportunidad de solicitar ser Exhibidor en el Congreso.</p>
+						<p>Si usted tiene un producto o servicio que podría beneficiar a capacitadores de pastores alrededor del mundo, entonces por favor ingrese a su cuenta en nuestro '.$url.'.  Después de iniciar sesión, vaya a la barra de menú en la parte superior de la página, haga clic en "Exhibidores" y complete la solicitud hoy mismo.</p>
+						<p>Le rogamos que presente su solicitud lo antes posible, ya que el espacio es limitado y los expositores se eligen por orden de inscripción.  En consecuencia, si espera demasiado para presentar su solicitud y efectuar el pago, podría quedarse fuera del Congreso como exhibidor, ya que todas las plazas podrían estar ya completas.						</p>
+						<p><i>Únase a nosotros en oración en pro de multiplicar la cantidad y calidad de capacitadores de pastores. </i></p>
+						<p>Cordialmente,</p><p>Equipo GProCongress II</p>';
+
+					}elseif($user->language == 'fr'){
+					
+						$url = '<a href="'.url('exhibitor-index').'" target="_blank">site Web</a>';
+						$subject = "GProCongress II accepte désormais les demandes d'exposants.";
+						$msg = '<p>Cher  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Vous recevez cet e-mail parce que vous vous êtes inscrit et que vous avez payé en totalité pour le GProCongress II.  Maintenant, vous avez la possibilité de postuler pour être exposant au Congrès!</p>
+						<p>Si vous avez un produit ou un service qui profiterait aux formateurs de pasteurs du monde entier, veuillez vous connecter à votre compte sur notre '.$url.'.  Après vous être connecté, allez dans la barre de menu en haut de la page, cliquez sur « Exposants » et remplissez la demande dès aujourd’hui.						</p>
+						<p>Nous vous demandons de vous inscrire le plus tôt possible, car les places sont limitées et les exposants sont choisis selon le principe du « premier à payer, premier arrivé ».  Par conséquent, si vous attendez trop longtemps pour vous inscrire et effectuer le paiement, vous pourriez être exclu du Congrès en tant qu’exposant, car toutes les places pourraient déjà être prises.						</p>
+						<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
+						<p>Cordialement,</p><p>L’équipe GProCongress II</p>';
+
+					}elseif($user->language == 'pt'){
+					
+						$url = '<a href="'.url('exhibitor-index').'" target="_blank">site</a>';
+						$subject = 'O GProCongresso II já está recebendo inscrições para Expositores.';
+						$msg = '<p>Caro '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Você está recebendo este e-mail porque se inscreveu e pagou integralmente a sua inscrição para o GProCongresso II.  Agora você tem a oportunidade de se candidatar como Expositor do Congresso!</p>
+						<p>Se você tem um produto ou serviço que beneficiaria os treinadores de pastores em todo o mundo, faça o login em sua conta em nosso '.$url.'. Depois de fazer o login, vá para a barra de menu no topo da página, clique em “Expositores” e preencha o formulário hoje mesmo.</p>
+						<p>Pedimos que você se inscreva o mais rápido possível, pois as vagas são limitadas e os expositores são escolhidos na base de “quem chegar primeiro  e pagar primeiro”. Assim, se você demorar muito para se inscrever e efetuar o pagamento, poderá ficar de fora do Congresso como expositor, pois todas as vagas  poderão estar preenchidas.</p>
+						<p><i>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</i></p>
+						<p>Calorosamente,</p><p>Equipe do GProCongresso II</p>';
+
+					}else{
+					
+						$url = '<a href="'.url('exhibitor-index').'" target="_blank">website</a>';
+						$subject = 'GProCongress II is now taking applications for Exhibitors.';
+						$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>You are receiving this email because you have registered and fully paid for GProCongress II.  Now you have the opportunity to apply to be an Exhibitor at the Congress!</p>
+						<p>If you have a product or service that would benefit pastor trainers around the world, then please login to your account on our '.$url.'.  After you login, go to the menu bar at the top of the page, click on “Exhibitors” and fill out the application today.</p>
+						<p>We ask that you apply as soon as possible, because space is limited, and exhibitors are chosen on a “first pay, first come” basis.  Accordingly, if you wait too long to apply and make payment, you could be left out of the Congress as an exhibitor, because all slots could already be full.</p>
+						<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.</i></p>
+						<p>Warmly,</p><p>GProCongress II Team</p>';
+		
+					}
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'GProCongress II is now taking applications for Exhibitors.');
+				
+				}
+				
+				return response(array('message'=>' Email has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
 
 }

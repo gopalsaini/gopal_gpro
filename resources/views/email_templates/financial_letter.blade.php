@@ -50,7 +50,7 @@
 				<p>Número de Pasaporte: {{$passport_no}}</p>
 				<p>País: {{$citizenship}}</p>
 				<p>Esta nota es para confirmar que su registro al GProCongress II ha sido aceptado(a), y que usted está invitado(a) a asistir al Congreso en Ciudad de Panamá, Panamá, del 12 al 17 de noviembre, 2023</p>
-				<p>RREACH le ofrece una importante ayuda financiera para que pueda asistir al Congreso. En primer lugar, su cuota de inscripción se ha rebajado a ___________. (El costo real para RREACH para que cada delegado asista al Congreso es de unos U$A ${{$amount}} – mil setecientos cincuenta dólares americanos.) Además, RREACH cubrirá los siguientes gastos</p>
+				<p>RREACH le ofrece una importante ayuda financiera para que pueda asistir al Congreso. En primer lugar, su cuota de inscripción se ha rebajado a ${{$amount}}. (El costo real para RREACH para que cada delegado asista al Congreso es de unos U$A $1,750.00 – mil setecientos cincuenta dólares americanos.) Además, RREACH cubrirá los siguientes gastos</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Transporte a/desde el aeropuerto al hotel</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Un cuarto por cinco noches en el hotel Westin Playa Bonita Panamá</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Todas las comidas durante el congreso; y</p>
@@ -70,7 +70,7 @@
 				<p>Numéro de passeport : {{$passport_no}}</p>
 				<p>Pays : {{$citizenship}}</p>
 				<p>Cette lettre confirme que votre candidature au GProCongress II a été acceptée et que vous êtes invité à participer au congrès qui se tiendra à Panama City, au Panama, du 12 au 17 novembre 2023.</p>
-				<p>RREACH vous apporte une aide financière considérable pour vous permettre de participer au congrès. Tout d'abord, vos frais d'inscription ont été réduits à ___________. (Le coût de la participation de chaque délégué au congrès est d'environ 1 ${{$amount}}.) En plus, RREACH couvrira les dépenses suivantes </p>
+				<p>RREACH vous apporte une aide financière considérable pour vous permettre de participer au congrès. Tout d'abord, vos frais d'inscription ont été réduits à ${{$amount}}. (Le coût de la participation de chaque délégué au congrès est d'environ 1 $1,750.00.) En plus, RREACH couvrira les dépenses suivantes </p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Transferts de l'aéroport vers/depuis l'hôtel.</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Une chambre pour cinq nuits à l'hôtel Westin Playa Bonita Panama.</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Tous les repas pendant le congrès ; et</p>
@@ -90,7 +90,7 @@
 				<p>Número do passaporte: {{$passport_no}}</p>
 				<p>País: {{$citizenship}}</p>
 				<p>Esta carta confirma que a sua candidatura ao GProCongresso II foi aceita e que está convidado a participar no Congresso na Cidade do Panamá, Panamá, de 12 a 17 de Novembro de 2023.</p>
-				<p>A RREACH está a lhe fornecer uma ajuda financeira significativa para que possa participar no Congresso. Em primeiro lugar, a sua taxa de inscrição foi reduzida para ___________. (O custo da RREACH para cada delegado participar no Congresso é de cerca de ${{$amount}}) Além disso, a RREACH cobrirá as seguintes despesas: </p>
+				<p>A RREACH está a lhe fornecer uma ajuda financeira significativa para que possa participar no Congresso. Em primeiro lugar, a sua taxa de inscrição foi reduzida para ${{$amount}}. (O custo da RREACH para cada delegado participar no Congresso é de cerca de $1,750.00) Além disso, a RREACH cobrirá as seguintes despesas: </p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Transferências do aeroporto para o hotel e vice-versa</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Um quarto para cinco noites no Westin Playa Bonita Panama Hotel.</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Todas as refeições durante o Congresso; e</p>
@@ -107,7 +107,7 @@
 				<p>Passport Number: {{$passport_no}}</p>
 				<p>Country: {{$citizenship}}</p>
 				<p>This letter will confirm that your application to GProCongress II has been accepted, and that you are invited to attend the Congress in Panama City, Panama, from November 12-17, 2023.</p>
-				<p>RREACH is providing you with significant financial assistance, so that you can attend the Congress. First, your registration fee has been discounted to ___________. (RREACH’s cost for each delegate to attend the Congress is around ${{$amount}}.) In addition, RREACH will cover the following expenses: </p>
+				<p>RREACH is providing you with significant financial assistance, so that you can attend the Congress. First, your registration fee has been discounted to ${{$amount}}. (RREACH’s cost for each delegate to attend the Congress is around $1,750.00.) In addition, RREACH will cover the following expenses: </p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	Airport transfe	rs to/from the hotel.</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	A room for five nights at the Westin Playa Bonita Panama Hotel.</p>
 				<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	All meals during the Congress; and</p>

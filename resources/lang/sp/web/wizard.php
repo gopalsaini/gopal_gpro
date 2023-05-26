@@ -226,7 +226,19 @@ return [
     'Yemen' => 'Yemen',			
     'Yugoslavia' => 'Yugoslavia',			
     'Zambia' =>'Zambia',			
-    'Zimbabwe' =>'Zimbabwe',		
+    'Zimbabwe' =>'Zimbabwe',	
+    
+    'confirm_the_Details' =>'I confirm the Details given above are accurate.',
+    'What_countries_among' =>'What countries among Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union you hold the Valid Visa?',
+    'Passport_Info' =>'Passport Info',
+    'Given_name' =>'Given name',
+    'Surname' =>'Surname',
+    'Passport_Number' =>'Passport Number',
+    'Enter_Passport_Number' =>'Enter Passport Number',
+    'Passport_Copy' =>'Passport Copy',
+    'Visa_Residence_Proof_for' =>'Visa/Residence Proof for',
+    'Visa_Wizard' =>'Visa-Wizard',
+    'Gpro_Visa_Eligibility_Wizard' =>'Gpro Visa Eligibility Wizard',
 
 
 ];

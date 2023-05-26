@@ -193,11 +193,12 @@
                         
                         
                         <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
-                        <!-- @if(\Session::has('gpro_user'))
+                        @if(env('TESTING')==true)
+                        @if(\Session::has('gpro_user'))
                         @php $tokens = "https://demo.d2rtech.com/GProCommunity/community?token=".\Session::get('gpro_user');  @endphp
                             <li><a  href="{{$tokens}}">Community</a></li>
-                           
-                        @endif -->
+                        @endif
+                        @endif
 
                     </ul>
                 </div>
@@ -624,6 +625,10 @@
                             @else
                               <a href="{{ route('attend-the-congress') }}" >Compelling Reasons</a>
                             @endif
+                    </li>
+                    <li>
+                        <a href="{{ url('visa-eligibility-wizard') }}" >@lang('web/wizard.Visa_Wizard')</a>
+                           
                     </li>
                 </ul>
             </div>

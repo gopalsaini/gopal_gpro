@@ -4860,7 +4860,6 @@ class UserController extends Controller {
 
 	}
 
-	
 	public function passportList(Request $request, $countryType, $type) {
 		
 		if ($request->ajax()) {
@@ -4930,7 +4929,7 @@ class UserController extends Controller {
 			->setOffset($start)
 
 			->addColumn('name', function($data){
-				return $data->name;
+				return $data->salutation.' '.$data->name;
 		    })
 
 			->addColumn('passport_no', function($data){
@@ -4946,21 +4945,6 @@ class UserController extends Controller {
 		    })
 
 
-			->addColumn('valid_residence_country', function($data){
-
-				$countryDoc = json_decode($data->valid_residence_country,true);
-				$html = '';
-
-				foreach($countryDoc as $key=>$img){
-
-					$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
-								'.\App\Helpers\commonHelper::getCountryNameById($img['id']).' </span>
-							</a></br>';
-				}
-					
-				return $html;
-		    })
-
 			->addColumn('passport_copy', function($data){
 
 				if($data->passport_copy!= ''){
@@ -4969,23 +4953,57 @@ class UserController extends Controller {
 
 						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img).'" target="_blank"> 
 								View '.($key+1).' </span>
-							</a></br>';
+							</a>,</br>';
 
 					}
 				}
-				
+
+				$html = rtrim($html, ",</br>");
 				
 				return $html;
 
 		    })
 
-			
-			
+			->addColumn('valid_residence_country', function($data){
+
+				$countryDoc = json_decode($data->valid_residence_country,true);
+				$html = '';
+
+				foreach($countryDoc as $key=>$img){
+
+					$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
+								'.\App\Helpers\commonHelper::getCountryNameById($img['id']).'</span>
+							</a>,</br>';
+				}
+					
+				$html = rtrim($html, ",</br>");
+				return $html;
+		    })
+
 			->addColumn('remark', function($data){
 
-					return '<button type="button" class="btn btn-sm btn ViewPassportRemark" data-remark="'.$data->admin_remark.'"> View </button>';
+				return '<button type="button" class="btn btn-sm btn ViewPassportRemark" data-remark="'.$data->admin_remark.'"> View </button>';
 				
-				
+		    })
+
+			
+			->addColumn('status', function($data) use($countryType){
+
+				if ($data->admin_status == 'Approved') {
+
+					return '<div class="badge rounded-pill pill-badge-success">Passport Info Approved</div>';
+
+				} else if ($data->admin_status == 'Decline') {
+
+					return '<div class="badge rounded-pill pill-badge-danger">Passport Info Returned</div>';
+
+				} else if ($data->admin_status === 'Pending') {
+
+					return '<div class="badge rounded-pill pill-badge-warning">Passport Info Submitted</div>';
+					
+				}
+
+
 		    })
 
 			->addColumn('admin_status', function($data) use($countryType){
@@ -5023,7 +5041,127 @@ class UserController extends Controller {
 				
 				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex">
-						<a href="'.route('admin.user.payment.history', ['id' => $data->user_id] ).'" title="User payment history" class="btn btn-sm btn-primary m-1"><i class="fas fa-money"></i></a><a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+						<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+				}
+		    })
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+
+	}
+	
+	public function passportListAll(Request $request, $type) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('passport_infos');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+
+			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
+
+			$query = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+
+			if (request()->has('email')) {
+				$query->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+
+			$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+			$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
+			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+		
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData1 = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+			
+			if (request()->has('email')) {
+				$totalData1->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+			
+			$totalData = $totalData1->count();
+
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('name', function($data){
+				return $data->salutation.' '.$data->name;
+		    })
+
+			->addColumn('passport_no', function($data){
+				return $data->passport_no;
+			})
+
+			->addColumn('country_id', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+		    })
+
+			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
+
+				if(in_array($data->country_id,$doNotRequireVisa)){
+
+					return 'No Visa Needed';
+
+				}elseif(in_array($data->country_id,$RequireVisa)){
+
+					return 'Visa Needed';
+					
+				}elseif(in_array($data->country_id,$restricted)){
+
+					return 'Restricted Country';
+
+				}
+				
+		    })
+
+			->addColumn('status', function($data) {
+
+				if ($data->admin_status == 'Pending') {
+
+					return '<div class="badge rounded-pill pill-badge-success">Passport info Submitted</div>';
+
+				} else if ($data->admin_status == 'Approved') {
+
+					return '<div class="badge rounded-pill pill-badge-success">Passport info Approved</div>';
+
+				} else if ($data->admin_status === 'Decline') {
+
+					return '<div class="badge rounded-pill pill-badge-danger">Passport Info Returned</div>';
+					
+				}else{
+
+					return '<div class="badge rounded-pill pill-badge-warning">Passport Info Pending</div>';
+				}
+
+
+		    })
+
+			->addColumn('action', function($data){
+				
+				if (\Auth::user()->designation_id == '1') {
+					return '<div style="display:flex">
+						<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 				}
 		    })
 
@@ -5048,7 +5186,7 @@ class UserController extends Controller {
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
 			
-			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
 					$query1->where('users.email', 'like', "%" . request('email') . "%")
@@ -5103,7 +5241,7 @@ class UserController extends Controller {
 			->setOffset($start)
 
 			->addColumn('name', function($data){
-				return $data->name;
+				return $data->salutation.' '.$data->name;
 		    })
 
 			->addColumn('passport_no', function($data){
@@ -5113,40 +5251,17 @@ class UserController extends Controller {
 			->addColumn('country_id', function($data){
 				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
 		    })
-			->addColumn('passport_copy', function($data){
-				if($data->passport_copy!= ''){
-					$html = '';
-					foreach(explode(",",$data->passport_copy) as $key=>$img){
 
-						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img).'" target="_blank"> 
-								View '.($key+1).' </span>
-							</a></br>';
-
-					}
-				}
-				
-				
-				return $html;
-		    })
-
-			
 			->addColumn('financial_letter', function($data){
 				
-				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-		
+				if($data->language == 'en'){
 
-				if(in_array($data->country_id,$doNotRequireVisa)){
-
-
-						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank </a>
-								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance</a>';
+						return '<a style="color:blue !important" href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance Letter English</a>,
+								<a style="color:blue!important" href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> Acceptance Letter Spanish</a>';
 					
 				}else{
 
-						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank</a>
-								<a href="'.asset('uploads/file/Visa_Request_Form.pdf').'" target="_blank" class="text-blue"> Visa request</a>
-								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance </a>
-								<a href="'.asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf').'" target="_blank" class="text-blue"> Visa processing</a>';
+						return '<a style="color:blue!important" href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> Acceptance Letter Spanish</a>';
 					
 				}
 				
@@ -5154,26 +5269,36 @@ class UserController extends Controller {
 			
 			->addColumn('valid_residence_country', function($data){
 
-				$countryDoc = json_decode($data->valid_residence_country,true);
-				$html = '';
+				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+		
 
-				foreach($countryDoc as $key=>$img){
+				if(in_array($data->country_id,$doNotRequireVisa)){
 
-					$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
-								'.\App\Helpers\commonHelper::getCountryNameById($img['id']).' </span>
-							</a></br>';
-				}
+					return '<a style="color:blue!important" href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank Letter  </a>';
+						
 					
-				return $html;
+				}else{
+
+					return '<a style="color:blue!important" href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank</a>,
+						<a style="color:blue!important" href="'.asset('uploads/file/Visa_Request_Form.pdf').'" target="_blank" class="text-blue"> Visa Request Form</a>,
+						<a style="color:blue!important" href="'.asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf').'" target="_blank" class="text-blue"> Documents Required for Visa Processing</a>';
+					
+				}
+				
 		    })
 
-			->addColumn('remark', function($data){
+			->addColumn('status', function($data){
 				
-					return '<button type="button" class="btn btn-sm btn ViewPassportRemark" data-remark="'.$data->remark.'"> View </button>';
+				if ($data->status == 'Approve') {
+					return '<div class="span badge rounded-pill pill-badge-success">Documents Issued</div>';
+				} else if ($data->status == 'Reject') {
+					return '<div class="span badge rounded-pill pill-badge-danger">Decline</div>';
+				} else if ($data->status === 'Pending') {
+					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+				}
 				
 		    })
-
-			->addColumn('user_status', function($data){
+			->addColumn('visa_status', function($data){
 				
 				if ($data->status == 'Approve') {
 					return '<div class="span badge rounded-pill pill-badge-success">Verify</div>';
@@ -5188,25 +5313,162 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if($data->status == 'Reject'){
+				if (\Auth::user()->designation_id == '1') {
+					return '<div style="display:flex">
+								<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+							</div>';
+				}
 
-					if (\Auth::user()->designation_id == '1') {
-						return '<div style="display:flex">
-									<a data-id="'.$data->id.'" title="Send Sponsorship letter" class="btn btn-sm btn-outline-success m-1 sendSponsorshipLetter">Send</a>
-									<a href="'.route('admin.user.payment.history', ['id' => $data->user_id] ).'" title="User payment history" class="btn btn-sm btn-primary m-1"><i class="fas fa-money"></i></a>
-									<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
-								</div>';
-					}
+				
+		    })
 
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+	}
+	
+	public function passportListRestrictedList(Request $request, $type) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('passport_infos');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
+
+			
+			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
+			if (request()->has('email')) {
+				$query->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+
+			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+	
+			$query->whereIn('passport_infos.country_id', $restricted);
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+			
+			if (request()->has('email')) {
+				$totalData1->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
+			}
+			
+			$totalData = $totalData1->count();
+
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('name', function($data){
+				return $data->salutation.' '.$data->name;
+		    })
+
+			->addColumn('passport_no', function($data){
+				return $data->passport_no;
+			})
+
+			->addColumn('country_id', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+		    })
+
+			->addColumn('financial_letter', function($data){
+				
+				if($data->language == 'en'){
+
+						return '<a style="color:blue !important" href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance Letter English</a>,
+								<a style="color:blue!important" href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> Acceptance Letter Spanish</a>';
+					
 				}else{
 
-					if (\Auth::user()->designation_id == '1') {
-						return '<div style="display:flex">
-									<a href="'.route('admin.user.payment.history', ['id' => $data->user_id] ).'" title="User payment history" class="btn btn-sm btn-primary m-1"><i class="fas fa-money"></i></a>
-									<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
-								</div>';
-					}
+						return '<a style="color:blue!important" href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> Acceptance Letter Spanish</a>';
+					
 				}
+				
+			})
+			
+			->addColumn('valid_residence_country', function($data){
+
+				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+		
+
+				if(in_array($data->country_id,$doNotRequireVisa)){
+
+					return '<a style="color:blue!important" href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank Letter  </a>';
+						
+					
+				}else{
+
+					return '<a style="color:blue!important" href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank</a>,
+						<a style="color:blue!important" href="'.asset('uploads/file/Visa_Request_Form.pdf').'" target="_blank" class="text-blue"> Visa Request Form</a>,
+						<a style="color:blue!important" href="'.asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf').'" target="_blank" class="text-blue"> Documents Required for Visa Processing</a>';
+					
+				}
+				
+		    })
+
+			->addColumn('support_name', function($data){
+				
+				return $data->admin_provide_name;
+		    })
+
+			->addColumn('support_email', function($data){
+				
+				return $data->admin_provide_email;
+		    })
+
+			->addColumn('status', function($data){
+				
+				if ($data->status == 'Approve') {
+					return '<div class="span badge rounded-pill pill-badge-success">Documents Issued</div>';
+				} else if ($data->status == 'Reject') {
+					return '<div class="span badge rounded-pill pill-badge-danger">Decline</div>';
+				} else if ($data->status === 'Pending') {
+					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+				}
+				
+		    })
+			->addColumn('visa_status', function($data){
+				
+				if ($data->status == 'Approve') {
+					return '<div class="span badge rounded-pill pill-badge-success">Verify</div>';
+				} else if ($data->status == 'Reject') {
+					return '<div class="span badge rounded-pill pill-badge-danger">Decline</div>';
+				} else if ($data->status === 'Pending') {
+					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+				}
+				
+		    })
+
+
+			->addColumn('action', function($data){
+				
+				if (\Auth::user()->designation_id == '1') {
+					return '<div style="display:flex">
+								<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+							</div>';
+				}
+
 				
 		    })
 

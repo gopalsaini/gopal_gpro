@@ -290,17 +290,18 @@
                     has created the following Exhibitor Policy to explain who can be an exhibitor
                     at the Congress, how to become an exhibitor, and the cost to be paid by
                     exhibitors.<o:p></o:p></font></span></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-                    justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">&nbsp;</font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">Q:&nbsp; &nbsp; &nbsp; Who
+                    justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">&nbsp;</font></span></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+                    justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000"><br></font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
+                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">Q:&nbsp; &nbsp;Who
                     can be an exhibitor?<o:p></o:p></font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><font color="#000000"><span lang="EN-US" style="font-size:12.0pt">A: &nbsp;&nbsp;&nbsp;&nbsp;<font color="#000000">Only
+                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><font color="#000000"><span lang="EN-US" style="font-size:12.0pt">A:&nbsp; &nbsp;<font color="#000000">Only
                     Congress delegates and their organizations with products and services that will
                     enable and/or enhance the training of pastors.</font></span><span lang="EN-US" style="font-size:12.0pt;font-family:&quot;Times New Roman&quot;,&quot;serif&quot;;mso-fareast-font-family:
                     &quot;Times New Roman&quot;"> <o:p></o:p></span></font></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
                     justify;line-height:normal"><span lang="EN-US"><font color="#000000">&nbsp;</font></span></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-                    justify;text-indent:36.0pt;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">Q:&nbsp; &nbsp; &nbsp; How
+                    justify;text-indent:36.0pt;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">Q:&nbsp; &nbsp;How
                     do I become an exhibitor?<o:p></o:p></font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">A:&nbsp; &nbsp; Use
+                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">A:&nbsp; &nbsp;Use
                     this <a href="{{url('exhibitor-register')}}" style="color:red">LINK</a> to fill out your application. Once
                     your application is approved or declined by the GProCongress II Team, you will
                     be notified and given further instructions. <o:p></o:p></font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
@@ -309,37 +310,16 @@
                     register as an exhibitor is <b>September
                     29, 2023.</b></font><o:p></o:p></span></font></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
                     margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">&nbsp;</font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">Q:&nbsp; &nbsp; &nbsp; What
+                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">Q:&nbsp; &nbsp;What
                     is the cost to be paid by exhibitors?<o:p></o:p></font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">A:&nbsp; &nbsp; &nbsp; Every
+                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">A:&nbsp; &nbsp;Every
                     exhibitor must pay the standard registration fee for the Congress, plus an
                     additional exhibition fee of $800 USD.&nbsp; <o:p></o:p></font></span></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
                     justify;line-height:normal"><span lang="EN-US" style="font-size:12.0pt;
                     font-family:&quot;Times New Roman&quot;,&quot;serif&quot;;mso-fareast-font-family:&quot;Times New Roman&quot;"><font color="#000000">&nbsp;</font></span></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
                     justify;line-height:normal"><u><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">OTHER
-                    POLICIES<o:p></o:p></font></span></u></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
-                    justify;line-height:normal"><span lang="EN-US" style="font-size:7.0pt;font-family:
-                    &quot;Times New Roman&quot;,&quot;serif&quot;;mso-fareast-font-family:&quot;Times New Roman&quot;"><font color="#000000">&nbsp;</font></span></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><font color="#000000"><span lang="EN-US" style="font-size:12.0pt">1.&nbsp; &nbsp; &nbsp;&nbsp;<font color="#000000" style="">RREACH
-                    will not be responsible for any loss or damage to the exhibitor’s booth,
-                    display materials, or products at any time.</font></span><span lang="EN-US"><o:p></o:p></span></font></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><font color="#000000"><span lang="EN-US" style="font-size:12.0pt">2.</span><span lang="EN-US" style="font-size:
-                    7.0pt;font-family:&quot;Times New Roman&quot;,&quot;serif&quot;;mso-fareast-font-family:&quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;</span><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">RREACH is not responsible for the transfer of the
-                    exhibitor’s booth, display materials, or products to or from the Congress
-                    daily. </font><o:p></o:p></span></font></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><font color="#000000"><span lang="EN-US" style="font-size:12.0pt">3.</span><span lang="EN-US" style="font-size:
-                    7.0pt;font-family:&quot;Times New Roman&quot;,&quot;serif&quot;;mso-fareast-font-family:&quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">No airport transfers will be provided (due to the
-                    large items exhibitors may be carrying). </font><o:p></o:p></span></font></p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><font color="#000000"><font color="#000000"><span lang="EN-US" style="font-size:12.0pt">4.</span><span lang="EN-US" style="font-size:
-                    7.0pt;font-family:&quot;Times New Roman&quot;,&quot;serif&quot;;mso-fareast-font-family:&quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">No time will be given to any exhibitors to promote
-                    from the stage during the Congress.</font><o:p></o:p></span></font></p><p>
-                    </p><p class="MsoNormal" style="margin-top:0cm;margin-right:0cm;margin-bottom:0cm;
-                    margin-left:36.0pt;margin-bottom:.0001pt;text-align:justify;line-height:normal"><font color="#000000"><a name="_heading=h.gjdgxs"></a></font><span lang="EN-US" style="font-size:12.0pt"><font color="#000000">5.&nbsp; &nbsp; Only unmarried people of the same sex
-                    or married couples will be allowed to share a room at the Congress. If you are
-                    bringing someone other than your spouse who is of the opposite sex, you will
-                    have to reserve a separate room for them.</font><o:p></o:p></span></p>
+                    POLICIES</font></span></u></p><p class="MsoNormal" style="margin-bottom:0cm;margin-bottom:.0001pt;text-align:
+                    justify;line-height:normal"><u><span lang="EN-US" style="font-size:12.0pt"><font color="#000000"><br></font></span></u></p><ol><li style="margin-bottom: 0.0001pt; text-align: justify; line-height: normal;"><span lang="EN-US" style="font-size: 12pt;"><font color="#000000" style="">RREACH will not be responsible for any loss or damage to the exhibitor’s booth, display materials, or products at any time.</font></span></li><li style="margin-bottom: 0.0001pt; text-align: justify; line-height: normal;"><span lang="EN-US" style="font-size: 12pt;"><font color="#000000" style="">RREACH is not responsible for the transfer of the exhibitor’s booth, display materials, or products to or from the Congress daily.</font></span></li><li style="margin-bottom: 0.0001pt; text-align: justify; line-height: normal;"><span lang="EN-US" style="font-size: 12pt;"><font color="#000000" style="">No airport transfers will be provided (due to the large items exhibitors may be carrying).</font></span></li><li style="margin-bottom: 0.0001pt; text-align: justify; line-height: normal;"><span lang="EN-US" style="font-size: 12pt;"><font color="#000000" style="">No time will be given to any exhibitors to promote from the stage during the Congress.</font></span></li><li style="margin-bottom: 0.0001pt; text-align: justify; line-height: normal;"><span lang="EN-US" style="font-size: 12pt;"><font color="#000000" style="">Only unmarried people of the same sex or married couples will be allowed to share a room at the Congress. If you are bringing someone other than your spouse who is of the opposite sex, you will have to reserve a separate room for them.</font></span></li></ol>
 
             </div>
                 

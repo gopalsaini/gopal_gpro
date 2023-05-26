@@ -37,30 +37,30 @@
         <div class="container">
            
             <div class="step-form">
-                <h4 class="inner-head">Passport Info</h4>
+                <h4 class="inner-head">@lang('web/wizard.Passport_Info')</h4>
                 <form id="Passport" action="{{ url('api/sponsorship-passport-info') }}" class="row" enctype="multipart/form-data">
                     @csrf
 
                     <div class="col-sm-4">
                         <div class="row">
                             <div class="col-md-5">
-                                <label for="input">Given name :</label>
+                                <label for="input">@lang('web/wizard.Given_name') :</label>
                                 <input type="text" name="name" placeholder="@lang('web/app.enter') @lang('web/help.name')" value="{{$resultData['result']['name']}}" class="active-input mt-2" required>
 
                             </div>
                             <div class="col-md-7">
-                                <label for="">Surname <span>*</span></label>
+                                <label for="">@lang('web/wizard.Surname') <span>*</span></label>
                                 <input type="text" name="surname" placeholder="@lang('web/app.enter') @lang('web/help.name')" value="{{$resultData['result']['last_name']}}" class="active-input mt-2" required>
                             </div>
                         </div>
                     </div>
                     
                     <div class="col-lg-4">
-                        <label for="">Passport Number<span>*</span></label>
-                        <input type="text" name="passport_no" placeholder="Enter Passport Number" class="active-input mt-2" required>
+                        <label for="">@lang('web/wizard.Passport_Number')<span>*</span></label>
+                        <input type="text" name="passport_no" placeholder="@lang('web/wizard.Enter_Passport_Number')" class="active-input mt-2" required>
                     </div>
                     <div class="col-lg-4">
-                        <label for="">Passport Copy<span>*</span></label>
+                        <label for="">@lang('web/wizard.Passport_Copy')<span>*</span></label>
                         <input type="file" name="passport_copy[]" placeholder="Upload passport copy" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg" multiple>
                     </div>
 
@@ -116,8 +116,11 @@
                     </div>
                     <div class="col-lg-12 classHideDiv" id="validVisaResidence" style="display:none;">
                         
-                        <label class="form-check-label">@lang('web/wizard.do_you_have_a_valid_visa_or_residence')<span>*</span></label>
-                        
+                        <label class="form-check-label">@lang('web/wizard.do_you_have_a_valid_visa_or_residence') (<a id="EuropeanUnionCountryShow" href="javascript::void()">List of countries that make European Union</a>)<span>*</span></label>
+                        <div id="EuropeanUnionCountryDiv" style="display:none">
+                            <br>
+                            <p>Austria, Belgium, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain and Sweden.</p>
+                        </div>
                         <div class="form__radio-group">
                             <select id="VisaResidence" class="mt-2 form-control active-input"  name="visa_residence">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
@@ -168,15 +171,26 @@
 
 
                     <div class="col-lg-12 classHideDiv step9" id="multiCountrySelect" style="display:none;">
-                         <label for="">What countries among Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union you hold the Valid Visa?<span>*</span></label>
+                         <label for="">@lang('web/wizard.What_countries_among') (<a id="EuropeanUnionCountryShowData" href="javascript::void()">List of countries that make European Union</a>)<span>*</span></label>
+                         
+                         <div id="EuropeanUnionCountryDataDiv" style="display:none">
+                            <br>
+                            <p>Austria, Belgium, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain and Sweden.</p>
+                        </div>
                          <div class="common-select">
                             <select id="country1" class="mt-2 test"  name="countries[]" multiple>
                                 @foreach($country as $con)
-                                    @php $visaResidenceArray = [233,39,14,116,109,232,105,199]; @endphp 
+                                    @php $visaResidenceArray = [233,39,14,116,109,232,105,199,15]; @endphp 
                                     @if(in_array($con['id'],$visaResidenceArray))
-                                        <option  data-phoneCode="{{ $con['phonecode'] }}" class="active-input mt-2" value="{{ $con['id'] }}">{{ ucfirst($con['name']) }} </option>
+                                        @if($con['id'] != '15')
+                                            <option  data-phoneCode="{{ $con['phonecode'] }}" class="active-input mt-2" value="{{ $con['id'] }}">{{ ucfirst($con['name']) }} </option>
+                                        @else
+                                            <option  data-phoneCode="European Union" class="active-input mt-2" value="{{ $con['id'] }}">European Union </option>
+                                        @endif
                                     @endif
+                                    
                                 @endforeach
+                                
                             </select>
                         </div>
                     </div>
@@ -190,7 +204,7 @@
                         <div class="form-check">
                             <input class="form-check-input form-control" type="checkbox" value="Yes" id="flexCheckDefault" name="user_confirm">
                             <label class="form-check-label" for="flexCheckDefault">
-                            &nbsp; &nbsp; &nbsp;  @lang('web/wizard.is_your_passport_valid_until')
+                            &nbsp; &nbsp; &nbsp;  @lang('web/wizard.confirm_the_Details')
                             </label>
                         </div>
                     </div>
@@ -334,6 +348,8 @@ $(document).ready(function() {
         if ($(this).val() == 'Yes') {
 
             $('#multiCountrySelect').show();
+        }else{
+            $('#country1').attr('required',false);
         }
     });
 
@@ -345,8 +361,16 @@ $(document).ready(function() {
                 $('#country-info').empty(); // Clear previous content
 
                 selectedCountries.forEach(function(countryId) {
-                    var countryName = $('#country option[value="' + countryId + '"]').text();
-                    var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="">Visa/Residence Proof for '+countryName+'<span>*</span></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
+
+                    if(countryId == '15'){
+                        var countryName = $('#country option[value="' + countryId + '"]').text();
+                        var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="">@lang("web/wizard.Visa_Residence_Proof_for") European Union<span>*</span></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
+
+                    }else{
+                        var countryName = $('#country option[value="' + countryId + '"]').text();
+                        var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="">@lang("web/wizard.Visa_Residence_Proof_for") '+countryName+'<span>*</span></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
+
+                    }
 
                     $('#country-info').append(countryDiv);
                 });
@@ -438,6 +462,18 @@ $(document).ready(function() {
             }
         });
     });
+
+    
+    $('#EuropeanUnionCountryShow').click(function() {
+        
+        $('#EuropeanUnionCountryDiv').show();
+    });
+    
+    $('#EuropeanUnionCountryShowData').click(function() {
+        
+        $('#EuropeanUnionCountryDataDiv').show();
+    });
+
 </script>
 
 

@@ -74,15 +74,61 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home"><span style="font-size: 16px;">Passport Details</span> </a>
-                <a class="list-group-item list-group-item-action" id="list-contact-list" data-bs-toggle="list" href="#contact-details" role="tab" aria-controls="list-contact"><span style="font-size: 16px;">Sponsorship Details</span></a>
-                <a class="list-group-item list-group-item-action" id="list-travel-list" data-bs-toggle="list" href="#travel-details" role="tab" aria-controls="list-travel"><span style="font-size: 16px;">Travel Details</span></a>
+                <a class="list-group-item list-group-item-action active" id="list-all-list" data-bs-toggle="list" href="#list-all" role="tab" aria-controls="list-all"><span style="font-size: 16px;">All</span> </a>
+                <a class="list-group-item list-group-item-action " id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home"><span style="font-size: 16px;">Passport Info</span> </a>
+                <a class="list-group-item list-group-item-action" id="list-contact-list" data-bs-toggle="list" href="#contact-details" role="tab" aria-controls="list-contact"><span style="font-size: 16px;">Document</span></a>
+                <a class="list-group-item list-group-item-action" id="list-travel-list" data-bs-toggle="list" href="#travel-details" role="tab" aria-controls="list-travel"><span style="font-size: 16px;">Travel Info</span></a>
             </div>
         </div>
         
         <div class="col-sm-12" style="margin-top: 20px;">
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                <div class="tab-pane fade show active" id="list-all" role="tabpanel" aria-labelledby="list-all-list">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <input type="text" name="email" class="form-control passportListAllEmail " placeholder="Search ...">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="passportListAll">
+                                            <thead>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Category  </th>
+                                                    <th> Status </th>
+                                                    <th> Action  </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="6">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> #ID </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Category  </th>
+                                                    <th> Status </th>
+                                                    <th> Action  </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade show" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="card">
@@ -95,14 +141,14 @@
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
                                                     <th> Country  </th>
-                                                    <th> Passport Valid  </th>
-                                                    <th> Valid Residence Country </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Remark  </th>
-                                                    <th> Admin Status </th>
+                                                    <th> Visa/Residence Proof of Countries </th>
+                                                    <th> Return Remarks  </th>
+                                                    <th> Status </th>
+                                                    <th> Admin Action </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -116,14 +162,14 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Valid  </th>
-                                                    <th> Valid Residence Country  </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Remark  </th>
-                                                    <th> admin Status </th>
+                                                    <th> Visa/Residence Proof of Countries  </th>
+                                                    <th> Return Remarks  </th>
+                                                    <th> Status </th>
+                                                    <th> Admin Action </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -144,14 +190,14 @@
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Valid  </th>
-                                                    <th> Valid Residence Country </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Remark  </th>
-                                                    <th> Admin Status </th>
+                                                    <th> Visa/Residence Proof of Countries </th>
+                                                    <th> Return Remarks  </th>
+                                                    <th> Status </th>
+                                                    <th> Admin Action </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -165,14 +211,14 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Valid  </th>
-                                                    <th> Valid Residence Country  </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Remark  </th>
-                                                    <th> admin Status </th>
+                                                    <th> Visa/Residence Proof of Countries  </th>
+                                                    <th> Return Remarks  </th>
+                                                    <th> Status </th>
+                                                    <th> Admin Action </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -193,14 +239,14 @@
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Valid  </th>
-                                                    <th> Valid Residence Country </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number</th>
+                                                    <th> Passport issued by Country  </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Remark  </th>
-                                                    <th> Admin Status </th>
+                                                    <th> Visa/Residence Proof of Countries </th>
+                                                    <th> Return Remarks  </th>
+                                                    <th> Status </th>
+                                                    <th> Admin Action </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -214,14 +260,14 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Valid  </th>
-                                                    <th> Valid Residence Country  </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number</th>
+                                                    <th> Passport issued by Country  </th>
                                                     <th> Passport Copy  </th>
-                                                    <th> Remark  </th>
-                                                    <th> admin Status </th>
+                                                    <th> Visa/Residence Proof of Countries  </th>
+                                                    <th> Return Remarks  </th>
+                                                    <th> Status </th>
+                                                    <th> Admin Action </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -246,14 +292,13 @@
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter  </th>
-                                                    <th> Valid Residence Country  </th>
-                                                    <th> Remark  </th>
-                                                    <th> User Status </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Acceptance Letter  </th>
+                                                    <th> Other Documents  </th>
+                                                    <th> Status  </th>
+                                                    <th> Visa Status </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -267,14 +312,13 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter   </th>
-                                                    <th> Valid Residence Country  </th>
-                                                    <th> Remark  </th>
-                                                    <th> User Status </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Acceptance Letter  </th>
+                                                    <th> Other Documents  </th>
+                                                    <th> Status  </th>
+                                                    <th> Visa Status </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -294,14 +338,13 @@
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter  </th>
-                                                    <th> Valid Residence Country  </th>
-                                                    <th> Remark  </th>
-                                                    <th> User Status </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Acceptance Letter  </th>
+                                                    <th> Other Documents  </th>
+                                                    <th> Status  </th>
+                                                    <th> Visa Status </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -315,14 +358,13 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter   </th>
-                                                    <th> Valid Residence Country  </th>
-                                                    <th> Remark  </th>
-                                                    <th> User Status </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Acceptance Letter  </th>
+                                                    <th> Other Documents  </th>
+                                                    <th> Status  </th>
+                                                    <th> Visa Status </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -342,14 +384,15 @@
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter  </th>
-                                                    <th> Valid Residence Country  </th>
-                                                    <th> Remark  </th>
-                                                    <th> User Status </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Acceptance Letter  </th>
+                                                    <th> Other Documents  </th>
+                                                    <th> Support Name  </th>
+                                                    <th> Support Email ID </th>
+                                                    <th> Status  </th>
+                                                    <th> Visa Status </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -363,14 +406,15 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter   </th>
-                                                    <th> Valid Residence Country  </th>
-                                                    <th> Remark  </th>
-                                                    <th> User Status </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Acceptance Letter  </th>
+                                                    <th> Other Documents  </th>
+                                                    <th> Support Name  </th>
+                                                    <th> Support Email ID </th>
+                                                    <th> Status  </th>
+                                                    <th> Visa Status </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -758,6 +802,69 @@
     $(document).ready(function() {
 
         
+        var passport = $('#passportListAll').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "searching": false,
+            "ordering": false,
+
+            "ajax": {
+                "url": "{{ url('admin/user/passport/all/'.$type) }}",
+                "dataType": "json",
+                "async": false,
+                "type": "get",
+                data: function (d) {
+                    d.email = $('.passportEmail').val()
+                },
+                "error": function(xhr, textStatus) {
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                },
+            },
+            "fnDrawCallback": function() {
+                fill_datatable();
+            },
+            "order": [0, 'desc'],
+            "columnDefs": [{
+                    className: "text-left",
+                    targets: "_all"
+                },
+                {
+                    orderable: false,
+                    targets: [-1]
+                },
+            ],
+            "columns": [{
+                    "data": null,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                    },
+                    className: "text-center font-weight-bold"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    "data": "passport_no"
+                },
+                {
+                    "data": "country_id"
+                }, 
+                {
+                    "data": "category"
+                },
+                {
+                    "data": "status"
+                },
+                {
+                    "data": "action"
+                }
+            ]
+        });
+
         var passport = $('#passportListNoVisaNeeded').DataTable({
             "processing": true,
             "serverSide": true,
@@ -810,17 +917,17 @@
                     "data": "country_id"
                 }, 
                 {
-                    "data": "passport_valid"
-                }, 
+                    "data": "passport_copy"
+                },
                 {
                     "data": "valid_residence_country"
                 },
                 {
-                    "data": "passport_copy"
-                },
-                {
                     "data": "remark"
                 },
+                {
+                    "data": "status"
+                }, 
                 {
                     "data": "admin_status"
                 },
@@ -882,17 +989,17 @@
                     "data": "country_id"
                 }, 
                 {
-                    "data": "passport_valid"
-                }, 
+                    "data": "passport_copy"
+                },
                 {
                     "data": "valid_residence_country"
                 },
                 {
-                    "data": "passport_copy"
-                },
-                {
                     "data": "remark"
                 },
+                {
+                    "data": "status"
+                }, 
                 {
                     "data": "admin_status"
                 },
@@ -955,17 +1062,17 @@
                     "data": "country_id"
                 }, 
                 {
-                    "data": "passport_valid"
-                }, 
+                    "data": "passport_copy"
+                },
                 {
                     "data": "valid_residence_country"
                 },
                 {
-                    "data": "passport_copy"
-                },
-                {
                     "data": "remark"
                 },
+                {
+                    "data": "status"
+                }, 
                 {
                     "data": "admin_status"
                 },
@@ -1028,19 +1135,16 @@
                     "data": "country_id"
                 },
                 {
-                    "data": "passport_copy"
-                },
-                {
                     "data": "financial_letter"
                 },
                 {
                     "data": "valid_residence_country"
                 },
                 {
-                    "data": "remark"
+                    "data": "status"
                 },
                 {
-                    "data": "user_status"
+                    "data": "visa_status"
                 },
                 {
                     "data": "action"
@@ -1100,19 +1204,16 @@
                     "data": "country_id"
                 },
                 {
-                    "data": "passport_copy"
-                },
-                {
                     "data": "financial_letter"
                 },
                 {
                     "data": "valid_residence_country"
                 },
                 {
-                    "data": "remark"
+                    "data": "status"
                 },
                 {
-                    "data": "user_status"
+                    "data": "visa_status"
                 },
                 {
                     "data": "action"
@@ -1127,7 +1228,7 @@
             "ordering": false,
 
             "ajax": {
-                "url": "{{ url('admin/user/passport/sponsorship/restricted/'.$type) }}",
+                "url": "{{ url('admin/user/passport/restricted-list/'.$type) }}",
                 "dataType": "json",
                 "async": false,
                 "type": "get",
@@ -1172,19 +1273,22 @@
                     "data": "country_id"
                 },
                 {
-                    "data": "passport_copy"
-                },
-                {
                     "data": "financial_letter"
                 },
                 {
                     "data": "valid_residence_country"
                 },
                 {
-                    "data": "remark"
+                    "data": "support_name"
                 },
                 {
-                    "data": "user_status"
+                    "data": "support_email"
+                },
+                {
+                    "data": "visa_status"
+                },
+                {
+                    "data": "status"
                 },
                 {
                     "data": "action"
