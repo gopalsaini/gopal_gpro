@@ -482,15 +482,10 @@
                                             <thead>
                                                 <tr>
                                                     <th> @lang('admin.id') </th>
-                                                    <th> @lang('admin.user') </th>
-                                                    <th> @lang('admin.email') </th>
-                                                    <th> @lang('admin.mobile') </th>
-                                                    <th>  User Remark </th>
-                                                    <th> @lang('admin.travel') @lang('admin.info') </th>
-                                                    <th> Visa Letter </th>
-                                                    <th> User Type </th>
-                                                    <th> Group Owner Name </th>
-                                                    <th> Spouse Name </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country </th>
+                                                    <th> Category </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -504,15 +499,10 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> @lang('admin.id') </th>
-                                                    <th> @lang('admin.user') </th>
-                                                    <th> @lang('admin.email') </th>
-                                                    <th> @lang('admin.mobile') </th>
-                                                    <th>  User Remark</th>
-                                                    <th> @lang('admin.travel') @lang('admin.info') </th>
-                                                    <th> Visa Letter </th>
-                                                    <th> User Type </th>
-                                                    <th> Group Owner Name </th>
-                                                    <th> Spouse Name </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country</th>
+                                                    <th> Category</th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -1406,31 +1396,16 @@
                     className: "text-center font-weight-bold"
                 },
                 {
-                    "data": "user_name"
+                    "data": "name"
                 },
                 {
-                    "data": "email"
+                    "data": "passport"
                 },
                 {
-                    "data": "mobile"
+                    "data": "country"
                 },
                 {
-                    "data": "remark"
-                },
-                {
-                    "data": "user_status"
-                },
-                {
-                    "data": "admin_status"
-                },
-                {
-                    "data": "user_type"
-                },
-                {
-                    "data": "group_owner_name"
-                },
-                {
-                    "data": "spouse_name"
+                    "data": "category"
                 },
                 {
                     "data": "action"

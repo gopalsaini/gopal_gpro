@@ -26,6 +26,11 @@
         z-index: 1;
         overflow: hidden;
     }
+
+    .fs-dropdown {
+        
+        width: 33% !important;
+    }
 </style>
 <div class="inner-banner-wrapper">
         <div class="container">
@@ -296,7 +301,9 @@
                                         </div>
                                         <br><br>
                                         <div class="col-lg-12">
-                                            @if($passportInfo['visa_not_ranted_comment'] == null)
+                                            @if($passportInfo['visa_granted'] == null)
+
+                                                
                                                 <label class="form-check-label">is your Visa Granted ?? <span>*</span></label>
                                                 <div class="radio-wrap">
                                                     <div class="form__radio-group">
@@ -313,10 +320,15 @@
                                                     </div>
                                                 </div>
                                             @else
+
+                                                @if($passportInfo['visa_granted'] == 'Yes')
+                                                    @php $TravelInfoShow = true; @endphp
+                                                @endif
                                                 <label class="form-check-label">is your Visa Granted : {{$passportInfo['visa_granted']}}</label><br><br>
                                                 
                                             @endif
                                         </div>
+                                        
                                     @elseif(in_array($passportInfo['country_id'],$restricted))
 
                                         @php $TravelInfoShow = false; @endphp
@@ -338,7 +350,9 @@
                                         <p>You will need to work with one of our team members to get your visa.  The person assigned to help you is <b>{{$passportInfo['admin_provide_name']}}</b>. His/her email address is <b>{{$passportInfo['admin_provide_email']}}</b>. Please contact them as soon as possible to begin working on your visa.</p><br>
                                         <div class="col-lg-12">
                         
-                                            @if($passportInfo['visa_not_ranted_comment'] == null)
+                                            @if($passportInfo['visa_granted'] == null)
+
+                                                
                                                 <label class="form-check-label">is your Visa Granted ?? <span>*</span></label><br><br>
                                                 <div class="radio-wrap">
                                                     <div class="form__radio-group">
@@ -355,6 +369,10 @@
                                                     </div>
                                                 </div>
                                             @else
+
+                                                @if($passportInfo['visa_granted'] == 'Yes')
+                                                    @php $TravelInfoShow = true; @endphp
+                                                @endif
                                                 <label class="form-check-label">is your Visa Granted : {{$passportInfo['visa_granted']}}</label><br><br>
                                                 
                                             @endif
@@ -384,7 +402,7 @@
                 @endif
 
                 
-
+                
                 <div id="TravelInfoShowDiv" style="display:@if($TravelInfoShow) block @else none @endif">
                     @if($passportInfo['status']=='Approve')
                         <h4 class="inner-head section-gap">Travel Info</h4>
@@ -1183,7 +1201,7 @@
                                                                         ->where(function ($query) {
                                                                             $query->where('added_as',null)
                                                                                 ->orWhere('added_as', '=', 'Group');
-                                                                        })->orderBy('updated_at', 'desc')->get();
+                                                                        })->where('id','!=',$resultData['result']['id'])->where('stage','>','2')->orderBy('updated_at', 'desc')->get();
                                                                 @endphp
 
                                                                 @if($users)
@@ -1310,6 +1328,43 @@
                                         <div class="modal-footer">
                                             
                                             <button type="submit" class=" main-btn main-btn-comment" form="PassportVisaIsNotGranted">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal fade" id="VisaIsGranted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header px-3">
+                    <h5 class="modal-title" >Visa is Granted</h5>
+                    <button type="button" class="close" onclick="modalHide()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <hr class="m-0">
+                <div class="modal-body px-3">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <label for="inputName">Please ensure you have a valid Visa as this option can not be changed Later. Do you want to Continue? <label class="text-danger">*</label></label>
+                                    <form id="PassportVisaIsGranted" action="{{ url('passport/visa-granted?type=Yes') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                                        @csrf
+                                        <!-- <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea> -->
+                                        <div class="modal-footer">
+                                            
+                                            <button type="submit" class=" main-btn main-btn-comment" form="PassportVisaIsGranted">Yes</button>
+                                            <button type="button" class=" main-btn main-btn-comment close" onclick="modalHide()" aria-label="Close">No</button>
                                         </div>
                                     </form>
                                 </div>
@@ -1537,6 +1592,7 @@
 
         $('#exampleModalCenter').modal('hide');
         $('#WhyVisaIsNotGranted').modal('hide');
+        $('#VisaIsGranted').modal('hide');
         $('#row_id').val(0);
         $('#remark').val(null);
     }
@@ -1546,13 +1602,14 @@
 <script>
 
     $(document).ready(function() {
-        $('#TravelInfoShowDiv').hide();
+        
 
         $('#yes').change(function() {
-
+            $('#TravelInfoShowDiv').hide();
             if ($(this).is(':checked')) {
 
-                $('#TravelInfoShowDiv').show();
+                // $('#TravelInfoShowDiv').show();
+                $('#VisaIsGranted').modal('show');
 
             } else {
 
@@ -1567,6 +1624,47 @@
             $('#WhyVisaIsNotGranted').modal('show');
             
         });
+    });
+
+    $("form#PassportVisaIsGranted").submit(function(e) {
+
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+
+        var form_data = new FormData(this);
+
+        var btnhtml = $("button[form=" + formId + "]").html();
+
+        $.ajax({
+            url: formAction,
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'GET',
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    showMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    showMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+
+                submitButton(formId, btnhtml, false);
+
+            },
+            success: function(data) {
+                showMsg('success', data.message);
+                location.href = "{{url('travel-information')}}";
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+
     });
 
 </script>

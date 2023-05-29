@@ -988,27 +988,34 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::with('TravelInfo')->where([['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
-				$query->where('added_as',null)
-					->orWhere('added_as', '=', 'Group')
-					->orWhere('parent_spouse_stage', '>=', '2');
-			})->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
-				$query->where('email', 'like', "%" . request('email') . "%");
+				$query->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
 			}
 
+			$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+			$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
+			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+		
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::with('TravelInfo')->where([['designation_id', $designation_id], ['stage', '=', '3']])->where(function ($query) {
-				$query->where('added_as',null)
-					->orWhere('added_as', '=', 'Group');
-			});
-
+			$totalData1 = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+			
 			if (request()->has('email')) {
-				$totalData1->where('email', 'like', "%" . request('email') . "%");
+				$totalData1->where(function ($query1) {
+					$query1->where('users.email', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.name', 'like', "%" . request('email') . "%")
+						  ->orWhere('users.last_name', 'like', "%" . request('email') . "%");
+				});
+				
 			}
-
+			
 			$totalData = $totalData1->count();
 
 			$totalFiltered = $query->count();
@@ -1020,155 +1027,32 @@ class UserController extends Controller {
 			return \DataTables::of($data)
 			->setOffset($start)
 
-			->addColumn('user_name', function($data){
-				return $data->name;
+			->addColumn('name', function($data){
+				return $data->salutation.' '.$data->name;
 		    })
 
-			->addColumn('email', function($data){
-				return $data->email;
+			->addColumn('passport', function($data){
+				return $data->passport_no;
 			})
 
-			->addColumn('mobile', function($data){
-				return '+'.$data->phone_code.' '.$data->mobile;
+			->addColumn('country', function($data){
+				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
 		    })
 
-			
-			->addColumn('remark', function($data){
+			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
 
-				if($data->TravelInfo && $data->TravelInfo->remark){
-					return '<button type="button" class="btn btn-sm btn ViewRemark" data-remark="'.$data->TravelInfo->remark.'"> View </button>';
-				}else{
-					return '-';
-				}
-				
-		    })
+				if(in_array($data->country_id,$doNotRequireVisa)){
 
-			->addColumn('user_status', function($data){
-				if ($data->TravelInfo) {
-					if ($data->TravelInfo->user_status == '1') {
-						return '<div class="span badge rounded-pill pill-badge-success">Verify</div>';
-					} else if ($data->TravelInfo->user_status == '0') {
-						return '<div class="span badge rounded-pill pill-badge-danger">Decline</div>';
-					} else if ($data->TravelInfo->user_status === null) {
-						return '<div class="span badge rounded-pill pill-badge-warning">In Process</div>';
-					}
-				}else {
-					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
-				}
-		    })
+					return 'No Visa Needed';
 
-			
-			->addColumn('admin_status', function($data){
+				}elseif(in_array($data->country_id,$RequireVisa)){
 
-				$draft_file = '';
-				$final_file = '';
-
-				if ($data->TravelInfo && $data->TravelInfo->user_status == '1') {
-
-					if ($data->TravelInfo->admin_status == '1') {
-
-						if ($data->TravelInfo->final_file != '') {
-
-							$final_file =  '<a href="'.asset('uploads/file/'.$data->TravelInfo->final_file).'" target="_blank" class="btn btn-sm btn-outline-success m-1">View File</a>';
-						}
-
+					return 'Visa Needed';
 					
-						return '<div class="badge rounded-pill pill-badge-success">Approved</div>'.$final_file;
-					} else if ($data->TravelInfo->admin_status == '0') {
-						return '<div class="badge rounded-pill pill-badge-danger">Decline</div>';
-					} else if ($data->TravelInfo->status === null) {
+				}elseif(in_array($data->country_id,$restricted)){
 
-						if ($data->TravelInfo->user_status == '1' && $data->TravelInfo->draft_file != '') {
+					return 'Restricted Country';
 
-
-							$draft_file =  '<a href="'.asset('uploads/file/'.$data->TravelInfo->draft_file).'" target="_blank" class="btn btn-sm btn-outline-success m-1">View File</a>';
-						}
-						return '<div style="display:flex"><a data-id="'.$data->TravelInfo->id.'" data-type="1" title="Travel Info Approve" class="btn btn-sm btn-outline-success m-1 sendFinalLetter">Approve</a>'.$draft_file.'</div>';
-					}
-
-				} else {
-
-					if ($data->TravelInfo && $data->TravelInfo->remark) {
-
-						return '<div style="display:flex"><a data-id="'.$data->TravelInfo->id.'" title="Send Draft letter" class="btn btn-sm btn-outline-success m-1 sendDraftLetter">Draft</a>';
-					
-					}
-
-					// return '<a class="btn btn-sm btn-dark sendEmail" data-id="'.$data->id.'" ><span style="color:#fff">Primarily Letter Issue</span></a>';
-				}
-
-		    })
-
-			->addColumn('user_type', function($data){
-				
-				if($data->parent_id != Null){
-
-					if($data->added_as == 'Group'){
-
-						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
-						
-					}elseif($data->added_as == 'Spouse'){
-
-						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
-						
-					}
-
-				}else {
-
-					$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->first();
-					$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
-				
-					if($groupName){
-
-						return '<div class="span badge rounded-pill pill-badge-secondary">Group</div>';
-						
-					}else if($spouseName){
-
-						return '<div class="span badge rounded-pill pill-badge-success">Spouse</div>';
-
-					}else{
-
-						return '<div class="span badge rounded-pill pill-badge-warning">Individual</div>';
-					}
-						
-
-				}
-				
-		    })
-
-			->addColumn('group_owner_name', function($data){
-				
-				$groupName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Group')->get();
-				
-				if($data->parent_id != Null && $data->added_as == 'Group'){
-
-					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
-					
-				}else if(count($groupName) > 0) {
-
-					return ucfirst($data->name.' '.$data->last_name);
-
-				}else{
-					return 'N/A';
-				}
-				
-		    })
-
-			->addColumn('spouse_name', function($data){
-				
-				$spouseName = \App\Models\user::where('parent_id', $data->id)->where('added_as','Spouse')->first();
-				
-				if($data->parent_id != Null && $data->added_as == 'Spouse'){
-
-					return \App\Helpers\commonHelper::getUserNameById($data->parent_id);
-
-				}else if($spouseName) {
-
-					return ucfirst($spouseName->name.' '.$spouseName->last_name);
-
-				}else{
-
-					return 'N/A';
 				}
 				
 		    })
@@ -1177,7 +1061,7 @@ class UserController extends Controller {
 				
 				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex"><a href="'.route('admin.user.travel.info', ['id' => $data->id] ).'" title="User travel info" class="btn btn-sm btn-warning m-1"><i class="fas fa-plane"></i></a>
-						<a href="'.route('admin.user.payment.history', ['id' => $data->id] ).'" title="User payment history" class="btn btn-sm btn-primary m-1"><i class="fas fa-money"></i></a><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 				}
 		    })
 
@@ -4971,9 +4855,15 @@ class UserController extends Controller {
 
 				foreach($countryDoc as $key=>$img){
 
-					$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
-								'.\App\Helpers\commonHelper::getCountryNameById($img['id']).'</span>
+					if($img['id'] == '15'){
+						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
+						European Union
 							</a>,</br>';
+					}else{
+						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img['file']).'" target="_blank"> 
+								'.\App\Helpers\commonHelper::getCountryNameById($img['id']).'
+							</a>,</br>';
+					}
 				}
 					
 				$html = rtrim($html, ",</br>");
@@ -5300,12 +5190,13 @@ class UserController extends Controller {
 		    })
 			->addColumn('visa_status', function($data){
 				
-				if ($data->status == 'Approve') {
-					return '<div class="span badge rounded-pill pill-badge-success">Verify</div>';
-				} else if ($data->status == 'Reject') {
-					return '<div class="span badge rounded-pill pill-badge-danger">Decline</div>';
-				} else if ($data->status === 'Pending') {
+				if ($data->visa_granted == null) {
 					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+					
+				} else if ($data->visa_granted == 'No') {
+					return '<div class="span badge rounded-pill pill-badge-danger">Visa Granted No</div>';
+				} else if ($data->visa_granted === 'Yes') {
+					return '<div class="span badge rounded-pill pill-badge-success">Visa Granted Yes</div>';
 				}
 				
 		    })

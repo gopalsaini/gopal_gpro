@@ -102,7 +102,7 @@ Route::group(['middleware'=>'Userauth'],function(){
 		Route::get('sponsorship-confirm/confirm/{id}', "ProfileController@PassportInfoApprove")->name('sponsorshipLetterApprove');
 		Route::post('sponsorship-confirm/decline/', "ProfileController@PassportInfoReject")->name('sponsorshipLetterReject');
 		Route::post('visa-is-not-granted', "ProfileController@visaIsNotGranted")->name('visa-is-not-granted');
-
+		Route::get('passport/visa-granted', 'ProfileController@visaGranted')->name('visa-granted');
 
 	});
 });
@@ -200,6 +200,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::match(['get', 'post'], 'passport/list/{countryType}/{type}', 'Admin\UserController@passportList')->name('passport');
 		Route::match(['get', 'post'], 'passport/sponsorship/{countryType}/{type}', 'Admin\UserController@sponsorshipList')->name('sponsorship');
 		Route::match(['get', 'post'], 'passport/visa-is-not-granted/{type}', 'Admin\UserController@visaIsNotGranted')->name('visa-is-not-granted');
+		
 		Route::get('passport/approve/{id}', 'Admin\UserController@PassportInfoApprove')->name('approve');
 		Route::match(['get', 'post'], 'passport/decline', 'Admin\UserController@PassportInfoReject')->name('decline');
 		Route::match(['get', 'post'], 'passport/approve/restricted', 'Admin\UserController@PassportApproveRestricted')->name('approve.restricted');

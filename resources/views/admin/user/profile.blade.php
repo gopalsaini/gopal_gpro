@@ -464,11 +464,23 @@
                                                 @php $countryDoc = json_decode($query['valid_residence_country'],true); @endphp
 
                                                 @foreach($countryDoc as $key=>$img)
-                                                    <p>Visa/Residence Proof for 
-                                                        <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
-                                                            <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
-                                                        </a>
-                                                    </p>&nbsp; &nbsp; &nbsp;
+
+                                                    @if($img['id'] == '15')
+                                                        <p>Visa/Residence Proof for 
+                                                            <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                                                <span>&nbsp;  European Union  </span>
+                                                            </a>
+                                                        </p>&nbsp; &nbsp; &nbsp;
+                                                    @else
+
+                                                        <p>Visa/Residence Proof for 
+                                                            <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                                                <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
+                                                            </a>
+                                                        </p>&nbsp; &nbsp; &nbsp;
+
+                                                    @endif
+                                                    
                                                 @endforeach
                                             @endif
                                         </td>

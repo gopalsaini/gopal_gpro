@@ -627,8 +627,9 @@
                             @endif
                     </li>
                     <li>
+                    @if(env('TESTING')==true)
                         <a href="{{ url('visa-eligibility-wizard') }}" >@lang('web/wizard.Visa_Wizard')</a>
-                           
+                    @endif
                     </li>
                 </ul>
             </div>

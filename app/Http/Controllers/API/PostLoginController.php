@@ -3391,10 +3391,10 @@ class PostLoginController extends Controller {
 
 				}	
 				
-				if(count($request->file('passport_copy'))>2){
+				// if(count($request->file('passport_copy'))>2){
 
-					return response(array("error" => true, "message" => 'File upload allow only 2'), 403);
-				}	
+				// 	return response(array("error" => true, "message" => 'File upload allow only 2'), 403);
+				// }	
 				
 				$passportInfoData =  \App\Models\PassportInfo::where('user_id','!=',$request->user()->id)->where('passport_no',$request->post('passport_no'))->first();
 				if($passportInfoData){
