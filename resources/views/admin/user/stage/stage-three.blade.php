@@ -143,7 +143,7 @@
                                                     <th> #ID </th>
                                                     <th> Given Name, Surname </th>
                                                     <th> Passport Number </th>
-                                                    <th> Country  </th>
+                                                    <th> Passport issued by Country  </th>
                                                     <th> Passport Copy  </th>
                                                     <th> Visa/Residence Proof of Countries </th>
                                                     <th> Return Remarks  </th>
@@ -434,11 +434,10 @@
                                             <thead>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter  </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Category  </th>
                                                     <th> Comment  </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
@@ -453,11 +452,10 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> #ID </th>
-                                                    <th> Name </th>
-                                                    <th> Passport No </th>
-                                                    <th> Country  </th>
-                                                    <th> Passport Copy  </th>
-                                                    <th> Attachment Letter   </th>
+                                                    <th> Given Name, Surname </th>
+                                                    <th> Passport Number </th>
+                                                    <th> Passport issued by Country  </th>
+                                                    <th> Category  </th>
                                                     <th> Comment  </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
@@ -1338,10 +1336,7 @@
                     "data": "country_id"
                 },
                 {
-                    "data": "passport_copy"
-                },
-                {
-                    "data": "financial_letter"
+                    "data": "category"
                 },
                 {
                     "data": "remark"

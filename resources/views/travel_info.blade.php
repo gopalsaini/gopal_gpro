@@ -153,7 +153,7 @@
                             <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($passportInfo['country_id'])}}</span>
                         </li>
                         <li>
-                            <p>@lang('web/wizard.is_this_a_diplomatic_passport') : {{$passportInfo['diplomatic_passport']}}</p>
+                            <p>@lang('web/wizard.is_this_a_diplomatic_passport') : {{$passportInfo['diplomatic_passport'] == 'Yes' ? Lang::get('web/wizard.yes') : Lang::get('web/wizard.no')}}</p>
                         </li>
                         
                         <!-- <li>
@@ -162,7 +162,7 @@
                         </li> -->
                         
                         <li>
-                            <p>Admin Status</p>
+                            <p>@lang('web/wizard.Admin_Status')</p>
                             @if($passportInfo['admin_status'] =='Pending')
                                 <span class="text-warning">:&nbsp; &nbsp; &nbsp; {{$passportInfo['admin_status']}}</span>
                             @elseif($passportInfo['admin_status'] =='Approved')
@@ -179,27 +179,27 @@
                         @if($passportInfo['visa_residence'])
                             <li >
                                 <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence') : </p>
-                                <p>{{$passportInfo['visa_residence']}}</p>
+                                <p>{{$passportInfo['visa_residence'] == 'Yes' ? Lang::get('web/wizard.yes') : Lang::get('web/wizard.no')}}</p>
                             </li>
                         @endif
 
                         @if($passportInfo['multiple_entry_visa_country'])
                             <li>
                                 <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence_yes') : </p>
-                                <p>{{$passportInfo['multiple_entry_visa_country']}}</p>
+                                <p>{{$passportInfo['multiple_entry_visa_country'] == 'Yes' ? Lang::get('web/wizard.yes') : Lang::get('web/wizard.no')}}</p>
                             </li>
                         @endif
 
                         @if($passportInfo['multiple_entry_visa'])
                             <li>
                                 <p >@lang('web/wizard.step_7_question') : </p>
-                                <p>{{$passportInfo['multiple_entry_visa']}}</p>
+                                <p>{{$passportInfo['multiple_entry_visa'] == 'Yes' ? Lang::get('web/wizard.yes') : Lang::get('web/wizard.no')}}</p>
                             </li> 
                         @endif
 
                         @if($passportInfo['passport_valid'])
                             <li>
-                                <p>@lang('web/wizard.is_your_passport_valid_until') : {{$passportInfo['passport_valid']}}</p>
+                                <p>@lang('web/wizard.is_your_passport_valid_until') : {{$passportInfo['passport_valid'] == 'Yes' ? Lang::get('web/wizard.yes') : Lang::get('web/wizard.no')}} </p>
                             </li>
                         @endif
                        
@@ -213,14 +213,14 @@
                                     @foreach($countryDoc as $key=>$img)
                                     
                                         @if($img['id'] == '15')
-                                            <p>Visa/Residence Proof for 
+                                            <p>@lang('web/wizard.Visa_Residence_Proof_for') 
                                                 <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
                                                     <span>&nbsp;  European Union  </span>
                                                 </a>
                                             </p>&nbsp; &nbsp; &nbsp;
                                         @else
 
-                                            <p>Visa/Residence Proof for 
+                                            <p>@lang('web/wizard.Visa_Residence_Proof_for')
                                                 <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
                                                     <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
                                                 </a>
@@ -235,13 +235,13 @@
 
                         @if($passportInfo['admin_status'] =='Decline')
                             <li>
-                                <p style="color:red">Passport Information Declined By admin.</p><br>
+                                <p style="color:red">@lang('web/wizard.Passport_Information_Declined_By_admin')</p><br>
                             </li>
                             <li>
-                                <p>Decline remark : {!! $passportInfo['admin_remark'] !!}</p><br>
+                                <p>@lang('web/wizard.Decline_remark') : {!! $passportInfo['admin_remark'] !!}</p><br>
                                 <div class="col-lg-12 mt-5">
                                     <div class="step-next">
-                                        <a style="margin: 0 auto;" href="{{url('passport-info')}}" class="main-btn">Resubmit Passport Info</a>
+                                        <a style="margin: 0 auto;" href="{{url('passport-info')}}" class="main-btn">@lang('web/wizard.Resubmit_Passport_Info') </a>
                                     </div>
                                 </div>
                             </li>
@@ -269,14 +269,14 @@
                                         @php $TravelInfoShow = true; @endphp
                                         <div class="row">
                                             <div class="alphabet-vd-box">
-                                                <h4>Document required for Visa/Travel </h4><br>
+                                                <h4>@lang('web/wizard.Document_required_for_Visa')  </h4><br>
                                                 
                                                 <div class="step-next" style="display: flex;">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Bank Letter Certification </a>
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification') </a>
                                                     @if($passportInfo['financial_letter'])
-                                                        <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter English Version</a>
+                                                        <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version')</a>
                                                     @endif
-                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter Spanish Version</a>
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version')</a>
 
                                                 </div>
                                             </div>
@@ -286,17 +286,17 @@
 
                                         @php $TravelInfoShow = false; @endphp
                                         <div class="row">
-                                        <h4>Document required for Visa/Travel </h4><br><br>
+                                        <h4>@lang('web/wizard.Document_required_for_Visa') </h4><br><br>
                                             <div class="step-next">
-                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Bank Letter Certification</a> 
+                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification')</a> 
                                                 @if($passportInfo['financial_letter'])
-                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter English Version</a>
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version')</a>
                                                 @endif
-                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter  Spanish Version</a>
+                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version')</a>
                                             </div>
                                             <div class="alphabet-vd-box mt-2">
-                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Visa Request Form</a>
-                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Documents Required for Visa Processing</a>
+                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
+                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
                                             </div>
                                         </div>
                                         <br><br>
@@ -304,18 +304,18 @@
                                             @if($passportInfo['visa_granted'] == null)
 
                                                 
-                                                <label class="form-check-label">is your Visa Granted ?? <span>*</span></label>
+                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') <span>*</span></label>
                                                 <div class="radio-wrap">
                                                     <div class="form__radio-group">
                                                         <input type="radio" name="diplomatic_passport" value="Yes" id="yes" class="form__radio-input">
                                                         <label class="form__label-radio" for="yes" class="form__radio-label" value="Yes">
-                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> Yes
+                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> @lang('web/wizard.yes')
                                                         </label>
                                                     </div>
                                                     <div class="form__radio-group">
                                                         <input type="radio" name="diplomatic_passport" value="No" id="no" class="form__radio-input">
                                                         <label class="form__label-radio" for="no" class="form__radio-label">
-                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> No
+                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> @lang('web/wizard.no')
                                                         </label>
                                                     </div>
                                                 </div>
@@ -324,7 +324,7 @@
                                                 @if($passportInfo['visa_granted'] == 'Yes')
                                                     @php $TravelInfoShow = true; @endphp
                                                 @endif
-                                                <label class="form-check-label">is your Visa Granted : {{$passportInfo['visa_granted']}}</label><br><br>
+                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') : {{$passportInfo['visa_granted']}}</label><br><br>
                                                 
                                             @endif
                                         </div>
@@ -333,17 +333,17 @@
 
                                         @php $TravelInfoShow = false; @endphp
                                         <div class="row">
-                                            <h4>Document required for Visa/Travel </h4><br><br>
+                                            <h4>@lang('web/wizard.Document_required_for_Visa') </h4><br><br>
                                             <div class="step-next">
-                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Bank Letter Certification</a> 
+                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification') </a> 
                                                 @if($passportInfo['financial_letter'])
-                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter English Version</a>
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version')</a>
                                                 @endif
-                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Acceptance Letter Spanish Version </a>
+                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version') </a>
                                             </div>
                                             <div class="alphabet-vd-box mt-2">
-                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Visa Request Form</a>
-                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> Documents Required for Visa Processing</a>
+                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
+                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
                                             </div>
                                         </div>
                                         <br>
@@ -353,18 +353,18 @@
                                             @if($passportInfo['visa_granted'] == null)
 
                                                 
-                                                <label class="form-check-label">is your Visa Granted ?? <span>*</span></label><br><br>
+                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') <span>*</span></label><br><br>
                                                 <div class="radio-wrap">
                                                     <div class="form__radio-group">
                                                         <input type="radio" name="visa_granted" value="Yes" id="yes" class="form__radio-input">
                                                         <label class="form__label-radio" for="yes" class="form__radio-label" value="Yes">
-                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> Yes
+                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> @lang('web/wizard.yes')
                                                         </label>
                                                     </div>
                                                     <div class="form__radio-group">
                                                         <input type="radio" name="visa_granted" value="No" id="no" class="form__radio-input">
                                                         <label class="form__label-radio" for="no" class="form__radio-label">
-                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> No
+                                                            <span class="form__radio-button" style="border:1px solid #dc3545"></span> @lang('web/wizard.no')
                                                         </label>
                                                     </div>
                                                 </div>
@@ -373,7 +373,7 @@
                                                 @if($passportInfo['visa_granted'] == 'Yes')
                                                     @php $TravelInfoShow = true; @endphp
                                                 @endif
-                                                <label class="form-check-label">is your Visa Granted : {{$passportInfo['visa_granted']}}</label><br><br>
+                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') : {{$passportInfo['visa_granted']}}</label><br><br>
                                                 
                                             @endif
                                         </div>
@@ -405,7 +405,7 @@
                 
                 <div id="TravelInfoShowDiv" style="display:@if($TravelInfoShow) block @else none @endif">
                     @if($passportInfo['status']=='Approve')
-                        <h4 class="inner-head section-gap">Travel Info</h4>
+                        <h4 class="inner-head section-gap">@lang('web/wizard.travel_Info')</h4>
                     
                         <div class="detail-wrap">
                             
@@ -1274,7 +1274,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header px-3">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Passport Info</h5>
+                    <h5 class="modal-title" id="exampleModalLongTitle">@lang('web/wizard.Passport_Info')</h5>
                     <button type="button" class="close" onclick="modalHide()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -1305,75 +1305,59 @@
     </div>
 
     
-    <div class="modal fade" id="WhyVisaIsNotGranted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header px-3">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Why Visa is not Granted</h5>
-                    <button type="button" class="close" onclick="modalHide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <hr class="m-0">
-                <div class="modal-body px-3">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <div class="form-line">
-                                    <label for="inputName">Enter comment  <label class="text-danger">*</label></label>
-                                    <form id="PassportVisaIsNotGranted" action="{{ route('visa-is-not-granted') }}" method="post" enctype="multipart/form-data" autocomplete="off">
-                                        @csrf
-                                        <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea>
-                                        <div class="modal-footer">
-                                            
-                                            <button type="submit" class=" main-btn main-btn-comment" form="PassportVisaIsNotGranted">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
+    
+    <div class="login-modal" >
+        <div class="modal fade" id="WhyVisaIsNotGranted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-block border-0">
+                        <h2 class="main-head">@lang('web/wizard.Why_Visa_is_not_Granted')</h2>
+                        <!-- <h5 style="text-align:center;padding-top: 50px;">Log in to submit your application</h5> -->
+                        <button type="button" class="btn-close" onclick="modalHide()"  data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <br><br>
+                    <div class="modal-body" style="padding-top:0px">
+                        <label for="inputName">@lang('web/app.enter') @lang('web/home.comment')  <label class="text-danger">*</label></label>
+                        <form id="PassportVisaIsNotGranted" action="{{ route('visa-is-not-granted') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                            @csrf
+                            <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea>
+                            <div class="modal-footer">
+                                
+                                <button type="submit" class=" main-btn main-btn-comment" form="PassportVisaIsNotGranted">@lang('web/home.submit')</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
-                
             </div>
         </div>
-    </div>
 
-    
-    <div class="modal fade" id="VisaIsGranted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header px-3">
-                    <h5 class="modal-title" >Visa is Granted</h5>
-                    <button type="button" class="close" onclick="modalHide()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <hr class="m-0">
-                <div class="modal-body px-3">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <div class="form-line">
-                                    <label for="inputName">Please ensure you have a valid Visa as this option can not be changed Later. Do you want to Continue? <label class="text-danger">*</label></label>
-                                    <form id="PassportVisaIsGranted" action="{{ url('passport/visa-granted?type=Yes') }}" method="post" enctype="multipart/form-data" autocomplete="off">
-                                        @csrf
-                                        <!-- <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea> -->
-                                        <div class="modal-footer">
-                                            
-                                            <button type="submit" class=" main-btn main-btn-comment" form="PassportVisaIsGranted">Yes</button>
-                                            <button type="button" class=" main-btn main-btn-comment close" onclick="modalHide()" aria-label="Close">No</button>
-                                        </div>
-                                    </form>
-                                </div>
+        <div class="modal fade" id="VisaIsGranted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+            aria-hidden="true">
+
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-block border-0">
+                        <h2 class="main-head">Visa is Granted</h2>
+                        <!-- <h5 style="text-align:center;padding-top: 50px;">Log in to submit your application</h5> -->
+                        <button type="button" class="btn-close" onclick="modalHide()"  data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <br><br>
+                    <div class="modal-body" style="padding-top:0px">
+                        <label for="inputName">@lang('web/wizard.Visa_changed_Later') <label class="text-danger">*</label></label>
+                        <form id="PassportVisaIsGranted" action="{{ url('passport/visa-granted?type=Yes') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                            @csrf
+                            <!-- <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea> -->
+                            <div class="modal-footer">
+                                
+                                <button type="submit" class=" main-btn main-btn-comment" form="PassportVisaIsGranted">@lang('web/wizard.yes')</button>
+                                <button type="button" class=" main-btn main-btn-comment close" onclick="modalHide()" aria-label="Close">@lang('web/wizard.no')</button>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
-                
             </div>
+            
         </div>
     </div>
 @endsection

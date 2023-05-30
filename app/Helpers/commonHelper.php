@@ -1734,11 +1734,12 @@ class commonHelper{
 				'Your_submission_has_been_sent' => 'Su envío se ha realizado correctamente.',	
 				'howmany_futurepastor'=> 'Por favor, seleccione una opción en "¿Cuántos de ellos pueden servir como futuros capacitadores de pastores?"',
 				'order_required'=> 'order',
-				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
-				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'countries_which_require_authorized'=> 'Lista de países que exigen Visa Autorizada o Sellada',
+				'requirements_for_authorized_and_stamped_visa'=> 'Requisitos para la Visa Autorizada y Sellada:',
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
+				'countries_doc_not_match_with_select_countries'=> 'los documentos del país no coinciden con los países seleccionados',
 				
 			);
 
@@ -1949,11 +1950,12 @@ class commonHelper{
 				'Your_submission_has_been_sent' => 'Votre demande a été envoyée avec succès.',
 				'howmany_futurepastor'=> 'le champ de "combien de pasteurs au futur" est exigé',	
 				'order_required'=> 'order',
-				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
-				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'countries_which_require_authorized'=> 'Liste des pays qui exigent un visa autorisé ou timbré',
+				'requirements_for_authorized_and_stamped_visa'=> "les conditions d'obtention d'un visa autorisé ou timbré :",
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
+				'countries_doc_not_match_with_select_countries'=> 'Le document des pays ne correspond pas aux pays sélectionnés',
 				
 			);
 
@@ -2161,11 +2163,12 @@ class commonHelper{
 				'Your_submission_has_been_sent' => 'A sua submissão foi realizada com sucesso',	
 				'howmany_futurepastor'=> 'O Campo: quantos futuros pastores é obrigatorio',
 				'order_required'=> 'order',
-				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
-				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'countries_which_require_authorized'=> 'Lista de países que necessitam de Visto Autorizado ou Carimbado',
+				'requirements_for_authorized_and_stamped_visa'=> 'Requisitos para Visto Autorizado e Carimbado:',
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
+				'countries_doc_not_match_with_select_countries'=> 'Documento do país não corresponde aos países selecionados',
 
 				
 			);
@@ -2372,10 +2375,11 @@ class commonHelper{
 				'howmany_futurepastor'=> 'How many future pastor field is required',
 				'order_required'=> 'order',
 				'countries_which_require_authorized'=> 'List of countries which require Authorized or Stamped Visa',
-				'requirements_for_authorized_and_stamped_visa'=> 'requirements for Authorized and Stamped Visa',
+				'requirements_for_authorized_and_stamped_visa'=> 'Requirements for Authorized and Stamped Visa',
 				'Passport_Number_already_exists'=> 'Passport Number already exists',
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
+				'countries_doc_not_match_with_select_countries'=> 'countries doc not match with select countries',
 				
 				
 	
@@ -3036,7 +3040,7 @@ class commonHelper{
 			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
 			$pdf->setPaper('L');
 			$pdf->output();
-			$fileEnNameFl = $user->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
 			$path = public_path('uploads/file/');
 			
 			$pdf->save($path . '/' . $fileEnNameFl);
@@ -3050,7 +3054,7 @@ class commonHelper{
 		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
 		$pdf->setPaper('L');
 		$pdf->output();
-		$fileName = $user->name.'_financial_Sp_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$fileName = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
 		$path = public_path('uploads/file/');
 		
 		$pdf->save($path . '/' . $fileName);
@@ -3188,7 +3192,7 @@ class commonHelper{
 			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
 			$pdf->setPaper('L');
 			$pdf->output();
-			$fileEnNameFl = $user->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
 			$path = public_path('uploads/file/');
 			
 			$pdf->save($path . '/' . $fileEnNameFl);
@@ -3202,7 +3206,7 @@ class commonHelper{
 		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
 		$pdf->setPaper('L');
 		$pdf->output();
-		$fileName = $user->name.'_financial_Sp_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$fileName = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
 		$path = public_path('uploads/file/');
 		
 		$pdf->save($path . '/' . $fileName);
@@ -3324,7 +3328,7 @@ class commonHelper{
 			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
 			$pdf->setPaper('L');
 			$pdf->output();
-			$fileEnNameFl = $user->name.'_financial_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
 			$path = public_path('uploads/file/');
 			
 			$pdf->save($path . '/' . $fileEnNameFl);
@@ -3338,7 +3342,7 @@ class commonHelper{
 		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
 		$pdf->setPaper('L');
 		$pdf->output();
-		$fileName = $user->name.'_financial_Sp_letter_'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$fileName = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
 		$path = public_path('uploads/file/');
 		
 		$pdf->save($path . '/' . $fileName);

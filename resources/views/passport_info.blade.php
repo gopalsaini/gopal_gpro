@@ -45,12 +45,12 @@
                         <div class="row">
                             <div class="col-md-5">
                                 <label for="input">@lang('web/wizard.Given_name') :</label>
-                                <input type="text" name="name" placeholder="@lang('web/app.enter') @lang('web/help.name')" value="{{$resultData['result']['name']}}" class="active-input mt-2" required>
+                                <input type="text" name="name" placeholder="@lang('web/app.enter') @lang('web/wizard.Given_name')" value="{{$resultData['result']['name']}}" class="active-input mt-2" required>
 
                             </div>
                             <div class="col-md-7">
                                 <label for="">@lang('web/wizard.Surname') <span>*</span></label>
-                                <input type="text" name="surname" placeholder="@lang('web/app.enter') @lang('web/help.name')" value="{{$resultData['result']['last_name']}}" class="active-input mt-2" required>
+                                <input type="text" name="surname" placeholder="@lang('web/app.enter') @lang('web/wizard.Surname')" value="{{$resultData['result']['last_name']}}" class="active-input mt-2" required>
                             </div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                     </div>
                     <div class="col-lg-12 classHideDiv" id="validVisaResidence" style="display:none;">
                         
-                        <label class="form-check-label">@lang('web/wizard.do_you_have_a_valid_visa_or_residence') (<a id="EuropeanUnionCountryShow" href="javascript::void()">List of countries that make European Union</a>)<span>*</span></label>
+                        <label class="form-check-label">@lang('web/wizard.do_you_have_a_valid_visa_or_residence') (<a id="EuropeanUnionCountryShow" href="javascript::void()">@lang('web/wizard.List_of_countries_that_make_European_Union') </a>)<span>*</span></label>
                         <div id="EuropeanUnionCountryDiv" style="display:none">
                             <br>
                             <p>Austria, Belgium, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain and Sweden.</p>
@@ -171,7 +171,7 @@
 
 
                     <div class="col-lg-12 classHideDiv step9" id="multiCountrySelect" style="display:none;">
-                         <label for="">@lang('web/wizard.What_countries_among') (<a id="EuropeanUnionCountryShowData" href="javascript::void()">List of countries that make European Union</a>)<span>*</span></label>
+                         <label for="">@lang('web/wizard.What_countries_among') (<a id="EuropeanUnionCountryShowData" href="javascript::void()">@lang('web/wizard.List_of_countries_that_make_European_Union')</a>)<span>*</span></label>
                          
                          <div id="EuropeanUnionCountryDataDiv" style="display:none">
                             <br>

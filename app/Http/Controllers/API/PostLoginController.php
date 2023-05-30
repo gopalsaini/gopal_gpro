@@ -3386,7 +3386,7 @@ class PostLoginController extends Controller {
 
 					if(count($request->post('countries')) != count($request->file('countries_doc'))){
 
-						return response(array("error" => true, "message" => 'countries doc not match'), 403);
+						return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'countries_doc_not_match_with_select_countries')), 403);
 					}
 
 				}	
@@ -3407,8 +3407,6 @@ class PostLoginController extends Controller {
 
 					$passportInfo = new \App\Models\PassportInfo;
 					$passportInfo->user_id = $request->user()->id;
-
-					
 
 					$passportInfoAlready = true;
 
@@ -3473,7 +3471,7 @@ class PostLoginController extends Controller {
 
 				$to = $request->user()->email;
 				
-				if($passportInfoAlready){
+				// if($passportInfoAlready){
 
 					if($request->user()->language == 'sp'){
 
@@ -3516,46 +3514,46 @@ class PostLoginController extends Controller {
 										
 					}
 
-				}else{
+				// }else{
 
-					if($request->user()->language == 'sp'){
+				// 	if($request->user()->language == 'sp'){
 
-						$subject = 'Your requested corrections to your visa letter have been received';
-						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
-						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
-						<p>Warmly</p>
-						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+				// 		$subject = 'Your requested corrections to your visa letter have been received';
+				// 		$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+				// 		<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+				// 		<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+				// 		<p>Warmly</p>
+				// 		<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 
-					}elseif($request->user()->language == 'fr'){
+				// 	}elseif($request->user()->language == 'fr'){
 					
-						$subject = 'Your requested corrections to your visa letter have been received';
-						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
-						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
-						<p>Warmly</p>
-						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+				// 		$subject = 'Your requested corrections to your visa letter have been received';
+				// 		$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+				// 		<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+				// 		<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+				// 		<p>Warmly</p>
+				// 		<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 
-					}elseif($request->user()->language == 'pt'){
+				// 	}elseif($request->user()->language == 'pt'){
 					
-						$subject = 'Your requested corrections to your visa letter have been received';
-						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
-						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
-						<p>Warmly</p>
-						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-					}else{
+				// 		$subject = 'Your requested corrections to your visa letter have been received';
+				// 		$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+				// 		<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+				// 		<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+				// 		<p>Warmly</p>
+				// 		<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+				// 	}else{
 					
-						$subject = 'Your requested corrections to your visa letter have been received';
-						$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
-						<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
-						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
-						<p>Warmly</p>
-						<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+				// 		$subject = 'Your requested corrections to your visa letter have been received';
+				// 		$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+				// 		<p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p>
+				// 		<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p>
+				// 		<p>Warmly</p>
+				// 		<p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 										
-					}
+				// 	}
 
-				}
+				// }
 
 				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
 

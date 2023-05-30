@@ -718,7 +718,14 @@ class UserController extends Controller {
 				
 		    })
 
-			->addColumn('action', function($data){
+			->addColumn('action', function($data) use($request){
+
+				$Url = '';
+				if($request->input('status') == 'ApprovedNotComing'){
+
+					$Url = '<a href="'.route('admin.user.move-stage-1', ['id' => $data->id] ).'" title="Move To Stage 1" class="btn btn-sm btn-success px-3 m-1 text-white" ><i class="fas fa-undo"></i></a>';
+					
+				}
 
 				if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'Review' ) {
 					
@@ -732,7 +739,7 @@ class UserController extends Controller {
 						<a href="javascript:void(0)" title="Approve Profile" data-id="'.$data->id.'" data-status="Approved" class="btn btn-sm btn-success px-3 m-1 text-white profile-status"><i class="fas fa-check"></i></a>
 						<a href="javascript:void(0)" title="Decline Profile" data-id="'.$data->id.'" data-status="Decline" class="btn btn-sm btn-danger px-3 m-1 text-white profile-status"><i class="fas fa-ban"></i></a>
 						<a href="javascript:void(0)" title="Waiting Profile" data-id="'.$data->id.'" data-status="Waiting" class="btn btn-sm btn-warning px-3 m-1 text-white profile-status"><i class="fas fa-pause"></i></a>
-						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>'.$Url;
 				
 				} else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '12' || \Auth::user()->designation_id == '11') && $data->profile_status == 'Waiting' ) {
 					
@@ -744,7 +751,8 @@ class UserController extends Controller {
 					return '<div style="display:flex">
 					<a href="javascript:void(0)" title="Approve Profile" data-id="'.$data->id.'" data-status="Approved" class="btn btn-sm btn-success px-3 m-1 text-white profile-status"><i class="fas fa-check"></i></a>
 					<a href="javascript:void(0)" title="Decline Profile" data-id="'.$data->id.'" data-status="Decline" class="btn btn-sm btn-danger px-3 m-1 text-white profile-status"><i class="fas fa-ban"></i></a>
-					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a>'.$Url.'
+					</div>';
 				
 				} else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '12' || \Auth::user()->designation_id == '11') && $data->profile_status == 'Rejected') {
 					
@@ -762,7 +770,8 @@ class UserController extends Controller {
 					<a href="javascript:void(0)" title="Approve Profile" data-id="'.$data->id.'" data-status="Approved" class="btn btn-sm btn-success px-3 m-1 text-white profile-status"><i class="fas fa-check"></i></a>
 					<a href="javascript:void(0)" title="Decline Profile" data-id="'.$data->id.'" data-status="Decline" class="btn btn-sm btn-danger px-3 m-1 text-white profile-status"><i class="fas fa-ban"></i></a>
 					<a href="javascript:void(0)" title="Waiting Profile" data-id="'.$data->id.'" data-status="Waiting" class="btn btn-sm btn-warning px-3 m-1 text-white profile-status"><i class="fas fa-pause"></i></a>
-					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a>'.$Url.'
+					</div>';
 				
 				}
 			})
@@ -2310,6 +2319,40 @@ class UserController extends Controller {
         $result->save();
 
 		$request->session()->flash('error','Profile Approved Successfully.');
+		return redirect()->back();
+
+	}
+	
+	public function userProfileMoveToStage1(Request $request, $id) {
+		
+		$result = \App\Models\User::where('id', $id)->first();
+
+		if (!$result) {
+			$request->session()->flash('5fernsadminerror','Something went wrong.please try again.');
+			return redirect()->back();
+		}
+
+		$userSpouse = \App\Models\User::where('parent_id',$result->id)->where('added_as','Spouse')->first();
+
+		if($userSpouse){
+
+			$userSpouse->profile_status='Review';
+			$userSpouse->stage= '1';
+			$userSpouse->amount= '0';
+			$userSpouse->save();
+
+			\App\Helpers\commonHelper::sendNotificationAndUserHistory($userSpouse->id,'Move user from ApproveNOTComing to Stage-1','Move user from Stage2 to Stage-1','Move user from Stage2 to Stage-1');
+
+		}
+
+        $result->profile_status = 'Review';
+        $result->stage = '1';
+		$result->amount= '0';
+        $result->save();
+
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,'User Move to Stage-1 by admin','User Move to Stage-1  by admin','User Move to Stage-1 by admin');
+
+		$request->session()->flash('5fernsadminsuccess','User Move to Stage-1 Successfully.');
 		return redirect()->back();
 
 	}
@@ -5033,8 +5076,14 @@ class UserController extends Controller {
 
 				} else if ($data->admin_status == 'Approved') {
 
-					return '<div class="badge rounded-pill pill-badge-success">Passport info Approved</div>';
-
+					if($data->visa_granted == 'Yes'){
+						return '<div class="badge rounded-pill pill-badge-success">Visa Granted</div>';
+					}elseif($data->visa_granted == 'No'){
+						return '<div class="badge rounded-pill pill-badge-danger">Visa Not Granted</div>';
+					}else{
+						return '<div class="badge rounded-pill pill-badge-success">Documents Issued</div>';
+					}
+					
 				} else if ($data->admin_status === 'Decline') {
 
 					return '<div class="badge rounded-pill pill-badge-danger">Passport Info Returned</div>';
@@ -5106,6 +5155,11 @@ class UserController extends Controller {
 
 			}
 
+			$query->where(function ($query1) {
+				$query1->where('passport_infos.visa_granted','!=','No')
+					  ->orWhere('passport_infos.visa_granted','=',null);
+			});
+			
 			$data = $query->offset($start)->limit($limit)->get();
 			
 			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
@@ -5194,9 +5248,9 @@ class UserController extends Controller {
 					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
 					
 				} else if ($data->visa_granted == 'No') {
-					return '<div class="span badge rounded-pill pill-badge-danger">Visa Granted No</div>';
+					return '<div class="span badge rounded-pill pill-badge-danger">Visa Not Granted</div>';
 				} else if ($data->visa_granted === 'Yes') {
-					return '<div class="span badge rounded-pill pill-badge-success">Visa Granted Yes</div>';
+					return '<div class="span badge rounded-pill pill-badge-success">Visa Granted</div>';
 				}
 				
 		    })
@@ -5246,6 +5300,11 @@ class UserController extends Controller {
 			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
 	
 			$query->whereIn('passport_infos.country_id', $restricted);
+
+			$query->where(function ($query1) {
+				$query1->where('passport_infos.visa_granted','!=','No')
+					  ->orWhere('passport_infos.visa_granted','=',null);
+			});
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
@@ -5382,7 +5441,10 @@ class UserController extends Controller {
 			$start = $request->input('start');
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			
+			$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+			$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
+			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+		
 			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
@@ -5393,11 +5455,7 @@ class UserController extends Controller {
 				
 			}
 
-			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
-	
-			$query->whereIn('passport_infos.country_id', $restricted);
-
-			$query->where('passport_infos.visa_not_ranted_comment','!=', null)->where('passport_infos.visa_granted','No');
+			$query->where('passport_infos.visa_granted','No');
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
@@ -5424,7 +5482,7 @@ class UserController extends Controller {
 			->setOffset($start)
 
 			->addColumn('name', function($data){
-				return $data->name;
+				return $data->salutation.' '.$data->name;
 		    })
 
 			->addColumn('passport_no', function($data){
@@ -5434,45 +5492,25 @@ class UserController extends Controller {
 			->addColumn('country_id', function($data){
 				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
 		    })
-			->addColumn('passport_copy', function($data){
-				if($data->passport_copy!= ''){
-					$html = '';
-					foreach(explode(",",$data->passport_copy) as $key=>$img){
-
-						$html.='<a style="color:blue !important" href="'.asset('/uploads/passport/'.$img).'" target="_blank"> 
-								View '.($key+1).' </span>
-							</a></br>';
-
-					}
-				}
-				
-				
-				return $html;
-		    })
-
-			
-			->addColumn('financial_letter', function($data){
-				
-				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-		
+			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
 
 				if(in_array($data->country_id,$doNotRequireVisa)){
 
+					return 'No Visa Needed';
 
-						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank </a>
-								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance</a>';
-					
-				}else{
+				}elseif(in_array($data->country_id,$RequireVisa)){
 
-						return '<a href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank</a>
-								<a href="'.asset('uploads/file/Visa_Request_Form.pdf').'" target="_blank" class="text-blue"> Visa request</a>
-								<a href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance </a>
-								<a href="'.asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf').'" target="_blank" class="text-blue"> Visa processing</a>';
+					return 'Visa Needed';
 					
+				}elseif(in_array($data->country_id,$restricted)){
+
+					return 'Restricted Country';
+
 				}
 				
-			})
+		    })
 
+			
 			->addColumn('remark', function($data){
 				
 					return $data->visa_not_ranted_comment;

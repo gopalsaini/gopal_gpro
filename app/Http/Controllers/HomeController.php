@@ -234,7 +234,7 @@ class HomeController extends Controller
 
         }else{
 
-            \Session::flash('gpro_error', $message);
+            // \Session::flash('gpro_error', $message);
 
             return redirect('/');
         }

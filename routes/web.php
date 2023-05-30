@@ -228,6 +228,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('transaction-data/download', 'Admin\UserController@TransationDataExport')->name('transaction-data-download');
 
 		Route::get('user-profile/{id}', 'Admin\UserController@userProfile')->name('profile');		
+		Route::get('user-move-stage-1/{id}', 'Admin\UserController@userProfileMoveToStage1')->name('move-stage-1');		
 		Route::get('archive-user/{id}', 'Admin\UserController@archiveUser')->name('archiveUserDelete');
 
 		Route::get('payment-history/{id}', 'Admin\UserController@paymentHistory')->name('payment.history');
