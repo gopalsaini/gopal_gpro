@@ -39,6 +39,7 @@
         <div class="step-form">
             <h4 class="inner-head inner-head-2">@lang('web/pricing.pricing')</h4>
             <h5 style="text-align:center;padding-top: 50px;">@lang('web/pricing.description')</h5>
+            <h5 style="text-align:center;padding-top: 20px;">@lang('web/home.subsidy_home')</h5>
             <form class="row">
                 <div class="col-lg-12 price-country-bg position-relative">
                     <label for="">@lang('web/pricing.country-name')<span class="loader"></span></label>

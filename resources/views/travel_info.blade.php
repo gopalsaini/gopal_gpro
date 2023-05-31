@@ -324,7 +324,13 @@
                                                 @if($passportInfo['visa_granted'] == 'Yes')
                                                     @php $TravelInfoShow = true; @endphp
                                                 @endif
-                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') : {{$passportInfo['visa_granted']}}</label><br><br>
+                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') : {{$passportInfo['visa_granted']}}</label><br>
+                                                @if($passportInfo['visa_granted'] == 'Yes')
+                                                    <div class="alphabet-vd-box mt-2">
+                                                        <a href="{{ asset('uploads/visa_file/'.$passportInfo['visa_granted_docs']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.View')</a>
+                                                    </div>
+                                                @endif
+                                                <br>
                                                 
                                             @endif
                                         </div>
@@ -347,7 +353,7 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <p>You will need to work with one of our team members to get your visa.  The person assigned to help you is <b>{{$passportInfo['admin_provide_name']}}</b>. His/her email address is <b>{{$passportInfo['admin_provide_email']}}</b>. Please contact them as soon as possible to begin working on your visa.</p><br>
+                                        <p>@lang('web/wizard.admin_provide_name1') <b>{{$passportInfo['admin_provide_name']}}</b>.@lang('web/wizard.admin_provide_name2') <b>{{$passportInfo['admin_provide_email']}}</b>. @lang('web/wizard.admin_provide_name3')</p><br>
                                         <div class="col-lg-12">
                         
                                             @if($passportInfo['visa_granted'] == null)
@@ -373,7 +379,13 @@
                                                 @if($passportInfo['visa_granted'] == 'Yes')
                                                     @php $TravelInfoShow = true; @endphp
                                                 @endif
-                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') : {{$passportInfo['visa_granted']}}</label><br><br>
+                                                <label class="form-check-label">@lang('web/wizard.your_Visa_Granted') : {{$passportInfo['visa_granted']}}</label><br>
+                                                @if($passportInfo['visa_granted'] == 'Yes')
+                                                    <div class="alphabet-vd-box mt-2">
+                                                        <a href="{{ asset('uploads/visa_file/'.$passportInfo['visa_granted_docs']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.View')</a>
+                                                    </div>
+                                                @endif
+                                                <br>
                                                 
                                             @endif
                                         </div>
@@ -1338,16 +1350,18 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header d-block border-0">
-                        <h2 class="main-head">Visa is Granted</h2>
+                        <h2 class="main-head">@lang('web/wizard.Visa_is_Granted')</h2>
                         <!-- <h5 style="text-align:center;padding-top: 50px;">Log in to submit your application</h5> -->
                         <button type="button" class="btn-close" onclick="modalHide()"  data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <br><br>
                     <div class="modal-body" style="padding-top:0px">
-                        <label for="inputName">@lang('web/wizard.Visa_changed_Later') <label class="text-danger">*</label></label>
-                        <form id="PassportVisaIsGranted" action="{{ url('passport/visa-granted?type=Yes') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                        <label for="inputName">@lang('web/wizard.Visa_changed_Later') </label>
+                        <form id="PassportVisaIsGranted" action="{{ url('api/visa-granted') }}" method="post" enctype="multipart/form-data" autocomplete="off">
                             @csrf
-                            <!-- <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea> -->
+                            <label class="d-flex">@lang('web/wizard.Upload_visa_file') <label class="text-danger">*</label></label>
+                            <input type="hidden"  name="type" id="type" value="Yes" required class="form-control">
+                            <input type="file"  name="visa_file" id="visa_file" required class="">
                             <div class="modal-footer">
                                 
                                 <button type="submit" class=" main-btn main-btn-comment" form="PassportVisaIsGranted">@lang('web/wizard.yes')</button>
@@ -1610,6 +1624,7 @@
         });
     });
 
+    
     $("form#PassportVisaIsGranted").submit(function(e) {
 
         e.preventDefault();
@@ -1625,7 +1640,10 @@
             url: formAction,
             data: new FormData(this),
             dataType: 'json',
-            type: 'GET',
+            type: 'post',
+            headers: {
+                "Authorization": "Bearer {{\Session::get('gpro_user')}}"
+            },
             beforeSend: function() {
                 submitButton(formId, btnhtml, true);
             },

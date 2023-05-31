@@ -564,15 +564,26 @@
                             <h4>@lang('web/app.footer-heading')</h4>
                             <p>@lang('web/app.footer-description')</p>
                             <div class="requirement-right pt-3 ">
-                            @if(App::getLocale() == 'pt')
-                              <a href="{{ route('attend-the-congress') }}" class="main-btn">Porquê devo participar no Congresso?</a>
-                            @elseif(App::getLocale() == 'sp')
-                              <a href="{{ route('attend-the-congress') }}" class="main-btn">¿Por qué asistir al Congreso?</a>
-                            @elseif(App::getLocale() == 'fr')
-                              <a href="{{ route('attend-the-congress') }}" class="main-btn">Pourquoi devrais-je participer au Congrès?</a>
-                            @else
-                              <a href="{{ route('attend-the-congress') }}" class="main-btn">Why should I attend the Congress?</a>
-                            @endif
+                                @if(App::getLocale() == 'pt')
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn">Porquê devo participar no Congresso?</a>
+                                @elseif(App::getLocale() == 'sp')
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn">¿Por qué asistir al Congreso?</a>
+                                @elseif(App::getLocale() == 'fr')
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn">Pourquoi devrais-je participer au Congrès?</a>
+                                @else
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn">Why should I attend the Congress?</a>
+                                @endif
+                            </div>
+                            <div class="requirement-right pt-3 ">
+                                @if(App::getLocale() == 'pt')
+                                <a href="{{ asset('pdf/Portuguese_Program.pdf') }}" target="_blank" class="main-btn">Programa</a>
+                                @elseif(App::getLocale() == 'sp')
+                                <a href="{{ asset('pdf/Spanish_Program.pdf') }}" target="_blank" class="main-btn">Programa</a>
+                                @elseif(App::getLocale() == 'fr')
+                                <a href="{{ asset('pdf/French_Program.pdf') }}" target="_blank" class="main-btn">Programme</a>
+                                @else
+                                <a href="{{ asset('pdf/English_Program.pdf') }}" target="_blank" class="main-btn">Program</a>
+                                @endif
                             </div>
                         </div>
                     </div>

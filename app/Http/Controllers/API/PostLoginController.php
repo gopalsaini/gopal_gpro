@@ -18,7 +18,6 @@ class PostLoginController extends Controller {
 
 	}
 
-
 	public function GroupLeader(Request $request){
 	
 		
@@ -239,7 +238,6 @@ class PostLoginController extends Controller {
 
     }
 
-
 	public function spouseAdd(Request $request){ 
 
 		
@@ -455,7 +453,6 @@ class PostLoginController extends Controller {
 		}
 
     }
-
 
 	public function stayRooms(Request $request){
 	
@@ -758,7 +755,6 @@ class PostLoginController extends Controller {
         
 	}
 
-	
 	public function contactDetails(Request $request){
 
 		$designation = \App\Models\StageSetting::where('designation_id',$request->user()->designation_id)->first();
@@ -1312,7 +1308,6 @@ class PostLoginController extends Controller {
         
 	}
 
-
 	public function travelInfo(Request $request){
 
 		$designation = \App\Models\StageSetting::where('designation_id', $request->user()->designation_id)->first();
@@ -1864,7 +1859,6 @@ class PostLoginController extends Controller {
         
 	}
 
-	
 	public function sponsorPaymentsSubmit(Request $request){
 	
 		
@@ -2669,7 +2663,6 @@ class PostLoginController extends Controller {
 
 	}
 
-	
     public function onlinePaymentByMobile(Request $request){
  
 		
@@ -3702,43 +3695,66 @@ class PostLoginController extends Controller {
 
 		}else{
 
+			$imagesArray = [];
+			if($resultData->passport_copy){
+				foreach(explode(',',$resultData->passport_copy) as $copyPass){
+
+					$imagesArray[]=asset('uploads/passport/'.$copyPass);
+				}
+			}
+
+			$imagesCountryArray = [];
+			if($resultData->valid_residence_country){
+				$cImage  = json_decode($resultData['valid_residence_country'],true);
+				foreach($cImage as $residencecountry){
+
+					$imagesCountryArray[]= [
+
+						'country'=>\App\Helpers\commonHelper::getCountryNameById($residencecountry['id']),
+						'file'=>asset('uploads/passport/'.$residencecountry['file']),
+					];
+				}
+			}
+
+
 			$PassportInfo=[
 				'id'=>$resultData['id'],
+				'user_id'=>$resultData['user_id'],
 				'name'=>ucfirst($resultData['salutation']),
 				'surname'=>ucfirst($resultData['name']),
 				'passport_no'=>$resultData['passport_no'],
-				'passport_copy'=>asset('uploads/passport/'.$resultData->passport_copy),
-				'dob'=>$resultData['dob'],
-				'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($resultData['citizenship']),
+				'passport_copy'=>$imagesArray,
 				'country_id'=>\App\Helpers\commonHelper::getCountryNameById($resultData['country_id']),
 				'admin_remark'=>$resultData['admin_remark'],
 				'admin_status'=>$resultData['admin_status'],
+				'valid_residence_country'=>$imagesCountryArray,
+				'visa_residence'=>$resultData['visa_residence'],
+				'multiple_entry_visa_country'=>$resultData['multiple_entry_visa_country'],
+				'multiple_entry_visa'=>$resultData['multiple_entry_visa'],
+				'diplomatic_passport'=>$resultData['diplomatic_passport'],
+				'passport_valid'=>$resultData['passport_valid'],
+				'admin_provide_name'=>$resultData['admin_provide_name'],
+				'admin_provide_email'=>$resultData['admin_provide_email'],
+				'visa_not_ranted_comment'=>$resultData['visa_not_ranted_comment'],
+				'visa_granted'=>$resultData['visa_granted'],
+				'status'=>$resultData['status'],
 			];
 
 			$sponsorshipInfo=[];
 
 			if($resultData['admin_status'] == 'Approved'){
 
-				$financialLetter = explode(',',$resultData['financial_letter']);
-
 				$sponsorshipInfo=[
-					'id'=>$resultData['id'],
-					'name'=>ucfirst($resultData['salutation']),
-					'surname'=>ucfirst($resultData['name']),
-					'passport_no'=>$resultData['passport_no'],
-					'passport_copy'=>asset('uploads/passport/'.$resultData->passport_copy),
-					'dob'=>$resultData['dob'],
-					'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($resultData['citizenship']),
-					'country_id'=>\App\Helpers\commonHelper::getCountryNameById($resultData['country_id']),
-					'sponsorship_letter'=>asset('uploads/file/'.$resultData['sponsorship_letter']),
-					'financial_letter1'=>asset('uploads/file/'.$financialLetter[0]),
-					'financial_letter2'=>asset('uploads/file/'.$financialLetter[1]),
-					'remark'=>$resultData['remark'],
-					'status'=>$resultData['status'],
+					
+					'financial_letter'=> $resultData->financial_letter != null ? asset('uploads/file/'.$resultData->financial_letter) : null,
+					'financial_spanish_letter'=> $resultData->financial_spanish_letter != null ? asset('uploads/file/'.$resultData->financial_spanish_letter) : null,
+					'visa_granted_docs'=> $resultData->visa_granted_docs != null ? asset('uploads/visa_file/'.$resultData->visa_granted_docs) : null,
+					'BANK_LETTER_CERTIFICATION'=> asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
+					'Visa_Request_Form'=> asset('uploads/file/Visa_Request_Form.pdf'),
+					'DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING'=> asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
+					
 				];
 			}
-
-			
 
 			return response(array("error"=>false, "message"=>'data fetche succesully', "PassportInfo"=>$PassportInfo, "sponsorshipInfo"=>$sponsorshipInfo), 200);
 
@@ -4196,6 +4212,55 @@ class PostLoginController extends Controller {
 
 				$passportReject->visa_not_ranted_comment=$request->json()->get('remark');
 				$passportReject->visa_granted='No';
+				
+				$passportReject->save();
+				
+				return response(array('message'=>'Request Updated successfully'),200);
+					
+			}catch (\Exception $e){
+			
+				return response(array("error"=>true, "message" => $e->getMessage()),200); 
+			
+			}
+		}
+	
+	}
+
+	public function visaIsGranted(Request $request){
+	
+		$rules = [
+			'visa_file' => 'required',
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+            
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
+		
+			return response(array('message'=>$message,"error" => true),403);
+		
+	
+		}else{
+
+			try{
+
+				$passportReject= \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
+
+				if($request->hasFile('visa_file')){
+                    $imageData = $request->file('visa_file');
+                    $file = strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+                    $destinationPath = public_path('/uploads/visa_file');
+                    $imageData->move($destinationPath, $file);
+
+                    $passportReject->visa_granted_docs = $file;
+                }
+
+				$passportReject->visa_granted='Yes';
 				
 				$passportReject->save();
 				

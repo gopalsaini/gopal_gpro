@@ -122,5 +122,7 @@ return [
     'TravelInformation-approved-successful' => 'Travel Information approved successful',
     'Email-already-verifiedPlease-Login' => 'Email already verified. Please Login',	
     'PreRecordedVideo'=>'Pre Recorded Video',
+    'subsidy_home'=>'RREACH’s total cost per delegate is up to $1750. Your cost includes a huge subsidy of $775-$1500.',
+    'Click_for_your_cost'=>'Click for your cost!!',
 
 ];

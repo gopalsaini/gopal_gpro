@@ -258,6 +258,12 @@ return [
     'Visa_changed_Later' =>'Por favor, asegúrese de tener una Visa válida, ya que esta opción no se puede cambiar más tarde. ¿Desea continuar?',
     'your_Visa_Granted' =>'¿Le han otorgado la Visa?',
     'travel_Info' =>'Información de Viaje',
+    'Upload_visa_file' =>'Upload an image or pdf of the visa',
+    'View' =>'View',
+    'admin_provide_name1' =>'Deberá trabajar con uno de los miembros de nuestro equipo para obtener su visa. La persona asignada para ayudarlo es',
+    'admin_provide_name2' =>' Su dirección de correo electrónico es ',
+    'admin_provide_name3' =>'Comuníquese con ellos lo antes posible para comenzar a trabajar en su visa.',
+    'Visa_is_Granted' =>'Visa es otorgada',
 
 
 ];

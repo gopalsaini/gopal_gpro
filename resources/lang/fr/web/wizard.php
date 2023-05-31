@@ -259,5 +259,11 @@ return [
     'Visa_changed_Later' =>"Veuillez vous assurer que vous disposez d'un visa valide car cette option ne peut être modifiée ultérieurement. Voulez-vous continuer ?",
     'your_Visa_Granted' =>'Votre visa a-t-il été accordé ?',
     'travel_Info' =>'informations de voyage',
+    'Upload_visa_file' =>'Upload an image or pdf of the visa',
+    'View' =>'View',
+    'admin_provide_name1' =>"Vous devrez travailler avec l'un des membres de notre équipe pour obtenir votre visa.  La personne chargée de vous aider est ",
+    'admin_provide_name2' =>'Son e-mail est',
+    'admin_provide_name3' =>'Veuillez le contacter dès que possible pour commencer à travailler sur votre visa.',
+    'Visa_is_Granted' =>'Le visa est accordé',
 
 ];

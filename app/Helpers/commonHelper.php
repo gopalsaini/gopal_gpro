@@ -1096,7 +1096,7 @@ class commonHelper{
 					<p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p>
 					<p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p>
 					<p>Por favor, pague el saldo a más tardar en 31 de Agosto, 2023.</p><p><br></p>
-					<p style="background-color:yellow; display: inline;"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
+					<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p><p></p>
 					<p>POR FAVOR, TENGA EN CUENTA: Si no se recibe el pago completo antes de 31 de Agosto, 2023, su inscripción quedará sin efecto y se cederá su lugar a otra persona.</p><p><br></p>
 					<p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo estará encantado de comunicarse con usted.</p><p><br></p>
 					<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
@@ -1115,7 +1115,7 @@ class commonHelper{
 					<p>PAIEMENTS EN COURS DE TRAITEMENT : ".$totalAmountInProcess."</p>
 					<p>SOLDE RESTANT DÛ : ".$totalPendingAmount."</p><p><br></p>
 					<p>Veuillez payer le solde au plus tard le&nbsp; 31st August 2023.&nbsp;</p><p><br></p>
-					<p style='background-color:yellow; display: inline;'><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
+					<p style='background-color:yellow; display: inline;'><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p><p></p>
 					<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p><p>Avez-vous des questions ? Répondez simplement à cet e-mail et notre équipe sera heureuse d'entrer en contact avec vous.</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier le nombre et de renforcer les capacités des formateurs de pasteurs.</p><p><br><p><br></p>
 					<p>Pour effectuer le paiement, veuillez vous rendre sur <a href='https://www.gprocongress.org/payment' traget='blank'> www.gprocongress.org/payment </a> </p>
 					<p>Pour plus d` informations, regardez le tutoriel https://youtu.be/xSV96xW_Dx0 </p> </p>
@@ -1132,7 +1132,7 @@ class commonHelper{
 					<p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p>
 					<p>SALDO REMANESCENTE EM ABERTO: '.$totalPendingAmount.'</p><p><br></p>
 					<p>Por favor pague o saldo até o dia ou antes de 31st August 2023.</p><p><br></p>
-					<p style="background-color:yellow; display: inline;"><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+					<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p><p></p>
 					<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
 					<p>Alguma dúvida? Simplesmente responda a este e-mail, e nossa equipe estará muito feliz para entrar em contacto com você.&nbsp;</p><p><br></p>
 					<p>Ore conosco a medida em que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.&nbsp;</p><p><p><br></p>
@@ -1152,7 +1152,7 @@ class commonHelper{
 					<div>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</div>
 					<div>REMAINING BALANCE DUE:'.$totalPendingAmount.'</div><div><br></div>
 					<div>Please pay the balance on or before 31st August 2023.&nbsp;</div><div><br></div>
-					<p style="background-color:yellow; display: inline;"><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+					<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p><p></p>
 					<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
 					<div>Do you have questions? Simply respond to this email, and our team will be happy to connect with you.&nbsp;</div><div><br></div><div> Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</div>
 					<div><p>To make the payment please go to <a href="https://www.gprocongress.org/payment" traget="blank"> www.gprocongress.org/payment </a> </p>
@@ -1740,6 +1740,7 @@ class commonHelper{
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
 				'countries_doc_not_match_with_select_countries'=> 'los documentos del país no coinciden con los países seleccionados',
+				'Request_Updated_successfully'=> 'Request Updated successfully',
 				
 			);
 
@@ -1956,6 +1957,7 @@ class commonHelper{
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
 				'countries_doc_not_match_with_select_countries'=> 'Le document des pays ne correspond pas aux pays sélectionnés',
+				'Request_Updated_successfully'=> 'Request Updated successfully',
 				
 			);
 
@@ -2169,6 +2171,7 @@ class commonHelper{
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
 				'countries_doc_not_match_with_select_countries'=> 'Documento do país não corresponde aos países selecionados',
+				'Request_Updated_successfully'=> 'Request Updated successfully',
 
 				
 			);
@@ -2380,6 +2383,7 @@ class commonHelper{
 				'Invitetion_send_successfully'=> 'Invitetion send successfully',
 				'mode_in'=> 'This payment type not support',
 				'countries_doc_not_match_with_select_countries'=> 'countries doc not match with select countries',
+				'Request_Updated_successfully'=> 'Request Updated successfully',
 				
 				
 	
@@ -2451,7 +2455,7 @@ class commonHelper{
 						<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
 						<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
 						<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
-						<p style="color"red"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
+						<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
 						<p style="color"red"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>
 						<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
 						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
@@ -2470,8 +2474,8 @@ class commonHelper{
 				<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
 				<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
 				<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
-				<p style="color"red"><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
-				<p style="color"red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>
+				<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
+					<p style="color"red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>
 				<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
 				<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
 				<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
@@ -2488,7 +2492,7 @@ class commonHelper{
 						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
 						<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
 						<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
-						<p ><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+						<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
 						<p ><i>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor  previamente pagos por si serão retidos.</i></p><p><br></p>
 						<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
 						<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
@@ -2507,7 +2511,7 @@ class commonHelper{
 						<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
 						<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
 						<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
-						<p ><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+						<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
 						<p ><i>PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</i></p><p><br></p>
 						<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
 						<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
@@ -2735,7 +2739,7 @@ class commonHelper{
 					$EB = '';
 				}else{
 					$paymentType = 'Gracias por hacer este pago parcial.';
-					$EB = '<p style="color"red"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
+					$EB = '<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
 					<p style="color"red"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>';
 
 				}
@@ -2763,7 +2767,7 @@ class commonHelper{
 					$EB = '';
 				}else{
 					$paymentType = 'Merci d’avoir effectué ce paiement partiel.';
-					$EB = '<p style="color"red"><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
+					$EB = '<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
 					<p style="color"red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>';
 
 				}
@@ -2789,7 +2793,7 @@ class commonHelper{
 					$EB = '';
 				}else{
 					$paymentType = 'Obrigado por ter efetuado esse pagamento parcial.';
-					$EB = '<p style="color"red"><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+					$EB = '<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
 					<p style="color"red"><i>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor  previamente pagos por si serão retidos.</i></p><p><br></p>';
 
 				}
@@ -2818,7 +2822,7 @@ class commonHelper{
 				}else{
 					$paymentType = 'Thank you for partial payment.';
 					
-					$EB = '<p style="color"red"><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+					$EB = '<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
 					<p style="color"red"><i>PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</i></p><p><br></p>';
 					
 				}
@@ -2875,8 +2879,8 @@ class commonHelper{
 						<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
 						<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
 						<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
-						<p style="color:red"><i>POR FAVOR, TENGA EN CUENTA: Para poder aprovechar el descuento por “inscripción anticipada”, el pago en su totalidad tiene que recibirse a más tardar el 31 de mayo de 2023.</i></p><p><br></p>
-						<p style="color:red"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>
+						<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
+						<p style="color:yellow"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>
 						<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
 						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
 						<p>Atentamente,</p>
@@ -2893,8 +2897,8 @@ class commonHelper{
 						<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
 						<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
 						<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
-						<p style="color:red"><i>VEUILLEZ NOTER : Afin de bénéficier de la réduction de « l’inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023.</i></p><p><br></p>
-						<p style="color:red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>
+						<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
+						<p style="color:yellow"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>
 						<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
 						<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
 						<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
@@ -2910,7 +2914,7 @@ class commonHelper{
 						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
 						<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
 						<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
-						<p ><i>POR FAVOR NOTE: A fim de poder beneficiar do desconto de "adiantamento", o pagamento integral deve ser recebido até 31 de Maio de 2023.</i></p><p><br></p>
+						<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
 						<p ><i>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor  previamente pagos por si serão retidos.</i></p><p><br></p>
 						<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
 						<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
@@ -2928,7 +2932,7 @@ class commonHelper{
 						<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
 						<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
 						<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
-						<p ><i>PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</i></p><p><br></p>
+						<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
 						<p ><i>PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</i></p><p><br></p>
 						<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
 						<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
@@ -3113,7 +3117,7 @@ class commonHelper{
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulario de Solicitud de Visa; y</p>
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Lista de Documentos requeridos para trámite de visa.</p>
 			<p>También se pueden encontrar copias de estos documentos en su perfil de GProCongress en nuestro sitio web.</p>
-			<p>Deberá trabajar con uno de los miembros de nuestro equipo para obtener su visa. La persona asignada para ayudarlo es '.$passportApprove->admin_provide_name.'. Su dirección de correo electrónico es '.$passportApprove->admin_provide_email.'. Comuníquese con ellos lo antes posible para comenzar a trabajar en su visa.</p>
+			<p style="background-color:yellow; display: inline;">Deberá trabajar con uno de los miembros de nuestro equipo para obtener su visa. La persona asignada para ayudarlo es '.$passportApprove->admin_provide_name.'. Su dirección de correo electrónico es '.$passportApprove->admin_provide_email.'. Comuníquese con ellos lo antes posible para comenzar a trabajar en su visa.</b></p>
 			<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br></p>
 			<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
 
@@ -3127,7 +3131,7 @@ class commonHelper{
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulaire de demande de visa; et</p>
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Liste des documents requis pour le traitement des visas.</p>
 			<p>Des copies de ces documents peuvent également être trouvées dans votre profil GProCongress sur notre site Web.</p>
-			<p>Vous devrez collaborer avec l’un des membres de notre équipe pour obtenir votre visa.  La personne désignée pour vous aider est '.$passportApprove->admin_provide_name.'. Son adresse e-mail est  '.$passportApprove->admin_provide_email.'. Veuillez la contacter dès que possible pour commencer à travailler sur votre visa.</p>
+			<p style="background-color:yellow; display: inline;">Vous devrez collaborer avec l’un des membres de notre équipe pour obtenir votre visa.  La personne désignée pour vous aider est '.$passportApprove->admin_provide_name.'. Son adresse e-mail est  '.$passportApprove->admin_provide_email.'. Veuillez la contacter dès que possible pour commencer à travailler sur votre visa.</b></p>
 			<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
 			<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
 
@@ -3141,7 +3145,7 @@ class commonHelper{
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Formulário de Solicitação de Visto; e</p>
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Lista de documentos necessários para o processamento do visto.</p>
 			<p>Cópias desses documentos também podem ser encontradas em seu perfil do GProCongresso em nosso site.</p>
-			<p>Você precisará trabalhar com um dos membros da nossa equipe para obter seu visto. A pessoa designada para ajudá-lo é '.$passportApprove->admin_provide_name.'. Seu endereço de e-mail é '.$passportApprove->admin_provide_email.'. Entre em contato com eles o mais rápido possível para começar a trabalhar no seu visto.</p>
+			<p style="background-color:yellow; display: inline;">Você precisará trabalhar com um dos membros da nossa equipe para obter seu visto. A pessoa designada para ajudá-lo é '.$passportApprove->admin_provide_name.'. Seu endereço de e-mail é '.$passportApprove->admin_provide_email.'. Entre em contato com eles o mais rápido possível para começar a trabalhar no seu visto.</b></p>
 			<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
 			<p>Calorosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
 
@@ -3155,7 +3159,7 @@ class commonHelper{
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Visa Request Form; and </p>
 			<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	List of Documents required for visa processing.</p>
 			<p>Copies of these documents can also be found in your GProCongress profile on our website.</p>
-			<p>You will need to work with one of our team members to get your visa.  The person assigned to help you is '.$passportApprove->admin_provide_name.'. His/her email address is '.$passportApprove->admin_provide_email.'. Please contact them as soon as possible to begin working on your visa.</p>
+			<p style="background-color:yellow; display: inline;"><b>You will need to work with one of our team members to get your visa.  The person assigned to help you is '.$passportApprove->admin_provide_name.'. His/her email address is '.$passportApprove->admin_provide_email.'. Please contact them as soon as possible to begin working on your visa.</b></p>
 			<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
 			<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 							

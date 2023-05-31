@@ -171,7 +171,7 @@ class TransactionController extends Controller {
 						<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE: '.$totalAcceptedAmount.'</p>
 						<p>PAGOS ACTUALMENTE EN PROCESO: '.$totalAmountInProcess.'</p>
 						<p>SALDO PENDIENTE DE PAGO: '.$totalPendingAmount.'</p><p><br></p>
-						<p style="background-color:yellow; display: inline;">TENGA EN CUENTA: Para calificar para el descuento de "pago anticipado", el pago total debe recibirse antes o para el día 31 de Mayo, 2023</p><p><br></p>
+						<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
 						<p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p><br></p>
 						<p>¿Tiene preguntas? Simplemente responda a este correo electrónico y nuestro equipo estará encantado de comunicarse con usted.</p><p><br></p>
 						<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p>
@@ -188,7 +188,7 @@ class TransactionController extends Controller {
 						<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS : ".$totalAcceptedAmount."</p>
 						<p>PAIEMENTS EN COURS DE TRAITEMENT : ".$totalAmountInProcess."</p>
 						<p>SOLDE RESTANT DÛ : ".$totalPendingAmount."</p><p><br></p>
-						<p style='background-color:yellow; display: inline;'>VEUILLEZ NOTER : Pour être qualifié au rabais « inscription anticipée », le paiement intégral doit être reçu au plus tard le 31 mai 2023</p><p><br></p>
+						<p style='background-color:yellow; display: inline;'><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
 						<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</p><p><br></p>
 						<p>Avez-vous des questions concernant votre paiement ou d’autres problèmes ? Répondez simplement à cet e-mail et notre équipe sera ravi d'entrer en contact avec vous.</p><p><br></p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>&nbsp;L’équipe du GProCongrès II</p>";
 			
@@ -203,7 +203,7 @@ class TransactionController extends Controller {
 						<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE: '.$totalAcceptedAmount.'</p>
 						<p>PAGAMENTO ATUALMENTE EM PROCESSO: '.$totalAmountInProcess.'</p>
 						<p>SALDO REMANESCENTE EM DÍVIDA: '.$totalPendingAmount.'</p><p><br></p>
-						<p style="background-color:yellow; display: inline;">OBSERVAÇÃO: Para se qualificar para o desconto "antecipado", o pagamento integral deve ser recebido até 31 de Mayo, 2023</p><p><br></p>
+						<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
 						<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
 						<p>Tens perguntas sobre o seu pagamento ou qualquer outra questão? Simplesmente responda a este e-mail, e nossa equipe estará muito feliz para se conectar com você.&nbsp;</p><p><br></p>
 						<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.&nbsp;</p><p><br></p>
@@ -221,7 +221,7 @@ class TransactionController extends Controller {
 						<div>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</div>
 						<div>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</div>
 						<div>REMAINING BALANCE DUE:'.$totalPendingAmount.'</div><div><br></div>
-						<p style="background-color:yellow; display: inline;">PLEASE NOTE: In order to qualify for the “early bird” discount, full payment must be received on or before May 31, 2023</p><div><br></div>
+						<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
 						<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
 						<div>Do you have questions about your payment or any other issues? Simply respond to this email, and our team will be happy to connect with you.&nbsp;</div><div><br></div>
 						<div>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</div><div><br></div>
@@ -339,7 +339,9 @@ class TransactionController extends Controller {
 				}else{
 				
 					$subject = 'Your payment has been declined';
-					$msg = '<p>Dear '.$result->User->name.',&nbsp;</p><p><br></p><p>You recent payment to GProCongress was declined.</p><p>Here is a current summary of your payment status:</p><p><br></p><p>TOTAL AMOUNT TO BE PAID:'.$result->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p><p><br></p><p>Do you need assistance while you attempt payment again? Please reply to this email and our team members will help you for sure.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp;</p>';
+					$msg = '<p>Dear '.$result->User->name.',&nbsp;</p><p><br></p><p>You recent payment to GProCongress was declined.</p><p>Here is a current summary of your payment status:</p><p><br></p><p>TOTAL AMOUNT TO BE PAID:'.$result->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+					<p>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</p><p><br></p>
+					<p>Do you need assistance while you attempt payment again? Please reply to this email and our team members will help you for sure.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp;</p>';
 				
 				}
 

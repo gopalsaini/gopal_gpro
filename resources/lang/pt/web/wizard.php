@@ -258,5 +258,11 @@ return [
     'Visa_changed_Later' =>'Certifique-se de ter um visto válido, pois esta opção não pode ser alterada posteriormente. Você quer continuar?',
     'your_Visa_Granted' =>'Seu visto foi concedido?',
     'travel_Info' =>'informações de viagem',
+    'Upload_visa_file' =>'Upload an image or pdf of the visa',
+    'View' =>'View',
+    'admin_provide_name1' =>'Você precisará trabalhar com um dos membros de nossa equipe para obter seu visto. A pessoa designada para ajudá-lo é',
+    'admin_provide_name2' =>'Seu endereço de e-mail é',
+    'admin_provide_name3' =>'Entre em contato com eles o mais rápido possível para começar a trabalhar no seu visto.',
+    'Visa_is_Granted' =>'O visto é concedido',
 
 ];

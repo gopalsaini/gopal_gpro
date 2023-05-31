@@ -68,6 +68,7 @@ Route::group([
     Route::post("invite-user","API\PostLoginController@InviteUser");
     Route::post("mobile-invite-user","API\PostLoginController@MobileInviteUser");
     Route::post("visa-is-not-granted","API\PostLoginController@visaIsNotGranted");
+    Route::post("visa-granted","API\PostLoginController@visaIsGranted");
 
 
 });
@@ -130,6 +131,7 @@ Route::get('get-total-member-for-community', 'API\PreLoginController@getTotalMem
 Route::get('sendcheckUserDetailsPendingAmount', 'API\PreLoginController@sendcheckUserDetailsPendingAmount');
 Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmailsToPaymentCompleteDone');
 Route::get('takingApplicationsForExhibitors', 'API\PreLoginController@takingApplicationsForExhibitors');
+Route::get('registrationFeeUntilJune30', 'API\PreLoginController@registrationFeeUntilJune30');
 
 
 

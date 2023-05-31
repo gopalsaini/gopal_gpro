@@ -260,6 +260,12 @@ return [
     'Visa_changed_Later' =>'Please ensure you have a valid Visa as this option can not be changed Later. Do you want to Continue?',
     'your_Visa_Granted' =>'is your Visa Granted',
     'travel_Info' =>'Travel Info',
+    'Upload_visa_file' =>'Upload an image or pdf of the visa',
+    'View' =>'View',
+    'admin_provide_name1' =>'You will need to work with one of our team members to get your visa.  The person assigned to help you is ',
+    'admin_provide_name2' =>'His/her email address is',
+    'admin_provide_name3' =>'Please contact them as soon as possible to begin working on your visa.',
+    'Visa_is_Granted' =>'Visa is Granted',
 
 
 ];

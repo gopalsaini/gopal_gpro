@@ -1354,30 +1354,6 @@ class ProfileController extends Controller
 			
         
     }
-
     
-	public function visaGranted(Request $request){
-	
-		try{
-
-            $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
-        
-            $resultData=json_decode($result->content, true); 
-
-			$passportReject= \App\Models\PassportInfo::where('user_id',$resultData['result']['id'])->first();
-            
-			$passportReject->visa_granted='Yes';
-			$passportReject->save();
-
-			return response(array('message'=>'Vis Granted Successfully'),200);
-				
-			
-		}catch (\Exception $e){
-		
-			return response(array("error"=>true, "message" => $e->getMessage()),200); 
-		
-		}
-	
-	}
 
 }

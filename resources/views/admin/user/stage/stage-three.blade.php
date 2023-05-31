@@ -484,6 +484,7 @@
                                                     <th> Passport Number </th>
                                                     <th> Passport issued by Country </th>
                                                     <th> Category </th>
+                                                    <th> Visa Document </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -501,6 +502,7 @@
                                                     <th> Passport Number </th>
                                                     <th> Passport issued by Country</th>
                                                     <th> Category</th>
+                                                    <th> Visa Document </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -1273,10 +1275,10 @@
                     "data": "support_email"
                 },
                 {
-                    "data": "visa_status"
+                    "data": "status"
                 },
                 {
-                    "data": "status"
+                    "data": "visa_status"
                 },
                 {
                     "data": "action"
@@ -1401,6 +1403,9 @@
                 },
                 {
                     "data": "category"
+                },
+                {
+                    "data": "visa_doc"
                 },
                 {
                     "data": "action"

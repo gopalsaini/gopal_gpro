@@ -51,7 +51,7 @@
                         </ul>
                     </div>
                 </div>
-               
+                <div class="banner-btn"><p >@lang('web/home.subsidy_home') <a href="{{url('pricing')}}" class=" blink fw-bold">@lang('web/home.Click_for_your_cost')</a></p></div>
                 <div class="banner-btn">
                     <ul>
                         @if(!\Session::has('gpro_user'))
@@ -68,7 +68,7 @@
                             <li><a target="_blank" href="{{ asset('admin-assets/images/flyer_2022.pdf') }}" class="main-btn">@lang('web/home.know') @lang('web/home.more')</a></li>
                         @endif
                         
-                        <li><a href="{{ route('donate') }}" class="main-btn" >Donate</a></li>
+                        <li><a href="{{ route('donate') }}" class="main-btn" >@lang('web/app.donate')</a></li>
                     </ul>
                     
                 </div>
