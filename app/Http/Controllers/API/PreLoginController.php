@@ -1339,8 +1339,12 @@ class PreLoginController extends Controller {
 
 							if($transaction->particular_id == '2'){
 
-								\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
-								\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+								$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+								if(!$userDataresult){
+									\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
+									\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+	
+								}
 								
 
 							}else{
@@ -1398,7 +1402,7 @@ class PreLoginController extends Controller {
 
 		$results = \App\Models\Transaction::where('payment_status','0')
 											->where('method','Online')
-											->where('bank_transaction_id','!=','')
+											->where('bank_transaction_id','=',null)
 											->whereDate('updated_at', now()->subDays(1)->setTime(0, 0, 0)->toDateTimeString())
 											->get();
 		
@@ -1604,8 +1608,13 @@ class PreLoginController extends Controller {
 
 							if($transaction->particular_id == '2'){
 
-								\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
-								\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+								$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+								if(!$userDataresult){
+									\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
+									\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+		
+								}
+
 
 							}else{
 
@@ -1663,8 +1672,12 @@ class PreLoginController extends Controller {
 
 						if($transaction->particular_id == '2'){
 
-							\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
-							\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+							$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+							if(!$userDataresult){
+								\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
+								\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
+		
+							}
 
 						}else{
 

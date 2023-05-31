@@ -3422,7 +3422,6 @@ class PostLoginController extends Controller {
 				// $passportInfo->citizenship = $request->post('citizenship');
 				$passportInfo->country_id = $request->post('country_id');
 				$passportInfo->salutation = $request->post('name');
-				$passportInfo->diplomatic_passport = $request->post('diplomatic_passport');
 				$passportInfo->visa_residence = $request->post('visa_residence');
 				$passportInfo->multiple_entry_visa = $request->post('multiple_entry_visa');
 				$passportInfo->multiple_entry_visa_country = $request->post('multiple_entry_visa_country');
@@ -4200,34 +4199,6 @@ class PostLoginController extends Controller {
 				
 				$passportReject->save();
 				
-				$to = $request->user()->email;
-					
-				if($request->user()->language == 'sp'){
-
-					$subject = "Su información de viaje está incompleta.";
-					$msg = '<p style=""><font color="#999999"><span style="font-size: 14px;">Estimado '.$request->user()->name.' '.$request->user()->last_name.'</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">¡Nos alegramos de poder verle en el GProCongress en Ciudad de Panamá, Panamá!</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Para asistir a los delgados con la obtención de visas, necesitamos que nos envíen su información de viaje.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Gracias por enviar la suya.&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Lamentablemente, la información que hemos recibido sobre el viaje está incompleta.&nbsp;&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Por favor, responda a este correo electrónico con la información completa de su viaje para que podamos ayudarle.&nbsp; Una vez recibida, le enviaremos un correo electrónico para confirmar que la información que hemos recibido es correcta.</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">Atentamente,&nbsp;</span></font></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><span style="font-size: 14px;"><br></span></p><p style=""><font color="#999999"><span style="font-size: 14px;">El Equipo GProCOngress II</span></font></p><div><br></div>';
-				
-				}elseif($request->user()->language == 'fr'){
-				
-					$subject = "Les informations sur votre voyage sont incomplètes.";
-					$msg = '<div><font color="#000000"><span style="font-size: 14px;">Cher '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Nous sommes ravis de vous voir au GProCongrès à Panama City, au Panama !</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Pour aider les délégués à obtenir des visas, nous leur demandons de nous soumettre leurs informations de voyage.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Merci d’avoir soumis le vôtre.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Malheureusement, les informations de voyage que nous avons reçues sont incomplètes.&nbsp;&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Veuillez répondre à cet e-mail avec vos informations de voyage complètes, afin que nous puissions vous aider.&nbsp; Dès réception, nous vous enverrons un e-mail pour confirmer que les informations que nous avons reçues sont correctes.&nbsp;</span></font></div><div><span style="font-size: 14px;"><br></span></div><div><font color="#000000"><span style="font-size: 14px;">Cordialement,&nbsp;</span></font></div><div><font color="#000000"><span style="font-size: 14px;">L’équipe du GProCongrès II</span></font></div><div><br></div>';
-		
-				}elseif($request->user()->language == 'pt'){
-				
-					$subject = "Sua informação de viagem está incompleta";
-					$msg = '<div><div><span style="font-size: 14px;">Prezado '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Nós estamos esperançosos em lhe ver no CongressoGPro na Cidade de Panamá, Panamá!</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Para ajudarmos os delegados a obter vistos, estamos solicitando que submetam sua informação de viagem a nós.</span></div><div><span style="font-size: 14px;">Agradecemos por ter submetido a sua informação</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Infelizmente, a informação de viagem que nós recebemos está incompleta.</span></div><div><font color="#24695c"><span style="font-size: 14px;"><br></span></font></div><div><span style="font-size: 14px;">Por favor responda este e-mail com sua informação de viagem completa, para que possamos lhe ajudar. Após o recebimento, nós lhe enviaremos um e-mail para confirmar que a informação que recebemos é correta.&nbsp;</span></div><div><span style="font-size: 14px;">Calorosamente,</span></div><div><span style="font-size: 14px;">Equipe do II CongressoGPro&nbsp;&nbsp;</span></div></div><div><br></div>';
-				
-				}else{
-				
-					$subject = 'Your requested corrections to your visa letter have been received';
-					$msg = '<p>Dear '.$request->user()->name.',&nbsp;</p><p><br></p><p>Thank you for reviewing your visa letter, and for requesting corrections to the letter.  Our team is now working on a revised visa letter for you, and we will send the letter to you as soon as it is completed.</p><p><br></p><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br><br></p><p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-									
-				}
-
-				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
-				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Request Updated successfully');
-
 				return response(array('message'=>'Request Updated successfully'),200);
 					
 			}catch (\Exception $e){

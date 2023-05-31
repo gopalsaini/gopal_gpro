@@ -66,7 +66,11 @@
 
         <div class="form-group">
             <div class="form-line">
-                <label for="inputName">Apply Early Bird <label class="text-danger">*</label></label>
+                @if (strtotime(date('Y-m-d H:i:s')) > strtotime('2023-06-01 05:00:00'))
+                    <label for="inputName">Apply June Offer  <label class="text-danger">*</label></label>
+                @else
+                    <label for="inputName">Apply Early Bird <label class="text-danger">*</label></label>
+                @endif
                 <select name="early_bird" class="form-control" required id="early_bird" @if(date('Y-m-d') == '2023-6-1') disabled @endif>
                     <option value="No" selected >No</option>
                     <option value="Yes">Yes</option>

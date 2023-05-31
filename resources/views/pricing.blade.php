@@ -67,14 +67,18 @@
                     <div class="row">
                         <div class="col-sm-12">
                             <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                                <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
-                                <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
-                                <!-- <a class="list-group-item list-group-item-action" id="list-registration-list" data-bs-toggle="list" href="#list-registration" role="tab" aria-controls="list-registration">Late Registration ends on October 13</a> -->
+
+                                <!-- <a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.Early_Bird')</a> -->
+
+                                <a class="list-group-item list-group-item-action active" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.Regular_Registration')</a>
+
+                                <a class="list-group-item list-group-item-action" id="list-registration-list" data-bs-toggle="list" href="#list-registration" role="tab" aria-controls="list-registration">
+                                    @lang('web/pricing.Late_Registration')</a>
                             </div>
                         </div>
                         <div class="col-sm-12">
                             <div class="tab-content" id="nav-tabContent">
-                                <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                                <div class="tab-pane fade " id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                                     <ul>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
@@ -93,25 +97,32 @@
                                             <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WEB">0</span></span>
                                         </li>
                                     </ul>
-                                    <!-- <p style="color:red"> @lang('web/pricing.early-bird-registration-ends-may')  </p> -->
+                                    <p style="color:red"> @lang('web/pricing.early-bird-registration-ends-may')  </p>
                                 </div>
-                                <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                                <div class="tab-pane fade show active" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
                                     <ul>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB">0</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB">0</span> 
+                                            &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WOEB">0</span></del></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB">0</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB">0</span>
+                                            &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WOEB">0</span></del>
+                                        </span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.deluxe-room-early-bird')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-after-WOEB">0</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-early">0</span>
+                                            &nbsp; &nbsp;<del style="color: red;">$<span class="trainers-after-WOEB">0</span></del>
+                                        </span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_spouse_trainer')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WOEB">0</span></span>
+                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WEB">0</span>
+                                            &nbsp; &nbsp;<del style="color: red;">$<span class="single-trainer-WOEB">0</span></del>
+                                        </span>
                                         </li>
                                     </ul>
                                     <!-- <p style="color:red"> @lang('web/pricing.regular-registration-ends-on-august')  </p> -->
@@ -136,7 +147,7 @@
                                             <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WOEB-registration">0</span></span>
                                         </li>
                                     </ul>
-                                    <!-- <p style="color:red"> @lang('web/pricing.no-registration-or-payment-will-be-accepted-after-october') </p> -->
+                                    <p style="color:red"> @lang('web/pricing.no-registration-or-payment-will-be-accepted-after-october') </p>
                                 </div>
                             </div>
                         </div>
@@ -200,28 +211,33 @@
                     if(SingleRoomWOEB < 1075){
                         SingleRoomWOEB = 1075;
                     }else{
-                        SingleRoomWOEB = ((parseInt(filter[0].base_price)+parseInt(400)));
+                        SingleRoomWOEB = ((parseInt(filter[0].base_price)+parseInt(650)));
                     }
 
 
                     $('.detail-price-wrap').find('.price').html(filter[0].base_price);
                     $('.detail-price-wrap').find('.twin-sharing-WEB').html((parseInt(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room)-parseInt(100))));
-                    $('.detail-price-wrap').find('.twin-sharing-WOEB').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room));
                     $('.detail-price-wrap').find('.single-room-WEB').html(SingleRoomWEB);
-                    $('.detail-price-wrap').find('.single-room-WOEB').html(SingleRoomWOEB);
                     $('.detail-price-wrap').find('.single-trainer-WEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))-parseInt(100)));
-                    $('.detail-price-wrap').find('.single-trainer-WOEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))));
                     $('.detail-price-wrap').find('.early-bird').html(Math.trunc(filter[0].early_bird_cost));
                     $('.detail-price-wrap').find('.trainers-early').html(Math.trunc(filter[0].both_are_trainers_deluxe_room_early_bird));
-                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(Math.trunc(filter[0].
-                    both_are_trainers_deluxe_room_after_early_bird));
-
                     
-                    $('.detail-price-wrap').find('.twin-sharing-WOEB-registration').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room)+parseInt(100));
-                    $('.detail-price-wrap').find('.single-room-WOEB-registration').html(SingleRoomWOEB+parseInt(100));
-                    $('.detail-price-wrap').find('.trainers-after-WOEB-registration').html(Math.trunc(filter[0].
-                    both_are_trainers_deluxe_room_after_early_bird)+parseInt(100));
-                    $('.detail-price-wrap').find('.single-trainer-WOEB-registration').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1350))));
+
+                    $('.detail-price-wrap').find('.twin-sharing-WOEB').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room));
+                 
+                    $('.detail-price-wrap').find('.single-room-WOEB').html(SingleRoomWOEB);
+                    $('.detail-price-wrap').find('.single-trainer-WOEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))));
+                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(parseInt(Math.trunc(filter[0].
+                    both_are_trainers_deluxe_room_after_early_bird)));
+                    
+
+                    $('.detail-price-wrap').find('.twin-sharing-WOEB-registration').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room)+parseInt(250));
+                    $('.detail-price-wrap').find('.single-room-WOEB-registration').html(SingleRoomWOEB+parseInt(250));
+                    $('.detail-price-wrap').find('.single-trainer-WOEB-registration').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1500))));
+                    $('.detail-price-wrap').find('.trainers-after-WOEB-registration').html(parseInt(Math.trunc(filter[0].
+                    both_are_trainers_deluxe_room_after_early_bird))+parseInt(250));
+                 
+
 
                     
                 } else {

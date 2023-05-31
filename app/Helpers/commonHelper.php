@@ -2532,7 +2532,7 @@ class commonHelper{
 			$user = \App\Models\User::where('id',$result->user_id)->first();
 
 			$subject = 'Thank you for your payment!';
-			$msg = '<p>Dear '.$result->name.' ,&nbsp;</p><p><br></p>
+			$msg = '<p>Dear '.$result->name.',&nbsp;</p><p><br></p>
 					<p>Thank you for sponsoring '.$user->name.' '.$user->last_name.' to attend GProCongress II. </p><p><br></p>
 					<p>A payment has been received from you in the amount of $'.$result->amount.' has been approved.  </p><p> <br></p>
 					<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p><p> <br></p>
@@ -3594,7 +3594,7 @@ class commonHelper{
 	public static function countExhibitorPaymentSuccess(){
 		
 		$result = \App\Models\Exhibitors::where('payment_status','Success')->count();
-		if($result < 10){
+		if($result == 10){
 			return true;
 		}else{
 			return false;

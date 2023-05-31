@@ -32,12 +32,9 @@ class PricingController extends Controller
         $pricing = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
         \App\Helpers\commonHelper::setLocale();
 
-        if (date('d-m-Y') === '01-06-2023') {  
-
+        if (strtotime(date('Y-m-d H:i:s')) > strtotime('2023-06-01 05:00:00')) {  
             return view('pricing', compact('pricing'));
-
         } else {
-
             return view('pricing2', compact('pricing'));
         }
 
