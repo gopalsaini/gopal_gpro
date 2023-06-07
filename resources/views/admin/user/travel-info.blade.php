@@ -20,37 +20,6 @@
     </div>
     <div class="row">
 
-
-        @if($result->TravelInfo && $result->TravelInfo->admin_status == '1')
-
-            @if($result->TravelInfo->final_file != '')
-
-                <div class="row step-form">   
-                    <br>
-                    <h4>visa letter file</h4>
-                    <div class="row">
-                        <div class="alphabet-vd-box">
-                            <iframe width="100%" height="400
-                            "  src="{{asset('uploads/file/'.$result->TravelInfo->final_file)}}#toolbar=0" title="Phonics Song for Children (Official Video) Alphabet Song | Letter Sounds | Signing for babies | ASL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </div>
-                    </div>
-                </div>
-
-            @endif
-
-        @else
-            @if($result->TravelInfo && $result->TravelInfo->draft_file != '')
-                <br> 
-                <div class="row">
-                    <div class="alphabet-vd-box">
-                        <iframe width="100%" height="400
-                        "  src="{{asset('uploads/file/'.$result->TravelInfo->draft_file)}}#toolbar=0" title="Phonics Song for Children (Official Video) Alphabet Song | Letter Sounds | Signing for babies | ASL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                </div>
-
-            @endif
-
-        @endif
         <h5 style="margin-bottom:20px;"><b>@lang('admin.personal') @lang('admin.information')</b></h5>
         <div class="row col-sm-12" style="margin-left:10px">
             <div class="col-sm-4"><p><strong>@lang('admin.name') :</strong> {{$result->name}}</p></div>
@@ -113,37 +82,18 @@
                 @endif
             @endif
 
-            <h5 style="margin-top:20px;"><b>@lang('admin.status')</b></h5>
-            <div class="row col-sm-12" style="margin-left:10px">
-                <div class="col-sm-6">
-                    <p><strong>@lang('admin.travel') @lang('admin.information') :</strong> 
-                        @if ($result->TravelInfo)
-                            @if ($result->TravelInfo->user_status == '1')
-                                <div class="span badge rounded-pill pill-badge-success">Verify</div>
-                            @elseif ($result->TravelInfo->user_status == '0')
-                                <div class="span badge rounded-pill pill-badge-danger">Reject</div>
-                            @elseif ($result->TravelInfo->user_status === null)
-                                <div class="span badge rounded-pill pill-badge-warning">In Process</div>
-                            @endif
-                        @else
-                            <div class="span badge rounded-pill pill-badge-warning">Pending</div>
-                        @endif
-                    </p>
-                </div>
-                <div class="col-sm-6">
-                    <p><strong>@lang('admin.admin') @lang('admin.status') :</strong>
-                        @if ($result->TravelInfo)
-                            @if ($result->TravelInfo->admin_status == '1')
-                                <div class="span badge rounded-pill pill-badge-success">Approved</div>
-                            @elseif ($result->TravelInfo->admin_status == '0')
-                                <div class="span badge rounded-pill pill-badge-danger">Reject</div>
-                            @elseif ($result->TravelInfo->admin_status === null)
-                                <div class="span badge rounded-pill pill-badge-warning">Pending</div>
-                            @endif
-                        @endif
-                    </p>
+            
+            <h5 style="margin-top:20px"><b>Do you know who would you like to share your room with?</b></h5>
+            <div class="col-lg-12" style="margin-left:10px">
+                <div class="radio-wrap">
+                    <div class="form__radio-group">
+                        @if($result->share_your_room_with) {{\App\Helpers\commonHelper::getUserNameById($result->share_your_room_with)}}  @else N/A @endif
+                        
+                    </div>
                 </div>
             </div>
+
+
         @else
             <h5>Travel Info Not Available</h5>
         @endif

@@ -997,7 +997,14 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::select('passport_infos.*','users.id as uid')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+
+			$query->where(function ($query2) {
+
+				$query2->where('passport_infos.visa_granted', 'Yes')
+						->orWhere('passport_infos.visa_granted', null);
+			});
+				
 
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
@@ -1008,14 +1015,19 @@ class UserController extends Controller {
 				
 			}
 
-			$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-			$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+			$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+			$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 		
 			$data = $query->offset($start)->limit($limit)->get();
 			
 			$totalData1 = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
 			
+			$totalData1->where(function ($query2) {
+				$query2->where('passport_infos.visa_granted', 'Yes')
+						->orWhere('passport_infos.visa_granted', null);
+			});
+
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
 					$query1->where('users.email', 'like', "%" . request('email') . "%")
@@ -1045,7 +1057,7 @@ class UserController extends Controller {
 			})
 
 			->addColumn('country', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+				return \App\Helpers\commonHelper::getCountry2NameById($data->country_id);
 		    })
 
 			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
@@ -1079,8 +1091,8 @@ class UserController extends Controller {
 			->addColumn('action', function($data){
 				
 				if (\Auth::user()->designation_id == '1') {
-					return '<div style="display:flex"><a href="'.route('admin.user.travel.info', ['id' => $data->id] ).'" title="User travel info" class="btn btn-sm btn-warning m-1"><i class="fas fa-plane"></i></a>
-						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+					return '<div style="display:flex"><a href="'.route('admin.user.travel.info', ['id' => $data->user_id] ).'" title="User travel info" class="btn btn-sm btn-warning m-1"><i class="fas fa-plane"></i></a>
+						<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 				}
 		    })
 
@@ -1729,8 +1741,9 @@ class UserController extends Controller {
 
 	public function travelInfo(Request $request, $id) {
 
+		
 		$result = \App\Models\User::with('TravelInfo')->where([['id', '=', $id]])->first();
-
+		
 		if (!$result) {
 			$request->session()->flash('error','Something went wrong.please try again.');
 			return redirect()->back();
@@ -3573,9 +3586,9 @@ class UserController extends Controller {
 
 					}else{
 
-						$totalPendingAmount = \App\Helpers\commonHelper::userBalance($request->post('user_id'));
-						
-						if($request->post('amount') <= $totalPendingAmount){
+						$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($request->post('user_id'));
+
+						if($request->post('amount') <= $totalAcceptedAmount){
 		
 							$transactionId=strtotime("now").rand(11,99);
 		
@@ -3604,23 +3617,30 @@ class UserController extends Controller {
 			
 							$user = \App\Models\User::where('id',$request->post('user_id'))->first();
 							$user->status = '1';
+							$user->refund_amount = $request->post('amount');
+							$user->reference_number = $request->post('reference_number');
 							$user->save();
 
 							$to = $user->email;
 							$name = $user->name.' '.$user->last_name;
 							$amount = $request->post('amount');
-							$subject = 'Payment refund';
-							$msg = 'Your '.$request->post('amount').' Payment refund successfully';
+							$subject = 'Your GProCongress II refund has been processed.';
+							$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+							<p>We are very sorry that you cannot make it to Panama for the GProCongress this November.   We have received your request for a refund, and it has been processed by our admin team.   You will be receiving your refund shortly.</p>
+							<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+							<p>Warmly,</p><p>GProCongress II Team</p>";
+
 							\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-		
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your GProCongress II refund has been processed.');
+
 							$subject = '[GProCongress II Admin]  Payment refund';
 							$msg = '<p><span style="font-size: 14px;">Hi,&nbsp;</span></p><p><span style="font-size: 14px;">Refund has been initiated for GProCongress II. Here are the candidate details:</span></p><p><span style="font-size: 14px;">Name: '.$name.'</span></p><p><span style="font-size: 14px;">Email: '.$to.'</span></p><p><span style="font-size: 14px;">Refund Amount : '.$amount.'</span></p><p><span style="font-size: 14px;">Regards,</span></p><p><span style="font-size: 14px;">Team GPro</span></p>';
 							\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
 		
 							// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
 		
-							return response(array("error"=>false, "message"=>'Manual payment refund successful'), 200);
+							return response(array("reset"=>true, "error"=>false, "message"=>'Manual payment refund successful'), 200);
 			
 						}else{
 		
@@ -4026,6 +4046,7 @@ class UserController extends Controller {
                 'amount' => 'required|numeric',
                 'user_id' => 'required|numeric',
                 'remark' => 'string|required',
+                'file' => 'required',
             ];
     
             $validator = \Validator::make($request->all(), $rules);
@@ -4049,7 +4070,7 @@ class UserController extends Controller {
 
                         $transactionId=strtotime("now").rand(11,99);
 
-                        $orderId=strtotime("now").rand(11,99);
+                        $orderId=strtotime("now").rand(11,99); $image = '';
         
                         $transaction = new \App\Models\Transaction();
                         $transaction->user_id = $request->post('user_id');
@@ -4061,6 +4082,16 @@ class UserController extends Controller {
                         $transaction->description = $request->post('remark');
                         $transaction->status = '0';
                         $transaction->particular_id = '1';
+
+						if($request->hasFile('file')){
+							$imageData = $request->file('file');
+							$image = 'image_'.strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+							$destinationPath = public_path('/uploads/transaction');
+							$imageData->move($destinationPath, $image);
+		
+							$transaction->file = $image;
+						}
+
                         $transaction->save();
 
                         $Wallet = new \App\Models\Wallet();
@@ -4077,10 +4108,106 @@ class UserController extends Controller {
                         $name = $user->name.' '.$user->last_name;
                         $amount = $request->post('amount');
                         
-                        $subject = 'Transaction Complete';
-                        $msg = 'Your '.$amount.' transaction has been send successfully';
-                        \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, true);
+						$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($user->id, true);
+						$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($user->id, true);
+						$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($user->id, true);
+						
+						if($user->language == 'sp'){
+			
+							$subject = 'Pago recibido. ¡Gracias!';
+							$msg = '<p>Estimado  '.$name.' ,&nbsp;</p><p><br></p>
+									<p>Se ha recibido la cantidad de $'.$amount.' en su cuenta.  </p><p><br></p>
+									<p>Gracias por hacer este pago.</p><p> <br></p>
+									<p>Le notificaremos tan pronto como el pago sea aprobado en nuestro sistema. Hasta entonces, este pago se reflejará como Pago en proceso.</p><p> <br></p>
+									<p>Aquí tiene un resumen actual del estado de su pago:</p>
+									<p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p>
+									<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
+									<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
+									<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+									<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
+									<p style="color"red"><i>IMPORTANTE: Si el pago en su totalidad no se recibe antes del 31 de agosto de 2023, se cancelará su inscripción, su lugar será cedido a otra persona y perderá los fondos que haya abonado con anterioridad.</i></p><p><br></p>
+									<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
+									<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+									<p>Atentamente,</p>
+									<p>El equipo del GProCongress II</p>';
+			
+						}elseif($user->language == 'fr'){
+						
+							$subject = 'Paiement intégral.  Merci !';
+							$msg = '<p>Cher '.$name.' ,&nbsp;</p><p><br></p>
+							<p>Un montant de '.$amount.'$ a été reçu sur votre compte.  </p><p><br></p>
+							<p>Merci d’avoir effectué ce paiement.</p><p> <br></p>
+							<p>Nous vous informerons dès que le paiement sera approuvé dans notre système. Jusqu’à ce moment-là, ce paiement apparaîtra comme un paiement en cours de traitement.</p>
+							<p>Voici un résumé de l’état de votre paiement :</p>
+							<p>MONTANT TOTAL À PAYER:'.$user->amount.'</p>
+							<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
+							<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
+							<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
+							<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
+								<p style="color"red"><i>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31 août 2023, votre inscription sera annulée, votre place sera donnée à quelqu’un d’autre et tous les fonds que vous auriez déjà payés seront perdus.</i></p><p><br></p>
+							<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
+							<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
+							<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+			
+						}elseif($user->language == 'pt'){
+						
+							$subject = 'Pagamento recebido. Obrigado!';
+							$msg = '<p>Prezado  '.$name.' ,&nbsp;</p><p><br></p>
+									<p>Uma quantia de $'.$amount.' foi recebido na sua conta.  </p><p><br></p>
+									<p>Obrigado por ter efetuado esse pagamento.</p><p> <br></p>
+									<p>Iremos notificá-lo assim que o pagamento for aprovado no nosso sistema. Até lá, este pagamento reflectirá como Pagamento em Processo.</p><p> <br></p>
+									<p>Aqui está o resumo do estado do seu pagamento:</p>
+									<p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p>
+									<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
+									<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
+									<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+									<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
+									<p ><i>POR FAVOR NOTE: Se o pagamento integral não for recebido até 31 de Agosto de 2023, a sua inscrição será cancelada, o seu lugar será dado a outra pessoa, e quaisquer valor  previamente pagos por si serão retidos.</i></p><p><br></p>
+									<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
+									<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
+									<p><br></p><p>Calorosamente,</p>
+									<p>A Equipe do II CongressoGPro</p>';
+			
+						}else{
+						
+							$subject = 'Payment received. Thank you!';
+							$msg = '<p>Dear '.$name.' ,&nbsp;</p><p><br></p>
+									<p>An amount of $'.$amount.' has been received on your account.  </p><p><br></p>
+									<p>Thank you for making this payment.</p><p> <br></p>
+									<p>We will notify you as soon as the payment is approved in our system. Until then, this payment will reflect as Payment in Process.</p><p> <br></p>
+									<p>Here is a summary of your payment status:</p>
+									<p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p>
+									<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
+									<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
+									<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+									<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
+									<p ><i>PLEASE NOTE: If full payment is not received by August 31, 2023, your registration will be cancelled, your spot will be given to someone else, and any funds previously paid by you will be forfeited.</i></p><p><br></p>
+									<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
+									<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
+									<p>Warmly,</p>
+									<p>GProCongress II Team</p>';
+			
+						}
+			
+						$files = [
+							public_path('uploads/transaction/'.$image),
+						];
+				
+						\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files) {
+							$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+							$message->subject($subject);
+							$message->to($to);
+							
+							foreach ($files as $file){
+								$message->attach($file);
+							}
+							
+						});
+			
 						\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg,  $subject,);
+			
 
                         $subject = '[GProCongress II Admin] || Payment Received';
                         $msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$name.' has made Payment of&nbsp; '.$amount.' for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Payment Mode: Cash</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
@@ -4810,7 +4937,7 @@ class UserController extends Controller {
 			
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','!=','Approved')->orderBy('updated_at', 'desc');
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','!=','Approved')->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
@@ -4823,19 +4950,19 @@ class UserController extends Controller {
 
 			if($countryType  == 'no-visa-needed'){
 
-				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
 		
 				$query->whereIn('passport_infos.country_id', $doNotRequireVisa);
 
 			}elseif($countryType  == 'visa-needed'){
 
-				$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-		
+				$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+
 				$query->whereIn('passport_infos.country_id', $RequireVisa);
 
 			}elseif($countryType  == 'restricted'){
 
-				$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 		
 				$query->whereIn('passport_infos.country_id', $restricted);
 
@@ -4843,7 +4970,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
@@ -4874,7 +5001,7 @@ class UserController extends Controller {
 			})
 
 			->addColumn('country_id', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+				return \App\Helpers\commonHelper::getCountry2NameById($data->country_id);
 		    })
 
 			->addColumn('passport_valid', function($data){
@@ -4951,6 +5078,17 @@ class UserController extends Controller {
 
 			->addColumn('admin_status', function($data) use($countryType){
 
+						$lang = 'English';
+						if($data->language == 'sp'){
+							$lang = 'Spanish';
+						}elseif($data->language == 'fr'){
+							$lang = 'French';
+						}elseif($data->language == 'pt'){
+							$lang = 'French';
+						}else{
+							$lang = 'English';
+						}
+						
 				if ($data->admin_status == 'Approved') {
 
 					return '<div class="badge rounded-pill pill-badge-success">Approved</div>';
@@ -4963,15 +5101,17 @@ class UserController extends Controller {
 
 					if($countryType  == 'restricted'){
 
+						
+						
 						return '<div style="display:flex">
 						<a data-id="'.$data->id.'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveRestricted">Approve</a>
-								<a data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
+								<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
 							</div>';
 					}else{
 
 						return '<div style="display:flex">
 								<a href="'.url('admin/user/passport/approve/'.$data->id).'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 ">Approve</a>
-								<a data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
+								<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
 							</div>';
 					}
 					
@@ -5002,14 +5142,14 @@ class UserController extends Controller {
 		
 		if ($request->ajax()) {
 			
-			$columns = \Schema::getColumnListing('passport_infos');
+			$columns = \Schema::getColumnListing('users');
 			
 			$limit = $request->input('length');
 			$start = $request->input('start');
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::with('passportUserData')->select('users.*')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
 
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
@@ -5020,13 +5160,13 @@ class UserController extends Controller {
 				
 			}
 
-			$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-			$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+			$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+			$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 		
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+			$totalData1 = \App\Models\User::with('passportUserData')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
@@ -5049,57 +5189,93 @@ class UserController extends Controller {
 			->setOffset($start)
 
 			->addColumn('name', function($data){
-				return $data->salutation.' '.$data->name;
+				return $data->name.' '.$data->last_name;
+		    })
+
+			->addColumn('email', function($data){
+				return $data->email;
 		    })
 
 			->addColumn('passport_no', function($data){
-				return $data->passport_no;
+				if($data['passportUserData']){
+					return $data['passportUserData']->passport_no;
+				}else{
+					return '-';
+				}
+				
 			})
 
 			->addColumn('country_id', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+
+				if($data['passportUserData']){
+					return \App\Helpers\commonHelper::getCountry2NameById($data['passportUserData']->country_id);
+				}else{
+					return '-';
+				}
+				
 		    })
 
 			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
 
-				if(in_array($data->country_id,$doNotRequireVisa)){
+				if($data['passportUserData']){
 
-					return 'No Visa Needed';
+					if(in_array($data['passportUserData']->country_id,$doNotRequireVisa)){
 
-				}elseif(in_array($data->country_id,$RequireVisa)){
+						return 'No Visa Needed';
+	
+					}elseif(in_array($data['passportUserData']->country_id,$RequireVisa)){
+	
+						return 'Visa Needed';
+						
+					}elseif(in_array($data['passportUserData']->country_id,$restricted)){
+	
+						return 'Restricted Country';
+	
+					}
 
-					return 'Visa Needed';
-					
-				}elseif(in_array($data->country_id,$restricted)){
+				}else{
 
-					return 'Restricted Country';
-
+					return '-';
 				}
+
+				
 				
 		    })
 
 			->addColumn('status', function($data) {
 
-				if ($data->admin_status == 'Pending') {
+				if($data['passportUserData']){
 
-					return '<div class="badge rounded-pill pill-badge-success">Passport info Submitted</div>';
+					if ($data['passportUserData']->admin_status == 'Pending') {
 
-				} else if ($data->admin_status == 'Approved') {
+						return '<div class="badge rounded-pill pill-badge-success">Passport info Submitted</div>';
+	
+					} else if ($data['passportUserData']->admin_status == 'Approved') {
+	
+						if($data['passportUserData']->visa_granted == 'Yes'){
+							return '<div class="badge rounded-pill pill-badge-success">Visa Granted</div>';
+						}elseif($data['passportUserData']->visa_granted == 'No'){
 
-					if($data->visa_granted == 'Yes'){
-						return '<div class="badge rounded-pill pill-badge-success">Visa Granted</div>';
-					}elseif($data->visa_granted == 'No'){
-						return '<div class="badge rounded-pill pill-badge-danger">Visa Not Granted</div>';
+							if($data['reference_number'] != null){
+								return '<div class="badge rounded-pill pill-badge-success">Money Refunded</div>';
+							}
+
+							return '<div class="badge rounded-pill pill-badge-danger">Visa Not Granted</div>';
+
+						}else{
+							return '<div class="badge rounded-pill pill-badge-success">Documents Issued</div>';
+						}
+						
+					} else if ($data['passportUserData']->admin_status === 'Decline') {
+	
+						return '<div class="badge rounded-pill pill-badge-danger">Passport Info Returned</div>';
+						
 					}else{
-						return '<div class="badge rounded-pill pill-badge-success">Documents Issued</div>';
+	
+						return '<div class="badge rounded-pill pill-badge-warning">Passport Info Pending</div>';
 					}
-					
-				} else if ($data->admin_status === 'Decline') {
 
-					return '<div class="badge rounded-pill pill-badge-danger">Passport Info Returned</div>';
-					
 				}else{
-
 					return '<div class="badge rounded-pill pill-badge-warning">Passport Info Pending</div>';
 				}
 
@@ -5110,7 +5286,7 @@ class UserController extends Controller {
 				
 				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex">
-						<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 				}
 		    })
 
@@ -5147,19 +5323,19 @@ class UserController extends Controller {
 
 			if($countryType  == 'no-visa-needed'){
 
-				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
 		
 				$query->whereIn('passport_infos.country_id', $doNotRequireVisa);
 
 			}elseif($countryType  == 'visa-needed'){
 
-				$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-		
+				$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+
 				$query->whereIn('passport_infos.country_id', $RequireVisa);
 
 			}elseif($countryType  == 'restricted'){
 
-				$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 		
 				$query->whereIn('passport_infos.country_id', $restricted);
 
@@ -5203,7 +5379,7 @@ class UserController extends Controller {
 			})
 
 			->addColumn('country_id', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+				return \App\Helpers\commonHelper::getCountry2NameById($data->country_id);
 		    })
 
 			->addColumn('financial_letter', function($data){
@@ -5223,7 +5399,7 @@ class UserController extends Controller {
 			
 			->addColumn('valid_residence_country', function($data){
 
-				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
 		
 
 				if(in_array($data->country_id,$doNotRequireVisa)){
@@ -5307,7 +5483,7 @@ class UserController extends Controller {
 				
 			}
 
-			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 	
 			$query->whereIn('passport_infos.country_id', $restricted);
 
@@ -5349,7 +5525,7 @@ class UserController extends Controller {
 			})
 
 			->addColumn('country_id', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+				return \App\Helpers\commonHelper::getCountry2NameById($data->country_id);
 		    })
 
 			->addColumn('financial_letter', function($data){
@@ -5369,7 +5545,7 @@ class UserController extends Controller {
 			
 			->addColumn('valid_residence_country', function($data){
 
-				$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
 		
 
 				if(in_array($data->country_id,$doNotRequireVisa)){
@@ -5451,11 +5627,11 @@ class UserController extends Controller {
 			$start = $request->input('start');
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-			$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-			$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+			$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+			$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 		
-			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.reference_number','users.refund_amount')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
 					$query1->where('users.email', 'like', "%" . request('email') . "%")
@@ -5500,7 +5676,7 @@ class UserController extends Controller {
 			})
 
 			->addColumn('country_id', function($data){
-				return \App\Helpers\commonHelper::getCountryNameById($data->country_id);
+				return \App\Helpers\commonHelper::getCountry2NameById($data->country_id);
 		    })
 			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
 
@@ -5521,18 +5697,59 @@ class UserController extends Controller {
 		    })
 
 			
+			->addColumn('visa_not_granted_docs', function($data){
+				
+				return '<a style="color:blue !important" href="'.asset('/uploads/visa_file/'.$data->visa_not_granted_docs).'" target="_blank"> View Doc</a>';
+				
+		    })
+
 			->addColumn('remark', function($data){
 				
 					return $data->visa_not_ranted_comment;
 				
 		    })
 
+			->addColumn('Refund', function($data){
+				
+				if (\Auth::user()->designation_id == '1') {
+
+					if($data->reference_number == null){
+
+						$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($data->user_id, true);
+						$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($data->user_id, true);
+
+						return '<div style="display:flex">
+								<a data-pending_amount="'.$totalPendingAmount.'" data-accepted_mount="'.$totalAcceptedAmount.'" data-id="'.$data->user_id.'" data-type="1" title="Refund Money" class="btn btn-sm btn-outline-success m-1 moneyRefunded" id="staticBackdropButton">Refund Money</a>
+								</div>';
+					}else{
+
+						return '<div class="span badge rounded-pill pill-badge-success">Money Refunded</div>';
+					}
+
+					
+				}
+				
+		    })
+
+			
+			->addColumn('refund_amount', function($data){
+				
+				return $data->refund_amount;
+			
+			})
+
+			->addColumn('reference_number', function($data){
+				
+				return $data->reference_number;
+			
+			})
+
 			->addColumn('action', function($data){
 				
 				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex">
 								<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
-							</div>';
+								</div>';
 				}
 				
 		    })
@@ -5548,9 +5765,9 @@ class UserController extends Controller {
 
 	public function PassportInfoApprove(Request $request,$id){
 	
-		$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-		$RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-		$restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247'];
+		$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+		$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+		$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247'];
 
 		try{
 
@@ -5559,63 +5776,63 @@ class UserController extends Controller {
 			$passportApprove->admin_status='Approved';
 			
 			$passportApprove->save();
+			
 			$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
+
 
 			if(in_array($passportApprove->country_id,$doNotRequireVisa)){
 
 				\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');  // 2 letter acc, bank
 
+				if($user->language == 'sp'){
+
+					$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
+					$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
+					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
+					<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}elseif($user->language == 'fr'){
+				
+					$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
+					$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
+					<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+					<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}elseif($user->language == 'pt'){
+				
+					$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
+					$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
+					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+					<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}else{
+				
+					$subject = 'Please submit your flight information for GProCongress II';
+					$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
+					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+					<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+									
+				}
+
+				\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
+		
+
 			}elseif(in_array($passportApprove->country_id,$RequireVisa)){
 
-				
 				\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);  // 4 letter
 
-				
 			}elseif(in_array($passportApprove->country_id,$restricted)){
 
 				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$id);  // 4 letter
 
 			}
-
-			if($user->language == 'sp'){
-
-				$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
-				$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-				<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
-				<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
-				<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
-	
-			}elseif($user->language == 'fr'){
-			
-				$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
-				$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-				<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
-				<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
-				<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
-	
-			}elseif($user->language == 'pt'){
-			
-				$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
-				$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-				<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
-				<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
-				<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
-	
-			}else{
-			
-				$subject = 'Please submit your flight information for GProCongress II';
-				$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-				<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
-				<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
-				<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-								
-			}
-
-			\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-
-			\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-			\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
-	
 
 			return redirect()->back()->with(['5fernsadminsuccess'=>"Passport information approved successfully."]);
 			
@@ -5783,33 +6000,60 @@ class UserController extends Controller {
 
 				$url = '<a href="'.url('passport-info').'">Click here</a>';
 				$to = $user->email;
+
+				$remark = $request->post('remark');
 				
 				$name = $user->name.' '.$user->last_name;
 
 				if($user->language == 'sp'){
 
-					$subject = "Por favor, aclare la información de su pasaporte para GProCongress II";
-					$msg = '<p>Estimado '.$name.',</p><p><br></p><p>Recibimos la información de su pasaporte. Sin embargo, la información proporcionada no coincide con la que figura en la copia del pasaporte que nos envió. Por favor, vuelva a verificar su pasaporte y envíenos la información correcta respondiendo a este correo electrónico.&nbsp;&nbsp;</p><p><br></p><p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.&nbsp;</p><p><br></p><p><br></p><p>Atentamente,</p><p>Equipo GProCongress II</p><div><br></div>';
+					$subject = "Por favor vuelva a enviar su información para GProCongress II.";
+					$msg = "<p>Estimado ".$name.",</p><p><br></p>
+					<p>Recibimos la información que envió. Sin embargo, hay un problema con lo que envió. A continuación siga leyendo para obtener una descripción del problema. Le pedimos que vuelva a enviar su información de acuerdo con el párrafo a continuación.</p>
+					<p style='background-color:yellow; display: inline;'>".$remark."</p>
+					<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miembros de nuestro equipo, por favor responda a este correo.</p>
+					<p>Por favor continúe orando junto con nosotros por el proceso de su visa. Dios primero, nos vemos en Panamá este noviembre.</p>
+					<p>Juntos busquemos al Señor por el GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio.</p>
+					<p>Atentamente,</p><p>Equipo GProCongress II</p><div><br></div>";
 				
 				}elseif($user->language == 'fr'){
 				
-					$subject = "Veuillez clarifier les informations relatives à votre passeport pour GProCongress II.";
-					$msg = "<p>Cher '.$name.',</p><p><br></p><p>Nous avons reçu les informations relatives à votre passeport.  Cependant, les informations écrites que vous avez fournies ne correspondent pas à celles qui figurent sur la copie du passeport que vous avez fournie.  Veuillez vérifier à nouveau votre passeport et nous envoyer les informations correctes en répondant à cet e-mail.&nbsp;&nbsp;</p><p><br></p><p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p><p><br></p><p>Chaleureusement,</p><p>L'équipe de GProCongress II </p><div><br></div>";
+					$subject = "Veuillez soumettre à nouveau vos informations pour GProCongress II.";
+					$msg = "<p>Cher ".$name.",</p><p><br></p>
+					<p>Nous avons reçu les informations que vous avez soumises. Cependant, il y a un problème avec ce que vous avez soumis. Vous trouverez ci-dessous une description du problème. Nous vous demandons de soumettre à nouveau vos informations conformément au paragraphe ci-dessous.</p>
+					<p style='background-color:yellow; display: inline;'>".$remark."</p>
+					<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet e-mail.</p>
+					<p>Continuez à prier avec nous pour la procédure d'obtention de votre visa. Si Dieu le veut, nous vous verrons au Panama en novembre.</p>
+					<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+					<p>Cordialement,</p><p>L'équipe de GProCongress II</p><div><br></div>";
 
 				}elseif($user->language == 'pt'){
 				
-					$subject = "Por favor,  verifique as informações do seu passaporte para o GProCongresso II.";
-					$msg = '<p>Caro '.$name.',</p><p><br></p><p>Recebemos as informações do seu passaporte. No entanto, as informações escritas que você forneceu não correspondem ao que está na cópia do passaporte que você forneceu. Verifique seu passaporte e nos envie  as informações corretas respondendo a este e-mail..&nbsp;</p><p><br><p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail</p></p><p><br></p><p>Calorosamente,</p><p>Equipe GProCongresso II</p><div><br></div>';				
+					$subject = "Por favor, reenvie suas informações para o GProCongresso II.";
+					$msg = "<p>Caro ".$name.",</p><p><br></p>
+					<p>Recebemos as informações que você enviou. No entanto, há um problema com o que você enviou. Veja abaixo uma descrição do problema. Pedimos que reenvie suas informações de acordo com o parágrafo abaixo.</p>
+					<p style='background-color:yellow; display: inline;'>".$remark."</p>
+					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.</p>
+					<p>Por favor, continue orando conosco pelo seu processo de visto. Se Deus quiser, nos veremos no Panamá em Novembro.</p>
+					<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+					<p>Calorosamente,</p><p>Equipe GProCongresso II</p><div><br></div>";
+
 				}else{
 				
-					$subject = 'Please clarify your passport information for GProCongress II';
-					$msg = '<p>Dear '.$name.',</p><p><br></p><p>We received your passport information.  However, the written information that you provided does not match what is on the copy of the passport that you provided.  Please double check your passport, and send us the correct information by replying to this email.&nbsp;</p><p><br><p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p></p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+					$subject = 'Please resubmit your information for GProCongress II';
+					$msg = "<p>Dear ".$name.",</p><p><br></p>
+					<p>We received the information that you submitted.  However, there is a problem with what you submitted.  See below for a description of the problem.  We are asking you to resubmit your information according to the paragraph below.</p>
+					<p style='background-color:yellow; display: inline;'>".$remark."</p>
+					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+					<p>Please continue to pray along with us for your visa process. God willing, we will see you in Panama this November.</p>
+					<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+					<p>Warmly,</p><p>GProCongress II Team</p><div><br></div>";
 										
 				}
 
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Please clarify your passport information for GProCongress II');
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Please resubmit your information for GProCongress II');
 
 				return response(array('message'=>'Passport Information declined successfully'),200);
 					
@@ -5861,48 +6105,7 @@ class UserController extends Controller {
 
 				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$passportApprove->id);  // 4 letter
 
-				if($user->language == 'sp'){
-
-					$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
-					$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
-					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
-					<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
-		
-				}elseif($user->language == 'fr'){
-				
-					$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
-					$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
-					<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
-					<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
-		
-				}elseif($user->language == 'pt'){
-				
-					$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
-					$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
-					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
-					<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
-		
-				}else{
-				
-					$subject = 'Please submit your flight information for GProCongress II';
-					$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
-					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
-					<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
-									
-				}
-	
-				\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-	
-				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
-		
-	
 				return response(array('message'=>'Passport Information Approved successfully'),200);
-					
 				
 			}catch (\Exception $e){
 			
@@ -6103,7 +6306,7 @@ class UserController extends Controller {
 
 		->addColumn('action', function($data){
 
-			if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
+			if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()  == false){
 
 				if($data->profile_status != 'Pending'){
 

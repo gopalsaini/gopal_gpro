@@ -239,7 +239,7 @@ return [
     'Passport_Copy' =>'Copie du passeport',
     'Visa_Residence_Proof_for' =>'Visa/Preuve de résidence pour',
     'Visa_Wizard' =>'Visa-Wizard',
-    'Gpro_Visa_Eligibility_Wizard' =>'Gpro Visa Eligibility Wizard',
+    'Gpro_Visa_Eligibility_Wizard' =>'VISA WIZARD (ASSISTANT DE VISA)',
     'List_of_countries_that_make_European_Union' =>"Liste des pays qui composent l'Union européenne",
     'Admin_Status' =>'Statut administratif',
     'Passport_Information_Declined_By_admin' =>"Informations sur le passeport refusées par l'administrateur",
@@ -265,5 +265,7 @@ return [
     'admin_provide_name2' =>'Son e-mail est',
     'admin_provide_name3' =>'Veuillez le contacter dès que possible pour commencer à travailler sur votre visa.',
     'Visa_is_Granted' =>'Le visa est accordé',
+    'Visa_wizard_desc' =>"Veuillez utiliser cet assistant de visa pour déterminer si vous avez besoin d'un visa pour entrer au Panama pour le Congrès en novembre.  Répondez aux questions, et l'assistant vous dira ce dont vous avez besoin!  Si vous avez besoin d'un visa, vous devez entamer les démarches pour l'obtenir dès que possible.  Vous ne pouvez commencer le processus de visa qu'après avoir entièrement payé vos frais d'inscription au Congrès, veuillez donc effectuer votre paiement aujourd'hui.  Veuillez NE PAS acheter vos billets d'avion avant d'avoir obtenu votre visa.",
+    'Visa_wizard_note' =>"VEUILLEZ NOTER: Cet assistant de visa n'est qu'un guide basé sur les informations disponibles pour RREACH au moment où il a été préparé.  Vous devriez consulter votre propre ambassade pour confirmer que les informations données par l'assistant sont correctes.",
 
 ];

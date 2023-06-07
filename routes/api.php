@@ -132,6 +132,8 @@ Route::get('sendcheckUserDetailsPendingAmount', 'API\PreLoginController@sendchec
 Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmailsToPaymentCompleteDone');
 Route::get('takingApplicationsForExhibitors', 'API\PreLoginController@takingApplicationsForExhibitors');
 Route::get('registrationFeeUntilJune30', 'API\PreLoginController@registrationFeeUntilJune30');
+Route::get('june-offer-stage01', 'API\PreLoginController@juneOfferStage01');
+Route::get('passportInfoSubmitEmail', 'API\PreLoginController@passportInfoSubmitEmail');
 
 
 

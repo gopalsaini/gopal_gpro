@@ -3377,17 +3377,23 @@ class PostLoginController extends Controller {
 
 				if($request->passport_valid == 'Yes'){
 
-					if(count($request->post('countries')) != count($request->file('countries_doc'))){
+					if (is_array($request->post('countries'))) {
+						$countries = $request->post('countries');
+					}else{
+						$countries = json_decode($request->post('countries'));
+					}
+
+					if(count(($countries)) != count($request->file('countries_doc'))){
 
 						return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'countries_doc_not_match_with_select_countries')), 403);
 					}
 
 				}	
 				
-				// if(count($request->file('passport_copy'))>2){
+				if(count($request->file('passport_copy'))>2){
 
-				// 	return response(array("error" => true, "message" => 'File upload allow only 2'), 403);
-				// }	
+					return response(array("error" => true, "message" => 'File upload allow only 2'), 403);
+				}	
 				
 				$passportInfoData =  \App\Models\PassportInfo::where('user_id','!=',$request->user()->id)->where('passport_no',$request->post('passport_no'))->first();
 				if($passportInfoData){
@@ -3440,7 +3446,13 @@ class PostLoginController extends Controller {
 				
 				if($request->passport_valid == 'Yes'){
 
-					foreach($request->post('countries') as $key=>$countries){
+					if (is_array($request->post('countries'))) {
+						$countries1 = $request->post('countries');
+					}else{
+						$countries1 = json_decode($request->post('countries'));
+					}
+
+					foreach($countries1 as $key=>$countries){
 
 						$images = $request->file('countries_doc')[$key];
 						
@@ -4191,7 +4203,7 @@ class PostLoginController extends Controller {
 			
 		];
 
-		$validator = \Validator::make($request->json()->all(), $rules);
+		$validator = \Validator::make($request->all(), $rules);
             
 		if ($validator->fails()) {
 			$message = [];
@@ -4210,7 +4222,16 @@ class PostLoginController extends Controller {
 
 				$passportReject= \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
 
-				$passportReject->visa_not_ranted_comment=$request->json()->get('remark');
+				if($request->hasFile('visa_not_granted_docs')){
+                    $imageData = $request->file('visa_not_granted_docs');
+                    $file = strtotime(date('Y-m-d H:i:s')).'.'.$imageData->getClientOriginalExtension();
+                    $destinationPath = public_path('/uploads/visa_file');
+                    $imageData->move($destinationPath, $file);
+
+                    $passportReject->visa_not_granted_docs = $file;
+                }
+
+				$passportReject->visa_not_ranted_comment=$request->post('remark');
 				$passportReject->visa_granted='No';
 				
 				$passportReject->save();
@@ -4263,7 +4284,46 @@ class PostLoginController extends Controller {
 				$passportReject->visa_granted='Yes';
 				
 				$passportReject->save();
+
+				if($request->user()->language == 'sp'){
+
+					$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
+					$msg = '<p>Estimado  '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
+					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
+					<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}elseif($request->user()->language == 'fr'){
 				
+					$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
+					$msg = '<p>Cher  '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
+					<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+					<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}elseif($request->user()->language == 'pt'){
+				
+					$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
+					$msg = '<p>Caro '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
+					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+					<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
+		
+				}else{
+				
+					$subject = 'Please submit your flight information for GProCongress II';
+					$msg = '<p>Dear '.$request->user()->name.' '.$request->user()->last_name.',&nbsp;</p><p><br></p>
+					<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
+					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+					<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+									
+				}
+
+				\App\Helpers\commonHelper::emailSendToUser($request->user()->email, $subject, $msg);
+
+				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
+		
 				return response(array('message'=>'Request Updated successfully'),200);
 					
 			}catch (\Exception $e){

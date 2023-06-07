@@ -31,6 +31,38 @@
     .list-group-item+.list-group-item {
         border-top-width: 1px !important;
     }
+
+    .price_blink{
+        text-decoration: blink;
+        letter-spacing: 0.5px;
+        animation: Color1 1s linear infinite;
+    }
+
+    @keyframes Color1 {
+        0% {
+            color: #000;
+        }
+
+        20% {
+            color: #ffce54;
+            ; }
+
+        40% {
+            color: #000;
+        }
+
+        60% {
+            color: #ffce54;
+        }
+
+        80% {
+            color: #000;
+        }
+
+        100% {
+            color: #ffce54;
+        }
+    }
 </style>
 @endpush
 
@@ -39,7 +71,7 @@
         <div class="step-form">
             <h4 class="inner-head inner-head-2">@lang('web/pricing.pricing')</h4>
             <h5 style="text-align:center;padding-top: 50px;">@lang('web/pricing.description')</h5>
-            <h5 style="text-align:center;padding-top: 20px;">@lang('web/home.subsidy_home')</h5>
+            <h5 style="text-align:center;padding-top: 20px;" class=" price_blink fw-bold">@lang('web/home.subsidy_home')</h5>
             <form class="row">
                 <div class="col-lg-12 price-country-bg position-relative">
                     <label for="">@lang('web/pricing.country-name')<span class="loader"></span></label>

@@ -407,11 +407,11 @@
                                     @php $query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('user_id',$result->id)->first(); @endphp
                                     @if($query)
                                     <tr>
-                                        <td colspan="5"><strong>Given Name :</strong> {{$query->name}}</td>
-                                        <td colspan="10"><strong>Last Name :</strong> {{$query->salutation}}</td>
+                                        <td colspan="5"><strong>Given Name :</strong> {{$query->salutation}}</td>
+                                        <td colspan="10"><strong>Last Name :</strong> {{$query->name}}</td>
                                     </tr>
                                     <tr>
-                                        <td colspan="15"><strong>Country :</strong> {{\App\Helpers\commonHelper::getCountryNameById($query['country_id'])}}</td>
+                                        <td colspan="15"><strong>Country :</strong> {{\App\Helpers\commonHelper::getCountry2NameById($query['country_id'])}}</td>
                                     </tr>
                                     <tr>
                                         <td colspan="5"><strong>Passport No :</strong> {{$query['passport_no']}}</td>
@@ -432,56 +432,62 @@
                                     <tr >
                                         <td colspan="15">
                                             <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence') : </p>
-                                            <p>{{$query['visa_residence']}}</p>
+                                            @if($query['visa_residence'] == Null) <p>N/A</p> @else <p>{{$query['visa_residence']}}</p> @endif
+                                            
                                         </td>
                                     </tr>
                                     
                                     <tr>
                                         <td colspan="15">
                                             <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence_yes') : </p>
-                                            <p>{{$query['multiple_entry_visa_country']}}</p>
+                                            @if($query['multiple_entry_visa_country'] == Null) <p>N/A</p> @else <p>{{$query['multiple_entry_visa_country']}}</p> @endif
                                         </td>
                                     </tr>
                                     
                                     <tr>
                                         <td colspan="15">
                                             <p >@lang('web/wizard.step_7_question') : </p>
-                                            <p>{{$query['multiple_entry_visa']}}</p>
+                                            @if($query['multiple_entry_visa'] == Null)<p>N/A</p> @else <p>{{$query['multiple_entry_visa']}}</p>@endif
                                         </td> 
                                     </tr> 
                                     
                                     <tr>
                                         <td colspan="15">
-                                            <p>@lang('web/wizard.is_your_passport_valid_until') : {{$query['passport_valid']}}</p>
+                                            <p>@lang('web/wizard.is_your_passport_valid_until') : 
+                                            @if($query['passport_valid'] == Null)<p>N/A</p> @else{{$query['passport_valid']}}</p>@endif
                                         </td>
                                     </tr>
                                     
                                     <tr>
                                         <td colspan="15">
                                             <p >@lang('web/wizard.What_countries_among') : </p>
-                                            @if($query['valid_residence_country'] != '')
+                                            @if($query['valid_residence_country'] != Null)
+                                                @if($query['valid_residence_country'] != '')
 
-                                                @php $countryDoc = json_decode($query['valid_residence_country'],true); @endphp
+                                                    @php $countryDoc = json_decode($query['valid_residence_country'],true); @endphp
 
-                                                @foreach($countryDoc as $key=>$img)
+                                                    @foreach($countryDoc as $key=>$img)
 
-                                                    @if($img['id'] == '15')
-                                                        <p>Visa/Residence Proof for 
-                                                            <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
-                                                                <span>&nbsp;  European Union  </span>
-                                                            </a>
-                                                        </p>&nbsp; &nbsp; &nbsp;
-                                                    @else
+                                                        @if($img['id'] == '15')
+                                                            <p>Visa/Residence Proof for 
+                                                                <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                                                    <span>&nbsp;  European Union  </span>
+                                                                </a>
+                                                            &nbsp; &nbsp; &nbsp;
+                                                        @else
 
-                                                        <p>Visa/Residence Proof for 
-                                                            <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
-                                                                <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
-                                                            </a>
-                                                        </p>&nbsp; &nbsp; &nbsp;
+                                                            Visa/Residence Proof for 
+                                                                <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
+                                                                    <span>&nbsp;  {{\App\Helpers\commonHelper::getCountry2NameById($img['id'])}}  </span>
+                                                                </a>
+                                                            </p>&nbsp; &nbsp; &nbsp;
 
-                                                    @endif
-                                                    
-                                                @endforeach
+                                                        @endif
+                                                        
+                                                    @endforeach
+                                                @endif
+                                            @else 
+                                                <p>N/A</p>
                                             @endif
                                         </td>
                                     </tr>
@@ -491,51 +497,56 @@
                                         <td colspan="15">
                                             @php 
                                     
-                                                $doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-                                                $RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-                                                $restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+                                                $doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+                                                $RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+                                                $restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
                     
                                             @endphp
                                             <p><strong>Document Required for Visa/ Travel  :</strong></p>
                                             <br>
-                                            @if(in_array($query['country_id'],$doNotRequireVisa))
-                                                
-                                                <div class="step-next" style="display: flex;">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter </a>
-                                                    <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
-                                                    @if($query['financial_letter'])
-                                                        <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
-                                                    @endif
-                                                </div>
+                                            @if($query['financial_spanish_letter'] != Null)
 
-                                            @elseif(in_array($query['country_id'],$RequireVisa))
-                                               
-                                                <div class="step-next">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
-                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
-                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
-                                                    <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                @if(in_array($query['country_id'],$doNotRequireVisa))
                                                     
-                                                    @if($query['financial_letter'])
-                                                        <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
-                                                    @endif
-                                                </div>
+                                                    <div class="step-next" style="display: flex;">
+                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter </a>
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                        @if($query['financial_letter'])
+                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                        @endif
+                                                    </div>
 
-                                            @elseif(in_array($query['country_id'],$restricted))
-                                               
-                                                <div class="step-next">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
-                                                    <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
-                                                    <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
-                                                    <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
-                                                    
-                                                    @if($query['financial_letter'])
-                                                        <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
-                                                    @endif
-                                                </div>
+                                                @elseif(in_array($query['country_id'],$RequireVisa))
                                                 
-                                                <p class="pt-5">You will need to work with one of our team members to get your visa.  The person assigned to help you is <b>{{$query['admin_provide_name']}}</b>. His/her email address is <b>{{$query['admin_provide_email']}}</b>. Please contact them as soon as possible to begin working on your visa.</p>
+                                                    <div class="step-next">
+                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
+                                                        <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
+                                                        <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                        
+                                                        @if($query['financial_letter'])
+                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                        @endif
+                                                    </div>
 
+                                                @elseif(in_array($query['country_id'],$restricted))
+                                                
+                                                    <div class="step-next">
+                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
+                                                        <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
+                                                        <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                        
+                                                        @if($query['financial_letter'])
+                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                        @endif
+                                                    </div>
+                                                    
+                                                    <p class="pt-5" style='background-color:yellow; display: inline;'>You will need to work with one of our team members to get your visa.  The person assigned to help you is <b >{{$query['admin_provide_name']}}</b>. His/her email address is <b >{{$query['admin_provide_email']}}</b>. Please contact them as soon as possible to begin working on your visa.</p>
+
+                                                @endif
+                                            @else 
+                                                <p>N/A</p>
                                             @endif
 
                                         </td>
@@ -547,8 +558,16 @@
                                         <td colspan="15">
                                             
                                             <p class=""><strong>Is your Visa Granted :</strong> {{$query['visa_granted']}}</p>
-                                            @if($query['visa_granted'] == 'No')
+                                            @if($query['visa_granted'] != Null)
+                                                @if($query['visa_granted'] == 'No')
+                                                    <p class="pt-1"><strong>Uploaded File</strong> : <a target="_blank" class="text-blue btn btn-primary" href="{{asset('uploads/visa_file/'.$query['visa_not_granted_docs'])}}">View</a></p>
+                                                @else
+                                                    <p class="pt-1"><strong>Uploaded File</strong> : <a target="_blank" class="text-blue btn btn-primary" href="{{asset('uploads/visa_file/'.$query['visa_granted_docs'])}}">View</a></p>
+                                                @endif
                                                 <p class="pt-1"><strong>Comment</strong> : {{$query['visa_not_ranted_comment']}}</p>
+                                            @else
+
+                                                <p> N/A</p>
                                             @endif
                                         </td>
                                             
@@ -578,31 +597,6 @@
                             data-bs-parent="#accordionoc" style="">
                             <div class="row">
                             @if($result->TravelInfo)
-
-                            
-                                @if($result->TravelInfo && $result->TravelInfo->admin_status == '1')
-
-                                    @if($result->TravelInfo->final_file != '')
-                                        
-                                        <h5 style="margin-top:20px; "><b>Visa letter file</b></h5>
-                                        <div class="row col-sm-12" style="margin-left:10px">
-                                            <a href="{{asset('uploads/file/'.$result->TravelInfo->final_file)}}" target="_blank">View File</a>
-                                        </div>
-                                    
-                                    @endif
-
-                                @else
-                                    @if($result->TravelInfo && $result->TravelInfo->draft_file != '')
-                                        
-                                        <h5 style="margin-top:20px; "><b>Draft visa letter file</b></h5>
-                                        <div class="row col-sm-12" style="margin-left:10px">
-                                            <a href="{{asset('uploads/file/'.$result->TravelInfo->draft_file)}}" target="_blank">View File</a>
-                                        </div>
-
-
-                                    @endif
-
-                                @endif
 
                                 @if($result->TravelInfo->flight_details)
                                     @php 
@@ -669,38 +663,37 @@
                                         @endforeach
                                     @endif
                                 @endif
-
-                                <h5 style="margin-top:20px;"><b>@lang('admin.status')</b></h5>
-                                <div class="row col-sm-12" style="margin-left:10px">
-                                    <div class="col-sm-6">
-                                        <p><strong>@lang('admin.travel') @lang('admin.information') :</strong> 
-                                            @if ($result->TravelInfo)
-                                                @if ($result->TravelInfo->user_status == '1')
-                                                    <div class="span badge rounded-pill pill-badge-success">Verify</div>
-                                                @elseif ($result->TravelInfo->user_status == '0')
-                                                    <div class="span badge rounded-pill pill-badge-danger">Reject</div>
-                                                @elseif ($result->TravelInfo->user_status === null)
-                                                    <div class="span badge rounded-pill pill-badge-warning">In Process</div>
-                                                @endif
-                                            @else
-                                                <div class="span badge rounded-pill pill-badge-warning">Pending</div>
-                                            @endif
-                                        </p>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <p><strong>@lang('admin.admin') @lang('admin.status') :</strong>
-                                            @if ($result->TravelInfo)
-                                                @if ($result->TravelInfo->admin_status == '1')
-                                                    <div class="span badge rounded-pill pill-badge-success">Approved</div>
-                                                @elseif ($result->TravelInfo->admin_status == '0')
-                                                    <div class="span badge rounded-pill pill-badge-danger">Reject</div>
-                                                @elseif ($result->TravelInfo->admin_status === null)
-                                                    <div class="span badge rounded-pill pill-badge-warning">Pending</div>
-                                                @endif
-                                            @endif
-                                        </p>
+                                
+                                <h5 style="margin-top:20px"><b>@lang('web/app.LogisticsInformation')</b></h5>
+                                <div class="col-lg-12" style="margin-left:10px">
+                                    <label for="">@lang('web/home.spouse-picked-by-gpro-from-airport')</label>
+                                    <div class="radio-wrap">
+                                        <div class="form__radio-group">
+                                            @if($result->TravelInfo->logistics_picked) {{$result->TravelInfo->logistics_picked}} @endif
+                                            
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="col-lg-12" style="margin-left:10px">
+                                    <label for="">@lang('web/home.spouse-dropped-by-gpro-at-airport')</label>
+                                    <div class="radio-wrap">
+                                        <div class="form__radio-group">
+                                            @if($result->TravelInfo->logistics_dropped) {{$result->TravelInfo->logistics_dropped}} @endif
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h5 style="margin-top:20px"><b>Do you know who would you like to share your room with?</b></h5>
+                                <div class="col-lg-12" style="margin-left:10px">
+                                    <div class="radio-wrap">
+                                        <div class="form__radio-group">
+                                            @if($result->share_your_room_with) {{\App\Helpers\commonHelper::getUserNameById($result->share_your_room_with)}}  @else N/A @endif
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+
                             @else
                                 <h5>Travel Info Not Available</h5>
                             @endif

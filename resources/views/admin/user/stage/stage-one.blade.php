@@ -243,7 +243,7 @@
                 <div class="modal-body px-3">
                     <input type="hidden" name="user_id" value="0" required />
                     <input type="hidden" name="status" required />
-
+                    
                     <div class="row" >
                         <div class="col-sm-12">
                             <div id="ProfileStatusData"></div>
@@ -541,6 +541,7 @@
             $('#exampleModalCenter').modal('show');
             $('input[name="user_id"]').val(id);
             $('input[name="status"]').val(status);
+            
             return false;
 
         });

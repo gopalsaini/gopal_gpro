@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->hasOne(\App\Models\TravelInfo::class);
 
     }
+    public function passportUserData(){
+
+        return $this->hasOne(\App\Models\PassportInfo::class);
+
+    }
     public function SessionInfo(){
 
         return $this->hasMany(\App\Models\SessionInfo::class);

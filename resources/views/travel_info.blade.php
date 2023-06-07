@@ -150,7 +150,7 @@
                     <ul>
                         <li>
                             <p>@lang('web/wizard.which_country_passport_will_you_use_to_come_to_panama')</p>
-                            <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountryNameById($passportInfo['country_id'])}}</span>
+                            <span>:&nbsp; &nbsp; &nbsp; {{\App\Helpers\commonHelper::getCountry2NameById($passportInfo['country_id'])}}</span>
                         </li>
                         <li>
                             <p>@lang('web/wizard.is_this_a_diplomatic_passport') : {{$passportInfo['diplomatic_passport'] == 'Yes' ? Lang::get('web/wizard.yes') : Lang::get('web/wizard.no')}}</p>
@@ -222,7 +222,7 @@
 
                                             <p>@lang('web/wizard.Visa_Residence_Proof_for')
                                                 <a href="{{ asset('/uploads/passport/'.$img['file']) }}" target="_blank"> 
-                                                    <span>&nbsp;  {{\App\Helpers\commonHelper::getCountryNameById($img['id'])}}  </span>
+                                                    <span>&nbsp;  {{\App\Helpers\commonHelper::getCountry2NameById($img['id'])}}  </span>
                                                 </a>
                                             </p>&nbsp; &nbsp; &nbsp;
 
@@ -259,9 +259,9 @@
 
                                 @php 
                                 
-                                    $doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
-                                    $RequireVisa = ['1','3','4'.'16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','149','150','151','160','161','166','167','51','183','195','198','215','203','208','206','210','217','218','224','226','229','236','245','246']; 
-                                    $restricted = ['38','45','56'.'62'.'174','83','95','101','131','42','50','212','220','239','247']; 
+                                    $doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+                                    $RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246']; 
+                                    $restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 		
                                 @endphp
                                     @if(in_array($passportInfo['country_id'],$doNotRequireVisa))
@@ -353,7 +353,7 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <p>@lang('web/wizard.admin_provide_name1') <b>{{$passportInfo['admin_provide_name']}}</b>.@lang('web/wizard.admin_provide_name2') <b>{{$passportInfo['admin_provide_email']}}</b>. @lang('web/wizard.admin_provide_name3')</p><br>
+                                        <p style='background-color:yellow; display: inline;'>@lang('web/wizard.admin_provide_name1') <b >{{$passportInfo['admin_provide_name']}}</b>.@lang('web/wizard.admin_provide_name2') <b >{{$passportInfo['admin_provide_email']}}</b>. @lang('web/wizard.admin_provide_name3')</p><br>
                                         <div class="col-lg-12">
                         
                                             @if($passportInfo['visa_granted'] == null)
@@ -508,17 +508,7 @@
                                 <div class="step-form" style="display: none">
                                     <h4>@lang('web/home.verify-visa-letter-info')</h4>
                                     
-                                        @if ($result && $result['draft_file'] != '')
-                                            <br> <br> <br>
-                                            <!-- <div class="row">
-                                                <div class="alphabet-vd-box">
-                                                    <iframe width="100%" height="400
-                                                    "  src="{{asset('uploads/file/'.$result['draft_file'])}}#toolbar=0" title="Phonics Song for Children (Official Video) Alphabet Song | Letter Sounds | Signing for babies | ASL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                                </div>
-                                            </div> -->
-                                                
-
-                                        @elseif($result)
+                                        @if($result)
 
                                             <div class="row">
                                                 
@@ -570,31 +560,6 @@
                                             </div>
                                         @endif
 
-                                    <!-- <div class="information-wrapper">
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                <div class="step-next">
-                                                    <a href="{{ url('travel-information-verify') }}" class="main-btn bg-gray-btn" >@lang('web/home.confirm')</a>
-                                                
-                                                </div>
-                                            </div>
-                                            
-                                            @if ($result && $result['final_file'] == NULL)
-                                                <div class="col-lg-3">
-                                                    <div class="step-next">
-                                                        <button type="button" id="TravelInfoEdit" class="main-btn bg-gray-btn" >@lang('web/home.edit')</button>
-                                                    </div>
-                                                </div>
-                                                <div class="col-lg-3">
-                                                    <div class="step-next">
-                                                        <a href="{{asset('uploads/file/'.$result['draft_file'])}}" target="_blank" class="main-btn bg-gray-btn" >Download</a>
-                                                    
-                                                    </div>
-                                                </div>
-                                            
-                                            @endif
-                                            
-                                        </div> -->
                                     </div>
                                 @endif
 
@@ -713,7 +678,7 @@
                                             </div>
                                         </div>
 
-                                        @if($SpouseInfoResult)
+                                        <!-- @if($SpouseInfoResult)
 
                                             <div class="arrival">
                                                 <h5><b>@lang('web/home.arrival-to-panama-spouse') </b> - &nbsp; &nbsp; Spouse Name: {{$SpouseInfoResult->name}} {{$SpouseInfoResult->last_name}}</h5>
@@ -785,7 +750,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif -->
                                         <div class="arrival">
                                             <h5><b>@lang('web/home.emergency-contact-info') -</b></h5>
                                         </div>
@@ -847,45 +812,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if($SpouseInfoResult)
-
-                                                <h5>@lang('web/home.spouse'): {{$SpouseInfoResult->name}} {{$SpouseInfoResult->last_name}}</h5>
-                                                <div class="information-wrapper">
-                                                    <div class="row">
-                                                        <div class="col-lg-4">
-                                                            <div class="info">
-                                                                <div class="information-box">
-                                                                    <h6>@lang('web/home.check-in-date-time')</h6>
-                                                                    <p>@lang('web/home.user-information-only')</p>
-                                                                    <p>
-                                                                        <span>
-                                                                            <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M9.35 1.2H8.25V0.6C8.25 0.44087 8.19205 0.288258 8.08891 0.175736C7.98576 0.0632141 7.84587 0 7.7 0C7.55413 0 7.41424 0.0632141 7.31109 0.175736C7.20795 0.288258 7.15 0.44087 7.15 0.6V1.2H3.85V0.6C3.85 0.44087 3.79205 0.288258 3.68891 0.175736C3.58576 0.0632141 3.44587 0 3.3 0C3.15413 0 3.01424 0.0632141 2.91109 0.175736C2.80795 0.288258 2.75 0.44087 2.75 0.6V1.2H1.65C1.21239 1.2 0.792709 1.38964 0.483274 1.72721C0.173839 2.06477 0 2.52261 0 3V10.2C0 10.6774 0.173839 11.1352 0.483274 11.4728C0.792709 11.8104 1.21239 12 1.65 12H9.35C9.78761 12 10.2073 11.8104 10.5167 11.4728C10.8262 11.1352 11 10.6774 11 10.2V3C11 2.52261 10.8262 2.06477 10.5167 1.72721C10.2073 1.38964 9.78761 1.2 9.35 1.2ZM9.9 10.2C9.9 10.3591 9.84205 10.5117 9.73891 10.6243C9.63576 10.7368 9.49587 10.8 9.35 10.8H1.65C1.50413 10.8 1.36424 10.7368 1.26109 10.6243C1.15795 10.5117 1.1 10.3591 1.1 10.2V6H9.9V10.2ZM9.9 4.8H1.1V3C1.1 2.84087 1.15795 2.68826 1.26109 2.57574C1.36424 2.46321 1.50413 2.4 1.65 2.4H2.75V3C2.75 3.15913 2.80795 3.31174 2.91109 3.42426C3.01424 3.53679 3.15413 3.6 3.3 3.6C3.44587 3.6 3.58576 3.53679 3.68891 3.42426C3.79205 3.31174 3.85 3.15913 3.85 3V2.4H7.15V3C7.15 3.15913 7.20795 3.31174 7.31109 3.42426C7.41424 3.53679 7.55413 3.6 7.7 3.6C7.84587 3.6 7.98576 3.53679 8.08891 3.42426C8.19205 3.31174 8.25 3.15913 8.25 3V2.4H9.35C9.49587 2.4 9.63576 2.46321 9.73891 2.57574C9.84205 2.68826 9.9 2.84087 9.9 3V4.8Z" fill="#58595B"/>
-                                                                            </svg>&nbsp; &nbsp; 12/10/2022 &nbsp; &nbsp; 10:20 am
-                                                                        </span>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-4">
-                                                            <div class="info">
-                                                                <div class="information-box">
-                                                                    <h6>@lang('web/home.check-in-date-time')</h6>
-                                                                    <p>@lang('web/home.user-information-only')</p>
-                                                                    <p>
-                                                                        <span>
-                                                                            <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M9.35 1.2H8.25V0.6C8.25 0.44087 8.19205 0.288258 8.08891 0.175736C7.98576 0.0632141 7.84587 0 7.7 0C7.55413 0 7.41424 0.0632141 7.31109 0.175736C7.20795 0.288258 7.15 0.44087 7.15 0.6V1.2H3.85V0.6C3.85 0.44087 3.79205 0.288258 3.68891 0.175736C3.58576 0.0632141 3.44587 0 3.3 0C3.15413 0 3.01424 0.0632141 2.91109 0.175736C2.80795 0.288258 2.75 0.44087 2.75 0.6V1.2H1.65C1.21239 1.2 0.792709 1.38964 0.483274 1.72721C0.173839 2.06477 0 2.52261 0 3V10.2C0 10.6774 0.173839 11.1352 0.483274 11.4728C0.792709 11.8104 1.21239 12 1.65 12H9.35C9.78761 12 10.2073 11.8104 10.5167 11.4728C10.8262 11.1352 11 10.6774 11 10.2V3C11 2.52261 10.8262 2.06477 10.5167 1.72721C10.2073 1.38964 9.78761 1.2 9.35 1.2ZM9.9 10.2C9.9 10.3591 9.84205 10.5117 9.73891 10.6243C9.63576 10.7368 9.49587 10.8 9.35 10.8H1.65C1.50413 10.8 1.36424 10.7368 1.26109 10.6243C1.15795 10.5117 1.1 10.3591 1.1 10.2V6H9.9V10.2ZM9.9 4.8H1.1V3C1.1 2.84087 1.15795 2.68826 1.26109 2.57574C1.36424 2.46321 1.50413 2.4 1.65 2.4H2.75V3C2.75 3.15913 2.80795 3.31174 2.91109 3.42426C3.01424 3.53679 3.15413 3.6 3.3 3.6C3.44587 3.6 3.58576 3.53679 3.68891 3.42426C3.79205 3.31174 3.85 3.15913 3.85 3V2.4H7.15V3C7.15 3.15913 7.20795 3.31174 7.31109 3.42426C7.41424 3.53679 7.55413 3.6 7.7 3.6C7.84587 3.6 7.98576 3.53679 8.08891 3.42426C8.19205 3.31174 8.25 3.15913 8.25 3V2.4H9.35C9.49587 2.4 9.63576 2.46321 9.73891 2.57574C9.84205 2.68826 9.9 2.84087 9.9 3V4.8Z" fill="#58595B"/>
-                                                                            </svg>&nbsp; &nbsp; 12/10/2022 &nbsp; &nbsp; 10:20 am
-                                                                        </span>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
-
+                                            
                                             
                                                 <h4>@lang('web/app.LogisticsInformation')</h4>
                                                 <div class="col-lg-12">
@@ -1006,95 +933,6 @@
                                             </div>
                                         </div>
 
-                                        @if($SpouseInfoResult)
-
-                                            <div class="arrival">
-                                                <h5><b>@lang('web/home.arrival-to-panama-spouse') </b> - &nbsp; &nbsp; Spouse Name: {{$SpouseInfoResult->name}} {{$SpouseInfoResult->last_name}}</h5>
-                                                <p>@lang('web/home.flight-details-landing-in-panama')</p>
-                                            </div>
-                                            <div class="information-wrapper">
-                                                <div class="row">
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.flight-number') <span style="color:red">*</span></h6>
-                                                                <p><input type="text" name="spouse_arrival_flight_number" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_flight_number']) {{$travelInfo['result']['spouse_arrival_flight_number']}} @endif" placeholder="@lang('web/home.flight-number')" class="mt-2" ></p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.start-location') <span style="color:red">*</span></h6>
-                                                                <p><input type="text" name="spouse_arrival_start_location" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_start_location']) {{$travelInfo['result']['spouse_arrival_start_location']}} @endif" placeholder="@lang('web/home.start-location')" class="mt-2" ></p>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.date-time-of-departure') <span style="color:red">*</span></h6>
-                                                                <p><input type="datetime-local" name="spouse_arrival_date_departure" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_date_departure']) {{$travelInfo['result']['spouse_arrival_date_departure']}} @endif" class="mt-2" ></p>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.date-time-of-arrival') <span style="color:red">*</span></h6>
-                                                                <p><input type="datetime-local" name="spouse_arrival_date_arrival" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_date_arrival']) {{$travelInfo['result']['spouse_arrival_date_arrival']}} @endif" class="mt-2" ></p>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="arrival">
-                                                <h5><b>@lang('web/home.departure-from-panama') -</b></h5>
-                                            </div>
-                                            <div class="information-wrapper">
-                                                <div class="row">
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.flight-number') <span style="color:red">*</span></h6>
-                                                                <p><input type="text" name="spouse_departure_flight_number" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_flight_number']) {{$travelInfo['result']['spouse_departure_flight_number']}} @endif" placeholder="@lang('web/home.flight-number')" class="mt-2" ></p>
-                                                        
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.start-location') <span style="color:red">*</span></h6>
-                                                                <p><input type="text" name="spouse_departure_start_location" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_start_location']) {{$travelInfo['result']['spouse_departure_start_location']}} @endif" placeholder="@lang('web/home.start-location')" class="mt-2" ></p>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.date-time-of-departure') <span style="color:red">*</span></h6>
-                                                                <p><input type="datetime-local" name="spouse_departure_date_departure" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_date_departure']) {{$travelInfo['result']['spouse_departure_date_departure']}} @endif" class="mt-2" ></p>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3">
-                                                        <div class="info">
-                                                            <div class="information-box">
-                                                                <h6>@lang('web/home.date-time-of-arrival') <span style="color:red">*</span></h6>
-                                                                <p><input type="datetime-local" name="spouse_departure_date_arrival" required value="@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_date_arrival']) {{$travelInfo['result']['spouse_departure_date_arrival']}} @endif" class="mt-2" ></p>
-
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
                                         <div class="arrival">
                                             <h5><b>@lang('web/home.emergency-contact-info') -</b></h5>
                                         </div>
@@ -1158,44 +996,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if($SpouseInfoResult)
-
-                                                <h5>@lang('web/home.spouse') @lang('web/home.name'): {{$SpouseInfoResult->name}} {{$SpouseInfoResult->last_name}}</h5>
-                                                <div class="information-wrapper">
-                                                    <div class="row">
-                                                        <div class="col-lg-4">
-                                                            <div class="info">
-                                                                <div class="information-box">
-                                                                    <h6>@lang('web/home.check-in-date-time')</h6>
-                                                                    <p>@lang('web/home.user-information-only')</p>
-                                                                    <p>
-                                                                        <span>
-                                                                            <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M9.35 1.2H8.25V0.6C8.25 0.44087 8.19205 0.288258 8.08891 0.175736C7.98576 0.0632141 7.84587 0 7.7 0C7.55413 0 7.41424 0.0632141 7.31109 0.175736C7.20795 0.288258 7.15 0.44087 7.15 0.6V1.2H3.85V0.6C3.85 0.44087 3.79205 0.288258 3.68891 0.175736C3.58576 0.0632141 3.44587 0 3.3 0C3.15413 0 3.01424 0.0632141 2.91109 0.175736C2.80795 0.288258 2.75 0.44087 2.75 0.6V1.2H1.65C1.21239 1.2 0.792709 1.38964 0.483274 1.72721C0.173839 2.06477 0 2.52261 0 3V10.2C0 10.6774 0.173839 11.1352 0.483274 11.4728C0.792709 11.8104 1.21239 12 1.65 12H9.35C9.78761 12 10.2073 11.8104 10.5167 11.4728C10.8262 11.1352 11 10.6774 11 10.2V3C11 2.52261 10.8262 2.06477 10.5167 1.72721C10.2073 1.38964 9.78761 1.2 9.35 1.2ZM9.9 10.2C9.9 10.3591 9.84205 10.5117 9.73891 10.6243C9.63576 10.7368 9.49587 10.8 9.35 10.8H1.65C1.50413 10.8 1.36424 10.7368 1.26109 10.6243C1.15795 10.5117 1.1 10.3591 1.1 10.2V6H9.9V10.2ZM9.9 4.8H1.1V3C1.1 2.84087 1.15795 2.68826 1.26109 2.57574C1.36424 2.46321 1.50413 2.4 1.65 2.4H2.75V3C2.75 3.15913 2.80795 3.31174 2.91109 3.42426C3.01424 3.53679 3.15413 3.6 3.3 3.6C3.44587 3.6 3.58576 3.53679 3.68891 3.42426C3.79205 3.31174 3.85 3.15913 3.85 3V2.4H7.15V3C7.15 3.15913 7.20795 3.31174 7.31109 3.42426C7.41424 3.53679 7.55413 3.6 7.7 3.6C7.84587 3.6 7.98576 3.53679 8.08891 3.42426C8.19205 3.31174 8.25 3.15913 8.25 3V2.4H9.35C9.49587 2.4 9.63576 2.46321 9.73891 2.57574C9.84205 2.68826 9.9 2.84087 9.9 3V4.8Z" fill="#58595B"/>
-                                                                            </svg>&nbsp; &nbsp; 12/10/2022 &nbsp; &nbsp; 10:20 am
-                                                                        </span>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-lg-4">
-                                                            <div class="info">
-                                                                <div class="information-box">
-                                                                    <h6>@lang('web/home.check-in-date-time')</h6>
-                                                                    <p>@lang('web/home.user-information-only')</p>
-                                                                    <p>
-                                                                        <span>
-                                                                            <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M9.35 1.2H8.25V0.6C8.25 0.44087 8.19205 0.288258 8.08891 0.175736C7.98576 0.0632141 7.84587 0 7.7 0C7.55413 0 7.41424 0.0632141 7.31109 0.175736C7.20795 0.288258 7.15 0.44087 7.15 0.6V1.2H3.85V0.6C3.85 0.44087 3.79205 0.288258 3.68891 0.175736C3.58576 0.0632141 3.44587 0 3.3 0C3.15413 0 3.01424 0.0632141 2.91109 0.175736C2.80795 0.288258 2.75 0.44087 2.75 0.6V1.2H1.65C1.21239 1.2 0.792709 1.38964 0.483274 1.72721C0.173839 2.06477 0 2.52261 0 3V10.2C0 10.6774 0.173839 11.1352 0.483274 11.4728C0.792709 11.8104 1.21239 12 1.65 12H9.35C9.78761 12 10.2073 11.8104 10.5167 11.4728C10.8262 11.1352 11 10.6774 11 10.2V3C11 2.52261 10.8262 2.06477 10.5167 1.72721C10.2073 1.38964 9.78761 1.2 9.35 1.2ZM9.9 10.2C9.9 10.3591 9.84205 10.5117 9.73891 10.6243C9.63576 10.7368 9.49587 10.8 9.35 10.8H1.65C1.50413 10.8 1.36424 10.7368 1.26109 10.6243C1.15795 10.5117 1.1 10.3591 1.1 10.2V6H9.9V10.2ZM9.9 4.8H1.1V3C1.1 2.84087 1.15795 2.68826 1.26109 2.57574C1.36424 2.46321 1.50413 2.4 1.65 2.4H2.75V3C2.75 3.15913 2.80795 3.31174 2.91109 3.42426C3.01424 3.53679 3.15413 3.6 3.3 3.6C3.44587 3.6 3.58576 3.53679 3.68891 3.42426C3.79205 3.31174 3.85 3.15913 3.85 3V2.4H7.15V3C7.15 3.15913 7.20795 3.31174 7.31109 3.42426C7.41424 3.53679 7.55413 3.6 7.7 3.6C7.84587 3.6 7.98576 3.53679 8.08891 3.42426C8.19205 3.31174 8.25 3.15913 8.25 3V2.4H9.35C9.49587 2.4 9.63576 2.46321 9.73891 2.57574C9.84205 2.68826 9.9 2.84087 9.9 3V4.8Z" fill="#58595B"/>
-                                                                            </svg>&nbsp; &nbsp; 12/10/2022 &nbsp; &nbsp; 10:20 am
-                                                                        </span>
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
+                                           
 
                                             <div class="arrival">
                                                 <p class="note">@lang('web/home.travel_note')</p>
@@ -1213,7 +1014,7 @@
                                                                         ->where(function ($query) {
                                                                             $query->where('added_as',null)
                                                                                 ->orWhere('added_as', '=', 'Group');
-                                                                        })->where('id','!=',$resultData['result']['id'])->where('stage','>','2')->orderBy('updated_at', 'desc')->get();
+                                                                        })->where('id','!=',$resultData['result']['id'])->where('stage','>','2')->where('gender',$resultData['result']['gender'])->orderBy('updated_at', 'desc')->get();
                                                                 @endphp
 
                                                                 @if($users)
@@ -1231,14 +1032,14 @@
                                                     <label for="">@lang('web/home.spouse-picked-by-gpro-from-airport')</label>
                                                     <div class="radio-wrap">
                                                         <div class="form__radio-group">
-                                                            <input type="radio" name="logistics_picked" id="yes" value="Yes" class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_picked'] == 'Yes') checked @endif>
-                                                            <label class="form__label-radio" for="yes">
+                                                            <input type="radio" name="logistics_picked" id="picked_yes" value="Yes" class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_picked'] == 'Yes') checked @endif>
+                                                            <label class="form__label-radio" for="picked_yes">
                                                             <span class="form__radio-button"></span> @lang('web/ministry-details.yes')
                                                             </label>
                                                         </div>
                                                         <div class="form__radio-group">
-                                                            <input type="radio" name="logistics_picked" id="no" value="No" class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_picked'] == 'No') checked @endif>
-                                                            <label class="form__label-radio" for="no">
+                                                            <input type="radio" name="logistics_picked" id="picked_no" value="No" class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_picked'] == 'No') checked @endif>
+                                                            <label class="form__label-radio" for="picked_no">
                                                             <span class="form__radio-button"></span> @lang('web/ministry-details.no')
                                                             </label>
                                                         </div>
@@ -1248,14 +1049,14 @@
                                                     <label for="">@lang('web/home.spouse-dropped-by-gpro-at-airport')</label>
                                                     <div class="radio-wrap">
                                                         <div class="form__radio-group">
-                                                            <input type="radio" name="logistics_dropped" id="yes2" value="Yes"  class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_dropped'] == 'Yes') checked @endif>
-                                                            <label class="form__label-radio" for="yes2">
+                                                            <input type="radio" name="logistics_dropped" id="picked_yes2" value="Yes"  class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_dropped'] == 'Yes') checked @endif>
+                                                            <label class="form__label-radio" for="picked_yes2">
                                                             <span class="form__radio-button"></span> @lang('web/ministry-details.yes')
                                                             </label>
                                                         </div>
                                                         <div class="form__radio-group">
-                                                            <input type="radio" name="logistics_dropped" id="no2" value="No" class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_dropped'] == 'Yes') checked @endif>
-                                                            <label class="form__label-radio" for="no2">
+                                                            <input type="radio" name="logistics_dropped" id="picked_no2" value="No" class="form__radio-input" @if($travelInfo['result'] && $travelInfo['result']['logistics_dropped'] == 'Yes') checked @endif>
+                                                            <label class="form__label-radio" for="picked_no2">
                                                             <span class="form__radio-button"></span> @lang('web/ministry-details.no')
                                                             </label>
                                                         </div>
@@ -1330,9 +1131,12 @@
                     </div>
                     <br><br>
                     <div class="modal-body" style="padding-top:0px">
-                        <label for="inputName">@lang('web/app.enter') @lang('web/home.comment')  <label class="text-danger">*</label></label>
-                        <form id="PassportVisaIsNotGranted" action="{{ route('visa-is-not-granted') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                        <form id="PassportVisaIsNotGranted" action="{{ url('api/visa-is-not-granted') }}" method="post" enctype="multipart/form-data" autocomplete="off">
                             @csrf
+                            <label for="inputName" class="d-flex">Visa Not Granted Proof &nbsp;&nbsp;<label class="text-danger">(@lang('web/app.Accepted_File_Formats'))*</label></label>
+                            <input type="file"  name="visa_not_granted_docs" accept="image/*, .jpg,.png,.pdf" id="visa_not_granted_docs" class="">
+                            <br>                                         
+                            <label for="inputName" class="d-flex pt-5">@lang('web/app.enter') @lang('web/home.comment') &nbsp;&nbsp; <label class="text-danger"> *</label></label>
                             <textarea name="remark" id="remark" cols="10" rows="5" class="form-control" required></textarea>
                             <div class="modal-footer">
                                 
@@ -1359,7 +1163,7 @@
                         <label for="inputName">@lang('web/wizard.Visa_changed_Later') </label>
                         <form id="PassportVisaIsGranted" action="{{ url('api/visa-granted') }}" method="post" enctype="multipart/form-data" autocomplete="off">
                             @csrf
-                            <label class="d-flex">@lang('web/wizard.Upload_visa_file') <label class="text-danger">*</label></label>
+                            <label class="d-flex">@lang('web/wizard.Upload_visa_file') &nbsp;&nbsp;<label class="text-danger">(@lang('web/app.Accepted_File_Formats'))*</label></label>
                             <input type="hidden"  name="type" id="type" value="Yes" required class="form-control">
                             <input type="file"  name="visa_file" id="visa_file" required class="">
                             <div class="modal-footer">
@@ -1543,6 +1347,9 @@
             data: new FormData(this),
             dataType: 'json',
             type: 'post',
+            headers: {
+                "Authorization": "Bearer {{\Session::get('gpro_user')}}"
+            },
             beforeSend: function() {
                 submitButton(formId, btnhtml, true);
             },

@@ -123,5 +123,6 @@ return [
     'exhibition_fee' => "Payer vos frais d’exposition de 800 USD",
     'Credit_Card_Payment' => "Credit Card Payment",
     'Exhibitor' => "Exhibidor",
+    'Accepted_File_Formats' => "Formats de fichier acceptés - jpg, png et pdf",
 
 ];

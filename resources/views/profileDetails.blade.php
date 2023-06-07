@@ -188,8 +188,8 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
-                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
+                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.Regular_Registration')</a>
+                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.Late_Registration')</a>
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
@@ -197,15 +197,14 @@
                                             <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
                                                 <ul>
                                                     <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB blink">0</span></span>
+                                                        <p><span class=""><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB blink">0</span> 
+                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WOEB">0</span></del></span>
                                                     </li>
                                                     <li>
-                                                        <!-- //Vineet - 080123 -->
-                                                        <!-- <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single-room')</p> -->
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <!-- //Vineet - 080123 -->
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB blink">0</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB blink">0</span>
+                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WOEB">0</span></del>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -213,14 +212,11 @@
                                                 <ul>
                                                     <li>
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB blink">0</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB-registration blink">0</span></span>
                                                     </li>
                                                     <li>
-                                                        <!-- //Vineet - 080123 -->
-                                                        <!-- <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single-room')</p> -->
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <!-- //Vineet - 080123 -->
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB blink">0</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB-registration blink">0</span></span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -382,21 +378,23 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list1" data-bs-toggle="list" href="#list-home1" role="tab" aria-controls="list-home">@lang('web/pricing.with_early_bird')</a>
-                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list1" data-bs-toggle="list" href="#list-profile1" role="tab" aria-controls="list-profile">@lang('web/pricing.with_out_early_bird')</a>
+                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list1" data-bs-toggle="list" href="#list-home1" role="tab" aria-controls="list-home">@lang('web/pricing.Regular_Registration')</a>
+                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list1" data-bs-toggle="list" href="#list-profile1" role="tab" aria-controls="list-profile">@lang('web/pricing.Late_Registration')</a>
                                         </div>
                                     </div>
                                     <div class="col-sm-12">
                                         <div class="tab-content" id="nav-tabContent">
-                                            <div class="tab-pane fade show active" id="list-home1" role="tabpanel" aria-labelledby="list-home-list1">
+                                            <div class="tab-pane fade show active mt-5" id="list-home1" role="tabpanel" aria-labelledby="list-home-list1">
                                                 <ul>
                                                     <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB">0.00</span></span>
+                                                        <p><span class=""><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB blink">0</span> 
+                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WOEB">0</span></del></span>
                                                     </li>
                                                     <li>
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB">0.00</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB blink">0</span>
+                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WOEB">0</span></del>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -404,11 +402,11 @@
                                                 <ul>
                                                     <li>
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB">0.00</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB-registration blink">0</span></span>
                                                     </li>
                                                     <li>
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB">0.00</span></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB-registration blink">0</span></span>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -723,9 +721,8 @@
             setTimeout(() => {
                 
                 if (filter.length > 0) {
-                   
+
                     var SingleRoomWEB = ((parseInt(filter[0].base_price)+parseInt(400)));
-                  
                     if(SingleRoomWEB < 1075){
                         SingleRoomWEB = 975;
                     }else{
@@ -736,23 +733,38 @@
                     if(SingleRoomWOEB < 1075){
                         SingleRoomWOEB = 1075;
                     }else{
-                        SingleRoomWOEB = ((parseInt(filter[0].base_price)+parseInt(400)));
+                        SingleRoomWOEB = ((parseInt(filter[0].base_price)+parseInt(650)));
                     }
 
 
-                    $('.detail-price-wrap').find('.price').html(Math.trunc(filter[0].base_price));
-                    $('.detail-price-wrap').find('.twin-sharing-WEB').html((parseInt(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room))-parseInt(100)));
-                    $('.detail-price-wrap').find('.twin-sharing-WOEB').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room));
+                    $('.detail-price-wrap').find('.price').html(filter[0].base_price);
+                    $('.detail-price-wrap').find('.twin-sharing-WEB').html((parseInt(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room)-parseInt(100))));
                     $('.detail-price-wrap').find('.single-room-WEB').html(SingleRoomWEB);
-                    $('.detail-price-wrap').find('.single-room-WOEB').html(SingleRoomWOEB);
                     $('.detail-price-wrap').find('.single-trainer-WEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))-parseInt(100)));
-                    $('.detail-price-wrap').find('.single-trainer-WOEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))));
                     $('.detail-price-wrap').find('.early-bird').html(Math.trunc(filter[0].early_bird_cost));
-                    $('.detail-price-wrap').find('.trainers-early').html(Math.trunc(Math.trunc(filter[0].both_are_trainers_deluxe_room_early_bird)));
-                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(Math.trunc(filter[0].both_are_trainers_deluxe_room_after_early_bird));
-                } else {
+                    $('.detail-price-wrap').find('.trainers-early').html(Math.trunc(filter[0].both_are_trainers_deluxe_room_early_bird));
+
+
+                    $('.detail-price-wrap').find('.twin-sharing-WOEB').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room));
+
+                    $('.detail-price-wrap').find('.single-room-WOEB').html(SingleRoomWOEB);
+                    $('.detail-price-wrap').find('.single-trainer-WOEB').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1250))));
+                    $('.detail-price-wrap').find('.trainers-after-WOEB').html(parseInt(Math.trunc(filter[0].
+                    both_are_trainers_deluxe_room_after_early_bird)));
+
+
+                    $('.detail-price-wrap').find('.twin-sharing-WOEB-registration').html(Math.trunc(filter[0].twin_sharing_per_person_deluxe_room)+parseInt(250));
+                    $('.detail-price-wrap').find('.single-room-WOEB-registration').html(SingleRoomWOEB+parseInt(250));
+                    $('.detail-price-wrap').find('.single-trainer-WOEB-registration').html(((parseInt(Math.trunc(filter[0].base_price))+parseInt(1500))));
+                    $('.detail-price-wrap').find('.trainers-after-WOEB-registration').html(parseInt(Math.trunc(filter[0].
+                    both_are_trainers_deluxe_room_after_early_bird))+parseInt(250));
+
+
+
+
+                    } else {
                     $('.detail-price-wrap').find('.price, .twin-sharing, .early-bird, .trainers-early, .trainers-after').html('0');
-                }
+                    }
                 $('.loader').html('');
             }, 300);
         } else {

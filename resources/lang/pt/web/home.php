@@ -121,8 +121,8 @@ return [
     'TravelInformation-approved-successful' => 'Informations de voyage approuvées réussies',
     'Email-already-verifiedPlease-Login' => 'E-mail déjà vérifié. Veuillez vous connecter',	
     'PreRecordedVideo'=>'Pre Recorded Video',
-    'subsidy_home'=>"O custo total custeado pela RREACH por cada delegado é de até $1750. O seu custo inclui um enorme subsídio de $775-$1500.",
-    'Click_for_your_cost'=>'Clique para ver a sua taxa!!',
+    'subsidy_home'=>"O custo da RREACH por delegado é de até US$ 1.750. Os subsídios para a bolsas variam entre US$ 775 e US$ 1.500. Deus Provê!",
+    'Click_for_your_cost'=>'Clique para o seu custo!!',
 
 ];
 

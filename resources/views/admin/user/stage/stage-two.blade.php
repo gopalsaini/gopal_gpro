@@ -195,6 +195,14 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <div class="form-line">
+                                    <label for="inputName">File ( <label class="text-danger">@lang('web/app.Accepted_File_Formats')</label> )* </label>
+                                    <input type="file" class="form-control" id="file" name="file" accept="image/*, .jpg,.png,.pdf" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="form-line">
                                     <label for="inputName">Remark <label class="text-danger">*</label></label>
                                     <textarea class="form-control" id="remark" name="remark" placeholder="Enter Remark" required></textarea>
                                 </div>
@@ -318,7 +326,9 @@
 
         $('.cashPayment').click(function(){
             $('#cashPaymentModel').modal('show');
-            $('#user_id').val($(this).data('id'))
+            $('#user_id').val($(this).data('id'));
+            $('#remark').val(null);
+            $('#amount').val(null);
         });
 
         $('.sendEmail').click(function() {

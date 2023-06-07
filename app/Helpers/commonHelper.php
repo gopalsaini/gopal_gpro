@@ -435,6 +435,17 @@ class commonHelper{
 		
 	}
 	
+	public static function getCountry2NameById($id){
+		
+		$result=\DB::table('countries_2')->where('id',$id)->first();
+		if($result){
+			return ucfirst($result->name2);
+		}else{
+			return "N/A";
+		}
+		
+	}
+	
 	public static function getOfferProductPrice($salePrice,$discountType,$discountAmount){
 
 		$discountAmount=$discountAmount;
@@ -898,6 +909,18 @@ class commonHelper{
 		
 		if ($result) {
 			return $result->id;
+		} else {
+			return 'N/A';
+		}
+
+	}
+
+	public static function getDesignationName($designation){
+
+		$result = \App\Models\Designation::where('id', $designation)->first();
+		
+		if ($result) {
+			return ucfirst($result->designations);
 		} else {
 			return 'N/A';
 		}

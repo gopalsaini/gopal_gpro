@@ -44,7 +44,7 @@
                     <div class="col-sm-4">
                         <div class="row">
                             <div class="col-md-5">
-                                <label for="input">@lang('web/wizard.Given_name') :</label>
+                                <label for="input">@lang('web/wizard.Given_name') <span>*</span></label>
                                 <input type="text" name="name" placeholder="@lang('web/app.enter') @lang('web/wizard.Given_name')" value="{{$resultData['result']['name']}}" class="active-input mt-2" required>
 
                             </div>
@@ -60,7 +60,7 @@
                         <input type="text" name="passport_no" placeholder="@lang('web/wizard.Enter_Passport_Number')" class="active-input mt-2" required>
                     </div>
                     <div class="col-lg-4">
-                        <label for="">@lang('web/wizard.Passport_Copy')<span>*</span></label>
+                        <label for="" class="d-flex">@lang('web/wizard.Passport_Copy') &nbsp;&nbsp;<label class="text-danger">(@lang('web/app.Accepted_File_Formats'))*</label></label>
                         <input type="file" name="passport_copy[]" placeholder="Upload passport copy" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg" multiple>
                     </div>
 
@@ -87,11 +87,11 @@
                     
                     <div class="col-lg-4">
                         <label for="country">@lang('web/wizard.which_country_passport_will_you_use_to_come_to_panama') <span>*</span></label>
-                        <div class="common-select">
+                        <div class="common-select-data">
                             <select id="country" class="mt-2 test"  name="country_id">
                                 <option value="">--@lang('web/ministry-details.select')--</option>
                                 @foreach($country as $con)
-                                    <option  data-phoneCode="{{ $con['phonecode'] }}" class="active-input mt-2" value="{{ $con['id'] }}">{{ ucfirst($con['name']) }} </option>
+                                    <option  data-phoneCode="{{ $con->phonecode }}" class="active-input mt-2" value="{{ $con->id }}">{{ ucfirst($con->name2) }} </option>
                                 @endforeach
                             </select>
                         </div>
@@ -178,14 +178,14 @@
                             <p>Austria, Belgium, Bulgaria, Croatia, Cyprus, Czechia, Denmark, Estonia, Finland, France, Germany, Greece, Hungary, Ireland, Italy, Latvia, Lithuania, Luxembourg, Malta, Netherlands, Poland, Portugal, Romania, Slovakia, Slovenia, Spain and Sweden.</p>
                         </div>
                          <div class="common-select">
-                            <select id="country1" class="mt-2 test"  name="countries[]" multiple>
+                            <select id="country1" class="mt-2 test2"  name="countries[]" multiple>
                                 @foreach($country as $con)
                                     @php $visaResidenceArray = [233,39,14,116,109,232,105,199,15]; @endphp 
-                                    @if(in_array($con['id'],$visaResidenceArray))
-                                        @if($con['id'] != '15')
-                                            <option  data-phoneCode="{{ $con['phonecode'] }}" class="active-input mt-2" value="{{ $con['id'] }}">{{ ucfirst($con['name']) }} </option>
+                                    @if(in_array($con->id,$visaResidenceArray))
+                                        @if($con->id != '15')
+                                            <option  data-phoneCode="{{ $con->phonecode }}" class="active-input mt-2" value="{{ $con->id }}">{{ ucfirst($con->name2) }} </option>
                                         @else
-                                            <option  data-phoneCode="European Union" class="active-input mt-2" value="{{ $con['id'] }}">European Union </option>
+                                            <option  data-phoneCode="European Union" class="active-input mt-2" value="{{ $con->id }}">European Union </option>
                                         @endif
                                     @endif
                                     
@@ -227,7 +227,8 @@
 @push('custom_js')
 
 <script>
-var doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','129','130','132','133','135','140','142','143','144','145','146','147','153','159','165','158','156','168','171','172','176','177','179','58','116','181','191','185','192','188','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+
+var doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
 		
 
 $(document).ready(function() {
@@ -311,6 +312,14 @@ $(document).ready(function() {
         if ($(this).val() == 'Yes') {
 
             $('#step6').show();
+        }else{
+            $('#country-info').html('');
+            
+            $('.test2').prev(".fs-dropdown").find(".fs-options .fs-option").each(function() {
+                $(this).removeClass('selected', false);
+            });
+            $('.common-select').find('.fs-label').html('--select--');
+
         }
     });
 
@@ -320,7 +329,13 @@ $(document).ready(function() {
         $('.step8').hide();
         $('.step9').hide();
         $('.stepValue7').val(null);
-
+        $('#country-info').html('');
+        
+        $('.test2').prev(".fs-dropdown").find(".fs-options .fs-option").each(function() {
+            $(this).removeClass('selected', false);
+        });
+        $('.common-select').find('.fs-label').html('--select--');
+        
         if ($(this).val() == 'Yes') {
 
             $('#multiple_entry_visa_granted').show();
@@ -337,6 +352,13 @@ $(document).ready(function() {
         if ($(this).val() == 'Yes') {
 
             $('#passportValid').show();
+        }else{
+            
+            $('.test2').prev(".fs-dropdown").find(".fs-options .fs-option").each(function() {
+                $(this).removeClass('selected', false);
+            });
+            $('.common-select').find('.fs-label').html('--select--');
+            
         }
     });
 
@@ -350,6 +372,12 @@ $(document).ready(function() {
             $('#multiCountrySelect').show();
         }else{
             $('#country1').attr('required',false);
+            
+            $('.test2').prev(".fs-dropdown").find(".fs-options .fs-option").each(function() {
+                $(this).removeClass('selected', false);
+            });
+            $('.common-select').find('.fs-label').html('--select--');
+            
         }
     });
 
@@ -364,11 +392,11 @@ $(document).ready(function() {
 
                     if(countryId == '15'){
                         var countryName = $('#country option[value="' + countryId + '"]').text();
-                        var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="">@lang("web/wizard.Visa_Residence_Proof_for") European Union<span>*</span></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
+                        var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="" >@lang("web/wizard.Visa_Residence_Proof_for") European Union &nbsp;<label class="text-danger">(@lang("web/app.Accepted_File_Formats"))*</label></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
 
                     }else{
                         var countryName = $('#country option[value="' + countryId + '"]').text();
-                        var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="">@lang("web/wizard.Visa_Residence_Proof_for") '+countryName+'<span>*</span></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
+                        var countryDiv = $('<div>').addClass('country-div col-lg-4').html('<label for="" >@lang("web/wizard.Visa_Residence_Proof_for") '+countryName+' &nbsp;<label class="text-danger">(@lang("web/app.Accepted_File_Formats"))*</label></label><input type="file" name="countries_doc[]" placeholder="Upload countries doc" class="active-input mt-2" required accept="application/pdf, image/png,jpeg,jpg">');
 
                     }
 
@@ -385,6 +413,15 @@ $(document).ready(function() {
     $(document).ready(function(){
 
         $('.test').fSelect({
+            placeholder: "-- @lang('web/ministry-details.select') -- ",
+            numDisplayed: 5,
+            overflowText: '{n} selected',
+            noResultsText: 'No results found',
+            searchText: 'Search',
+            showSearch: true
+        });
+
+        $('.test2').fSelect({
             placeholder: "-- @lang('web/ministry-details.select') -- ",
             numDisplayed: 5,
             overflowText: '{n} selected',

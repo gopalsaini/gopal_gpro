@@ -238,7 +238,7 @@ return [
     'Passport_Copy' =>'Cópia do Passaporte',
     'Visa_Residence_Proof_for' =>'Visto/ Comprovativo de Residência para',
     'Visa_Wizard' =>'Visa-Wizard',
-    'Gpro_Visa_Eligibility_Wizard' =>'Gpro Visa Eligibility Wizard',
+    'Gpro_Visa_Eligibility_Wizard' =>'ASSISTENTE DE VISTOS',
     'List_of_countries_that_make_European_Union' =>"Lista de países que fazem a União Europeia",
     'Admin_Status' =>'Status do administrador',
     'Passport_Information_Declined_By_admin' =>'Informações do passaporte Recusadas Pelo Administrador',
@@ -264,5 +264,8 @@ return [
     'admin_provide_name2' =>'Seu endereço de e-mail é',
     'admin_provide_name3' =>'Entre em contato com eles o mais rápido possível para começar a trabalhar no seu visto.',
     'Visa_is_Granted' =>'O visto é concedido',
+    'Visa_wizard_desc' =>"Utilize este assistente para determinar se precisa de um visto para entrar no Panamá para o Congresso em Novembro.  Responda às perguntas e o assistente dir-lhe-á o que precisa!  Se precisar de um visto, deve iniciar o processo de obtenção do mesmo o mais rapidamente possível.  Só pode iniciar o processo de obtenção do visto depois de ter pago integralmente a sua taxa de inscrição ao Congresso, pelo que deve efetuar o pagamento hoje.  NÃO compre os seus bilhetes de avião até ter obtido o seu visto.",
+    'Visa_wizard_note' =>"OBSERVAÇÃO: Este assistente de visto é apenas um guia baseado nas informações disponíveis para o RREACH no momento em que foi preparado.  Deve consultar a sua própria embaixada para confirmar se as informações fornecidas pelo assistente estão corretas.",
+
 
 ];

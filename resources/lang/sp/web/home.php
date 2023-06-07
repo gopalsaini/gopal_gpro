@@ -120,8 +120,8 @@ return [
     'TravelInformation-approved-successful' => 'Información de viaje aprobada con éxito',
     'Email-already-verifiedPlease-Login' => 'Se ha verificado el correo electrónico, por favor, inicie sesión',	
     'PreRecordedVideo'=>'Pre Recorded Video',
-    'subsidy_home'=>"El costo total de RREACH por delegado es de hasta $1750. Su costo incluye un gran subsidio de $775-$1500.",
-    'Click_for_your_cost'=>'¡Haga clic para ver su costo!!',
+    'subsidy_home'=>"El costo de RREACH por delegado es de hasta $1750. Las becas oscilan entre $775 y $1500 dólares. ¡Dios provee!",
+    'Click_for_your_cost'=>'¡¡Haga clic para ver cuánto le cuesta a usted!!',
 
 
 

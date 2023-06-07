@@ -238,7 +238,7 @@ return [
     'Passport_Copy' =>'Copia del Pasaporte',
     'Visa_Residence_Proof_for' =>'Visa/Prueba de Residencia para',
     'Visa_Wizard' =>'Visa-Wizard',
-    'Gpro_Visa_Eligibility_Wizard' =>'Gpro Visa Eligibility Wizard',
+    'Gpro_Visa_Eligibility_Wizard' =>'VISA WIZARD',
     'List_of_countries_that_make_European_Union' =>'Lista de países que componen la Unión Europea',
     'Admin_Status' =>'Estado Administrativo',
     'Passport_Information_Declined_By_admin' =>'Información de Pasaporte Rechazada por Admin',
@@ -264,6 +264,9 @@ return [
     'admin_provide_name2' =>' Su dirección de correo electrónico es ',
     'admin_provide_name3' =>'Comuníquese con ellos lo antes posible para comenzar a trabajar en su visa.',
     'Visa_is_Granted' =>'Visa es otorgada',
+    'Visa_wizard_desc' =>"Por favor, utilice este asistente para determinar si necesita visa para entrar a Panamá con motivo del Congreso en noviembre.  Responda a las preguntas y el asistente le dirá lo que necesita.  En caso de que necesite visa, debe iniciar los trámites para obtenerla lo antes posible.  Sólo podrá iniciar el proceso para obtener la visa una vez que haya abonado la totalidad del costo de su inscripción al Congreso, por lo que le rogamos que efectúe su pago hoy mismo.  Por favor, NO compre sus pasajes aéreos hasta que haya obtenido su visa.",
+    'Visa_wizard_note' =>"ATENCIÓN: Este asistente es sólo una guía basada en la información de que disponía RREACH al momento de su elaboración.  Debe consultar a su propia embajada para confirmar que la información que ofrece el asistente es correcta.",
+
 
 
 ];

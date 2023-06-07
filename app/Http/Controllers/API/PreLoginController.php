@@ -1157,7 +1157,7 @@ class PreLoginController extends Controller {
 
 										$subject = 'Pago parcial Aprobado. ¡Gracias!';
 										$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha aprobado una cantidad de  $'.$transaction->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
+										<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p><p></p>
     									<p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p><br></p>
 				
 										<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
@@ -1167,14 +1167,14 @@ class PreLoginController extends Controller {
 										$subject = 'Paiement partiel Approuvéu.  Merci !';
 										$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de  '.$transaction->amount.'$ a été approuvé sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p>
 										<p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
+										<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p><p></p>
     									<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</mark><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
 
 									}elseif($user->language == 'pt'){
 									
 										$subject = 'Aprovado o pagamento parcial. Obrigado!';
 										$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Foi aprovado um montante de $'.$transaction->amount.' na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
+										<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p><p></p>
     									<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
 				
 										<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
@@ -1183,7 +1183,7 @@ class PreLoginController extends Controller {
 									
 										$subject = 'Partial payment Approved. Thank you!';
 										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$transaction->amount.' has been approved on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
+										<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p><p></p>
     									<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
 				
 										<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
@@ -1552,7 +1552,7 @@ class PreLoginController extends Controller {
 
 										$subject = 'Pago parcial Aprobado. ¡Gracias!';
 										$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha aprobado una cantidad de  $'.$transaction->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
+										<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p><p></p>
     									<p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p><br></p>
 				
 										<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
@@ -1561,14 +1561,14 @@ class PreLoginController extends Controller {
 									
 										$subject = 'Paiement partiel Approuvéu.  Merci !';
 										$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de  '.$transaction->amount.'$ a été approuvé sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
+										<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p><p></p>
     									<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</mark><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
 
 									}elseif($user->language == 'pt'){
 									
 										$subject = 'Aprovado o pagamento parcial. Obrigado!';
 										$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Foi aprovado um montante de $'.$transaction->amount.' na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
+										<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p><p></p>
 										<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
 				
 										<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
@@ -1577,7 +1577,7 @@ class PreLoginController extends Controller {
 									
 										$subject = 'Partial payment Approved. Thank you!';
 										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$transaction->amount.' has been approved on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
+										<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p><p></p>
     									<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
 				
 										<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
@@ -5114,7 +5114,7 @@ class PreLoginController extends Controller {
 
 							$name= $additionalUser->name.' '.$additionalUser->last_name;
 
-							$doNotRequireVisa = [82,6,7,10,194,11,12,14,15,17,20,22,23,21,27,28,29,31,33,34,26,40,37,39,44,57,238,48,53,55,59,61,64,66,231,200,201,207,233,69,182,73,74,75,79,81,87,90,94,97,98,99,232,105,100,49,137,202,106,107,108,109,113,114,117,120,125,126,127,129,130,132,133,135,140,142,143,144,145,146,147,153,159,165,158,156,168,171,172,176,177,179,58,116,181,191,185,192,188,196,197,199,186,204,213,214,219,216,222,223,225,228,230,235,237,240]; 
+							$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
 							$diplomaticPassportNotRequireVisa = [56,62,95,102,174,45,239]; 
 							$authorizedVisa = [1,3,4,16,18,19,24,35,36,43,50,60,65,68,70,67,80,92,93,95,102,103,104,54,111,112,248,118,119,121,122,123,124,134,139,149,150,151,154,160,161,166,167,169,116,183,195,198,203,208,209,210,215,217,218,224,226,229,236,245,246]; 
 							$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
@@ -5613,74 +5613,296 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('email','gopalsaini.img@gmail.com')->where('designation_id', '!=', '14')->where('user_type', '=', '2')->where('email_reminder','1')->where('stage','<=','2')->get();
+			$results = \App\Models\User::where('designation_id', '!=', '14')->where('user_type', '=', '2')->where('email_reminder','1')->where('email','!=','aamillogo@gmail.com')->where('stage','<=','2')->get();
 			// echo "<pre>";
 			// print_r($results->toArray()); die;
 			if(count($results) > 0){
-
+				$resultData = '';
 				foreach ($results as $key => $user) {
 				
-					$name = $user->name.' '.$user->last_name;
-					\App\Helpers\commonHelper::sendPaymentReminderMailSend($user->id,$user->email,$name);
-
-
-					// $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($user->id, true);
-
-					// if($user->language == 'sp'){
-
-					// 	$url = '<a href="'.url('payment').'" target="_blank">enlace</a>';
-					// 	$subject = 'RECORDATORIO: ¡$100 de descuento en lel costo de inscripción para el GProCongress II hasta el 30 de junio!';
-					// 	$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
-					// 	<p>El pago de su asistencia al GProCongress II vence ahora. Vaya a '.$url.' y realice su pago ahora.</p>
-					// 	<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
-					// 	<p>Su nuevo monto de pago es $'.$totalPendingAmount.' (debe pagarse en su totalidad antes del 30 de junio).</p>
-					// 	<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
-					// 	<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores.</i></p>
-					// 	<p>Cordialmente,</p><p>Equipo GProCongress II</p>';
-
-					// }elseif($user->language == 'fr'){
 					
-					// 	$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
-					// 	$subject = "RAPPEL - 100 $ de rabais sur les frais d’inscription au GProCongress II jusqu’au 30 juin!";
-					// 	$msg = '<p>Cher  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
-					// 	<p>Le paiement de votre participation au GProCongress II est maintenant dû. Prière d’aller sur '.$url.', et effectuer votre paiement maintenant.</p>
-					// 	<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
-    				// 	<p>Le montant de votre nouveau paiement est de '.$totalPendingAmount.' $ (doit être payé en totalité au plus tard le 30 juin).</p>
-					// 	<p>Si vous avez des questions sur votre paiement, ou si vous souhaitez parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
-					// 	<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
-					// 	<p>Cordialement,</p><p>L’équipe GProCongress II</p>';
+					$Spouse = \App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->first(); 
 
-					// }elseif($user->language == 'pt'){
-					
-					// 	$url = '<a href="'.url('payment').'" target="_blank">link</a>';
-					// 	$subject = 'LEMBRETE – $100 de desconto na taxa de inscrição do GProCongresso II até 30 de junho!';
-					// 	$msg = '<p>Caro '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
-					// 	<p>O pagamento da sua participação no GProCongresso II está vencido. Acesse '.$url.' e faça seu pagamento agora.</p>
-					// 	<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
-    				// 	<p>Seu novo valor de pagamento é $'.$totalPendingAmount.' (deve ser pago integralmente até 30 de junho).</p>
-					// 	<p>Se você tiver alguma dúvida sobre como fazer seu pagamento ou se precisar falar com um dos membros de nossa equipe, basta responder a este e-mail.</p>
-					// 	<p><i>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</i></p>
-					// 	<p>Calorosamente,</p><p>Equipe do GProCongresso II</p>';
+					$SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
+			
+					if($Spouse){
+						$amount = $user->amount;
+			
+					}elseif($SpouseParent && $user->added_as == 'Spouse'){
+			
+						$amount = $SpouseParent->amount;
+			
+					}else{
+			
+						$amount = $user->amount;
+					}
 
-					// }else{
+					$resultData.=$user->id.','.$user->name.','.$user->added_as.','.$amount.','.$user->email.','.$user->stage.','.$user->parent_id.'<br>';
+
+					if($user->language == 'sp'){
+
+						$url = '<a href="'.url('payment').'" target="_blank">enlace</a>';
+						$subject = 'RECORDATORIO: ¡$100 de descuento en lel costo de inscripción para el GProCongress II hasta el 30 de junio!';
+						$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>El pago de su asistencia al GProCongress II vence ahora. Vaya a '.$url.' y realice su pago ahora.</p>
+						<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p>
+						<p>Su nuevo monto de pago es $'.$amount.' (debe pagarse en su totalidad antes del 30 de junio).</p>
+						<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+						<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores.</i></p>
+						<p>Cordialmente,</p><p>Equipo GProCongress II</p>';
+
+					}elseif($user->language == 'fr'){
 					
-					// 	$url = '<a href="'.url('payment').'" target="_blank">link</a>';
-					// 	$subject = 'REMINDER – $100 off GProCongress II registration fee until June 30!';
-					// 	$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
-					// 	<p>Payment for your attendance at GProCongress II is now due. Please go to '.$url.', and make your payment now.</p>
-					// 	<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
-					// 	<p>Your new payment amount is $'.$totalPendingAmount.' (must be paid in full by June 30).</p>
-					// 	<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
-					// 	<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.</i></p>
-					// 	<p>Warmly,</p><p>GProCongress II Team</p>';
+						$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
+						$subject = "RAPPEL - 100 $ de rabais sur les frais d’inscription au GProCongress II jusqu’au 30 juin!";
+						$msg = '<p>Cher  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Le paiement de votre participation au GProCongress II est maintenant dû. Prière d’aller sur '.$url.', et effectuer votre paiement maintenant.</p>
+						<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p>
+    					<p>Le montant de votre nouveau paiement est de '.$amount.' $ (doit être payé en totalité au plus tard le 30 juin).</p>
+						<p>Si vous avez des questions sur votre paiement, ou si vous souhaitez parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+						<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
+						<p>Cordialement,</p><p>L’équipe GProCongress II</p>';
+
+					}elseif($user->language == 'pt'){
+					
+						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+						$subject = 'LEMBRETE – $100 de desconto na taxa de inscrição do GProCongresso II até 30 de junho!';
+						$msg = '<p>Caro '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>O pagamento da sua participação no GProCongresso II está vencido. Acesse '.$url.' e faça seu pagamento agora.</p>
+						<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p>
+    					<p>Seu novo valor de pagamento é $'.$amount.' (deve ser pago integralmente até 30 de junho).</p>
+						<p>Se você tiver alguma dúvida sobre como fazer seu pagamento ou se precisar falar com um dos membros de nossa equipe, basta responder a este e-mail.</p>
+						<p><i>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</i></p>
+						<p>Calorosamente,</p><p>Equipe do GProCongresso II</p>';
+
+					}else{
+					
+						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+						$subject = 'REMINDER – $100 off GProCongress II registration fee until June 30!';
+						$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Payment for your attendance at GProCongress II is now due. Please go to '.$url.', and make your payment now.</p>
+						<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p>
+						<p>Your new payment amount is $'.$amount.' (must be paid in full by June 30).</p>
+						<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+						<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.</i></p>
+						<p>Warmly,</p><p>GProCongress II Team</p>';
 		
-					// }
+					}
 
-					// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-					// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-					// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – $100 off GProCongress II registration fee until June 30!');
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – $100 off GProCongress II registration fee until June 30!');
 				
 				}
+
+				echo "<pre>";
+				print_r($resultData); die;
+				
+				return response(array('message'=>' Email has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	public function juneOfferStage01(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('designation_id', '!=', '14')->where('profile_status', '!=', 'ApprovedNotComing')->where('user_type', '=', '2')->where('email_reminder','1')->where('stage','<=','1')->get();
+			// echo "<pre>";
+			// print_r($results->toArray()); die;
+			if(count($results) > 0){
+				$resultData = '';
+				foreach ($results as $key => $user) {
+				
+					$resultData.=$user->id.','.$user->name.','.$user->added_as.','.$user->email.','.$user->stage.','.$user->amount.'<br>';
+
+					if($user->language == 'sp'){
+
+						$url = '<a href="'.url('pricing').'" target="_blank">enlace</a>';
+						$subject = 'Candidatos aprobados  ¡Descuento de USD 100 en el costo de la inscripción al GProCongress II hasta el 30 de junio!';
+						$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Ya ha oído hablar del descuento de 100 dólares en el costo de inscripción regular hasta el 30 de junio.</p>
+						<p>Sin embargo, queremos animarle a que siga adelante y complete el formulario de inscripción con todos sus datos para que nuestro equipo los pueda revisar.</p>
+						<p>Pasos sencillos a seguir:</p>
+						<p>&nbsp;&nbsp;&nbsp;1. Ya ha creado una cuenta con nosotros.</p>
+						<p>&nbsp;&nbsp;&nbsp;2. Inicie sesión y complete su solicitud respondiendo a todas las preguntas. Si no recuerda la antigua contraseña, puede restablecerla.</p>
+						<p>&nbsp;&nbsp;&nbsp;3. Nuestro equipo revisará y aprobará su solicitud. Le informaremos por correo electrónico si está aprobada o no.</p>
+						<p>&nbsp;&nbsp;&nbsp;4. Una vez aprobada su solicitud, puede proceder al pago y beneficiarse del descuento de USD 100 sobre el precio de inscripción regular hasta el 30 de junio.</p>
+						<p>Haga clic aquí para comprobar el precio para su país:  '.$url.' </p>
+						<p>Si tienes alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+						<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores.</i></p>
+						<p>Atentamente, </p><p>Equipo GProCongreso II</p>';
+
+					}elseif($user->language == 'fr'){
+					
+						$url = '<a href="'.url('pricing').'" target="_blank">lien</a>';
+						$subject = "Les candidats approuvés bénéficient d'une réduction de 100 $ sur les frais d'inscription à GProCongress II jusqu'au 30 juin !";
+						$msg = "<p>Cher  ".$user->name." ".$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Vous avez déjà entendu la nouvelle de la réduction de 100 $ sur les frais d'inscription normaux jusqu'au 30 juin.</p>
+						<p>Cependant, nous souhaitons vous encourager à remplir le formulaire d'inscription complet avec toutes les informations nécessaires pour que notre équipe puisse l'examiner.</p>
+						<p>Les étapes simples à suivre :</p>
+						<p>&nbsp;&nbsp;&nbsp;1. Vous avez déjà créé un compte avec nous.</p>
+						<p>&nbsp;&nbsp;&nbsp;2. Veuillez vous connecter et compléter votre demande en répondant à toutes les questions. Vous pouvez réinitialiser votre mot de passe si vous ne vous souvenez plus de l'ancien.</p>
+						<p>&nbsp;&nbsp;&nbsp;3. Notre équipe examinera et approuvera votre demande en conséquence. Nous vous informerons par e-mail de l'acceptation ou du rejet de votre demande.</p>
+						<p>&nbsp;&nbsp;&nbsp;4. Une fois votre candidature approuvée, vous pouvez procéder au paiement et bénéficier d'une réduction de 100$ sur les frais d'inscription jusqu'au 30 juin.</p>
+						<p>Cliquez ici pour vérifier le prix de votre pays : ".$url." </p>
+						<p>Si vous avez des questions concernant le paiement, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+						<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
+						<p>Chaleureusement,</p><p>L'équipe de GProCongress II</p>";
+
+					}elseif($user->language == 'pt'){
+					
+						$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
+						$subject = 'Candidatos aprovados qualificados para desconto de $100 dólares na taxa de inscrição do GProCongresso II até 30 de Junho!';
+						$msg = '<p>Prezado '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>Já ouviu falar do desconto de 100 dólares na taxa de inscrição regular até 30 de Junho.</p>
+						<p>No entanto, queremos incentivá-lo a preencher o formulário de inscrição completo com todas as informações para que a nossa equipa possa analisar suas informções.  </p>
+						<p>Passos simples a seguir:</p>
+						<p>&nbsp;&nbsp;&nbsp;1. Você já criou uma conta connosco.</p>
+						<p>&nbsp;&nbsp;&nbsp;2. Inicie sessão, preencha o seu formulário de inscrição e responda a todas as perguntas. Pode redefinir a sua senha se não se lembrar da antiga.</p>
+						<p>&nbsp;&nbsp;&nbsp;3. A nossa equipa irá analisar e aprovar a sua inscrição em conformidade. Vamos lhe informar por e-mail se foi ou não aprovado.</p>
+						<p>&nbsp;&nbsp;&nbsp;4. Assim que a sua inscrição for aprovada, pode prsseguir para o pagamento e se beneficiar com o desconto de 100 dólares no custo da inscrição regular até 30 de Junho.</p>
+						<p>Clique aqui para verificar o valor para o seu país: '.$url.' </p>
+						<p>Se tiver alguma dúvida sobre como efetuar o pagamento ou se precisar falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+						<p><i>Ore connosco para multiplicar a quantidade e a qualidade dos pastores-formadores.</i></p>
+						<p>Cordialmente,</p><p>Equipe do GProCongresso II</p>';
+
+					}else{
+					
+						$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
+						$subject = 'Approved applicants qualify for $100 off GProCongress II registration fee until June 30!';
+						$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p>
+						<p>You already heard about the $100 off the Regular Registration rate until June 30.</p>
+						<p>However, we want to encourage you to go ahead and fill out the full registration form with all the information so our team can review it.</p>
+						<p>Simple steps to follow:</p>
+						<p>&nbsp;&nbsp;&nbsp;1. You already created an account with us.</p>
+						<p>&nbsp;&nbsp;&nbsp;2. Please login and complete your application and answer all the questions. You can reset your password if you do not remember the old one.</p>
+						<p>&nbsp;&nbsp;&nbsp;3. Our team will review and approve your application accordingly. We will inform you via email if it’s approved or not.</p>
+						<p>&nbsp;&nbsp;&nbsp;4. Once your application is approved, you can proceed with the payment and avail $100 off the Regular Registration cost until June 30.</p>
+						<p>Click here to check the price for your country: '.$url.' </p>
+						<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email. </p>
+						<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers.</i></p>
+						<p>Warmly,</p><p>GProCongress II Team</p>';
+		
+					}
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Approved applicants | Qualify for $100 off GProCongress II registration fee until June 30!');
+				
+				}
+
+				echo "<pre>";
+				print_r($resultData); die;
+				
+				return response(array('message'=>' Email has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	public function passportInfoSubmitEmail(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('designation_id', '!=', '14')->where('profile_status', '!=', 'ApprovedNotComing')->where('user_type', '=', '2')->where('email','gopalsaini.img@gmail.com')->where('email_reminder','1')->where('stage','=','3')->get();
+			// echo "<pre>";
+			// print_r($results->toArray()); die;
+			if(count($results) > 0){
+				$resultData = '';
+				foreach ($results as $key => $user) {
+				
+					$resultData.=$user->id.','.$user->name.','.$user->added_as.','.$user->email.','.$user->stage.','.$user->amount.'<br>';
+
+					if($user->language == 'sp'){
+
+						$url = '<a href="'.url('pricing').'" target="_blank">enlace</a>';
+						$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+						$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+						<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que hlo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+						<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+						<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+						<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+						<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+						<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+						<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+
+					}elseif($user->language == 'fr'){
+					
+						$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+						$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre. </p>
+						<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+						<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+						<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, La décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+						<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	l'approbation du visa.</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+						<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+						<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+						<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+
+					}elseif($user->language == 'pt'){
+					
+						$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+						$msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+						<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+						<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+						<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+						<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+						<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+						<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+						<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+
+					}else{
+					
+						$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
+						$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+						$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+						<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+						<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+						<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+						<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+						<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+						<p>Warmly,</p><p>GProCongress II Team</p>";
+		
+					}
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+				
+				}
+
+				echo "<pre>";
+				print_r($resultData); die;
 				
 				return response(array('message'=>' Email has been sent successfully.'), 200);
 			}

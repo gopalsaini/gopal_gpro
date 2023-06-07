@@ -96,6 +96,7 @@
                                                 <tr>
                                                     <th> #ID </th>
                                                     <th> Given Name, Surname </th>
+                                                    <th> Email </th>
                                                     <th> Passport Number </th>
                                                     <th> Passport issued by Country  </th>
                                                     <th> Category  </th>
@@ -114,6 +115,7 @@
                                                 <tr>
                                                     <th> #ID </th>
                                                     <th> Given Name, Surname </th>
+                                                    <th> Email </th>
                                                     <th> Passport Number </th>
                                                     <th> Passport issued by Country  </th>
                                                     <th> Category  </th>
@@ -439,6 +441,10 @@
                                                     <th> Passport issued by Country  </th>
                                                     <th> Category  </th>
                                                     <th> Comment  </th>
+                                                    <th> Visa Not Granted Proof  </th>
+                                                    <th> Refund Money  </th>
+                                                    <th> Refund Amount  </th>
+                                                    <th> Reference Number </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </thead>
@@ -457,6 +463,10 @@
                                                     <th> Passport issued by Country  </th>
                                                     <th> Category  </th>
                                                     <th> Comment  </th>
+                                                    <th> Visa Not Granted Proof   </th>
+                                                    <th> Refund Money  </th>
+                                                    <th> Refund Amount  </th>
+                                                    <th> Reference Number </th>
                                                     <th> @lang('admin.action') </th>
                                                 </tr>
                                             </tfoot>
@@ -704,11 +714,19 @@
                                 <div class="information-box">
                                     <input type="hidden" name="id" id="passportId" cols="10" rows="5" class="form-control" required />
 
+                                    @php  $coordinate = ['test'=>'test@gmail.com','test2'=>'test2@gmail.com','test3'=>'test3@gmail.com'];  @endphp
                                     <h6>Enter Name <span style="color:red">*</span></h6>
-                                    <p><input name="name" id="fileData" type="text" class="form-control" /></p>
+                                    <p>
+                                        <select id="coordinateName" class="form-control"  name="name" required>
+                                            <option  value="">-- Select --</option>
+                                            @foreach($coordinate as $key=>$val)
+                                                <option  data-email="{{ $val }}" value="{{ $key }}">{{ ucfirst($key) }} </option>
+                                            @endforeach
+                                        </select>
+                                    </p>
 
                                     <h6>Enter Email <span style="color:red">*</span></h6>
-                                    <p><input name="email" id="fileData" type="email" class="form-control" /></p>
+                                    <p><input name="email" value="" required id="emailData" type="email" class="form-control" readonly/></p>
                             
                                 </div>
                             </div>
@@ -746,6 +764,7 @@
                     <div class="col-sm-12">
                         <div class="form-group">
                             <div class="form-line">
+                                <label for="inputName">User Language : </label> <label id="user_lang"></label> <br>
                                 <label for="inputName">Enter Decline Remark <label class="text-danger">*</label></label>
                                 <form id="Passport" action="{{ url('admin/user/passport/decline') }}" method="post" enctype="multipart/form-data" autocomplete="off">
                                     @csrf
@@ -761,6 +780,44 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger " onclick="modalHide()">Close</button>
                 <button type="submit" class="btn btn-dark " form="Passport">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Payment Refund</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="paymentRefund" action="{{ route('admin.user.refund.amount') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                    @csrf
+                    <input type="hidden" value="" name="user_id" required id="refundUserId"/>
+                    <p>Total Accepted Amount : <span id="totalAcceptedAmount">0.00</span></p>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="input">Enter Amount:</label>
+                                <input type="test" class="form-control" value="" name="amount" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="input">Enter Reference Number:</label>
+                                <input type="test" class="form-control" value="" name="reference_number" required />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 d-flex justify-content-center align-items-center">
+                            <div class="btn-showcase text-center">
+                                <button class="btn btn-primary" type="submit" form="paymentRefund">@lang('admin.submit')</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -792,7 +849,7 @@
     $(document).ready(function() {
 
         
-        var passport = $('#passportListAll').DataTable({
+        var passportListAllEmail = $('#passportListAll').DataTable({
             "processing": true,
             "serverSide": true,
             "searching": false,
@@ -804,7 +861,7 @@
                 "async": false,
                 "type": "get",
                 data: function (d) {
-                    d.email = $('.passportEmail').val()
+                    d.email = $('.passportListAllEmail').val()
                 },
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
@@ -836,6 +893,9 @@
                 },
                 {
                     "data": "name"
+                },
+                {
+                    "data": "email"
                 },
                 {
                     "data": "passport_no"
@@ -1085,7 +1145,7 @@
                 "async": false,
                 "type": "get",
                 data: function (d) {
-                    d.email = $('.sponsorshipEmail').val()
+                    d.email = $('.sponsorshipNoVisaNeededEmail').val()
                 },
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
@@ -1154,7 +1214,7 @@
                 "async": false,
                 "type": "get",
                 data: function (d) {
-                    d.email = $('.sponsorshipEmail').val()
+                    d.email = $('.sponsorshipVisaNeededEmail').val()
                 },
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
@@ -1223,7 +1283,7 @@
                 "async": false,
                 "type": "get",
                 data: function (d) {
-                    d.email = $('.sponsorshipEmail').val()
+                    d.email = $('.sponsorshipRestrictedCountriesEmail').val()
                 },
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
@@ -1298,7 +1358,7 @@
                 "async": false,
                 "type": "get",
                 data: function (d) {
-                    d.email = $('.sponsorshipEmail').val()
+                    d.email = $('.visaIsNotGrantedEmail').val()
                 },
                 "error": function(xhr, textStatus) {
                     if (xhr && xhr.responseJSON.message) {
@@ -1341,7 +1401,19 @@
                     "data": "category"
                 },
                 {
-                    "data": "remark"
+                    "data": "category"
+                },
+                {
+                    "data": "visa_not_granted_docs"
+                },
+                {
+                    "data": "Refund"
+                },
+                {
+                    "data": "refund_amount"
+                },
+                {
+                    "data": "reference_number"
                 },
                 {
                     "data": "action"
@@ -1417,6 +1489,10 @@
             table.draw();
         });
 
+        $(".passportListAllEmail").keyup(function(){
+            passportListAllEmail.draw();
+        });
+
         $(".passportEmail").keyup(function(){
             passport.draw();
         });
@@ -1454,6 +1530,8 @@
             $('#exampleModal').modal('show');
             $('#Remark').html($(this).data('remark'));
         });
+
+        
 
         $('.ViewPassportRemark').click(function() {
         
@@ -1555,10 +1633,24 @@
             
         $('.passportReject').click(function() {
             var id = $(this).data('id');
-
+            var lang = $(this).data('lang');
+            
             $('#exampleModalCenter').modal('show');
             $('#row_id').val(id);
+            $('#user_lang').html(lang);
             $('#remark').val(null);
+
+        });
+
+        
+            
+        $('#staticBackdropButton').click(function() {
+            var id = $(this).data('id');
+            $('#totalPendingAmount').html($(this).data('pending_amount'));
+            $('#totalAcceptedAmount').html($(this).data('accepted_mount'));
+            
+            $('#staticBackdrop').modal('show');
+            $('#refundUserId').val(id);
 
         });
 
@@ -1596,6 +1688,8 @@
                 $('#preloader').css('display', 'none');
                 sweetAlertMsg('success', data.message);
                 $('#draftLetterModal').modal('hide');
+                window.location.reload();
+                
             },
             cache: false,
             contentType: false,
@@ -1635,6 +1729,7 @@
                 $('#preloader').css('display', 'none');
                 sweetAlertMsg('success', data.message);
                 $('#sendSponsorshipLetterModal').modal('hide');
+                window.location.reload();
             },
             cache: false,
             contentType: false,
@@ -1674,6 +1769,7 @@
                 $('#preloader').css('display', 'none');
                 sweetAlertMsg('success', data.message);
                 $('#finalLetterModal').modal('hide');
+                window.location.reload();
             },
             cache: false,
             contentType: false,
@@ -1715,6 +1811,7 @@
 
             },
             success: function(data) {
+
                 sweetAlertMsg('success', data.message);
                 location.reload();
             },
@@ -1773,6 +1870,7 @@
                 sweetAlertMsg('success', data.message);
                 $('#passportApproveRestricted').modal('hide');
                 $('#passportId').val(null);
+                window.location.reload();
             },
             cache: false,
             contentType: false,
@@ -1780,6 +1878,60 @@
         });
     });
 
+    
+    $("form#paymentRefund").submit(function(e) {
+        
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+        var btnhtml = $("button[form="+formId+"]").html();
+
+        $.ajax({
+            url: formAction,
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+                submitButton(formId, btnhtml, false);
+            },
+            success: function(data) {
+                if (data.error) {
+                    sweetAlertMsg('error', data.message);
+                } else {
+
+                    if (data.reset) {
+                        $('#' + formId)[0].reset();
+                        $('#staticBackdrop').modal('hide');
+                        window.location.reload();
+
+                    }
+
+                    sweetAlertMsg('success', data.message);
+
+                }
+                submitButton(formId, btnhtml, false);
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+
+    });
+
+
+    $('#coordinateName').change(function(){
+        $('#emailData').val(($(this).children('option:selected').data('email')));
+    });
 
 </script>
 @endpush

@@ -133,10 +133,7 @@ class DashboardController extends Controller
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count(),
-                'stage3' => \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->where(function ($query) {
-                              $query->where('added_as',null)
-                                ->orWhere('added_as', '=', 'Group');
-                            })->count(),
+                'stage3' => \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->count(),
                 'stage4' => \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '4']])->count(),
                 'stage5' => \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '5']])->count(),
                 

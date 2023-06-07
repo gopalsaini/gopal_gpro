@@ -23,9 +23,9 @@ return [
     'you_do_not_require_a_visa_to_enter_panama_30days' => "You do not require a visa to enter Panama and can stay for 30 days or less.",
     'you_do_not_require_a_visa_to_enter_panama_90days' => "You do not require a visa to enter Panama and can stay for 90 days or less.",
     'do_you_have_a_valid_visa_or_residence' => "Do you have a valid Visa or Residence, duly issued by Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union?",
-    'do_you_have_a_valid_visa_or_residence_yes' => "Is your visa from one of the countries identified in the previous step a multiple entry visa, and is it valid until May 31, 2024?",
+    'do_you_have_a_valid_visa_or_residence_yes' => "Is your visa from one of the countries identified in the previous step a multiple entry visa, and is 6 month visa validity?",
     'step_7_question' => "Have you used your multiple entry visa at least once before to enter the country that granted it? ",
-    'is_your_visa_from_one_of_the_countries' => "Is your visa from one of the countries identified in the previous step a multiple entry visa, and is it valid until May 31, 2024?",
+    'is_your_visa_from_one_of_the_countries' => "Is your visa from one of the countries identified in the previous step a multiple entry visa, and is 6 month visa validity?",
     'have_you_used_your_multiple_entry_visa' => "Have you used your multiple entry visa at least once before to enter the country that granted it?",
     'is_your_passport_valid_until' => "Is your passport valid until May 31, 2024?",
     'you_must_obtain_an_authorized_visa_to_enter_panama' => "You must obtain an authorized visa to enter Panama. The approval process for authorized visas can take up to 60 business days. The general requirements for obtaining an authorized visa may be reviewed at <a href='embassyofpanama.org/visas-1'>embassyofpanama.org/visas-1</a>. (NOTE: The information on this website may not be current or accurate with respect to all countries.) RREACH willl assist you with some of the documents required, including proof of economic solvency, and a letter of invitation. (NOTE: All documents submitted with your visa application must be translated into Spanish.)",
@@ -240,7 +240,7 @@ return [
     'Passport_Copy' =>'Passport Copy',
     'Visa_Residence_Proof_for' =>'Visa/Residence Proof for',
     'Visa_Wizard' =>'Visa-Wizard',
-    'Gpro_Visa_Eligibility_Wizard' =>'Gpro Visa Eligibility Wizard',
+    'Gpro_Visa_Eligibility_Wizard' =>'VISA WIZARD',
     'List_of_countries_that_make_European_Union' =>'List of countries that make European Union',
     'Admin_Status' =>'Admin Status',
     'Passport_Information_Declined_By_admin' =>'Passport Information Declined By admin',
@@ -266,6 +266,9 @@ return [
     'admin_provide_name2' =>'His/her email address is',
     'admin_provide_name3' =>'Please contact them as soon as possible to begin working on your visa.',
     'Visa_is_Granted' =>'Visa is Granted',
+    'Visa_wizard_desc' =>"Please use this wizard to determine whether you need a visa to enter Panama for the Congress in November.  Answer the questions, and the wizard will tell you what you need!  If you need a visa, then you should begin the process of getting it as soon as possible.  You can only begin the visa process after you have fully paid your registration fee for the Congress, so please make your payment today.  Please DO NOT purchase your airline tickets until you have obtained your visa.",
+    'Visa_wizard_note' =>"PLEASE NOTE: This visa wizard is only a guide based on information available to RREACH at the time it was prepared.  You should consult your own embassy to confirm that the information given by the wizard is correct.",
+
 
 
 ];

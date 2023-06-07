@@ -1191,7 +1191,8 @@ class ProfileController extends Controller
 
     public function sponsorshipPassportInfo(Request $request){
 
-        $country=\App\Models\Country::select('id','name','phonecode')->get();
+        $country=\DB::table('countries_2')->get();
+        
         $citizenship = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
     
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');

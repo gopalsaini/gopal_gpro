@@ -116,6 +116,13 @@
     color: #ffce54;
   }
 }
+
+        .requirement .requirement-wrapper {
+           
+            padding: 51px !important;
+        }
+
+    
     </style>
 
     @stack('custom_css')
@@ -185,7 +192,7 @@
                         @if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0)
 
                         
-                            @if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess())
+                            @if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess() == false)
                                 <li><a target="_blank" href="{{ url('exhibitor-index') }}">@lang('web/app.Exhibitor')</a></li>
                             @endif
 
@@ -279,7 +286,7 @@
                 <li><a href="{{ url('/#contact-us') }}">@lang('web/app.contactus')</a></li>
                 @if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0)
 
-                    @if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess())
+                    @if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess() == false)
                         <li><a target="_blank" href="{{ url('exhibitor-index') }}">@lang('web/app.Exhibitor')</a></li>
                     @endif
 
@@ -565,16 +572,16 @@
                             <p>@lang('web/app.footer-description')</p>
                             <div class="requirement-right pt-3 ">
                                 @if(App::getLocale() == 'pt')
-                                <a href="{{ route('attend-the-congress') }}" class="main-btn">Porquê devo participar no Congresso?</a>
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn main-btn-large">Porquê devo participar no Congresso?</a>
                                 @elseif(App::getLocale() == 'sp')
-                                <a href="{{ route('attend-the-congress') }}" class="main-btn">¿Por qué asistir al Congreso?</a>
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn main-btn-large">¿Por qué asistir al Congreso?</a>
                                 @elseif(App::getLocale() == 'fr')
-                                <a href="{{ route('attend-the-congress') }}" class="main-btn">Pourquoi devrais-je participer au Congrès?</a>
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn main-btn-large">Pourquoi devrais-je participer au Congrès?</a>
                                 @else
-                                <a href="{{ route('attend-the-congress') }}" class="main-btn">Why should I attend the Congress?</a>
+                                <a href="{{ route('attend-the-congress') }}" class="main-btn main-btn-large">Why should I attend the Congress?</a>
                                 @endif
                             </div>
-                            <div class="requirement-right pt-3 ">
+                            <!-- <div class="requirement-right pt-3 ">
                                 @if(App::getLocale() == 'pt')
                                 <a href="{{ asset('pdf/Portuguese_Program.pdf') }}" target="_blank" class="main-btn">Programa</a>
                                 @elseif(App::getLocale() == 'sp')
@@ -584,7 +591,7 @@
                                 @else
                                 <a href="{{ asset('pdf/English_Program.pdf') }}" target="_blank" class="main-btn">Program</a>
                                 @endif
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     

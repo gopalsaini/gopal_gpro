@@ -29,7 +29,7 @@
         border-color: #ffcd34;
     }
     form label {
-        font-size: 25px !important;
+        font-size: 21px !important;
     }
     footer {
         padding-top: 93px !important;
@@ -63,7 +63,7 @@
 	
 @endpush
 
-<div class="inner-banner-wrapper">
+<div class="inner-banner-wrapper" style="padding: 56px 0;">
     <div class="container">
         <div class="">
             <div class="section-wz ">
@@ -71,8 +71,9 @@
                     <div class="row">
 
                         <div class="col-md-12 ml-auto mr-auto">
-                            <h2 id="ques" class="wz-title fadeInUp animated a-duration-5 a-delay-05 pr-settings-title">@lang('web/wizard.Gpro_Visa_Eligibility_Wizard')</h2>
-
+                            <h4 id="ques" class="wz-title fadeInUp animated a-duration-5 a-delay-05 pr-settings-title" style="margin-bottom: 19px;font-size: 2.5em !important;">@lang('web/wizard.Gpro_Visa_Eligibility_Wizard')</h4>
+                            <p style="color:white">@lang('web/wizard.Visa_wizard_desc')</p><p><br></p>
+                            <p style="color:white">@lang('web/wizard.Visa_wizard_note')</p>
                             <br>
                             <div class="">
                                 <div class="row">

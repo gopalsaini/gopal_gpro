@@ -204,7 +204,7 @@ class HomeController extends Controller
     
     public function exhibitorPaymentLink(Request $request,$token){
 
-        if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
+        if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess() == false){
 
             $linkPayment = \App\Models\Exhibitors::where('payment_token',$token)->first();
 
@@ -929,7 +929,7 @@ class HomeController extends Controller
         
         if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0){
 
-            if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
+            if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess() == false){
 
                 \App\Helpers\commonHelper::setLocale();
                 return view('exhibitors.index');
@@ -1073,7 +1073,7 @@ class HomeController extends Controller
             
             if(isset($resultData['result']) && $resultData['result']['profile_status']=='Approved' && $totalPendingAmount == 0){
 
-                if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()){
+                if(\App\Helpers\commonHelper::countExhibitorPaymentSuccess()  == false){
 
                     \App\Helpers\commonHelper::setLocale();
                     return view('exhibitors.exhibitors');

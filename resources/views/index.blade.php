@@ -5,6 +5,7 @@
 
 @push('custom_css')
     <style>
+        
         .requirement .requirement-wrapper {
             display:flex;
         }
@@ -15,6 +16,27 @@
         .gpro-wrapper {
             position: relative;
             padding-bottom: 72px !important;
+        }
+
+        @media only screen and (min-width:320px) and (max-width:768px) { 
+            footer{
+                padding-top: 350px;
+            }
+            .requirement-right{
+                margin-left: auto;
+            }
+            .requirement .requirement-wrapper .requirement-right .main-btn{
+                width: 210px;
+            }
+            .requirement .requirement-wrapper .requirement-right .main-btn-large{
+                height: 70px;
+            }
+
+            .requirement .requirement-wrapper {
+                
+                padding: 13px !important;
+            }
+
         }
     </style>
 @endpush

@@ -125,6 +125,7 @@ return [
     'exhibition_fee' => "Pay $800 Exhibitor Fee",
     'Credit_Card_Payment' => "Credit Card Payment",
     'Exhibitor' => "Exhibitor",
+    'Accepted_File_Formats' => "Accepted File Formats - jpg, png and pdf",
 
 
 

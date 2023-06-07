@@ -6,6 +6,8 @@
 
     </style>
     <div class="approved-section">
+        <label for="inputName">User Type : {{\App\Helpers\commonHelper::getDesignationName($user->designation_id)}}</label>
+        @php $userType = [3,4]; @endphp
         <div class="form-group">
             <div class="form-line">
                 <label for="inputName">Select Payment Country </label>
@@ -28,32 +30,32 @@
             </div>
         </div>
         
-        <div class="form-group">
-            <div class="form-line">
-                <label for="inputName">Do you want to change User Room Type</label>
-                <select name="room_type" class="form-control" id="change_room_type" required>
-                    <option value="Yes" >Yes</option>
-                    <option value="No" selected>No</option>
-                </select>
+            <div class="form-group" style="display: @if(!in_array($user->designation_id,$userType)) block @else none @endif">
+                <div class="form-line">
+                    <label for="inputName">Do you want to change User Room Type</label>
+                    <select name="room_type" class="form-control" id="change_room_type" required>
+                        <option value="Yes" >Yes</option>
+                        <option value="No" selected>No</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="form-group" id="CategoryDiv" style="display:none">
-            <div class="form-line">
-                <label for="inputName">Select Category <label class="text-danger">*</label></label>
-                <select name="category" class="form-control" id="selectCategory">
-                    <option value="">Select</option>
-                    @if(!empty($category))
-                        @foreach($category as $key=>$val)
-                            <option value="{{$key}}" data-amount="{{$val}}">{{$key}}</option>
-                        @endforeach
+            <div class="form-group" id="CategoryDiv" style="display:none">
+                <div class="form-line">
+                    <label for="inputName">Select Category <label class="text-danger">*</label></label>
+                    <select name="category" class="form-control" id="selectCategory">
+                        <option value="">Select</option>
+                        @if(!empty($category))
+                            @foreach($category as $key=>$val)
+                                <option value="{{$key}}" data-amount="{{$val}}">{{$key}}</option>
+                            @endforeach
 
-                    @endif
-                    
-                </select>
+                        @endif
+                        
+                    </select>
+                </div>
             </div>
-        </div>
        
-        <!--         
+            <!--         
             <div class="form-group">
                 <div class="form-line">
                     <label for="inputName">Allow Cash payment <label class="text-danger">*</label></label>
@@ -63,42 +65,42 @@
                     </select>
                 </div>
             </div> -->
-
-        <div class="form-group">
-            <div class="form-line">
-                @if (strtotime(date('Y-m-d H:i:s')) > strtotime('2023-06-01 05:00:00'))
-                    <label for="inputName">Apply June Offer  <label class="text-danger">*</label></label>
-                @else
-                    <label for="inputName">Apply Early Bird <label class="text-danger">*</label></label>
-                @endif
-                <select name="early_bird" class="form-control" required id="early_bird" @if(date('Y-m-d') == '2023-6-1') disabled @endif>
-                    <option value="No" selected >No</option>
-                    <option value="Yes">Yes</option>
-                </select>
+            
+            <div class="form-group" style="display: @if(!in_array($user->designation_id,$userType)) block @else none @endif">
+                <div class="form-line">
+                    @if (strtotime(date('Y-m-d H:i:s')) > strtotime('2023-06-01 05:00:00'))
+                        <label for="inputName">Apply June Offer  <label class="text-danger">*</label></label>
+                    @else
+                        <label for="inputName">Apply Early Bird <label class="text-danger">*</label></label>
+                    @endif
+                    <select name="early_bird" class="form-control" required id="early_bird" @if(date('Y-m-d') == '2023-6-1') disabled @endif>
+                        <option value="No" selected >No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                </div>
             </div>
-        </div>
 
         
-        <div class="form-group" id="OffersDiv">
-            <div class="form-line">
-                <label for="inputName">Select Offers </label>
-                <select name="offer_id" class="form-control" id="selectOffer">
-                    <option value="">Select</option>
-                    @if(!empty($Offers))
-                        @foreach($Offers as $data)
-                            <option value="{{$data->id}}" >{{$data->name}}</option>
-                        @endforeach
+            <div class="form-group" id="OffersDiv" style="display: @if(!in_array($user->designation_id,$userType)) block @else none @endif">
+                <div class="form-line">
+                    <label for="inputName">Select Offers </label>
+                    <select name="offer_id" class="form-control" id="selectOffer">
+                        <option value="">Select</option>
+                        @if(!empty($Offers))
+                            @foreach($Offers as $data)
+                                <option value="{{$data->id}}" >{{$data->name}}</option>
+                            @endforeach
 
-                    @endif
-                   
-                </select>
+                        @endif
+                    
+                    </select>
+                </div>
             </div>
-        </div>
 
         <div class="form-group">
             <div class="form-line">
                 <label for="inputName">Payable Amount <label class="text-danger">*</label></label>
-                <input type="number" class="form-control" name="amount" id="payable_amount" value="{{$basePrice}}" readonly required>
+                <input type="number" class="form-control" name="amount" id="payable_amount" value="{{in_array($user->designation_id,$userType) ? '0' : $basePrice }}" readonly required>
             </div>
         </div>
     </div>

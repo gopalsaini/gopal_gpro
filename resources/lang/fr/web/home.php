@@ -125,7 +125,7 @@ return [
     'TravelInformation-approved-successful' => 'Informations de voyage approuvées réussies',
     'Email-already-verifiedPlease-Login' => 'E-mail déjà vérifié. Veuillez vous connecter',	
     'PreRecordedVideo'=>'Pre Recorded Video',
-    'subsidy_home'=>"Le coût total de RREACH par délégué s'élève à 1 750$. Votre coût comprend une énorme subvention de 775 $ à 1500 $.",
-    'Click_for_your_cost'=>'Cliquez pour votre coût!!',
+    'subsidy_home'=>"Le coût de RREACH par délégué s'élève à 1 750 dollars. Les subventions pour les bourses varient entre 775 et 1500 dollars. Dieu pourvoit !",
+    'Click_for_your_cost'=>'Cliquez pour savoir quel est votre coût !',
 
 ];

@@ -307,43 +307,45 @@
                                         <div id="collapseTwo" class="accordion-collapse collapse show"
                                             aria-labelledby="headingTwo" data-bs-parent="#accordionExample2">
                                             <div class="accordion-body">
-                                                <table class="table">
-                                                    <thead>
-                                                      <tr>
-                                                        <th>@lang('web/payment.date')</th>
-                                                        <th>@lang('web/payment.amount')</th>
-                                                        <th>@lang('web/payment.transfer-id')</th>
-                                                        <th>@lang('web/payment.utr-no')</th>
-                                                        <th>@lang('web/payment.Mode')</th>
-                                                        <th>@lang('web/payment.payment-pay')</th>
-                                                        <th>@lang('web/payment.payment-for')</th>
-                                                        <th>@lang('web/payment.Status')</th>
-                                                      </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        @if(!empty($transactions))
-                                                            @foreach($transactions as $transaction)
-                                                                <tr>
-                                                                    <th>{{date('d-M-Y',strtotime($transaction->created_at))}}</th>
-                                                                    <td>${{$transaction->amount}}</td>
-                                                                    <td>{{$transaction->order_id}}</td>
-                                                                    <td>{{$transaction->bank_transaction_id}}</td>
-                                                                    <td>{{$transaction->bank}} Transfer</td>
-                                                                    <td>{{\App\Helpers\commonHelper::getUserNameById($transaction->user_id)}}</td>
-                                                                    <td>
-                                                                        @if($transaction->particular_id == 1 || $transaction->particular_id == 2)
-                                                                            Registration
-                                                                        @else
-                                                                            Donation
-                                                                        @endif
-                                                                    </td>
-                                                                    <td>@if($transaction->payment_status == 0) @lang('web/home.pending') @elseif($transaction->payment_status == 2) @lang('web/home.confirm') @else @lang('web/home.decline') @endif</td>
-                                                                    
-                                                                </tr>
-                                                            @endforeach
-                                                        @endif
-                                                    </tbody>
-                                                </table>
+                                                <div class="table-responsive">
+                                                    <table class="table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>@lang('web/payment.date')</th>
+                                                            <th>@lang('web/payment.amount')</th>
+                                                            <th>@lang('web/payment.transfer-id')</th>
+                                                            <th>@lang('web/payment.utr-no')</th>
+                                                            <th>@lang('web/payment.Mode')</th>
+                                                            <th>@lang('web/payment.payment-pay')</th>
+                                                            <th>@lang('web/payment.payment-for')</th>
+                                                            <th>@lang('web/payment.Status')</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            @if(!empty($transactions))
+                                                                @foreach($transactions as $transaction)
+                                                                    <tr>
+                                                                        <th>{{date('d-M-Y',strtotime($transaction->created_at))}}</th>
+                                                                        <td>${{$transaction->amount}}</td>
+                                                                        <td>{{$transaction->order_id}}</td>
+                                                                        <td>{{$transaction->bank_transaction_id}}</td>
+                                                                        <td>{{$transaction->bank}} Transfer</td>
+                                                                        <td>{{\App\Helpers\commonHelper::getUserNameById($transaction->user_id)}}</td>
+                                                                        <td>
+                                                                            @if($transaction->particular_id == 1 || $transaction->particular_id == 2)
+                                                                                Registration
+                                                                            @else
+                                                                                Donation
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>@if($transaction->payment_status == 0) @lang('web/home.pending') @elseif($transaction->payment_status == 2) @lang('web/home.confirm') @else @lang('web/home.decline') @endif</td>
+                                                                        
+                                                                    </tr>
+                                                                @endforeach
+                                                            @endif
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

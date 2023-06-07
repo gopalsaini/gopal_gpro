@@ -135,10 +135,7 @@
         <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/three')}}">
                 <h2>STAGE 3 </h2>
-                <h4> {{ \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->where(function ($query) {
-							$query->where('added_as',null)
-								->orWhere('added_as', '=', 'Group');
-						})->count() }} </h4>
+                <h4> {{ \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->count() }} </h4>
             </a>
         </div>
 
