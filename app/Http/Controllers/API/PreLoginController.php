@@ -5818,7 +5818,7 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where('designation_id', '!=', '14')->where('profile_status', '!=', 'ApprovedNotComing')->where('user_type', '=', '2')->where('email','gopalsaini.img@gmail.com')->where('email_reminder','1')->where('stage','=','3')->get();
+			$results = \App\Models\User::where('designation_id', '!=', '14')->where('profile_status', '!=', 'ApprovedNotComing')->where('user_type', '=', '2')->where('stage','=','3')->get();
 			// echo "<pre>";
 			// print_r($results->toArray()); die;
 			if(count($results) > 0){
@@ -5833,7 +5833,7 @@ class PreLoginController extends Controller {
 						$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
 						$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
 						<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
-						<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que hlo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+						<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
 						<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
 						<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
 						<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
@@ -5848,12 +5848,12 @@ class PreLoginController extends Controller {
 					
 						$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
 						$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
-						<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre. </p>
+						<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
 						<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
 						<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
-						<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, La décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+						<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
 						<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
-						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	l'approbation du visa.</p><br>
+						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
 						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
 						<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
 						<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>

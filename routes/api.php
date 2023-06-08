@@ -115,7 +115,7 @@ Route::any("send-early-bird-reminder-mail","API\PreLoginController@sendEarlyBird
 Route::any("spouse-reject-action-cron","API\PreLoginController@SpouseRejectActionCron");
 Route::any("setdateandSpouseReminder","API\PreLoginController@setdateandSpouseReminder");
 
-Route::any("send-early-bird-reminder-new-mail","API\PreLoginController@sendEarlyBirdReminderNewEmail");
+// Route::any("send-early-bird-reminder-new-mail","API\PreLoginController@sendEarlyBirdReminderNewEmail");
 
 
 
@@ -130,10 +130,10 @@ Route::get('get-user-profile', 'API\PreLoginController@userProfile');
 Route::get('get-total-member-for-community', 'API\PreLoginController@getTotalMemberForCommunity');
 Route::get('sendcheckUserDetailsPendingAmount', 'API\PreLoginController@sendcheckUserDetailsPendingAmount');
 Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmailsToPaymentCompleteDone');
-Route::get('takingApplicationsForExhibitors', 'API\PreLoginController@takingApplicationsForExhibitors');
-Route::get('registrationFeeUntilJune30', 'API\PreLoginController@registrationFeeUntilJune30');
-Route::get('june-offer-stage01', 'API\PreLoginController@juneOfferStage01');
-Route::get('passportInfoSubmitEmail', 'API\PreLoginController@passportInfoSubmitEmail');
+// Route::get('takingApplicationsForExhibitors', 'API\PreLoginController@takingApplicationsForExhibitors');
+// Route::get('registrationFeeUntilJune30', 'API\PreLoginController@registrationFeeUntilJune30');
+// Route::get('june-offer-stage01', 'API\PreLoginController@juneOfferStage01');
+// Route::get('passportInfoSubmitEmail', 'API\PreLoginController@passportInfoSubmitEmail');
 
 
 

@@ -34,28 +34,36 @@
     @endif
     
     <li>
-        @if(env('TESTING')==true)
         <!-- <a href="@if($stage->stage > 2) # @else # @endif" class="@if($stage->stage > 2) active @endif"> -->
             <a href="@if($stage->stage > 2) {{url('travel-information')}} @else # @endif" class="@if($stage->stage > 2) active @endif">
-            @else
-            <a href="@if($stage->stage > 2) # @else # @endif" class="@if($stage->stage > 2) active @endif">
             <!-- <a href="@if($stage->stage > 2) {{url('travel-information')}} @else # @endif" class="@if($stage->stage > 2) active @endif"> -->
-            @endif
             <span>0@php echo $i++; @endphp</span>@lang('web/profile.travel') @lang('web/profile.info')
         </a>
     </li>
       
     <li>
+    @if(env('TESTING')==true)
         <a href="@if($stage->stage > 3) {{url('session-information')}} @else # @endif" class="@if($stage->stage > 3) active @endif">
             <span>0@php echo $i++; @endphp</span>@lang('web/profile.session') 
         </a>
+    @else
+        <a href="@if($stage->stage > 3) # @else # @endif" class="@if($stage->stage > 3) active @endif">
+            <span>0@php echo $i++; @endphp</span>@lang('web/profile.session') 
+        </a>
+    @endif
     </li>
    
     
     <li>
+    @if(env('TESTING')==true)
         <a href="@if($stage->stage > 4) {{url('event-day-information')}} @else # @endif" class="@if($stage->stage > 4) active @endif">
             <span>0@php echo $i++; @endphp</span> @lang('web/profile.event-day')
         </a>
+    @else
+    <a href="@if($stage->stage > 4) # @else # @endif" class="@if($stage->stage > 4) active @endif">
+            <span>0@php echo $i++; @endphp</span> @lang('web/profile.event-day')
+        </a>
+    @endif
     </li>
     
 </ul>

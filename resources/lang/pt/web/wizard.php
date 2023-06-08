@@ -237,7 +237,7 @@ return [
     'Enter_Passport_Number' =>'Digite o número do passaporte',
     'Passport_Copy' =>'Cópia do Passaporte',
     'Visa_Residence_Proof_for' =>'Visto/ Comprovativo de Residência para',
-    'Visa_Wizard' =>'Visa-Wizard',
+    'Visa_Wizard' =>'Visa',
     'Gpro_Visa_Eligibility_Wizard' =>'ASSISTENTE DE VISTOS',
     'List_of_countries_that_make_European_Union' =>"Lista de países que fazem a União Europeia",
     'Admin_Status' =>'Status do administrador',

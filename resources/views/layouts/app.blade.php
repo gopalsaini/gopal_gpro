@@ -67,6 +67,10 @@
             .modelReg {
                 max-width: 100% !important;
             }
+            #sidebar {
+                
+                z-index: 999999 !important;
+            }
         }
         .marq-link{
             height: 54px;
@@ -168,7 +172,9 @@
                         <li><a href="{{ url('groupinfo-update') }}">@lang('web/app.myprofile')</a></li>
                         @endif
                         <li><a href="{{ route('pricing') }}" class=" blink fw-bold" style="padding: 10px;font-size: 18px;">@lang('web/app.pricing')</a></li>
-                                
+                        <li>
+                                <a href="{{ url('visa-eligibility-wizard') }}" >@lang('web/wizard.Visa_Wizard')</a>
+                        </li>     
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 About
@@ -292,6 +298,9 @@
 
                 @endif
                 <li><a href="{{ route('pricing') }}">@lang('web/app.pricing')</a></li>
+                <li>
+                        <a href="{{ url('visa-eligibility-wizard') }}" >@lang('web/wizard.Visa_Wizard')</a>
+                </li>    
                 <li><a href="{{ route('help') }}">@lang('web/app.help')</a></li>
                 <li><a href="{{ route('donate') }}">@lang('web/app.donate')</a></li>
                 @if(!\Session::has('gpro_user'))
@@ -644,11 +653,7 @@
                               <a href="{{ route('attend-the-congress') }}" >Compelling Reasons</a>
                             @endif
                     </li>
-                    <li>
-                    @if(env('TESTING')==true)
-                        <a href="{{ url('visa-eligibility-wizard') }}" >@lang('web/wizard.Visa_Wizard')</a>
-                    @endif
-                    </li>
+                    
                 </ul>
             </div>
             <div class="row">

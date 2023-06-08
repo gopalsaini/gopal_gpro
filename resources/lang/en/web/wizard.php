@@ -239,7 +239,7 @@ return [
     'Enter_Passport_Number' =>'Enter Passport Number',
     'Passport_Copy' =>'Passport Copy',
     'Visa_Residence_Proof_for' =>'Visa/Residence Proof for',
-    'Visa_Wizard' =>'Visa-Wizard',
+    'Visa_Wizard' =>'Visa',
     'Gpro_Visa_Eligibility_Wizard' =>'VISA WIZARD',
     'List_of_countries_that_make_European_Union' =>'List of countries that make European Union',
     'Admin_Status' =>'Admin Status',
