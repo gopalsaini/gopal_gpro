@@ -1,58 +1,107 @@
 @extends('layouts/master')
 
-@section('title',__('Community List'))
+@section('title',__('Stage All'))
 
-@section('content')
+@push('custom_css')
+    <style>
+        .odd{
+            position: relative;
+        }
 
+        .group-user-list{
+            position: absolute;
+            left: 87px;
+        }
+        .dataTables_wrapper table.dataTable tbody td:nth-child(2)  { 
+            padding-left: 45px !important;
+        }
+        .btn-outline-primary:focus,.btn-outline-primary:hover, .btn-outline-primary.active { 
+            background-color: #ffc107 !important;
+            border-color: #ffc107 !important;
+        } 
+
+        .group-user-list {
+            background: url('{{asset("admin-assets/images/details_open.png")}}') no-repeat center center;
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+        }
+        .shown .group-user-list {
+            background: url('{{asset("admin-assets/images/details_close.png")}}') no-repeat center center;
+        }
+    </style>
+    
+@endpush 
+@section('content') 
 <div class="container-fluid">
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> Speaker @lang('admin.list') </h3>
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
-                    <li class="breadcrumb-item" aria-current="page">Community</li>
-                    <li class="breadcrumb-item" aria-current="page">@lang('admin.list')</li>
-                </ol>
+                <h3> Community List</h3>
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
+					<li class="breadcrumb-item" aria-current="page">Community</li>
+					<li class="breadcrumb-item" aria-current="page">List</li>
+					
+				</ol>
             </div>
-            <div class="col-sm-6">
+           
+            <div class="col-sm-3">
                 <div class="bookmark">
                     <ul>
-                        <a href="{{ route('admin.community.add') }}" class="btn btn-outline-primary"><i class="fas fa-plus me-2"></i>@lang('admin.add') Community</a>
+                        <a href="{{ route('admin.community.add') }}" class="btn btn-primary"><i class="fas fa-list me-2"></i> Group Add</a>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
     <div class="row">
+        
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
+                
                     <div class="table-responsive">
-                        <table class="display datatables" id="tablelist">
+                        
+                        <table id="example2" class="display">
                             <thead>
                                 <tr>
-                                    <th> #ID </th>
+                                    <th> @lang('admin.id') </th>
                                     <th> Name </th>
-                                    <th> Image </th>
-                                    <th> Status </th>
-                                    <th> Action </th>
+                                    <th> @lang('admin.user') </th>
+                                    <th> Mobile </th>
+                                    <th> @lang('admin.action') </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td class="text-center" colspan="6">
-                                        <div id="loader" class="spinner-border" role="status"></div>
-                                    </td>
-                                </tr>
+                                @if(!empty($datas) && count($datas)>0)
+                                    @php $sn = 1; @endphp
+                                    @foreach($datas as $data)
+                                        @php $results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $data->id],['added_as', 'Group']])->get() @endphp
+                                        @if(!empty($results) && count($results)>0)
+                                            <tr>
+                                                <td>{{$sn}}</td>
+                                                <td>{{$data->name}} {{$data->last_name}}</td>
+                                                <td><a href="javascript:void(0)" class="group-user-list" data-email="{{$data->email}}"></a> {{$data->email}}</td>
+                                                <td>+{{$data->phone_code}} {{$data->mobile}}</td>
+                                                
+                                                <td>
+                                                    <div style="display:flex"><a href="{{route('admin.community.group.update', ['id' => $data->id] )}}" title="Update Group" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-edit"></i></a></div>
+                                                </td>
+                                            </tr>
+
+                                            @php $sn++; @endphp
+                                        @endif
+                                    @endforeach
+                                @endif
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th> #ID </th>
+                                    <th> @lang('admin.id') </th>
                                     <th> Name </th>
-                                    <th> Image </th>
-                                    <th> Status </th>
-                                    <th> Action </th>
+                                    <th> @lang('admin.user') </th>
+                                    <th> Mobile </th>
+                                    <th> @lang('admin.action') </th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -63,102 +112,53 @@
     </div>
 </div>
 
+  
 @endsection
 
 @push('custom_js')
 
 <script>
-$(document).ready(function() {
-    fill_datatable();
-    $('#tablelist').DataTable({
-        "processing": true,
-        "serverSide": true,
-        "searching": true,
-        "ordering": true,
+    $(document).ready(function() {
 
-        "ajax": {
-            "url": "{{ route('admin.community.list') }}",
-            "dataType": "json",
-            "async": false,
-            "type": "get",
-            "error": function(xhr, textStatus) {
-                if (xhr && xhr.responseJSON.message) {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
-                } else {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
-                }
-            },
-        },
-        "fnDrawCallback": function() {
-            fill_datatable();
-        },
-        "order": [0, 'asc'],
-        "columnDefs": [{
-                className: "text-center",
-                targets: "_all"
-            },
-            {
-                orderable: false,
-                targets: [-1, -2]
-            },
-        ],
-        "columns": [{
-                "data": null,
-                render: function(data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
-                },
-                className: "text-center font-weight-bold"
-            },
-            {
-                "data": "name"
-            },
-            {
-                "data": "image"
-            },
-            {
-                "data": "status"
-            },
-            {
-                "data": "action"
-            }
-        ]
-    });
-});
+        var table = $('#example2').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+        });
 
-function fill_datatable() {
-    $('.-change').change(function() {
-        var status = $(this).prop('checked') == true ? 1 : 0;
-        var id = $(this).data('id');
+        $('#example2 tbody').on('click', '.group-user-list', function () {
+            var email = $(this).data('email');
+            
+            var tr = $(this).parents('tr');
+            var row = table.row(tr);
+    
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
 
-        $.ajax({
-            type: "POST",
-            dataType: "json",
-            url: "{{ route('admin.community.status') }}",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            data: {
-                'id': id,
-                'status': status
-            },
-            beforeSend: function() {
                 $('#preloader').css('display', 'block');
-            },
-            error: function(xhr, textStatus) {
+                $.post("{{ route('admin.user.group.users.list.edit') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
+                    row.child(data.html).show();
+                    $('#preloader').css('display', 'none');
+                }, "json");
 
-                if (xhr && xhr.responseJSON.message) {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
-                } else {
-                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
-                }
-                $('#preloader').css('display', 'none');
-            },
-            success: function(data) {
-                $('#preloader').css('display', 'none');
-                sweetAlertMsg('success', data.message);
+                tr.addClass('shown');
             }
         });
+        
     });
+
+
+    
+
+function fill_datatable() {
+
+   
 }
+
 </script>
 @endpush

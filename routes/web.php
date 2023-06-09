@@ -248,7 +248,8 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::post('get-offer-price', 'Admin\UserController@getOfferPrice')->name('get-offer-price');
 
 		Route::post('group/users/list', 'Admin\UserController@groupUsersList')->name('group.users.list');
-
+		Route::post('group/users/list-edit', 'Admin\UserController@groupUsersListEdit')->name('group.users.list.edit');
+		
 
 		Route::post('upload-sponsorship-letter', 'Admin\UserController@uploadSponsorshipLetter')->name('upload-sponsorship-letter');
 		Route::post('upload-draft-information', 'Admin\UserController@uploadDraftInformation')->name('upload-draft-information');
@@ -415,6 +416,8 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('edit/{id}', 'Admin\CommunityController@edit')->name('edit');
 		Route::get('delete/{id}', 'Admin\CommunityController@delete')->name('delete'); 
 		Route::post('status', 'Admin\CommunityController@status')->name('status');
+		Route::get('group/update/{id}', 'Admin\CommunityController@groupUsersGroupUpdate')->name('group.update');
+
 	});
 	
 	// post

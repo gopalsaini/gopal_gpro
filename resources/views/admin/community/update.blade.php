@@ -1,7 +1,7 @@
 @extends('layouts/master')
 
 @section('title')
-@if($result) Edit @else Add @endif Community @endsection
+@if($results) Edit @else Add @endif Community @endsection
 @section('content')
 <style>
 	hr {
@@ -12,11 +12,11 @@
 	<div class="page-header">
 		<div class="row">
 			<div class="col-sm-6">
-				<h3>@if($result) @lang('admin.edit') @else @lang('admin.add') @endif Community</h3>
+				<h3>@if($results) @lang('admin.edit') @else @lang('admin.add') @endif Community</h3>
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
 					<li class="breadcrumb-item" aria-current="page">Community</li>
-					@if($result)
+					@if($results)
 						<li class="breadcrumb-item" aria-current="page">@lang('admin.edit')</li>
 					@else
 						<li class="breadcrumb-item" aria-current="page">@lang('admin.add')</li>
@@ -49,9 +49,9 @@
 								@if(!empty($users) && count($users)>0)
 									@foreach($users as $user)
 
-										@php $results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $user->id],['added_as', 'Group']])->first() @endphp
+										@php $resultsData = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $user->id],['added_as', 'Group']])->first() @endphp
                                         
-										@if(!$results)
+										@if(!$resultsData)
 											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
 												<label for="user{{$user->id}}" style="font-size: 19px;">
 													<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
@@ -76,11 +76,33 @@
 									<div class="col-sm-12 pb-3" >
 										<h5>Group Leader</h5>
 										<div style="border: 1px solid #00000014;height:50px;padding:10px"  id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+
+											@if($userLeader)
+												<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$userLeader->id}}" >
+													<label for="user{{$userLeader->id}}" style="font-size: 19px;">
+														<input id="user{{$userLeader->id}}" value="{{$userLeader->id}}" type="hidden" name="users[]" > 
+														{{$userLeader->name}} {{$userLeader->last_name}} ({{$userLeader->email}})
+													</label>
+													<hr>
+												</div>
+											@endif
 										</div>
 									</div>
 									<div class="col-sm-12" >
 										<h5>Group Members</h5>
 										<div style="border: 1px solid #00000014;height:370px;padding:10px;overflow: scroll;"  id="div3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+											@if(!empty($results) && count($results)>0)
+												@foreach($results as $user)
+
+													<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
+														<label for="user{{$user->id}}" style="font-size: 19px;">
+															<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
+															{{$user->name}} {{$user->last_name}} ({{$user->email}})
+														</label>
+														<hr>
+													</div>
+												@endforeach
+											@endif
 										</div>
 									
 									</div>
@@ -90,9 +112,7 @@
 
 						</div>
 						<div class="btn-showcase text-center">
-							@if(!$result)
-							<button class="btn btn-light" type="reset">@lang('admin.reset')</button>
-							@endif
+							
 							<button class="btn btn-primary" type="submit" form="form">@lang('admin.submit')</button>
 						</div>
 					</form>

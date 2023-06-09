@@ -61,7 +61,7 @@ class SubAdminController extends Controller {
 		
         \App\Helpers\commonHelper::setLocale();
 		
-		$designations = \App\Models\Designation::where('slug','recruiter')->orWhere('slug','registrar')->orWhere('slug','admin')->orWhere('slug','finances')->orWhere('slug','exhibitor')->where('status','1')->get();
+		$designations = \App\Models\Designation::where('slug','recruiter')->orWhere('slug','registrar')->orWhere('slug','admin')->orWhere('slug','finances')->orWhere('slug','exhibitor')->orWhere('slug','visa')->where('status','1')->get();
 		
 		$result = array();
         return view('admin.subadmin.add', compact('result','designations'));
@@ -163,7 +163,7 @@ class SubAdminController extends Controller {
 
         \App\Helpers\commonHelper::setLocale();
 
-		$designations = \App\Models\Designation::where('slug','recruiter')->orWhere('slug','registrar')->orWhere('slug','admin')->where('status','1')->get();
+		$designations = \App\Models\Designation::where('slug','recruiter')->orWhere('slug','registrar')->orWhere('slug','admin')->orWhere('slug','finances')->orWhere('slug','exhibitor')->orWhere('slug','visa')->where('status','1')->get();
 		
 		return view('admin.subadmin.add')->with(compact('result','designations'));
 

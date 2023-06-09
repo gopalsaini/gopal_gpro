@@ -521,7 +521,7 @@ class UserController extends Controller {
 				
 				$msg = "' Are you sure you want to delete this user ??'";
 
-				if (\Auth::user()->designation_id == '11') {
+				if (\Auth::user()->designation_id == '11' || \Auth::user()->designation_id == '16') {
 					return '<div style="display:flex"><a class="btn btn-sm btn-dark px-3 m-1 text-white sendEmail" data-id="'.$data->id.'"><i class="fas fa-envelope"></i></a>
 					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></a>
 					</div>';
@@ -727,9 +727,9 @@ class UserController extends Controller {
 					
 				}
 
-				if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'Review' ) {
+				if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' || \Auth::user()->designation_id == '16' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'Review' ) {
 					
-					if (\Auth::user()->designation_id == '11' ) {
+					if (\Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '16') {
 
 						return '<div style="display:flex"><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 
@@ -741,9 +741,9 @@ class UserController extends Controller {
 						<a href="javascript:void(0)" title="Waiting Profile" data-id="'.$data->id.'" data-status="Waiting" class="btn btn-sm btn-warning px-3 m-1 text-white profile-status"><i class="fas fa-pause"></i></a>
 						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>'.$Url;
 				
-				} else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '12' || \Auth::user()->designation_id == '11') && $data->profile_status == 'Waiting' ) {
+				} else if ((\Auth::user()->designation_id == '1' ||  \Auth::user()->designation_id == '16' || \Auth::user()->designation_id == '12' || \Auth::user()->designation_id == '11') && $data->profile_status == 'Waiting' ) {
 					
-					if (\Auth::user()->designation_id == '11') {
+					if (\Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '16') {
 						
 						return '<div style="display:flex"><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 
@@ -754,13 +754,13 @@ class UserController extends Controller {
 					<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a>'.$Url.'
 					</div>';
 				
-				} else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '12' || \Auth::user()->designation_id == '11') && $data->profile_status == 'Rejected') {
+				} else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '12' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '16') && $data->profile_status == 'Rejected') {
 					
 					return '<div style="display:flex"><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 				
-				}else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'ApprovedNotComing' ) {
+				}else if ((\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '16' ||  \Auth::user()->designation_id == '12') && $data->profile_status == 'ApprovedNotComing' ) {
 					
-					if (\Auth::user()->designation_id == '11' ) {
+					if (\Auth::user()->designation_id == '11' ||  \Auth::user()->designation_id == '16') {
 
 						return '<div style="display:flex"><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 
@@ -1090,7 +1090,7 @@ class UserController extends Controller {
 		    })
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
+				if (\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == '16') {
 					return '<div style="display:flex"><a href="'.route('admin.user.travel.info', ['id' => $data->user_id] ).'" title="User travel info" class="btn btn-sm btn-warning m-1"><i class="fas fa-plane"></i></a>
 						<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
 				}
@@ -1103,7 +1103,7 @@ class UserController extends Controller {
 
         }
 
-		if(\Auth::user()->designation_id == 1){
+		if(\Auth::user()->designation_id == 1 || \Auth::user()->designation_id == 12 || \Auth::user()->designation_id == 16){
 
 			\App\Helpers\commonHelper::setLocale();
 			$setting = \App\Models\Designation::With('StageSetting')->where('slug', $type)->first();
@@ -2313,6 +2313,44 @@ class UserController extends Controller {
 
 					$html .= '<td class="text-center"><a href="'.route('admin.user.profile', ['id' => $result->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>';
 					$html .= $spouse ? '<hr><a href="'.route('admin.user.profile', ['id' => $spouse->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>' : '';
+					$html .= '</td>';
+
+					$html .= '</tr>';
+				}
+			} else {
+				$html .= '<tr colspan="9"><td class="text-center">No Group Users Found</td></tr>';
+			}
+			$html .= '</tbody></table>';
+
+			return response()->json(array('html'=>$html));
+			
+        }
+
+	}
+
+	public function groupUsersListEdit(Request $request) {
+
+		if ($request->ajax()) {
+
+			$id = \App\Models\User::where('email', $request->post('email'))->first()->id;
+			$results = \App\Models\User::where([['parent_id', $id],['added_as', 'Group']])->get();
+
+			$html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"> <thead> <tr> <th class="text-center">'. \Lang::get('admin.id') .'</th> <th class="text-center">'. \Lang::get('admin.addedas') .'</th> <th class="text-center">'. \Lang::get('admin.user') .'</th> <th class="text-center">'. \Lang::get('admin.action') .'</th> </tr> </thead><tbody>';
+			
+			if (count($results) > 0) {
+				foreach ($results as $key=>$result) {
+					
+					$key += 1;
+					$html .= '<tr>';
+					$html .= '<td class="text-center">'.$key.'.</td>';
+
+					$html .= '<td class="text-center">'.$result->added_as;
+					$html .= '</td>';
+
+					$html .= '<td class="text-center">'.$result->email;
+					$html .= '</td>';
+
+					$html .= '<td class="text-center"><a href="'.route('admin.user.profile', ['id' => $result->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>';
 					$html .= '</td>';
 
 					$html .= '</tr>';
@@ -4980,6 +5018,26 @@ class UserController extends Controller {
 				});
 				
 			}
+
+			if($countryType  == 'no-visa-needed'){
+
+				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+		
+				$totalData1->whereIn('passport_infos.country_id', $doNotRequireVisa);
+
+			}elseif($countryType  == 'visa-needed'){
+
+				$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
+
+				$totalData1->whereIn('passport_infos.country_id', $RequireVisa);
+
+			}elseif($countryType  == 'restricted'){
+
+				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
+		
+				$totalData1->whereIn('passport_infos.country_id', $restricted);
+
+			}
 			
 			$totalData = $totalData1->count();
 
@@ -5078,16 +5136,16 @@ class UserController extends Controller {
 
 			->addColumn('admin_status', function($data) use($countryType){
 
-						$lang = 'English';
-						if($data->language == 'sp'){
-							$lang = 'Spanish';
-						}elseif($data->language == 'fr'){
-							$lang = 'French';
-						}elseif($data->language == 'pt'){
-							$lang = 'French';
-						}else{
-							$lang = 'English';
-						}
+				$lang = 'English';
+				if($data->language == 'sp'){
+					$lang = 'Spanish';
+				}elseif($data->language == 'fr'){
+					$lang = 'French';
+				}elseif($data->language == 'pt'){
+					$lang = 'French';
+				}else{
+					$lang = 'English';
+				}
 						
 				if ($data->admin_status == 'Approved') {
 
@@ -5099,20 +5157,26 @@ class UserController extends Controller {
 
 				} else if ($data->admin_status === 'Pending') {
 
-					if($countryType  == 'restricted'){
+					if(\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == 16){
 
-						
-						
-						return '<div style="display:flex">
-						<a data-id="'.$data->id.'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveRestricted">Approve</a>
-								<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
-							</div>';
+						if($countryType  == 'restricted'){
+
+							return '<div style="display:flex">
+							<a data-id="'.$data->id.'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveRestricted">Approve</a>
+									<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
+								</div>';
+						}else{
+
+							return '<div style="display:flex">
+									<a href="'.url('admin/user/passport/approve/'.$data->id).'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 ">Approve</a>
+									<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
+								</div>';
+						}
+
 					}else{
 
-						return '<div style="display:flex">
-								<a href="'.url('admin/user/passport/approve/'.$data->id).'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 ">Approve</a>
-								<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
-							</div>';
+						return '<div class="badge rounded-pill pill-badge-warning">Pending</div>';
+
 					}
 					
 				}
@@ -5122,10 +5186,9 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex">
 						<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
-				}
+				
 		    })
 
 		    ->escapeColumns([])	
@@ -5284,10 +5347,10 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
+				
 					return '<div style="display:flex">
 						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
-				}
+				
 		    })
 
 		    ->escapeColumns([])	
@@ -5444,11 +5507,10 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex">
 								<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
 							</div>';
-				}
+				
 
 				
 		    })
@@ -5504,6 +5566,13 @@ class UserController extends Controller {
 				});
 				
 			}
+
+			$totalData1->whereIn('passport_infos.country_id', $restricted);
+
+			$totalData1->where(function ($query1) {
+				$query1->where('passport_infos.visa_granted','!=','No')
+					  ->orWhere('passport_infos.visa_granted','=',null);
+			});
 			
 			$totalData = $totalData1->count();
 
@@ -5599,11 +5668,10 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex">
 								<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
 							</div>';
-				}
+				
 
 				
 		    })
@@ -5655,7 +5723,9 @@ class UserController extends Controller {
 				});
 				
 			}
-			
+
+			$totalData1->where('passport_infos.visa_granted','No');
+
 			$totalData = $totalData1->count();
 
 			$totalFiltered = $query->count();
@@ -5711,7 +5781,7 @@ class UserController extends Controller {
 
 			->addColumn('Refund', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
+				if (\Auth::user()->designation_id == '1' || Auth::user()->designation_id == 16) {
 
 					if($data->reference_number == null){
 
@@ -5746,11 +5816,10 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				if (\Auth::user()->designation_id == '1') {
 					return '<div style="display:flex">
 								<a href="'.route('admin.user.profile', ['id' => $data->user_id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
 								</div>';
-				}
+				
 				
 		    })
 
