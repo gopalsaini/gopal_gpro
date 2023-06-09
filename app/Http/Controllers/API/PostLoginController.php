@@ -1438,68 +1438,80 @@ class PostLoginController extends Controller {
 						$user->share_your_room_with=$request->json()->get('share_your_room_with');
 						$user->save();
 					}
-					$url = '<a href="'.url('profile-update').'">Click here</a>';
-					$to = $request->user()->email;
-					$subject = 'Please verify your travel Information.';
-					$msg = '<p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
 
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Travel information completed');
+					$userData = \App\Models\User::where('id',$request->user()->id)->first();
+					if($userData){
+						$userData->stage = '4';
+						$userData->status_change_at = date('Y-m-d H:i:s');
+						$userData->save();
+					}
+
+					\App\Helpers\commonHelper::userMailTrigger($userData->id,'Travel Info Submitted','Travel Info Submitted');
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($userData->id,'Travel Info Submitted','Travel Info Submitted','Travel Info Submitted');
+	
 					
-					$result = \App\Models\TravelInfo::join('users','users.id','=','travel_infos.user_id')->where('travel_infos.user_id',$request->user()->id)->first();
+					// $url = '<a href="'.url('profile-update').'">Click here</a>';
+					// $to = $request->user()->email;
+					// $subject = 'Please verify your travel Information.';
+					// $msg = '<p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+
+					// \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id,$subject,$msg,'Travel information completed');
+					
+					// $result = \App\Models\TravelInfo::join('users','users.id','=','travel_infos.user_id')->where('travel_infos.user_id',$request->user()->id)->first();
 		
-					if ($result) {
-						$to = $result->email;
+					// if ($result) {
+					// 	$to = $result->email;
 						
-						if($result->language == 'sp'){
+					// 	if($result->language == 'sp'){
 
-							$subject = "Por favor, verifique su información de viaje";
-							$msg = '<p>Estimado '.$result->name.' '.$result->last_name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace: '.$url.' para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
+					// 		$subject = "Por favor, verifique su información de viaje";
+					// 		$msg = '<p>Estimado '.$result->name.' '.$result->last_name.' ,</p><p><br></p><p><br></p><p>Gracias por enviar su información de viaje.&nbsp;</p><p><br></p><p>A continuación, le adjuntamos una carta de solicitud de visa que hemos redactado a partir de la información recibida.&nbsp;</p><p><br></p><p>Por favor, revise la carta y luego haga clic en este enlace: '.$url.' para verificar que la información es correcta.</p><p><br></p><p>Gracias por su colaboración.</p><p><br></p><p><br></p><p>Atentamente,&nbsp;</p><p><br></p><p><br></p><p>El Equipo GproCongress II</p>';
 						
-						}elseif($result->language == 'fr'){
+					// 	}elseif($result->language == 'fr'){
 						
-							$subject = "Veuillez vérifier vos informations de voyage";
-							$msg = "<p>Cher '.$result->name.' '.$result->last_name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien: '.$url.' pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
+					// 		$subject = "Veuillez vérifier vos informations de voyage";
+					// 		$msg = "<p>Cher '.$result->name.' '.$result->last_name.',&nbsp;</p><p><br></p><p>Merci d’avoir soumis vos informations de voyage.&nbsp;&nbsp;</p><p><br></p><p>Veuillez trouver ci-joint une lettre de visa que nous avons rédigée basée sur les informations reçues.&nbsp;</p><p><br></p><p>Pourriez-vous s’il vous plaît examiner la lettre, puis cliquer sur ce lien: '.$url.' pour vérifier que les informations sont correctes.&nbsp;</p><p><br></p><p>Merci pour votre aide.</p><p><br></p><p>Cordialement,&nbsp;</p><p>L’équipe du GProCongrès II</p><div><br></div>";
 				
-						}elseif($result->language == 'pt'){
+					// 	}elseif($result->language == 'pt'){
 						
-							$subject = "Por favor verifique sua Informação de Viagem";
-							$msg = '<p>Prezado '.$result->name.' '.$result->last_name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link: '.$url.' para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
+					// 		$subject = "Por favor verifique sua Informação de Viagem";
+					// 		$msg = '<p>Prezado '.$result->name.' '.$result->last_name.',</p><p><br></p><p>Agradecemos por submeter sua informação de viagem</p><p><br></p><p>Por favor, veja a carta de pedido de visto em anexo, que escrevemos baseando na informação que recebemos.</p><p><br></p><p>Poderia por favor rever a carta, e daí clicar neste link: '.$url.' para verificar que a informação esteja correta.&nbsp;</p><p><br></p><p>Agradecemos por sua ajuda.</p><p><br></p><p>Calorosamente,</p><p>Equipe do II CongressoGPro</p><div><br></div>';
 						
-						}else{
+					// 	}else{
 						
-							$subject = 'Please verify your travel Information.';
-							$msg = '<p>Dear '.$result->name.' '.$result->last_name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
+					// 		$subject = 'Please verify your travel Information.';
+					// 		$msg = '<p>Dear '.$result->name.' '.$result->last_name.',</p><p><br></p><p>Thank you for submitting your travel information.&nbsp;&nbsp;</p><p><br></p><p>Please find a visa letter attached, that we have drafted based on the information received.&nbsp;</p><p><br></p><p>Would you please review the letter, and then click on this link: '.$url.' to verify that the information is correct.</p><p><br></p><p>Thank you for your assistance.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p><div><br></div>';
 												
-						}
-						$pdf = \PDF::loadView('email_templates.travel_info', $result->toArray());
-						$pdf->setPaper('L');
-						$pdf->output();
-						$canvas = $pdf->getDomPDF()->getCanvas();
+					// 	}
+					// 	$pdf = \PDF::loadView('email_templates.travel_info', $result->toArray());
+					// 	$pdf->setPaper('L');
+					// 	$pdf->output();
+					// 	$canvas = $pdf->getDomPDF()->getCanvas();
 						
-						$height = $canvas->get_height();
-						$width = $canvas->get_width();
-						$canvas->set_opacity(.2,"Multiply");
-						$canvas->page_text($width/5, $height/2, 'Draft', null,
-						70, array(0,0,0),2,2,-30);
+					// 	$height = $canvas->get_height();
+					// 	$width = $canvas->get_width();
+					// 	$canvas->set_opacity(.2,"Multiply");
+					// 	$canvas->page_text($width/5, $height/2, 'Draft', null,
+					// 	70, array(0,0,0),2,2,-30);
 
-						$fileName = strtotime("now").rand(11,99).'.pdf';
+					// 	$fileName = strtotime("now").rand(11,99).'.pdf';
 
-						$path = public_path('uploads/file/');
+					// 	$path = public_path('uploads/file/');
 						
-						$pdf->save($path . '/' . $fileName);
+					// 	$pdf->save($path . '/' . $fileName);
 						
-						$model = \App\Models\TravelInfo::find($travelinfo->id);
+					// 	$model = \App\Models\TravelInfo::find($travelinfo->id);
 
-						$model->draft_file = $fileName;
-						$model->save();
+					// 	$model->draft_file = $fileName;
+					// 	$model->save();
 
 
-						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
-						\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
+					// 	\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
+					// 	\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
 
-						// \App\Helpers\commonHelper::sendSMS($result->mobile);
 
-					} 
+					// } 
+
 					$name = $request->user()->name.' '.$request->user()->last_name;
 					$subject = '[GProCongress II Admin]  Travel Info Submitted by User';
 					$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$name.' has updated Travel Info for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Please review the updated info.</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';

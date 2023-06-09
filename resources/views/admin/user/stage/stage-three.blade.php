@@ -714,7 +714,7 @@
                                 <div class="information-box">
                                     <input type="hidden" name="id" id="passportId" cols="10" rows="5" class="form-control" required />
 
-                                    @php  $coordinate = ['test'=>'test@gmail.com','test2'=>'test2@gmail.com','test3'=>'test3@gmail.com'];  @endphp
+                                    @php  $coordinate = ['Nadine'=>'Nadine@grocongress.org','Johanna'=>'Johanna@gprocongress.org'];  @endphp
                                     <h6>Enter Name <span style="color:red">*</span></h6>
                                     <p>
                                         <select id="coordinateName" class="form-control"  name="name" required>
