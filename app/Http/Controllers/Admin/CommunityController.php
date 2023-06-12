@@ -31,6 +31,25 @@ class CommunityController extends Controller
             
 				if(!empty($request->post('users')) && count($request->post('users'))>1){
 
+					if($request->post('type') == 'update'){
+
+						$userExitsInGroup = \App\Models\User::where('parent_id',$request->post('users')[0])->where('added_as','Group')->get();
+						if(!empty($userExitsInGroup) && count($userExitsInGroup)>0){
+
+							foreach($userExitsInGroup as $key=>$userVal){
+
+								$user = \App\Models\User::where('id',$userVal->id)->first();
+								if($user){
+									$user->parent_id = null;
+									$user->added_as = null;
+									$user->save();
+								}
+								
+							}
+						}
+
+					}
+
 					foreach($request->post('users') as $key=>$user){
 
 						if($key++){

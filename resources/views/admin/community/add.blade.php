@@ -1,7 +1,7 @@
 @extends('layouts/master')
 
 @section('title')
-@if($result) Edit @else Add @endif Community @endsection
+@if($result) Edit @else Add @endif Group @endsection
 @section('content')
 <style>
 	hr {
@@ -12,10 +12,10 @@
 	<div class="page-header">
 		<div class="row">
 			<div class="col-sm-6">
-				<h3>@if($result) @lang('admin.edit') @else @lang('admin.add') @endif Community</h3>
+				<h3>@if($result) @lang('admin.edit') @else @lang('admin.add') @endif Group</h3>
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
-					<li class="breadcrumb-item" aria-current="page">Community</li>
+					<li class="breadcrumb-item" aria-current="page">Group</li>
 					@if($result)
 						<li class="breadcrumb-item" aria-current="page">@lang('admin.edit')</li>
 					@else
@@ -26,7 +26,7 @@
 			<div class="col-sm-6">
             <div class="bookmark">
                 <ul>
-                    <a href="{{ route('admin.community.list') }}" class="btn btn-primary"><i class="fas fa-list me-2"></i> Community @lang('admin.list')</a>
+                    <a href="{{ route('admin.community.list') }}" class="btn btn-primary"><i class="fas fa-list me-2"></i> Group @lang('admin.list')</a>
                 </ul>
             </div>
         </div>
@@ -70,7 +70,8 @@
 							<div class="col-sm-6" >
 
 							<form id="form" action="{{ route('admin.community.add') }}" method="post" enctype="multipart/form-data" autocomplete="off">
-							@csrf
+								@csrf
+								<input id="type" value="add" type="hidden" name="type" > 
 								<div class="row" >
 
 									<div class="col-sm-12 pb-3" >

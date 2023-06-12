@@ -2335,7 +2335,7 @@ class UserController extends Controller {
 			$id = \App\Models\User::where('email', $request->post('email'))->first()->id;
 			$results = \App\Models\User::where([['parent_id', $id],['added_as', 'Group']])->get();
 
-			$html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"> <thead> <tr> <th class="text-center">'. \Lang::get('admin.id') .'</th> <th class="text-center">'. \Lang::get('admin.addedas') .'</th> <th class="text-center">'. \Lang::get('admin.user') .'</th> <th class="text-center">'. \Lang::get('admin.action') .'</th> </tr> </thead><tbody>';
+			$html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"> <thead> <tr> <th class="text-center">'. \Lang::get('admin.id') .'</th> <th class="text-center">'. \Lang::get('admin.addedas') .'</th> <th class="text-center">Name</th>  <th class="text-center">'. \Lang::get('admin.action') .'</th> </tr> </thead><tbody>';
 			
 			if (count($results) > 0) {
 				foreach ($results as $key=>$result) {
@@ -2345,6 +2345,9 @@ class UserController extends Controller {
 					$html .= '<td class="text-center">'.$key.'.</td>';
 
 					$html .= '<td class="text-center">'.$result->added_as;
+					$html .= '</td>';
+
+					$html .= '<td class="text-center">'.$result->name.' '.$result->last_name;
 					$html .= '</td>';
 
 					$html .= '<td class="text-center">'.$result->email;

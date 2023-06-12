@@ -1,6 +1,6 @@
 @extends('layouts/master')
 
-@section('title',__('Stage All'))
+@section('title',__('Group List'))
 
 @push('custom_css')
     <style>
@@ -37,10 +37,10 @@
     <div class="page-header">
         <div class="row">
             <div class="col-sm-6">
-                <h3> Community List</h3>
+                <h3> Group List</h3>
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
-					<li class="breadcrumb-item" aria-current="page">Community</li>
+					<li class="breadcrumb-item" aria-current="page">Group</li>
 					<li class="breadcrumb-item" aria-current="page">List</li>
 					
 				</ol>

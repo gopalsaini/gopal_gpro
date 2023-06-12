@@ -1,7 +1,7 @@
 @extends('layouts/master')
 
 @section('title')
-@if($results) Edit @else Add @endif Community @endsection
+@if($results) Edit @else Add @endif Group @endsection
 @section('content')
 <style>
 	hr {
@@ -12,10 +12,10 @@
 	<div class="page-header">
 		<div class="row">
 			<div class="col-sm-6">
-				<h3>@if($results) @lang('admin.edit') @else @lang('admin.add') @endif Community</h3>
+				<h3>@if($results) @lang('admin.edit') @else @lang('admin.add') @endif Group</h3>
 				<ol class="breadcrumb">
 					<li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
-					<li class="breadcrumb-item" aria-current="page">Community</li>
+					<li class="breadcrumb-item" aria-current="page">Group</li>
 					@if($results)
 						<li class="breadcrumb-item" aria-current="page">@lang('admin.edit')</li>
 					@else
@@ -26,7 +26,7 @@
 			<div class="col-sm-6">
             <div class="bookmark">
                 <ul>
-                    <a href="{{ route('admin.community.list') }}" class="btn btn-primary"><i class="fas fa-list me-2"></i> Community @lang('admin.list')</a>
+                    <a href="{{ route('admin.community.list') }}" class="btn btn-primary"><i class="fas fa-list me-2"></i> Group @lang('admin.list')</a>
                 </ul>
             </div>
         </div>
@@ -70,15 +70,15 @@
 							<div class="col-sm-6" >
 
 							<form id="form" action="{{ route('admin.community.add') }}" method="post" enctype="multipart/form-data" autocomplete="off">
-							@csrf
+								@csrf
+								<input id="type" value="update" type="hidden" name="type" > 
 								<div class="row" >
 
 									<div class="col-sm-12 pb-3" >
 										<h5>Group Leader</h5>
-										<div style="border: 1px solid #00000014;height:50px;padding:10px"  id="div2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-
+										<div style="border: 1px solid #00000014;height:50px;padding:10px"  >
 											@if($userLeader)
-												<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$userLeader->id}}" >
+												<div class="SelectLocality" >
 													<label for="user{{$userLeader->id}}" style="font-size: 19px;">
 														<input id="user{{$userLeader->id}}" value="{{$userLeader->id}}" type="hidden" name="users[]" > 
 														{{$userLeader->name}} {{$userLeader->last_name}} ({{$userLeader->email}})
@@ -87,10 +87,11 @@
 												</div>
 											@endif
 										</div>
+
 									</div>
 									<div class="col-sm-12" >
 										<h5>Group Members</h5>
-										<div style="border: 1px solid #00000014;height:370px;padding:10px;overflow: scroll;"  id="div3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+										<div style="border: 1px solid #00000014;height:370px;padding:10px;overflow: scroll;"  id="div3" ondrop="drop(event)" ondragover="allowDrop(event)">
 											@if(!empty($results) && count($results)>0)
 												@foreach($results as $user)
 
@@ -111,7 +112,7 @@
 							
 
 						</div>
-						<div class="btn-showcase text-center">
+						<div class="btn-showcase text-center mt-5">
 							
 							<button class="btn btn-primary" type="submit" form="form">@lang('admin.submit')</button>
 						</div>
