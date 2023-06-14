@@ -25,14 +25,26 @@ class UserController extends Controller {
 					'contact_country_id' => 'required',
 					'contact_state_id' => 'required',
 					'contact_city_id' => 'required',
-					'ministry_name' => 'required',
-					'ministry_zip_code' => 'required',
-					'ministry_address' => 'required',
-					'ministry_country_id' => 'required',
-					'ministry_state_id' => 'required',
-					'ministry_city_id' => 'required',
-					'language' => 'required|in:en,sp,fr,pt',
 				];
+
+				$result=\App\Models\User::find($request->post('id'));
+
+				if($result && $result->designation_id != '4' && $result->designation_id != '6'){
+
+					$rules['ministry_name'] = 'required';
+					$rules['ministry_zip_code'] = 'required';
+					$rules['ministry_address'] = 'required';
+					$rules['ministry_country_id'] = 'required';
+					$rules['ministry_state_id'] = 'required';
+					$rules['ministry_city_id'] = 'required';
+					$rules['language'] = 'required|in:en,sp,fr,pt';
+					
+					
+
+				}else{
+					$rules['marital_status'] = 'required';
+					$rules['citizenship'] = 'required';
+				}
 
 
 			} else {
@@ -85,6 +97,7 @@ class UserController extends Controller {
 					$data->name = $request->post('first_name');
 					$data->last_name = $request->post('last_name');
 					$data->gender = $request->post('gender');
+					$data->citizenship = $request->post('citizenship');
 					$data->dob = $dob;
 					
 					$data->mobile = $request->post('mobile');
@@ -99,28 +112,63 @@ class UserController extends Controller {
 					$data->contact_city_id = $request->post('contact_city_id');
 					$data->contact_city_name = $request->post('contact_city_name');
 					$data->contact_state_name = $request->post('contact_state_name');
-					$data->ministry_name = $request->post('ministry_name');
-					$data->ministry_zip_code = $request->post('ministry_zip_code');
-					$data->ministry_address = $request->post('ministry_address');
-					$data->ministry_country_id = $request->post('ministry_country_id');
-					$data->ministry_state_id = $request->post('ministry_state_id');
-					$data->ministry_state_name = $request->post('ministry_state_name');
-					$data->ministry_city_id = $request->post('ministry_city_id');
-					$data->ministry_city_name = $request->post('ministry_city_name');
-					$data->doyouseek_postoralcomment = $request->post('doyouseek_postoral_comment');
-					$data->language = $request->post('language');
 					
-					$dataMin=array(
-						'non_formal_trainor'=>$request->post('non_formal_trainor'),
-						'formal_theological'=>$request->post('formal_theological'),
-						'informal_personal'=>$request->post('informal_personal'),
-						'howmany_pastoral'=>$request->post('howmany_pastoral'),
-						'howmany_futurepastor'=>$request->post('howmany_futurepastor'), 
-						'comment'=>$request->post('comment') ?? '', 
-						'willing_to_commit'=>$request->post('willing_to_commit') ?? '', 
-					);
 
-					$data->ministry_pastor_trainer_detail = json_encode($dataMin); 
+					if($data && $data->designation_id != '4' && $data->designation_id != '6'){
+
+						$data->ministry_name = $request->post('ministry_name');
+						$data->ministry_zip_code = $request->post('ministry_zip_code');
+						$data->ministry_address = $request->post('ministry_address');
+						$data->ministry_country_id = $request->post('ministry_country_id');
+						$data->ministry_state_id = $request->post('ministry_state_id');
+						$data->ministry_state_name = $request->post('ministry_state_name');
+						$data->ministry_city_id = $request->post('ministry_city_id');
+						$data->ministry_city_name = $request->post('ministry_city_name');
+						$data->doyouseek_postoralcomment = $request->post('doyouseek_postoral_comment');
+						$data->language = $request->post('language');
+						
+						$dataMin=array(
+							'non_formal_trainor'=>$request->post('non_formal_trainor'),
+							'formal_theological'=>$request->post('formal_theological'),
+							'informal_personal'=>$request->post('informal_personal'),
+							'howmany_pastoral'=>$request->post('howmany_pastoral'),
+							'howmany_futurepastor'=>$request->post('howmany_futurepastor'), 
+							'comment'=>$request->post('comment') ?? '', 
+							'willing_to_commit'=>$request->post('willing_to_commit') ?? '', 
+						);
+
+						$data->ministry_pastor_trainer_detail = json_encode($dataMin); 
+	
+					}else{
+
+						if($request->post('marital_status') == 'Unmarried'){
+							
+							$existSpouse = \App\Models\User::where([
+								['parent_id', '=', $request->post('id')],
+								['added_as', '=', 'Spouse']
+								])->first();
+			
+							if($existSpouse){
+								
+								$existSpouse->added_as = null;
+								$existSpouse->parent_id = null;
+								$existSpouse->save();
+				
+							}
+						}
+						
+
+						$data->profile_status = 'Approved';
+						$data->profile_update = 'Approved';
+						$data->amount = '0.00';
+						$data->stage = '3';
+						$data->payment_status = '2';
+						$data->marital_status = $request->post('marital_status');
+						$data->room = $request->post('room') ?? null;
+						$data->profile_submit_type = 'submit';
+						$data->status_change_at = date('Y-m-d H:i:s');
+					}
+
 
 				} else {
 
@@ -158,7 +206,11 @@ class UserController extends Controller {
 					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 					\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
 
-					return response(array('message'=>'User added successfully.', 'reset'=>true), 200);
+					$userUpdate = '';
+					if($request->post('designation_id') == '4' || $request->post('designation_id') == '6'){
+						$userUpdate = url('admin/user/edit/'.$data->id);
+					}
+					return response(array('message'=>'User added successfully.', 'userUpdateUrl'=>$userUpdate, 'reset'=>true), 200);
 
 				} else {
 
@@ -176,6 +228,8 @@ class UserController extends Controller {
 		$country=\App\Models\Country::get();
 		
 		$result = array();
+
+		
         return view('admin.user.add', compact('result', 'designations','country'));
 
     }
@@ -1015,10 +1069,6 @@ class UserController extends Controller {
 				
 			}
 
-			$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-			$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
-			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
-		
 			$data = $query->offset($start)->limit($limit)->get();
 			
 			$totalData1 = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
@@ -1060,22 +1110,10 @@ class UserController extends Controller {
 				return \App\Helpers\commonHelper::getCountry2NameById($data->country_id);
 		    })
 
-			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
+			->addColumn('category', function($data) {
 
-				if(in_array($data->country_id,$doNotRequireVisa)){
+				return $data->visa_category;
 
-					return 'No Visa Needed';
-
-				}elseif(in_array($data->country_id,$RequireVisa)){
-
-					return 'Visa Needed';
-					
-				}elseif(in_array($data->country_id,$restricted)){
-
-					return 'Restricted Country';
-
-				}
-				
 		    })
 
 			->addColumn('visa_doc', function($data){
@@ -1504,7 +1542,7 @@ class UserController extends Controller {
 
 	}
 
-    public function edit($id) {
+    public function edit(Request $request,$id) {
 		
 		$result = \App\Models\User::find($id);
 
@@ -1517,7 +1555,14 @@ class UserController extends Controller {
 		$designations = \App\Models\Designation::where('slug', '!=', 'admin')->get();
 		$country  = \App\Models\Country::get();
 		
-		return view('admin.user.edit', compact('result', 'designations','country'));
+
+		
+		$SpouseDetails =\App\Models\User::where('parent_id',$id)->where('added_as','Spouse')->first();
+		if(!$SpouseDetails){
+			$SpouseDetails = [];
+		}
+
+		return view('admin.user.edit', compact('result', 'designations','country','SpouseDetails'));
 
 	}
 
@@ -3594,6 +3639,193 @@ class UserController extends Controller {
 
 	}
 
+	public function stageDownloadExcelGovernmentPassport(Request $request){
+
+		try{
+
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language','users.citizenship as citizenship')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', '2')->orderBy('updated_at', 'desc');
+
+			$result = $query->get();
+			
+			if($result->count()==0){
+
+				return response(array('error'=>true,'message'=>'Data not found.'),200);
+
+			}else{
+
+				
+					$delimiter = ",";  
+					$filename = "passport-".date('d-m-Y').rand(111,999).".csv";
+					
+					$f = fopen('php://memory', 'w'); 
+					
+					//$f = fopen('php://memory', 'w');
+					$fields = array('Id', 'Full name', 
+										'Passport number', 
+										'Passport Issued by (Country)', 
+										'Current Residence/Travelling From (Country)'); 
+					fputcsv($f, $fields, $delimiter); 
+
+					$i=1;
+					foreach($result as $row){
+						
+						$name= $row['salutation'].' '.$row['name'];
+						$countryPass= \App\Helpers\commonHelper::getCountry2NameById($row['country_id']);
+						$country= \App\Helpers\commonHelper::getCountryNameById($row['citizenship']);
+						
+						$lineData = array(
+							($i), 
+							$name,
+							$row['passport_no'], 
+							$countryPass,
+							$country
+						); 
+						
+						fputcsv($f, $lineData, $delimiter); 
+						
+						$i++;
+					}
+					
+					fseek($f, 0); 
+					header('Content-Type: text/csv'); 
+					// header("Content-Type: application/octet-stream");
+					header('Content-Disposition: attachment; filename="' . $filename . '";');
+					fpassthru($f);
+					
+
+					fclose($f);
+					
+				exit; 
+
+				return response(array('error'=>false,"message" => "File downloaded success"),200); 
+				
+			}
+			
+		}catch (\Exception $e){
+		
+			return response(array('error'=>true,"message" => "Something went wrong.please try again"),200); 
+		
+		}
+
+	}
+
+	public function stageDownloadExcelPassport(Request $request){
+
+		try{
+
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language','users.citizenship as citizenship')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', '2')->orderBy('updated_at', 'desc');
+
+			$result = $query->get();
+			
+			if($result->count()==0){
+
+				return response(array('error'=>true,'message'=>'Data not found.'),200);
+
+			}else{
+
+				$delimiter = ",";  
+				$filename = "passport-".date('d-m-Y').rand(111,999).".csv";
+				
+				$f = fopen('php://memory', 'w'); 
+				
+				//$f = fopen('php://memory', 'w');
+				$fields = array('Id', 'Full name', 
+									'Passport number', 
+									'Passport Copy', 
+									'Passport Issued by (Country)', 
+									'Current Residence/Travelling From (Country)',
+									'Is this a diplomatic passport?',
+									"Do you have a valid Visa or Residence, duly issued by Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union?",
+									"Is your visa from one of the countries identified in the previous step a multiple entry visa, and is 6 month visa validity?",
+									"Have you used your multiple entry visa at least once before to enter the country that granted it? ",
+									"Is your passport valid until May 31, 2024?",
+									'What countries among Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union you hold the Valid Visa?',
+									'Is your Visa Granted ?',
+								); 
+				fputcsv($f, $fields, $delimiter); 
+
+				$i=1;
+				foreach($result as $row){
+					
+					$name= $row['salutation'].' '.$row['name']; $passportCopy = ''; $ResidenceProof = '';
+					$countryPass= \App\Helpers\commonHelper::getCountry2NameById($row['country_id']);
+					$country= \App\Helpers\commonHelper::getCountryNameById($row['citizenship']);
+					
+					if($row['passport_copy'] != ''){
+						foreach(explode(",",rtrim($row['passport_copy'], ',')) as $key=>$img){
+							$passportCopy .= asset('/uploads/passport/'.$img);
+						}
+					}
+
+					if($row['valid_residence_country'] != Null){
+
+						if($row['valid_residence_country'] != ''){
+
+							$countryDoc = json_decode($row['valid_residence_country'],true); 
+
+							foreach($countryDoc as $key=>$img){
+
+								if($img['id'] == '15'){
+									$ResidenceProof.= 'Visa/Residence Proof for European Union, '.asset('/uploads/passport/'.$img['file']).', ';
+
+								}else{
+
+									$ResidenceProof.= 'Visa/Residence Proof for '.\App\Helpers\commonHelper::getCountry2NameById($img['id']).' '.asset('/uploads/passport/'.$img['file']).', ';
+									
+								}
+								
+							}
+						}
+
+					}else{
+						$ResidenceProof = 'N/A';
+					}
+					
+					$lineData = array(
+						($i), 
+						$name,
+						$row['passport_no'], 
+						$passportCopy, 
+						$countryPass,
+						$country,
+						$row['diplomatic_passport'],
+						$row['visa_residence'] == Null ? 'N/A' : $row['visa_residence'],
+						$row['multiple_entry_visa_country'] == Null ? 'N/A' : $row['multiple_entry_visa_country'],
+						$row['multiple_entry_visa'] == Null ? 'N/A' : $row['multiple_entry_visa'],
+						$row['passport_valid'] == Null ? 'N/A' : $row['passport_valid'],
+						$ResidenceProof,
+						$row['visa_granted'] == Null ? 'N/A' : $row['visa_granted'],
+					); 
+					
+					fputcsv($f, $lineData, $delimiter); 
+					
+					$i++;
+				}
+				
+				fseek($f, 0); 
+				header('Content-Type: text/csv'); 
+				// header("Content-Type: application/octet-stream");
+				header('Content-Disposition: attachment; filename="' . $filename . '";');
+				fpassthru($f);
+				
+
+				fclose($f);
+				
+				exit; 
+
+				return response(array('error'=>false,"message" => "File downloaded success"),200); 
+				
+			}	
+			
+		}catch (\Exception $e){
+		
+			return response(array('error'=>true,"message" => "Something went wrong.please try again"),200); 
+		
+		}
+		
+
+	}
+
     public function refundAmount(Request $request){
  
         if($request->ajax()){
@@ -4990,29 +5222,22 @@ class UserController extends Controller {
 			}
 
 			if($countryType  == 'no-visa-needed'){
-
-				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-		
-				$query->whereIn('passport_infos.country_id', $doNotRequireVisa);
+			
+				$query->where('passport_infos.visa_category','No Visa Needed');
 
 			}elseif($countryType  == 'visa-needed'){
 
-				$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
-
-				$query->whereIn('passport_infos.country_id', $RequireVisa);
+				$query->where('passport_infos.visa_category', 'Visa Needed');
 
 			}elseif($countryType  == 'restricted'){
 
-				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
-		
-				$query->whereIn('passport_infos.country_id', $restricted);
+				$query->where('passport_infos.visa_category', 'Restricted Country');
 
 			}
 
 			$data = $query->offset($start)->limit($limit)->get();
-			
-			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
-			
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','!=','Approved')->orderBy('updated_at', 'desc');
+
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
 					$query1->where('users.email', 'like', "%" . request('email') . "%")
@@ -5024,21 +5249,15 @@ class UserController extends Controller {
 
 			if($countryType  == 'no-visa-needed'){
 
-				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-		
-				$totalData1->whereIn('passport_infos.country_id', $doNotRequireVisa);
+				$totalData1->where('passport_infos.visa_category','No Visa Needed');
 
 			}elseif($countryType  == 'visa-needed'){
 
-				$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
-
-				$totalData1->whereIn('passport_infos.country_id', $RequireVisa);
+				$totalData1->where('passport_infos.visa_category', 'Visa Needed');
 
 			}elseif($countryType  == 'restricted'){
 
-				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
-		
-				$totalData1->whereIn('passport_infos.country_id', $restricted);
+				$totalData1->where('passport_infos.visa_category', 'Restricted Countr');
 
 			}
 			
@@ -5226,10 +5445,6 @@ class UserController extends Controller {
 				
 			}
 
-			$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-			$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
-			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
-		
 			$data = $query->offset($start)->limit($limit)->get();
 			
 			$totalData1 = \App\Models\User::with('passportUserData')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
@@ -5281,24 +5496,12 @@ class UserController extends Controller {
 				
 		    })
 
-			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
+			->addColumn('category', function($data) {
 
 				if($data['passportUserData']){
 
-					if(in_array($data['passportUserData']->country_id,$doNotRequireVisa)){
-
-						return 'No Visa Needed';
+					return $data['passportUserData']->visa_category;
 	
-					}elseif(in_array($data['passportUserData']->country_id,$RequireVisa)){
-	
-						return 'Visa Needed';
-						
-					}elseif(in_array($data['passportUserData']->country_id,$restricted)){
-	
-						return 'Restricted Country';
-	
-					}
-
 				}else{
 
 					return '-';
@@ -5388,33 +5591,29 @@ class UserController extends Controller {
 			}
 
 			if($countryType  == 'no-visa-needed'){
-
-				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-		
-				$query->whereIn('passport_infos.country_id', $doNotRequireVisa);
+			
+				$query->where('passport_infos.visa_category','No Visa Needed');
 
 			}elseif($countryType  == 'visa-needed'){
 
-				$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
-
-				$query->whereIn('passport_infos.country_id', $RequireVisa);
+				$query->where('passport_infos.visa_category', 'Visa Needed');
 
 			}elseif($countryType  == 'restricted'){
 
-				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
-		
-				$query->whereIn('passport_infos.country_id', $restricted);
+				$query->where('passport_infos.visa_category', 'Restricted Country');
 
 			}
-
+			
 			$query->where(function ($query1) {
 				$query1->where('passport_infos.visa_granted','!=','No')
 					  ->orWhere('passport_infos.visa_granted','=',null);
 			});
+
+			
 			
 			$data = $query->offset($start)->limit($limit)->get();
-			
-			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
@@ -5424,7 +5623,25 @@ class UserController extends Controller {
 				});
 				
 			}
-			
+			if($countryType  == 'no-visa-needed'){
+
+				$totalData1->where('passport_infos.visa_category','No Visa Needed');
+
+			}elseif($countryType  == 'visa-needed'){
+
+				$totalData1->where('passport_infos.visa_category', 'Visa Needed');
+
+			}elseif($countryType  == 'restricted'){
+
+				$totalData1->where('passport_infos.visa_category', 'Restricted Country');
+
+			}
+
+			$totalData1->where(function ($query1) {
+				$query1->where('passport_infos.visa_granted','!=','No')
+					  ->orWhere('passport_infos.visa_granted','=',null);
+			});
+
 			$totalData = $totalData1->count();
 
 			$totalFiltered = $query->count();
@@ -5465,10 +5682,7 @@ class UserController extends Controller {
 			
 			->addColumn('valid_residence_country', function($data){
 
-				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-		
-
-				if(in_array($data->country_id,$doNotRequireVisa)){
+				if($data->visa_category == 'No Visa Needed'){
 
 					return '<a style="color:blue!important" href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank Letter  </a>';
 						
@@ -5548,9 +5762,7 @@ class UserController extends Controller {
 				
 			}
 
-			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
-	
-			$query->whereIn('passport_infos.country_id', $restricted);
+			$query->where('passport_infos.visa_category', 'Restricted Country');
 
 			$query->where(function ($query1) {
 				$query1->where('passport_infos.visa_granted','!=','No')
@@ -5559,7 +5771,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
@@ -5570,10 +5782,10 @@ class UserController extends Controller {
 				
 			}
 
-			$totalData1->whereIn('passport_infos.country_id', $restricted);
+			$totalData1->where('passport_infos.visa_category', 'Restricted Country');
 
-			$totalData1->where(function ($query1) {
-				$query1->where('passport_infos.visa_granted','!=','No')
+			$totalData1->where(function ($query2) {
+				$query2->where('passport_infos.visa_granted','!=','No')
 					  ->orWhere('passport_infos.visa_granted','=',null);
 			});
 			
@@ -5617,10 +5829,7 @@ class UserController extends Controller {
 			
 			->addColumn('valid_residence_country', function($data){
 
-				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-		
-
-				if(in_array($data->country_id,$doNotRequireVisa)){
+				if($data->visa_category == 'No Visa Needed'){
 
 					return '<a style="color:blue!important" href="'.asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf').'" target="_blank" class="text-blue"> Bank Letter  </a>';
 						
@@ -5698,10 +5907,6 @@ class UserController extends Controller {
 			$start = $request->input('start');
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-			$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
-			$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
-		
 			$query = \App\Models\PassportInfo::select('passport_infos.*','users.reference_number','users.refund_amount')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
@@ -5715,8 +5920,8 @@ class UserController extends Controller {
 			$query->where('passport_infos.visa_granted','No');
 
 			$data = $query->offset($start)->limit($limit)->get();
-			
-			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->orderBy('id','desc');
+
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*','users.reference_number','users.refund_amount')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
@@ -5751,21 +5956,10 @@ class UserController extends Controller {
 			->addColumn('country_id', function($data){
 				return \App\Helpers\commonHelper::getCountry2NameById($data->country_id);
 		    })
-			->addColumn('category', function($data) use($doNotRequireVisa,$RequireVisa,$restricted){
+			->addColumn('category', function($data) {
 
-				if(in_array($data->country_id,$doNotRequireVisa)){
+				return $data->visa_category;
 
-					return 'No Visa Needed';
-
-				}elseif(in_array($data->country_id,$RequireVisa)){
-
-					return 'Visa Needed';
-					
-				}elseif(in_array($data->country_id,$restricted)){
-
-					return 'Restricted Country';
-
-				}
 				
 		    })
 
@@ -5837,10 +6031,6 @@ class UserController extends Controller {
 
 	public function PassportInfoApprove(Request $request,$id){
 	
-		$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-		$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
-		$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247'];
-
 		try{
 
 			$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
@@ -5852,7 +6042,7 @@ class UserController extends Controller {
 			$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
 
 
-			if(in_array($passportApprove->country_id,$doNotRequireVisa)){
+			if($passportApprove->visa_category == 'No Visa Needed'){
 
 				\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');  // 2 letter acc, bank
 
@@ -5896,11 +6086,11 @@ class UserController extends Controller {
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
 		
 
-			}elseif(in_array($passportApprove->country_id,$RequireVisa)){
+			}elseif($passportApprove->visa_category == 'Visa Needed'){
 
 				\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);  // 4 letter
 
-			}elseif(in_array($passportApprove->country_id,$restricted)){
+			}elseif($passportApprove->visa_category == 'Restricted Country'){
 
 				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$id);  // 4 letter
 
@@ -7684,6 +7874,635 @@ class UserController extends Controller {
 			}
 		}
 			
+	}
+
+
+	public function spouseUpdate(Request $request){ 
+
+		$usersMain = \App\Models\User::where('id', $request->post('user_id'))->first();
+
+		$rules = [
+            'is_spouse' => 'required|in:Yes,No',
+            'is_spouse_registered' => 'required|in:Yes,No',
+            'id' => 'required',
+		];
+
+		if($request->post('is_spouse_registered')=='Yes'){
+
+			$rules['email'] = 'required|email';
+
+		}elseif($request->post('is_spouse_registered')=='No'){
+ 
+			$rules['email'] = 'required|email|unique:users,email,'.$request->post('id');
+			$rules['first_name'] = 'required';
+			$rules['last_name'] = 'required';
+			$rules['gender'] = 'required|in:1,2';
+			$rules['date_of_birth'] = 'required|date';
+			$rules['citizenship'] = 'required';
+			$rules['salutation'] = 'required';
+			
+		}
+
+		$validator = \Validator::make($request->all(), $rules);
+		 
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message = $msg[0];
+				break;
+			}
+			
+			return response(array("error"=>true, 'message'=>$message), 403);
+			
+		}else{
+
+			try {
+				
+				$dob=date('Y-m-d',strtotime($request->post('date_of_birth')));
+
+				if((int)$request->post('id') == 0){
+					
+
+					if($request->post('is_spouse_registered')=='Yes'){
+
+						$users = \App\Models\User::where([
+							['email', '=', $request->post('email')],
+							['id', '!=', $request->post('id')]
+							])->first();
+
+						if(!$users){
+							
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Spouse-not-found');
+							return response(array("error"=>true, 'message'=>$message), 403);
+						
+						}elseif($users->added_as == 'Spouse'){
+
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Spouse-already-associated-withother-user');
+							return response(array("error"=>true, "message"=>$message), 403);
+						}
+
+						$spouseName = \App\Models\user::where('parent_id', $users->id)->where('added_as','Spouse')->first();
+						if($spouseName){
+
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Spouse-already-associated-withother-user');
+							return response(array("error"=>true, "message"=>$message), 403);
+						}
+						if($spouseName && $spouseName->stage < 3){
+
+							return response(array("error"=>true, "message"=>'Spouse Profile not complete'), 403);
+						}
+
+						$reminderData = [
+							'type'=>'spouse_reminder',
+							'date'=>date('Y-m-d'),
+							'reminder'=>'0',
+						];
+						
+						if($users->stage >= 2){
+
+							$usersP = \App\Models\User::where('id',$request->post('id'))->first();
+							$usersP->parent_spouse_stage = $users->stage;
+							$usersP->room = 'Sharing';
+							$users->parent_spouse_stage = $users->stage;
+							$usersP->save(); 
+						}
+						
+						$users->parent_id = $request->post('user_id');
+						$users->added_as = 'Spouse';
+						
+						$users->spouse_confirm_token =md5(rand(1111,4444));
+						$users->spouse_confirm_reminder_email =json_encode($reminderData);
+						$users->save(); 
+
+						$spouse_id = $users->id;
+
+					}else if($request->post('is_spouse_registered')=='No'){
+						
+						$existSpouse = \App\Models\User::where([
+							['parent_id', '=', $request->post('user_id')],
+							['added_as', '=', 'Spouse']
+							])->first();
+		
+						if($existSpouse){
+		
+							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Youhave-already-updated-spouse-detail');
+							return response(array("error"=>true, 'message'=>$message), 200);
+		
+						}else{
+
+							$users = \App\Models\User::where('email', $request->post('email'))->first();
+
+							if($users && $users->added_as == 'Spouse'){
+								
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Spouse-already-associated-withother-user');
+								return response(array("error"=>true, "message"=>$message), 200);
+							}
+
+							$date1 = $dob;
+							$date2 = date('Y-m-d');
+							$diff = abs(strtotime($date2) - strtotime($date1));
+							$years = floor($diff / (365*60*60*24));
+						
+							if($years<18){
+
+								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'DateOfBirthyear-mustbemore-than-18years');
+								return response(array("error"=>true, "message"=>$message), 200);
+							
+							}else{
+								
+								
+								$token = md5(rand(1111,4444));
+								$reminderData = [
+									'type'=>'spouse_reminder',
+									'date'=>date('Y-m-d'),
+									'reminder'=>'0',
+		
+								];
+								
+								$users = array(
+									'parent_id'=> $request->post('user_id'),
+									'added_as'=>'Spouse',
+									'salutation'=>$request->post('salutation'),
+									'name'=>$request->post('first_name'),
+									'last_name'=>$request->post('last_name'),
+									'email'=>$request->post('email'),
+									'gender'=>$request->post('gender'),
+									'dob'=>$dob,
+									'citizenship'=>$request->post('citizenship'),
+									'reg_type'=>'email',
+									'designation_id'=>'2',
+									'otp_verified'=>'No',
+									'system_generated_password'=>'1',
+									'spouse_confirm_token'=>$token,
+									'spouse_confirm_reminder_email'=>json_encode($reminderData),
+								);
+			
+								$user =  \App\Models\User::insert($users);
+
+								$spouse_id = \DB::getPdo()->lastInsertId();
+
+							}
+						}
+
+					}
+
+					\App\Models\User::where('id',$request->post('id'))->update(['spouse_id' => $spouse_id]);
+
+
+				}else{
+
+					$users = array(
+						'parent_id'=> $request->post('user_id'),
+						'added_as'=>'Spouse',
+						'salutation'=>$request->post('salutation'),
+						'name'=>$request->post('first_name'),
+						'last_name'=>$request->post('last_name'),
+						'email'=>$request->post('email'),
+						'gender'=>$request->post('gender'),
+						'dob'=>$dob,
+						'citizenship'=>$request->post('citizenship'),
+					);
+			
+					\App\Models\User::where('id',$request->post('id'))->update($users);
+
+					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel('en','Spouse-update-successful');
+					return response(array("error"=>false, "message"=>$message), 200);
+
+				}
+
+
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Spouse-added-successful');
+				return response(array("error"=>false, "message"=>$message), 200);
+
+			} catch (\Exception $e) {
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Something-went-wrongPlease-try-again')), 403);
+			}
+		}
+
+    }
+
+	public function roomUpdate(Request $request){
+	
+		$usersMain = \App\Models\User::where('id', $request->post('user_id'))->first();
+
+		$rules = [
+            'room' => 'required|in:Single,Sharing',
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+		 
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message = $msg[0];
+				break;
+			}
+			
+			return response(array("error"=>true, 'message'=>$message), 403);
+			
+		}else{
+
+			try {
+				
+				$existSpouse = \App\Models\User::where([
+					['parent_id', '=', $request->post('user_id')],
+					['added_as', '=', 'Spouse']
+					])->first();
+
+				if($existSpouse){
+					
+					$existSpouse->added_as = null;
+					$existSpouse->parent_id = null;
+					$existSpouse->save();
+	
+				}
+				$users = \App\Models\User::where('id',$request->post('user_id'))->first();
+				
+				$users->room = $request->post('room');
+				$users->save();
+				
+				$subject='User Stay room update';
+				$msg='User Stay room update';
+
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($usersMain->id,$subject,$msg,'User Stay room update');
+				
+				$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Stay-room-update-successful');
+				return response(array("error"=>true, "message"=>$message), 200);
+
+			} catch (\Exception $e) {
+
+				return response(array("error"=>true, "message"=>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Something-went-wrongPlease-try-again')), 403);
+			}
+		}
+
+    }
+
+	
+
+	public function stageTwoDownloadExcelPassport(Request $request){
+
+		// try{
+
+			$result = \App\Models\User::where([['designation_id', 2], ['parent_id', NULL], ['added_as', NULL], ['stage','=>',2]])->orderBy('updated_at', 'desc')->get();
+			
+			if($result->count()==0){
+
+				return response(array('error'=>true,'message'=>'Data not found.'),200);
+
+			}else{
+
+				
+					$delimiter = ",";  
+					$filename = "User-".date('d-m-Y').rand(111,999).".csv";
+					
+					$f = fopen('php://memory', 'w'); 
+					
+					//$f = fopen('php://memory', 'w');
+					$fields = array('Id', 'Current Stage', 
+										'Candidate Name', 
+										'Candidate email Address', 
+										'Candidate Mobile Number', 
+										'Country', 
+										'Citizenship', 
+										'Spouse Name', 
+										'Spouse Email Address', 
+										'Group Leader Name', 
+										'Group Leader Email Address', 
+										'Room Type', 
+										'Pastor Trainer(yes/No)', 
+										'Ministry Name', 
+										'Total Payable Amount', 
+										'Pending Amount', 
+										'Accepted Amount', 
+										'Payment in process', 
+										'Payment Declined',
+										'Stage 0', 
+										'Stage 1', 
+										'Stage 2', 
+										'Stage 3', 
+										'Stage 4', 
+										'Stage 5',
+										'Non-formal Pastoral Training', 
+										'Formal Theological Education', 
+										'Informal Personal Mentoring', 
+										'Are you willing to commit to train one trainer of pastors per year for the next 7 years?', 
+										'Comment', 
+										'How many pastoral leaders are you involved in strengthening each year?', 
+										'How many of them can serve as future pastor trainers?', 
+										'Do you seek to add Pastoral Training to your ministry?',
+										'Comment',
+									); 
+					fputcsv($f, $fields, $delimiter); 
+
+					$i=1;
+					foreach($result as $row){
+						
+						if($row['stage'] == 0){
+							$stage0 = "In Process";
+						}elseif($row['stage'] > 0){
+							$stage0 = "Completed";
+						}else{
+							$stage0 = "Pending";
+						}  
+
+						if($row['stage'] == 1){
+							$stage1 = "In Process";
+						}elseif($row['stage'] > 1){
+							$stage1 = "Completed";
+						}else{
+							$stage1 = "Pending";
+						} 
+
+						if($row['stage'] == 2){
+							$stage2 = "In Process";
+						}elseif($row['stage'] > 2){
+							$stage2 = "Completed";
+						}else{
+							$stage2 = "Pending";
+						} 
+
+						if($row['stage'] == 3){
+							$stage3 = "In Process";
+						}elseif($row['stage'] > 3){
+							$stage3 = "Completed";
+						}else{
+							$stage3 = "Pending";
+						} 
+
+						if($row['stage'] == 4){
+							$stage4 = "In Process";
+						}elseif($row['stage'] > 4){
+							$stage4 = "Completed";
+						}else{
+							$stage4 = "Pending";
+						} 
+
+						if($row['stage'] == 5){
+							$stage5 = "In Process";
+						}elseif($row['stage'] > 5){
+							$stage5 = "Completed";
+						}else{
+							$stage5 = "Pending";
+						} 
+
+						$userSpouse = \App\Models\User::with('TravelInfo')->where([['parent_id', $row['id']], ['added_as', 'Spouse']])->first();
+						$userGroup = \App\Models\User::where([['parent_id', $row['id']],['added_as', 'Group']])->first();
+						$spouseName = '';
+						$spouseEmail = '';
+						$mobile = '';
+						$groupLeaderEmail= '';
+						$groupLeaderName= '';
+						$non_formal_trainor = '';
+						$formal_theological = '';
+						$informal_personal = '';
+						$willing_to_commit = '';
+						$comment = '';
+						$howmany_pastoral = '';
+						$howmany_futurepastor = '';
+						$doyouseek_postoral = '';
+						$doyouseek_postoralcomment = '';
+
+
+						if($userGroup){
+							$groupLeaderName= $row['name'].' '.$row['last_name'];
+							$groupLeaderEmail= $row['email'];
+						}if($userSpouse){
+							$spouseName= $userSpouse->name.' '.$userSpouse->last_name;
+							$spouseEmail= $userSpouse->email;
+						}
+
+
+						if($row['mobile']){
+							$mobile = '+'.$row['phone_code'].' '.$row['mobile'];
+						}
+
+						
+
+						if($row['ministry_pastor_trainer_detail']){
+
+							$ministryPastorDetail=json_decode($row['ministry_pastor_trainer_detail'],true);
+
+							$non_formal_trainor = $ministryPastorDetail['non_formal_trainor'] ?? '';
+							$formal_theological = $ministryPastorDetail['formal_theological'] ?? '';
+							$informal_personal = $ministryPastorDetail['informal_personal'] ?? '';
+							$willing_to_commit = $ministryPastorDetail['willing_to_commit'] ?? '';
+							$comment = $ministryPastorDetail['comment'] ?? '';
+							$howmany_pastoral = $ministryPastorDetail['howmany_pastoral'] == '1-10' ? '01 to 10' : $ministryPastorDetail['howmany_pastoral'] ?? '';
+							$howmany_futurepastor = $ministryPastorDetail['howmany_futurepastor'] == '1-10' ? '01 to 10' : $ministryPastorDetail['howmany_futurepastor'] ?? '';
+						}
+
+						if($row['doyouseek_postoral']){
+							
+							$doyouseek_postoral = $row['doyouseek_postoral'] ?? '';
+							$doyouseek_postoralcomment = $row['doyouseek_postoralcomment'] ?? '';
+						}
+
+						$lineData = array(($i), 'Stage '.$row['stage'], 
+						$row['name'].' '.$row['last_name'], 
+						$row['email'], 
+						$mobile, 
+						\App\Helpers\commonHelper::getCountryNameById($row['contact_country_id']), 
+						\App\Helpers\commonHelper::getCountryNameById($row['citizenship']), 
+						$spouseName,
+						$spouseEmail,
+						$groupLeaderName,
+						$groupLeaderEmail,
+						$row['room'] ?? 'Double Deluxe',
+						$row['ministry_pastor_trainer'],
+						$row['ministry_name'],
+						$row['amount'],
+						\App\Helpers\commonHelper::getTotalPendingAmount($row['id']),
+						\App\Helpers\commonHelper::getTotalAcceptedAmount($row['id']),
+						\App\Helpers\commonHelper::getTotalAmountInProcess($row['id']),
+						\App\Helpers\commonHelper::getTotalRejectedAmount($row['id']),
+						$stage0, $stage1, 
+						$stage2, $stage3, $stage4, 
+						$stage5,
+						$non_formal_trainor,
+						$formal_theological,
+						$informal_personal,
+						$willing_to_commit,
+						$comment,
+						$howmany_pastoral,
+						$howmany_futurepastor,
+						$doyouseek_postoral,
+						$doyouseek_postoralcomment,
+
+					); 
+						
+						fputcsv($f, $lineData, $delimiter); 
+						
+						$results = \App\Models\User::where([['parent_id', $row['id']],['stage','=>',2]])->get();
+						$groupLeaderName = '';
+						$groupLeaderEmail = '';
+						$spouseLeaderName = '';
+						$spouseLeaderEmail = '';
+						
+						$non_formal_trainor = '';
+						$formal_theological = '';
+						$informal_personal = '';
+						$willing_to_commit = '';
+						$comment = '';
+						$howmany_pastoral = '';
+						$howmany_futurepastor = '';
+						$doyouseek_postoral = '';
+						$doyouseek_postoralcomment = '';
+						
+						if(!empty($results) && count($results)>0){
+								$j = 1;
+							foreach($results as $val){
+
+								
+								if($val && $val->added_as == 'Group'){
+
+									$groupLeaderName= $row['name'].' '.$row['last_name'];
+									$groupLeaderEmail= $row['email'];
+								}
+								if($val && $val->added_as == 'Spouse'){
+									
+									$spouseLeaderName= $row['name'].' '.$row['last_name'];
+									$spouseLeaderEmail= $row['email'];
+									$groupLeaderName = '';
+									$groupLeaderEmail = '';
+								}
+
+
+								if($val['stage'] == 0){
+									$stage0 = "In Process";
+								}elseif($val['stage'] > 0){
+									$stage0 = "Completed";
+								}else{
+									$stage0 = "Pending";
+								}  
+
+								if($val['stage'] == 1){
+									$stage1 = "In Process";
+								}elseif($val['stage'] > 1){
+									$stage1 = "Completed";
+								}else{
+									$stage1 = "Pending";
+								} 
+
+								if($val['stage'] == 2){
+									$stage2 = "In Process";
+								}elseif($val['stage'] > 2){
+									$stage2 = "Completed";
+								}else{
+									$stage2 = "Pending";
+								} 
+
+								if($val['stage'] == 3){
+									$stage3 = "In Process";
+								}elseif($val['stage'] > 3){
+									$stage3 = "Completed";
+								}else{
+									$stage3 = "Pending";
+								} 
+
+								if($val['stage'] == 4){
+									$stage4 = "In Process";
+								}elseif($val['stage'] > 4){
+									$stage4 = "Completed";
+								}else{
+									$stage4 = "Pending";
+								} 
+
+								if($val['stage'] == 5){
+									$stage5 = "In Process";
+								}elseif($val['stage'] > 5){
+									$stage5 = "Completed";
+								}else{
+									$stage5 = "Pending";
+								} 
+
+
+								if($val['mobile']){
+									$mobile = '+'.$val['phone_code'].' '.$val['mobile'];
+								}
+
+								if($val['ministry_pastor_trainer_detail']){
+
+									$ministryPastorDetail=json_decode($val['ministry_pastor_trainer_detail'],true);
+		
+									$non_formal_trainor = $ministryPastorDetail['non_formal_trainor'] ?? '';
+									$formal_theological = $ministryPastorDetail['formal_theological'] ?? '';
+									$informal_personal = $ministryPastorDetail['informal_personal'] ?? '';
+									$willing_to_commit = $ministryPastorDetail['willing_to_commit'] ?? '';
+									$comment = $ministryPastorDetail['comment'] ?? '';
+									$howmany_pastoral = $ministryPastorDetail['howmany_pastoral'] == '1-10' ? '01 to 10' : $ministryPastorDetail['howmany_pastoral'] ?? '';
+									$howmany_futurepastor = $ministryPastorDetail['howmany_futurepastor'] == '1-10' ? '01 to 10' : $ministryPastorDetail['howmany_futurepastor'] ?? '';
+								}
+		
+								if($val['doyouseek_postoral']){
+									
+									$doyouseek_postoral = $val['doyouseek_postoral'] ?? '';
+									$doyouseek_postoralcomment = $val['doyouseek_postoralcomment'] ?? '';
+								}
+
+								$lineData = array(($i), 'Stage '.$val['stage'], 
+									$val['name'].' '.$val['last_name'], 
+									$val['email'], 
+									$mobile, 
+									\App\Helpers\commonHelper::getCountryNameById($val['contact_country_id']), 
+									\App\Helpers\commonHelper::getCountryNameById($val['citizenship']), 
+									$spouseLeaderName,
+									$spouseLeaderEmail,
+									$groupLeaderName,
+									$groupLeaderEmail,
+									$val['room'] ?? 'Double Deluxe',
+									$val['ministry_pastor_trainer'],
+									$val['ministry_name'],
+									$val['amount'],
+									\App\Helpers\commonHelper::getTotalPendingAmount($val['id']),
+									\App\Helpers\commonHelper::getTotalAcceptedAmount($val['id']),
+									\App\Helpers\commonHelper::getTotalAmountInProcess($val['id']),
+									\App\Helpers\commonHelper::getTotalRejectedAmount($val['id']),
+									$stage2, $stage3, $stage4, $stage5,
+									$non_formal_trainor,
+									$formal_theological,
+									$informal_personal,
+									$willing_to_commit,
+									$comment,
+									$howmany_pastoral,
+									$howmany_futurepastor,
+									$doyouseek_postoral,
+									$doyouseek_postoralcomment,
+								); 
+								fputcsv($f, $lineData, $delimiter);
+
+								$j++;
+							}
+						}
+
+						$i++;
+					}
+					
+					fseek($f, 0); 
+					header('Content-Type: text/csv'); 
+					// header("Content-Type: application/octet-stream");
+					header('Content-Disposition: attachment; filename="' . $filename . '";');
+					fpassthru($f);
+					
+
+					fclose($f);
+					
+					//readfile ($filename);
+
+				
+				exit; 
+
+				return response(array('error'=>false,"message" => "File downloaded success"),200); 
+				
+			}
+			
+		// }catch (\Exception $e){
+		
+		// 	return response(array('error'=>true,"message" => "Something went wrong.please try again"),200); 
+		
+		// }
+
 	}
 
 	

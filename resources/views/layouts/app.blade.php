@@ -27,6 +27,10 @@
     </script>
 
     <style>
+
+        .requirement .requirement-wrapper {
+            display:none;
+        }
         .selectLanguage {
             width: 100%;
             height: 50px;

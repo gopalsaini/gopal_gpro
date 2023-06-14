@@ -23,7 +23,7 @@
 		<div class="col-sm-12">
 			<div class="card">
 				<div class="card-body add-post">
-					<form id="form" action="{{ route('admin.user.add') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+					<form id="Userform" action="{{ route('admin.user.add') }}" method="post" enctype="multipart/form-data" autocomplete="off">
 						@csrf
 						<input type="hidden" value="@if($result){{ $result->id }} @else 0 @endif" name="id" required />
 						<div class="row">
@@ -35,7 +35,7 @@
 
 										@if (count($designations) > 0)
 											@foreach ($designations as $designation)
-												@if($designation->id == 2 || $designation->id == 3 || $designation->id == 4)
+												@if($designation->id == 2 || $designation->id == 3 || $designation->id == 4 || $designation->id == 6)
 												<option value="{{$designation->id}}" @if($result && $result->designation_id == $designation->id) selected @endif>{{$designation->designations}}</option>
 												@endif
 											@endforeach
@@ -71,7 +71,7 @@
 								@if(!$result)
 								<button class="btn btn-light" type="reset">@lang('admin.reset')</button>
 								@endif
-								<button class="btn btn-primary" type="submit" form="form">@lang('admin.submit')</button>
+								<button class="btn btn-primary" type="submit" form="Userform">@lang('admin.submit')</button>
 							</div>
 						</div>
 					</form>
@@ -82,3 +82,88 @@
 </div>
 
 @endsection
+
+@push('custom_js')
+
+<script>
+	$("form#Userform").submit(function(e) {
+
+		e.preventDefault();
+
+		var formId = $(this).attr('id');
+		var formAction = $(this).attr('action');
+		var btnhtml = $("button[form="+formId+"]").html();
+
+		$.ajax({
+			url: formAction,
+			data: new FormData(this),
+			dataType: 'json',
+			type: 'post',
+			beforeSend: function() {
+				submitButton(formId, btnhtml, true);
+			},
+			error: function(xhr, textStatus) {
+
+				if (xhr && xhr.responseJSON.message) {
+					sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+				} else {
+					sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+				}
+				submitButton(formId, btnhtml, false);
+			},
+			success: function(data) {
+				if (data.error) {
+					sweetAlertMsg('error', data.message);
+				} else {
+
+					if(data.ministryUpdate){
+						$('#' + formId)[0].reset();
+						$('#MinistryHtml').html("");
+					}
+					if (data.reset) {
+						$('#' + formId)[0].reset();
+						$('#MinistryHtml').html("");
+
+						if($('.previewimages').length > 0) {
+							$('.previewimages').html('');
+						}
+						if($('#summernote').length > 0) {
+							$('#summernote').summernote('reset');
+						}
+						if($('.js-example-tags').length > 0){
+							$(".js-example-tags").select2({
+								allowClear: true
+							});
+						}
+
+						if (data.userUpdateUrl != '') {
+							location.href = data.userUpdateUrl;
+						}
+					}
+
+					if (data.reload) {
+						location.reload();
+					}
+
+					if (data.script) {
+						resetFormData();
+					}
+					
+					
+					if (data.comment && $('#commentstablelist').length > 0) {
+						$('#commentstablelist').DataTable().ajax.reload();
+						$('#userHistoryList').DataTable().ajax.reload();
+					}
+					sweetAlertMsg('success', data.message);
+
+				}
+				submitButton(formId, btnhtml, false);
+			},
+			cache: false,
+			contentType: false,
+			processData: false,
+		});
+
+		});
+</script>
+@endpush

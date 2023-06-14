@@ -391,6 +391,7 @@ class ProfileController extends Controller
                 }
     
                 $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/profile-update', json_encode($data));
+                // print_r($result); die;
                 $resultData=json_decode($result->content, true);
                
                 if($result->status==200){

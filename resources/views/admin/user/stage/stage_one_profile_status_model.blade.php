@@ -7,7 +7,7 @@
     </style>
     <div class="approved-section">
         <label for="inputName">User Type : {{\App\Helpers\commonHelper::getDesignationName($user->designation_id)}}</label>
-        @php $userType = [3,4]; @endphp
+        @php $userType = [6,4]; @endphp
         <div class="form-group">
             <div class="form-line">
                 <label for="inputName">Select Payment Country </label>

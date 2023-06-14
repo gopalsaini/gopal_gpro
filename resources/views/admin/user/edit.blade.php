@@ -29,6 +29,14 @@
 	.list-group-item-action{
 		background-color: #ffcd34 !important;
 	}
+
+	@media (min-width: 576px){
+
+		.modal-dialog {
+			max-width: 51%;
+			margin: 1.75rem auto;
+		}
+	}
     </style>
 @endpush
 @section('content')
@@ -64,7 +72,9 @@
 									<div class="list-group flex-row text-center" id="list-tab" role="tablist">
 										<a class="list-group-item list-group-item-action active" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">Personal Details </a>
 										<a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#contact-details" role="tab" aria-controls="list-profile">Contact Details</a>
-										<a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#ministry-details" role="tab" aria-controls="list-profile">Ministry Details</a>
+										@if($result && $result->designation_id != '4' && $result->designation_id != '6')
+											<a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="list" href="#ministry-details" role="tab" aria-controls="list-profile">Ministry Details</a>
+										@endif
 									</div>
 								</div>
 								
@@ -104,7 +114,7 @@
 
 												
 												<div class="row">
-													<div class="col-sm-4">
+													<div class="col-sm-3">
 														<div class="form-group">
 															<label for="input">@lang('admin.gender'):</label>
 															<select id="name" placeholder="- Select -" class="form-control" name="gender" >
@@ -114,13 +124,13 @@
 															</select>
 														</div>
 													</div>
-													<div class="col-sm-4">
+													<div class="col-sm-3">
 														<div class="form-group">
 															<label for="input">@lang('admin.dob'):</label>
 															<input type="date" value="{{$result->dob}}" placeholder="DD/ MM/ YYYY" class="form-control" name="dob" >
 														</div>
 													</div>
-													<div class="col-lg-4">
+													<div class="col-lg-3">
 														<div class="form-check">
 															<label class="form-check-label">@lang('web/app.Languages') <b>*</b> </label>
 															<div class="input-box">
@@ -134,6 +144,48 @@
 															</div>
 														</div>
 													</div>
+													@if($result && ($result->designation_id == '4' || $result->designation_id == '6'))
+														<div class="col-lg-3">
+															<label for="citizen">@lang('web/profile-details.citizenship') <span>*</span></label>
+															<div class="common-select">
+																<select id="citizen" class="mt-2 test" name="citizenship" >
+																	<option value="">--@lang('web/ministry-details.select')--</option>
+																	@foreach($country as $con)
+																		
+																		<option @if($result['citizenship'] && $result['citizenship']==$con['id']){{'selected'}}@endif value="{{$con['id']}}">{{$con['name']}} </option>
+																	
+																	@endforeach
+																</select>
+															</div>
+														</div>  
+														<div class="col-lg-3">
+															<label for="status">@lang('web/profile-details.maritalstatus') <span>*</span></label>
+															<div class="common-select">
+																<select id="status" placeholder="- @lang('web/ministry-details.select') -" class="mt-2 form-control" name="marital_status" required>
+																	<option value="">- @lang('web/ministry-details.select') -</option>
+																	<option  @if($result['marital_status']=='Married'){{'selected'}}@endif value="Married">@lang('web/home.Married')</option>
+																	<option  @if($result['marital_status']=='Unmarried'){{'selected'}}@endif value="Unmarried">@lang('web/home.Unmarried')</option>
+																</select>
+															</div>
+														</div>
+														<div class="col-lg-12 unmarried" style="display: @if($result['marital_status']=='Unmarried'){{'block'}}@else{{'none'}}@endif">
+															<label>@lang('web/profile-details.stay-in-twin-or-single') - <span>*</span></label>
+															<div class="radio-wrap">
+																<div class="form__radio-group">
+																	<input type="radio" name="room" value="Single" id="yes" class="form__radio-input" @if($result['room']=='Single'){{'checked'}}@endif>
+																	<label class="form__label-radio" for="yes" class="form__radio-label" >
+																	<span class="form__radio-button"></span> @lang('web/profile-details.single-room')
+																	</label>
+																</div>
+																<div class="form__radio-group">
+																	<input type="radio" name="room" value="Sharing" id="no" class="form__radio-input" @if($result['room']=='Sharing'){{'checked'}}@endif>
+																	<label class="form__label-radio" for="no" class="form__radio-label" >
+																	<span class="form__radio-button"></span> @lang('web/profile-details.twin')
+																	</label>
+																</div>
+															</div>
+														</div>
+													@endif
 												</div>
 											</div>
 										<div class="tab-pane fade" id="contact-details" role="tabpanel" aria-labelledby="list-profile-list">
@@ -512,6 +564,155 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="login-modal minister-modal prsnl-modal">
+        <div class="modal fade" id="exampleModalToggle4" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+        tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" >
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header d-block border-0 text-center">
+                        <h4>@lang('web/profile-details.coming-with-spouse')</h4>
+                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                    </div>
+                    <div class="modal-body">
+                        <form class="row p-0">
+                            <div class="col-lg-12">
+                                <div class="group-main">
+                                    <a href="javascript:;" class="yes-btn btn btn-primary">@lang('web/profile-details.yes')</a>
+                                    <a href="javascript:;" class="no-btn btn btn-primary">@lang('web/profile-details.no')</a>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="comment-form mt-3" >
+							<div id="AlreadyRegisteredQuestion" style="display:none">
+								<label for="">@lang('web/profile-details.spouse-already-registered') </label>
+								<div class="radio-wrap">
+									<div class="form__radio-group">
+										<input type="radio" value="Yes" name="size" id="already_registered_yes" class="form__radio-input">
+										<label class="form__label-radio register-yes" for="already_registered_yes" class="form__radio-label">
+											<span class="form__radio-button"></span> @lang('web/profile-details.yes')
+										</label>
+									</div>
+									<div class="form__radio-group">
+										<input type="radio" value="No"  name="size" id="already_registered_no" class="form__radio-input">
+										<label class="form__label-radio register-no" for="already_registered_no" class="form__radio-label">
+											<span class="form__radio-button"></span> @lang('web/profile-details.no')
+										</label>
+									</div>
+								</div>
+							</div>
+                            <div  id="AlreadyRegisteredYes" class="divHide"  style="display:none">
+                                <form id="alreadyHasSpouse" action="{{ url('admin/user/spouse-update') }}" class="p-0" enctype="multipart/form-data">
+                                    <!-- <label for="">@lang('web/profile-details.registered') @lang('web/profile-details.email')</label> -->
+                                    <label for="">@lang('web/profile-details.registered-email')</label>
+                                    <input type="email" placeholder="@lang('web/app.enter_email')" class="form-control" name="email" autocomplete="off">
+                                    <input type="hidden" name="id"  required value="0">
+                                    <input type="hidden" name="user_id"  required value="{{$result['id']}}">
+
+                                    <div class="col-lg-12 mt-2">
+                                        <div class="step-next register-submit">
+                                            <button type="submit" class="btn btn-success" form="alreadyHasSpouse">@lang('web/profile-details.submit')</button> 
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="spouse-form divHide" id="AlreadyRegisteredNo" style="display:none">
+                                <form id="donttHasSpouse" action="{{ url('admin/user/spouse-update') }}" class="row" enctype="multipart/form-data">
+									@csrf
+									<input type="hidden" name="user_id"  required value="{{$result['id']}}">
+                                    <input type="hidden" name="id"  required value="@if($SpouseDetails && $SpouseDetails->id) {{$SpouseDetails->id}} @else {{'0'}} @endif">
+									<label for="name">@lang('web/profile-details.name') <span>*</span></label>
+                                    <div class="col-lg-4 mt-2">
+                                        <div class="select-option">
+                                            
+                                            <select id="name" class="form-control" required name="salutation">
+                                                <option  value="@lang('web/profile-details.Mr.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Mr.')) selected @endif>@lang('web/profile-details.Mr.')</option>
+                                                <option  value="@lang('web/profile-details.Ms.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Ms.')) selected @endif>@lang('web/profile-details.Ms.')</option>
+                                                <option  value="@lang('web/profile-details.Mrs.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Mrs.')) selected @endif>@lang('web/profile-details.Mrs.')</option>
+                                                <option  value="@lang('web/profile-details.Dr.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Dr.')) selected @endif>@lang('web/profile-details.Dr.')</option>
+                                                <option  value="@lang('web/profile-details.Pastor')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Pastor')) selected @endif>@lang('web/profile-details.Pastor')</option>
+                                                <option  value="@lang('web/profile-details.Bishop')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Bishop')) selected @endif>@lang('web/profile-details.Bishop')</option>
+                                                <option  value="@lang('web/profile-details.Rev.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Rev.')) selected @endif>@lang('web/profile-details.Rev.')</option>
+                                                <option  value="@lang('web/profile-details.Prof.')" @if($SpouseDetails && $SpouseDetails->salutation == Lang::get('web/profile-details.Prof.')) selected @endif>@lang('web/profile-details.Prof.')</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mt-2">
+                                        <input type="text" autocomplete="off" placeholder="@lang('web/app.enter') @lang('web/app.first_name')" class="form-control" required name="first_name" value="@if($SpouseDetails) {{$SpouseDetails->name}} @endif">
+                                    </div>
+                                    <div class="col-lg-4 mt-2">
+                                        <input type="text" autocomplete="off" placeholder="@lang('web/app.enter') @lang('web/app.last_name')" class="form-control" required name="last_name" value="@if($SpouseDetails) {{$SpouseDetails->last_name}} @endif">
+                                    </div>
+                                    <div class="col-lg-6 mt-2">
+                                        <label for="">@lang('web/profile-details.email') <span>*</span> </label>
+                                        <input type="email" autocomplete="off" placeholder="@lang('web/app.enter_email')" class="form-control" required name="email" value="@if($SpouseDetails) {{$SpouseDetails->email}} @endif">
+                                    </div>
+                                    <div class="col-lg-6 mt-2">
+                                        <label for="">@lang('web/profile-details.gender') <span>*</span></label>
+                                        <div class="common-select">
+                                            <select id="name" placeholder="- @lang('web/ministry-details.select') -" class="form-control" required name="gender">
+                                                <option value="">- @lang('web/ministry-details.select') -</option>
+                                                <option value="1" @if($SpouseDetails && $SpouseDetails->gender == '1') selected @endif>@lang('web/profile-details.male')</option>
+                                                <option value="2" @if($SpouseDetails && $SpouseDetails->gender == '2') selected @endif>@lang('web/profile-details.female')</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 mt-2">
+                                        <label for="">@lang('web/profile-details.dob') <span>*</span></label>
+                                        <input type="date" placeholder="DD/ MM/ YYYY" class="form-control" required name="date_of_birth" value="@if($SpouseDetails){{$SpouseDetails->dob}}@endif">
+                                    </div>
+                                    <div class="col-lg-6 mt-2">
+                                        <label for="citizen">@lang('web/profile-details.citizenship') <span>*</span></label>
+                                        <div class="common-select"> 
+                                            <select id="citizen" placeholder="- Select -" class="form-control test" name="citizenship">
+                                                <option value="">--@lang('web/ministry-details.select')--</option>
+                                                @foreach($country as $con)
+                                                    <option @if($SpouseDetails && $SpouseDetails->id==$con['id']){{'selected'}}@endif value="{{$con['id']}}">{{$con['name']}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 mt-2">
+                                        <div class="step-next register-submit">
+                                            <button type="submit" class="btn btn-success" form="donttHasSpouse">@lang('web/profile-details.submit')</button> 
+                                        </div>
+                                    </div>
+                                </form>
+                            </div> 
+                        </div>
+                        <div class="room-form  divHide"  id="ShowRoom" style="display:none">
+                            <label for="">@lang('web/profile-details.stay-in-twin-or-single')</label>
+                            <form id="updateRoom" action="{{ url('admin/user/room-update') }}" class="p-0" enctype="multipart/form-data">
+								@csrf
+								<input type="hidden" name="user_id"  required value="{{$result['id']}}">
+                                <div class="radio-wrap">
+                                    <div class="form__radio-group">
+                                        <input type="radio" name="room" id="single-room" class="form__radio-input" value="Single" required>
+                                        <label class="form__label-radio" for="single-room" class="form__radio-label">
+                                            <span class="form__radio-button"></span> @lang('web/profile-details.single-room')
+                                        </label>
+                                    </div>
+                                    <div class="form__radio-group">
+                                        <input type="radio" name="room" id="twin-share" class="form__radio-input" value="Sharing" required>
+                                        <label class="form__label-radio" for="twin-share" class="form__radio-label">
+                                            <span class="form__radio-button"></span> @lang('web/profile-details.twin')
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12 mt-2">
+                                    <div class="step-next register-submit">
+                                        <button type="submit" class="btn btn-success" form="updateRoom">@lang('web/profile-details.submit')</button> 
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
  
 @endsection
 
@@ -543,7 +744,47 @@
         }
     }); 
 
-	$('.test').fSelect({
+	$("select#status").change(function(){ 
+
+		var citizenship = $('#citizen').val();
+
+		if(citizenship == ''){
+			
+			
+			alert('Please select citizenship first');
+
+			$('#status').val('');
+
+		}else{
+
+			var selectedStatus= $(this).children("option:selected").val();
+
+			$('.unmarried').find('input').prop('checked', false);
+
+			if(selectedStatus=='Married'){
+
+				$('#exampleModalToggle4').modal('toggle'); 
+
+			}else{
+
+				$('#exampleModalToggle4').modal('hide'); 
+			}  
+
+			if(selectedStatus=='Unmarried'){
+
+				$('.unmarried').css('display','block');
+				$('.unmarried').find('input').prop('required',true);
+
+			}else{
+				$('.unmarried').css('display','none');
+				$('.unmarried').find('input').prop('required',false);
+			}
+		}
+
+
+		});
+
+		$('.test').fSelect({
             placeholder: "-- Select -- ",
             numDisplayed: 5,
             overflowText: '{n} selected',
@@ -693,9 +934,221 @@
 
 	$(document).ready(function(){
 		$('.fSelect').fSelect();
-			@if($result)
-				$(".MinistryCountry").trigger('change'); 
-			@endif
+		@if($result)
+			$(".MinistryCountry").trigger('change'); 
+		@endif
+	});
+
+	$("form#alreadyHasSpouse").submit(function(e) {
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+        var btnhtml = $("button[form="+formId+"]").html();
+
+        let formData = new FormData(this);
+        formData.append('is_spouse', 'Yes')
+        formData.append('is_spouse_registered', 'Yes')
+
+        $.ajax({
+            url: formAction,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: formData,
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.statusTex);
+                }
+
+                submitButton(formId, btnhtml, false);
+
+            },
+            success: function(data) { 
+                $('#exampleModalToggle4').modal('toggle');
+                submitButton(formId, btnhtml, false);
+                sweetAlertMsg('success', data.message);
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+    
+    $("form#donttHasSpouse").submit(function(e) {
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+        var btnhtml = $("button[form="+formId+"]").html();
+
+        let formData = new FormData(this);
+        formData.append('is_spouse', 'Yes')
+        formData.append('is_spouse_registered', 'No')
+
+        $.ajax({
+            url: formAction,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: formData,
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.statusTex);
+                }
+
+                submitButton(formId, btnhtml, false);
+
+            },
+            success: function(data) { 
+                $('#exampleModalToggle4').modal('toggle');
+                submitButton(formId, btnhtml, false);
+                sweetAlertMsg('success', data.message);
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+    
+    $("form#updateRoom").submit(function(e) {
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+        var btnhtml = $("button[form="+formId+"]").html();
+
+        let formData = new FormData(this); 
+
+        $.ajax({
+            url: formAction,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: formData,
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.statusTex);
+                }
+
+                submitButton(formId, btnhtml, false);
+
+            },
+            success: function(data) { 
+                $('#exampleModalToggle4').modal('toggle');
+                submitButton(formId, btnhtml, false);
+                sweetAlertMsg('success', data.message);
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+    
+    $("form#formSubmit").submit(function(e) {
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+        var btnhtml = $("button[form="+formId+"]").html();
+
+
+        $.ajax({
+            url: formAction,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.statusTex);
+                }
+
+                submitButton(formId, btnhtml, false);
+
+            },
+            success: function(data) {
+                if (data.error == false) {
+                    location.href = "{{ route('contact-details') }}";
+                }
+                submitButton(formId, btnhtml, false);
+                sweetAlertMsg('success', data.message);
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+
+    $(document).ready(function () {
+        $(".yes-btn").click(function () {
+            $('.divHide').hide();
+
+            $('#AlreadyRegisteredQuestion').show();
+            $("#ShowRoom").hide();
+        });
+    });
+
+    $(document).ready(function () {
+        $(".no-btn").click(function () {
+			
+			$('.divHide').hide();
+            $('#AlreadyRegisteredQuestion').hide();
+            $("#ShowRoom").show();
+        });
+    });
+
+    $(document).ready(function(){
+
+		$("input[type='radio'][name='size']").click(function() {
+
+			if($(this).val() == "Yes"){
+
+				$('.divHide').hide();
+				$("#AlreadyRegisteredYes").show();
+            	$("#AlreadyRegisteredNo").hide();
+
+            }else{
+
+				$('.divHide').hide();
+				$("#AlreadyRegisteredYes").hide();
+            	$("#AlreadyRegisteredNo").show();
+			}
 		});
+
+    });
+   
 </script>
 @endpush

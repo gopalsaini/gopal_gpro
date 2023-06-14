@@ -50,7 +50,7 @@
 <div class="container-fluid">
     <div class="page-header">
         <div class="row">
-            <div class="col-sm-6">
+            <div class="col-sm-5 mb-2">
                 <h3> @lang('admin.stage') @lang('admin.three') {{$type}} </h3>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">@lang('admin.dashboard')</a></li>
@@ -60,14 +60,15 @@
                     <li class="breadcrumb-item" aria-current="page">@lang('admin.three')</li>
                 </ol>
             </div>
-            <div class="col-sm-6">
-                <div class="bookmark">
-                    <ul>
-                        <a href="{{ route('admin.user.add') }}" class="btn btn-outline-primary"><i class="fas fa-plus me-2"></i>Send Invitation</a>
-                    </ul>
+            <div class="col-sm-7">
+                <div class="list-group flex-row" id="list-tab" role="tablist">
+                    <a href="{{ url('admin/user/stage-three-download-excel-government-passport') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-file me-2"></i>Government Report </a>
+                    <a href="{{ url('admin/user/stage-three-download-excel-passport') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-file me-2"></i>Reach Report </a>
+                    <a href="{{ route('admin.user.add') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-plus me-2" ></i>Send Invitation</a>
                 </div>
             </div>
         </div>
+            
     </div>
     @include('admin.user.stage-bar')
     
@@ -1502,7 +1503,7 @@
         });
 
         $(".passportRestrictedCountriesEmail").keyup(function(){
-            RestrictedCountries.draw();
+            passportRestrictedCountries.draw();
         });
 
         $(".sponsorshipNoVisaNeededEmail").keyup(function(){

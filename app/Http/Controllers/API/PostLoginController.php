@@ -858,7 +858,7 @@ class PostLoginController extends Controller {
 		
 					}
 
-					if($request->user()->designation_id == 3 || $request->user()->designation_id == 4 || $request->user()->designation_id == 15){
+					if($request->user()->designation_id == 3 || $request->user()->designation_id == 4 || $request->user()->designation_id == 15 || $request->user()->designation_id == 6){
 						$user->profile_submit_type = 'submit';
 						$user->profile_status = 'Review';
 						$user->stage = '1';
@@ -1514,7 +1514,7 @@ class PostLoginController extends Controller {
 
 					$name = $request->user()->name.' '.$request->user()->last_name;
 					$subject = '[GProCongress II Admin]  Travel Info Submitted by User';
-					$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$name.' has updated Travel Info for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$to.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Please review the updated info.</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
+					$msg = '<p><span style="font-size: 14px;"><font color="#000000">Hi,&nbsp;</font></span></p><p><span style="font-size: 14px;"><font color="#000000">'.$name.' has updated Travel Info for GProCongress II. Here are the candidate details:</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Name: '.$name.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Email: '.$request->user()->email.'</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Please review the updated info.</font></span></p><p><span style="font-size: 14px;"><font color="#000000"><br></font></span></p><p><span style="font-size: 14px;"><font color="#000000">Regards,</font></span></p><p><span style="font-size: 14px;"><font color="#000000">Team GPro</font></span></p>';
 					\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
 
 					// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
@@ -3383,7 +3383,7 @@ class PostLoginController extends Controller {
 		}else{
 
 
-			try{
+			// try{
 
 				$country = [];
 
@@ -3436,7 +3436,7 @@ class PostLoginController extends Controller {
 				$passportInfo->visa_residence = $request->post('visa_residence');
 				$passportInfo->multiple_entry_visa = $request->post('multiple_entry_visa');
 				$passportInfo->multiple_entry_visa_country = $request->post('multiple_entry_visa_country');
-				$passportInfo->diplomatic_passport = $request->post('diplomatic_passport');
+				$passportInfo->diplomatic_passport = $request->post('diplomatic_passport') ?? 'No';
 				$passportInfo->status = 'Pending';
 				$passportInfo->admin_status = 'Pending';
 				$passportInfo->user_confirm = $request->post('user_confirm') ? 'Yes' : 'No';
@@ -3483,6 +3483,90 @@ class PostLoginController extends Controller {
 
 				$passportInfo->valid_residence_country = json_encode($country);
 
+
+				$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+				$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
+				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
+				$visa_category = 'No Visa Needed';
+				 
+				if(in_array($request->post('country_id'),$doNotRequireVisa)){
+
+					if($request->post('diplomatic_passport') == 'Yes'){
+
+						$visa_category = 'No Visa Needed';
+
+					}else{
+
+						if($request->post('visa_residence') == 'Yes'){
+							
+							if($request->post('multiple_entry_visa') == 'Yes'){
+							
+								if($request->post('multiple_entry_visa_country') == 'Yes'){
+							
+									if($request->post('passport_valid') == 'Yes'){
+							
+										$visa_category = 'No Visa Needed';
+							
+									}else{
+	
+										$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+									}
+							
+								}else{
+
+									$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+								}
+							
+							}else{
+
+								$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+							}
+
+						}else{
+
+							$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+
+						}
+						
+					}
+					
+
+				}else{
+
+					if($request->post('visa_residence') == 'Yes'){
+							
+						if($request->post('multiple_entry_visa') == 'Yes'){
+						
+							if($request->post('multiple_entry_visa_country') == 'Yes'){
+						
+								if($request->post('passport_valid') == 'Yes'){
+						
+									$visa_category = 'No Visa Needed';
+						
+								}else{
+
+									$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+								}
+						
+							}else{
+
+								$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+							}
+						
+						}else{
+
+							$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+						}
+
+					}else{
+
+						$visa_category = \App\Helpers\commonHelper::checkUserPassPortCategoryacordingToCountry($request->post('country_id'));
+					}
+					
+				}
+
+
+				$passportInfo->visa_category = $visa_category;
 				$passportInfo->save();
 
 				$to = $request->user()->email;
@@ -3579,11 +3663,11 @@ class PostLoginController extends Controller {
 
 				return response(array("error" => false, "message" =>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your_submission_has_been_sent')), 200);
 				
-			}catch (\Exception $e){
+			// }catch (\Exception $e){
 				
-			    return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			//     return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			
-			}
+			// }
 
         }
 
@@ -4248,7 +4332,7 @@ class PostLoginController extends Controller {
 				
 				$passportReject->save();
 				
-				return response(array('message'=>'Request Updated successfully'),200);
+				return response(array("error"=>false,'message'=>'Request Updated successfully'),200);
 					
 			}catch (\Exception $e){
 			
@@ -4336,7 +4420,7 @@ class PostLoginController extends Controller {
 				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory($request->user()->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
 		
-				return response(array('message'=>'Request Updated successfully'),200);
+				return response(array("error"=>false, 'message'=>'Request Updated successfully'),200);
 					
 			}catch (\Exception $e){
 			

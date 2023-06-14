@@ -175,6 +175,11 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::match(['get','post'], 'add', 'Admin\UserController@add')->name('add');
 		Route::get('edit/{id}', 'Admin\UserController@edit')->name('edit');
 		Route::get('delete/{id}', 'Admin\UserController@delete')->name('delete');
+
+		Route::post('spouse-update', 'Admin\UserController@spouseUpdate')->name('spouse-update');
+		Route::post('room-update', 'Admin\UserController@roomUpdate')->name('room-update');
+
+
 		Route::get('approve/{id}', 'Admin\UserController@ProfileApproved')->name('approve');
 		Route::get('reject/{id}', 'Admin\UserController@profileReject')->name('reject');
 		Route::post('status', 'Admin\UserController@status')->name('status');
@@ -192,6 +197,9 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::match(['get','post'],'userMail-TriggerList-Model', 'Admin\UserController@userMailTriggerListModel')->name('userMailTriggerListModel');
 		Route::match(['get'], 'spouse-pending', 'Admin\UserController@spousePending')->name('spouse.pending');
 		Route::match(['get'], 'stage-all-download-excel-file', 'Admin\UserController@stageAllDownloadExcelFile')->name('stage-all-download-excel-file');
+		Route::match(['get'], 'stage-three-download-excel-government-passport', 'Admin\UserController@stageDownloadExcelGovernmentPassport')->name('stage-three-download-excel-government-passport');
+		Route::match(['get'], 'stage-three-download-excel-passport', 'Admin\UserController@stageDownloadExcelPassport')->name('stage-three-download-excel-passport');
+		Route::match(['get'], 'stage-two-download-excel-passport', 'Admin\UserController@stageTwoDownloadExcelPassport')->name('stage-two-download-excel-passport');
 	
 		Route::get('{designation}', 'Admin\UserController@list')->name('list');
 

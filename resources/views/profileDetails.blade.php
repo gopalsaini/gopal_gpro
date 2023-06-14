@@ -85,7 +85,7 @@
                             <!-- //Vineet - 080123 -->
                         </a>
                     </li>
-                    @if($resultData['result']['designation_id'] != 3 && $resultData['result']['designation_id'] != 4 && $resultData['result']['designation_id'] != 15)
+                    @if($resultData['result']['designation_id'] != 3 && $resultData['result']['designation_id'] != 4 && $resultData['result']['designation_id'] != 15 && $resultData['result']['designation_id'] != 6)
                     <li>
                         <a href="{{url('ministry-details')}}">
                             <!-- //Vineet - 080123 -->
