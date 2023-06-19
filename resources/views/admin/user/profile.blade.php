@@ -429,6 +429,10 @@
                                         <td colspan="5"><strong> Is this a diplomatic passport? : </strong>{{$query['diplomatic_passport']}}</td>
                                     </tr>
                                     
+                                    <tr>
+                                        <td colspan="5"><strong> Visa Category : </strong>{{$query['visa_category']}}</td>
+                                    </tr>
+                                    
                                     <tr >
                                         <td colspan="15">
                                             <p >@lang('web/wizard.do_you_have_a_valid_visa_or_residence') : </p>

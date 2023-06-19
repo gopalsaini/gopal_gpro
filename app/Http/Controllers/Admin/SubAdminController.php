@@ -175,7 +175,7 @@ class SubAdminController extends Controller {
 		
 		if ($result) {
 
-			\App\Models\User::where('id', $id)->delete();
+			\App\Models\User::where('id', $id)->forceDelete();
 			$request->session()->flash('success','Sub Admin deleted successfully.');
 
 		} else {

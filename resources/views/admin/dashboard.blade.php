@@ -64,12 +64,111 @@
 
 <div class="container-fluid">
     <div class="row mainboxs">
+    <div class="col-md-12 p-0 headding">
+            <h2>Summery</h2>
+        </div>
         
+        <div class="col-2 p-0 box-inner">
+            <a href="#">
+                <h2>Total candidates paid(Including Spouses) </h2>
+
+                @php 
+            
+                $userPaid = [];
+                $candidatesWSPaid = 0;
+                $candidatesPartiallyPaid = 0;
+                $candidatesWSPartiallyPaid = 0;
+                $candidatesNotPaid = 0;
+                $totalUser = 0;
+
+                $results = \App\Models\User::where([
+                        ['user_type', '!=', '1'],
+                        ['designation_id', 2],
+                    ])
+                    ->where('profile_status', 'Approved')
+                    ->where(function ($query) {
+                        $query->where('added_as', null)
+                            ->orWhere('added_as', '=', 'Group')
+                            ->orWhere('parent_spouse_stage', '>=', '2');
+                    })
+                    ->get();
+
+                if ($results) {
+                    foreach ($results as $val) {
+                        $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($val->id);
+                        
+                        if ($totalPendingAmount <= 0) {
+                            $candidatesWSPaid++;
+                        } elseif ($totalPendingAmount < $val->amount) {
+                            $candidatesPartiallyPaid++;
+                            $candidatesWSPartiallyPaid++;
+                        } else {
+                            $candidatesNotPaid++;
+                        }
+
+                        if (!in_array($val->id, $userPaid)) {
+                            $userPaid[] = $val->id;
+                        }
+
+                        $spouse = \App\Models\User::where([
+                            ['parent_id', '=', $val->id],
+                            ['added_as', '=', 'Spouse'],
+                        ])->first();
+
+                        if ($spouse && !in_array($spouse->id, $userPaid)) {
+                            $userPaid[] = $spouse->id;
+                            if ($totalPendingAmount <= 0) {
+                                $candidatesWSPaid++;
+                            } elseif ($totalPendingAmount < $val->amount) {
+                                $candidatesWSPartiallyPaid++;
+                            } else {
+                                $candidatesNotPaid++;
+                            }
+                        }
+                    }
+                }
+               
+                
+                @endphp
+                <h4> {{ $candidatesWSPaid }} </h4>
+            </a>
+        </div>
+        <div class="col-2 p-0 box-inner">
+            <a href="#">
+                <h2>Total Candidates Approved but Partially Paid </h2>
+                <h4> {{ $candidatesPartiallyPaid }} </h4>
+            </a>
+        </div>
+
+        <div class="col-4 p-0 box-inner">
+            <a href="#">
+                <h2>Total Candidates Approved but Partially Paid(Including Spouses)</h2>
+                <h4> {{ $candidatesWSPartiallyPaid}} </h4>
+            
+            </a>
+        </div>
+
+        <div class="col-2 p-0 box-inner">
+            <a href="#">
+                <h2>Total Candidates Approved but have not Paid yet</h2>
+                <h4> {{ $candidatesNotPaid }} </h4>
+            
+            </a>
+        </div>
+
+        <div class="col-2 p-0 box-inner">
+            <a href="#">
+                <h2>Total Candidates Registered(including Spouses)</h2>
+                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count() }} </h4>
+            </a>
+        </div>
+
+
         <div class="col-md-12 p-0 headding">
             <h2>Attendees Stages</h2>
         </div>
         
-        <div class="col-2 p-0 box-inner">
+        <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/all')}}">
                 <h2>STAGE ALL </h2>
                 <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count() }} </h4>
@@ -93,23 +192,30 @@
             <div class="" style="display:none" id="stageOneDivShow">
                 <div >
                     <a href="{{url('admin/user/attendees/stage/one')}}" class="row" >
-                        <div class="col-4 p-0 box-inner">
+                        <div class="col-2 p-0 box-inner">
                             <h2>Pending </h2>
                             <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Review']])->where(function ($query) {
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count() }} </h4>
                         </div>
-                        <div class="col-4 p-0 box-inner">
+                        <div class="col-2 p-0 box-inner">
                             <h2>Waiting </h2>
                             <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Waiting']])->where(function ($query) {
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count() }} </h4>
                         </div>
-                        <div class="col-4 p-0 box-inner">
+                        <div class="col-3 p-0 box-inner">
                             <h2>Declined </h2>
                             <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Rejected']])->where(function ($query) {
+                              $query->where('added_as',null)
+                                ->orWhere('added_as', '=', 'Group');
+                            })->count() }} </h4>
+                        </div>
+                        <div class="col-5 p-0 box-inner">
+                            <h2>Approve Not Coming </h2>
+                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'ApprovedNotComing']])->where(function ($query) {
                               $query->where('added_as',null)
                                 ->orWhere('added_as', '=', 'Group');
                             })->count() }} </h4>
@@ -122,7 +228,7 @@
 
         <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/two')}}">
-                <h2>STAGE 2 </h2>
+                <h2>STAGE 2 W/O Spouse </h2>
                 <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])
                         ->where(function ($query) {
 							$query->where('added_as',null)
@@ -133,9 +239,19 @@
         </div>
 
         <div class="col-1 p-0 box-inner">
+            <a href="#">
+                <h2>STAGE 2 With Spouse </h2>
+                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])
+                        ->count() }} </h4>
+            
+            </a>
+        </div>
+
+        <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/three')}}">
                 <h2>STAGE 3 </h2>
-                <h4> {{ \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->count() }} </h4>
+                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->count() }}
+                </h4>
             </a>
         </div>
 
@@ -143,7 +259,7 @@
         <div class="col-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/four')}}">
                 <h2>STAGE 4 </h2>
-                <h4> {{ \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '4']])->count() }} </h4>
+                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '4']])->count() }} </h4>
             </a>
         </div>
 

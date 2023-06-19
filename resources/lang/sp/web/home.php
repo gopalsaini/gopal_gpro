@@ -98,7 +98,7 @@ return [
     'spouse-picked-by-gpro-from-airport' => '¿Desean usted y su cónyuge que alguien del equipo de GproCongress les recoja en el aeropuerto?',
     'spouse-dropped-by-gpro-at-airport' => '¿Desean usted y su cónyuge que alguien del equipo de GproCongress les deje en el aeropuerto?',
     'flight-details-landing-in-panama' => 'Por favor, ingrese los detalles del vuelo que aterriza en Panamá o sale desde Panamá.',
-    'travel_note'=>'Note: If you are reaching early, You can contact Hotel and get discounted rates. Details for same would be <br> shared with you in an email.',
+    'travel_note'=>'A cambio de su pago de inscripción, RREACH se hará cargo de su habitación del 12 al 17 de noviembre, por un total de cinco noches (de domingo a jueves).  Los delegados pueden llegar antes del 12 de noviembre y marcharse después del 17 de noviembre, pero deberán pagar por las noches adicionales.  RREACH ha llegado a un acuerdo con los hoteles Westin Playa Bonita Panamá y Dreams Playa Bonita Panamá para que los delegados del GProCongress II paguen tarifas reducidas por las noches adicionales.  Los delegados que deseen llegar antes o marcharse más tarde deberán realizar la reserva por las noches adicionales con el hotel directamente (Ms. Nelly Morales nelly.morales@westinplayabonita.com cc:carolina.lezcano@westinplayabonita.com).    ',
     'like_to_share_your_room'=>'Do you know who would you like to share your room with?',
     'Married'=>'Casado/a',
     'Unmarried'=>'Soltero/a',
@@ -122,6 +122,7 @@ return [
     'PreRecordedVideo'=>'Pre Recorded Video',
     'subsidy_home'=>"El costo de RREACH por delegado es de hasta $1750. Las becas oscilan entre $775 y $1500 dólares. ¡Dios provee!",
     'Click_for_your_cost'=>'¡¡Haga clic para ver cuánto le cuesta a usted!!',
+    'Traveling_Country'=>'Current Residence/Travelling From (Country)',
 
 
 

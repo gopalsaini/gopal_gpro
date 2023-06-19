@@ -1078,6 +1078,7 @@ class ProfileController extends Controller
                     'logistics_picked'=>$request->post('logistics_picked'),
                     'mobile'=>$request->post('mobile'),
                     'name'=>$request->post('name'),
+                    'citizenship'=>$request->post('citizenship'),
                     'id'=>$request->post('id'),
                     'share_your_room_with'=>$request->post('share_your_room_with'),
                 );

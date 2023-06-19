@@ -138,5 +138,7 @@ Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmails
 
 
 // Route::any("appologies-letter","API\PreLoginController@AppologiesLetter");
-Route::any("PassportInfoUpdateUsersApi","API\PreLoginController@PassportInfoUpdateUsersApi");
+// Route::any("PassportInfoUpdateUsersApi","API\PreLoginController@PassportInfoUpdateUsersApi");
+// Route::any("PassportInfoUpdateAdminProvideUserNameApi","API\PreLoginController@PassportInfoUpdateAdminProvideUserNameApi");
+// Route::any("testingEmailSend","API\PreLoginController@testingEmailSend");
 

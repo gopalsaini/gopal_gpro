@@ -44,6 +44,7 @@ class UserController extends Controller {
 				}else{
 					$rules['marital_status'] = 'required';
 					$rules['citizenship'] = 'required';
+					
 				}
 
 
@@ -158,15 +159,89 @@ class UserController extends Controller {
 						}
 						
 
-						$data->profile_status = 'Approved';
-						$data->profile_update = 'Approved';
-						$data->amount = '0.00';
-						$data->stage = '3';
-						$data->payment_status = '2';
-						$data->marital_status = $request->post('marital_status');
-						$data->room = $request->post('room') ?? null;
-						$data->profile_submit_type = 'submit';
-						$data->status_change_at = date('Y-m-d H:i:s');
+						if($data && $data->stage == '3'){
+
+							$data->profile_status = 'Approved';
+							$data->profile_update = 'Approved';
+							$data->amount = '0.00';
+							$data->stage = '3';
+							$data->payment_status = '2';
+							$data->marital_status = $request->post('marital_status');
+							$data->room = $request->post('room') ?? null;
+							$data->profile_submit_type = 'submit';
+							$data->status_change_at = date('Y-m-d H:i:s');
+
+							if($data->language == 'sp'){
+
+								$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+								$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+								<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+								<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+								<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+								<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+								<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+								<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+								<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+		
+							}elseif($data->language == 'fr'){
+							
+								$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+								$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
+								<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+								<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+								<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+								<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+								<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+								<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+								<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+		
+							}elseif($data->language == 'pt'){
+							
+								$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+								$msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+								<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+								<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+								<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+								<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+								<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+								<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+								<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+		
+							}else{
+							
+								$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+								$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+								<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+								<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+								<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+								<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+								<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+								<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+								<p>Warmly,</p><p>GProCongress II Team</p>";
+				
+							}
+		
+							\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+							\App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+						}
+						
 					}
 
 
@@ -1051,14 +1126,14 @@ class UserController extends Controller {
 
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
-			$query = \App\Models\User::select('passport_infos.*','users.id as uid')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+			$query = \App\Models\User::select('passport_infos.*','users.id as uid')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->where('passport_infos.admin_status', 'Approved')->orderBy('updated_at', 'desc');
 
 			$query->where(function ($query2) {
 
 				$query2->where('passport_infos.visa_granted', 'Yes')
 						->orWhere('passport_infos.visa_granted', null);
 			});
-				
+
 
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
@@ -1071,7 +1146,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->orderBy('updated_at', 'desc');
+			$totalData1 = \App\Models\User::select('passport_infos.*')->join('passport_infos','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('users.stage', 3)->where('passport_infos.admin_status', 'Approved')->orderBy('updated_at', 'desc');
 			
 			$totalData1->where(function ($query2) {
 				$query2->where('passport_infos.visa_granted', 'Yes')
@@ -1573,8 +1648,8 @@ class UserController extends Controller {
 		
 		if ($result) {
 
-			\App\Models\User::where('id', $id)->delete();
-			\App\Models\User::where('parent_id', $id)->delete();
+			\App\Models\User::where('id', $id)->forceDelete();
+			\App\Models\User::where('parent_id', $id)->forceDelete();
 			
 			$request->session()->flash('5fernsadminsuccess','User deleted successfully.');
 		} else {
@@ -3643,7 +3718,7 @@ class UserController extends Controller {
 
 		try{
 
-			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language','users.citizenship as citizenship')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', '2')->orderBy('updated_at', 'desc');
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', '2')->orderBy('updated_at', 'desc');
 
 			$result = $query->get();
 			
@@ -3655,7 +3730,7 @@ class UserController extends Controller {
 
 				
 					$delimiter = ",";  
-					$filename = "passport-".date('d-m-Y').rand(111,999).".csv";
+					$filename = "Government Report.csv";
 					
 					$f = fopen('php://memory', 'w'); 
 					
@@ -3663,7 +3738,9 @@ class UserController extends Controller {
 					$fields = array('Id', 'Full name', 
 										'Passport number', 
 										'Passport Issued by (Country)', 
-										'Current Residence/Travelling From (Country)'); 
+										'Current Residence/Travelling From (Country)',
+										'Status'
+									); 
 					fputcsv($f, $fields, $delimiter); 
 
 					$i=1;
@@ -3673,12 +3750,48 @@ class UserController extends Controller {
 						$countryPass= \App\Helpers\commonHelper::getCountry2NameById($row['country_id']);
 						$country= \App\Helpers\commonHelper::getCountryNameById($row['citizenship']);
 						
+						if($row){
+
+							if ($row['admin_status'] == 'Pending') {
+		
+								$admin_status = 'Passport info Submitted';
+			
+							} else if ($row['admin_status'] == 'Approved') {
+			
+								if($row['visa_granted'] == 'Yes'){
+									$admin_status = 'Visa Granted';
+								}elseif($row['visa_granted'] == 'No'){
+		
+									if($row['reference_number'] != null){
+										$admin_status = 'Money Refunded';
+									}
+		
+									$admin_status = 'Visa Not Granted';
+		
+								}else{
+									$admin_status = 'Documents Issued';
+								}
+								
+							} else if ($row['admin_status'] === 'Decline') {
+			
+								$admin_status = 'Passport Info Returned';
+								
+							}else{
+			
+								$admin_status = 'Passport Info Pending';
+							}
+		
+						}else{
+							$admin_status = 'Passport Info Pending';
+						}
+
 						$lineData = array(
 							($i), 
 							$name,
 							$row['passport_no'], 
 							$countryPass,
-							$country
+							$country,
+							$admin_status
 						); 
 						
 						fputcsv($f, $lineData, $delimiter); 
@@ -3724,7 +3837,7 @@ class UserController extends Controller {
 			}else{
 
 				$delimiter = ",";  
-				$filename = "passport-".date('d-m-Y').rand(111,999).".csv";
+				$filename = "Reach Report.csv";
 				
 				$f = fopen('php://memory', 'w'); 
 				
@@ -3897,11 +4010,41 @@ class UserController extends Controller {
 							$to = $user->email;
 							$name = $user->name.' '.$user->last_name;
 							$amount = $request->post('amount');
-							$subject = 'Your GProCongress II refund has been processed.';
-							$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
-							<p>We are very sorry that you cannot make it to Panama for the GProCongress this November.   We have received your request for a refund, and it has been processed by our admin team.   You will be receiving your refund shortly.</p>
-							<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
-							<p>Warmly,</p><p>GProCongress II Team</p>";
+
+							if($user->language == 'sp'){
+
+								$subject = 'Su reembolso del GProCongress II ha sido procesado.';
+								$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>Sentimos mucho que no pueda asistir al GProCongress este noviembre en Panamá.   Hemos recibido su solicitud de reembolso, y ha sido procesada por nuestro equipo de administración.   Pronto recibirás tu reembolso.</p>
+								<p>Si tiene alguna pregunta, o si necesita hablar con un miembro de nuestro equipo, por favor responda a este correo electrónico.</p>
+								<p>Un saludo cordial,</p><p>Equipo GProCongress II</p>";
+		
+							}elseif($user->language == 'fr'){
+							
+								$subject = "Votre remboursement GProCongress II a été traité.";
+								$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>Nous sommes désolés que vous ne puissiez pas vous rendre à Panama pour le GProCongress de novembre. Nous avons reçu votre demande de remboursement, qui a été traitée par notre équipe administrative. Vous recevrez votre remboursement très bientôt.</p>
+								<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet e-mail.</p>
+								<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+		
+							}elseif($user->language == 'pt'){
+							
+								$subject = 'Seu reembolso do GProCongresso II foi processado.';
+								$msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>Lamentamos muito que você não possa ir ao Panamá para o GProCongresso neste Novembro. Recebemos sua solicitação de reembolso e ela foi processada por nossa equipe administrativa. Você receberá seu reembolso em breve.</p>
+								<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.</p>
+								<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+		
+							}else{
+							
+								$subject = 'Your GProCongress II refund has been processed.';
+								$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+								<p>We are very sorry that you cannot make it to Panama for the GProCongress this November.   We have received your request for a refund, and it has been processed by our admin team.   You will be receiving your refund shortly.</p>
+								<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+								<p>Warmly,</p><p>GProCongress II Team</p>";
+				
+							}
+
 
 							\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
@@ -6083,7 +6226,7 @@ class UserController extends Controller {
 				\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
 				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id, $subject, $msg, 'Passport Info Approved');
 		
 
 			}elseif($passportApprove->visa_category == 'Visa Needed'){
@@ -6315,7 +6458,7 @@ class UserController extends Controller {
 
 				\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Please resubmit your information for GProCongress II');
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id,$subject,$msg,'Passport info Rejected');
 
 				return response(array('message'=>'Passport Information declined successfully'),200);
 					
@@ -6366,7 +6509,8 @@ class UserController extends Controller {
 				$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
 
 				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$passportApprove->id);  // 4 letter
-
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id, 'Passport Info Approved', 'Passport Info Approved', 'Passport Info Approved');
+		
 				return response(array('message'=>'Passport Information Approved successfully'),200);
 				
 			}catch (\Exception $e){
@@ -7900,6 +8044,16 @@ class UserController extends Controller {
 			$rules['date_of_birth'] = 'required|date';
 			$rules['citizenship'] = 'required';
 			$rules['salutation'] = 'required';
+			$rules['spouse_contact_country_id'] = 'required';
+			$rules['spouse_contact_state_id'] = 'required';
+			$rules['spouse_contact_city_id'] = 'required';
+			$rules['spouse_user_mobile_code'] = 'required';
+			$rules['spouse_mobile'] = 'required';
+			$rules['spouse_contact_business_codenumber'] = 'required';
+			$rules['spouse_contact_business_number'] = 'required';
+			$rules['spouse_contact_whatsapp_codenumber'] = 'required';
+			$rules['spouse_contact_whatsapp_number'] = 'required';
+			$rules['spouse_contact_zip_code'] = 'required';
 			
 		}
 
@@ -8036,8 +8190,18 @@ class UserController extends Controller {
 									'system_generated_password'=>'1',
 									'spouse_confirm_token'=>$token,
 									'spouse_confirm_reminder_email'=>json_encode($reminderData),
+									'contact_country_id'=>$request->post('spouse_contact_country_id'),
+									'contact_state_id'=>$request->post('spouse_contact_state_id'),
+									'contact_city_id'=>$request->post('spouse_contact_city_id'),
+									'phone_code'=>$request->post('spouse_user_mobile_code'),
+									'mobile'=>$request->post('spouse_mobile'),
+									'contact_business_codenumber'=>$request->post('spouse_contact_business_codenumber'),
+									'contact_business_number'=>$request->post('spouse_contact_business_number'),
+									'contact_whatsapp_codenumber'=>$request->post('spouse_contact_whatsapp_codenumber'),
+									'contact_whatsapp_number'=>$request->post('spouse_contact_whatsapp_number'),
+									'contact_zip_code'=>$request->post('spouse_contact_zip_code'),
 								);
-			
+
 								$user =  \App\Models\User::insert($users);
 
 								$spouse_id = \DB::getPdo()->lastInsertId();
@@ -8139,13 +8303,11 @@ class UserController extends Controller {
 
     }
 
-	
-
 	public function stageTwoDownloadExcelPassport(Request $request){
 
 		// try{
 
-			$result = \App\Models\User::where([['designation_id', 2], ['parent_id', NULL], ['added_as', NULL], ['stage','=>',2]])->orderBy('updated_at', 'desc')->get();
+			$result = \App\Models\User::where([['designation_id', 2], ['parent_id', NULL], ['added_as', NULL], ['stage','>=',2]])->orderBy('updated_at', 'desc')->get();
 			
 			if($result->count()==0){
 
@@ -8155,7 +8317,7 @@ class UserController extends Controller {
 
 				
 					$delimiter = ",";  
-					$filename = "User-".date('d-m-Y').rand(111,999).".csv";
+					$filename = "Reach Report.csv";
 					
 					$f = fopen('php://memory', 'w'); 
 					
@@ -8334,7 +8496,7 @@ class UserController extends Controller {
 						
 						fputcsv($f, $lineData, $delimiter); 
 						
-						$results = \App\Models\User::where([['parent_id', $row['id']],['stage','=>',2]])->get();
+						$results = \App\Models\User::where([['parent_id', $row['id']],['stage','>=',2]])->get();
 						$groupLeaderName = '';
 						$groupLeaderEmail = '';
 						$spouseLeaderName = '';
@@ -8459,6 +8621,7 @@ class UserController extends Controller {
 									\App\Helpers\commonHelper::getTotalAcceptedAmount($val['id']),
 									\App\Helpers\commonHelper::getTotalAmountInProcess($val['id']),
 									\App\Helpers\commonHelper::getTotalRejectedAmount($val['id']),
+									$stage0, $stage1, 
 									$stage2, $stage3, $stage4, $stage5,
 									$non_formal_trainor,
 									$formal_theological,

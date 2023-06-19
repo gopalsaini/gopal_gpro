@@ -99,7 +99,7 @@ return [
     'spouse-picked-by-gpro-from-airport' => 'Would you and your spouse like to be picked by Gpro Congress from Airport',
     'spouse-dropped-by-gpro-at-airport' => 'Would you and your spouse like to be dropped by Gpro Congress at Airport',
     'flight-details-landing-in-panama' => 'lease fill in Flight details of the Flight landing in Panama or departing from Panama',
-    'travel_note'=>'Note: If you are reaching early, You can contact Hotel and get discounted rates. Details for same would be <br> shared with you in an email.',
+    'travel_note'=>'In return for your registration fee, RREACH is taking care of your room from November 12-17, for a total of five nights (Sunday to Thursday).  Delegates are welcome to arrive before November 12, and to leave after November 17, but they will be required to pay for any additional nights.  RREACH has arranged with the Westin Playa Bonita Panama and Dreams Playa Bonita Panama hotel for discounted rates to be paid by GProCongress II delegates for additional nights.  Delegates wishing to arrive early or leave late will need to book additional nights directly with the hotel (Ms. Nelly Morales nelly.morales@westinplayabonita.com cc:carolina.lezcano@westinplayabonita.com)',
     'like_to_share_your_room'=>'Do you know who would you like to share your room with?',
     'Married'=>'Married',
     'Unmarried'=>'Unmarried',
@@ -124,5 +124,6 @@ return [
     'PreRecordedVideo'=>'Pre Recorded Video',
     'subsidy_home'=>'RREACH’s cost per delegate is up to $1750. Scholarship subsidies range between $775-$1500. God Provides!',
     'Click_for_your_cost'=>'Click for your cost!!',
+    'Traveling_Country'=>'Current Residence/Travelling From (Country)',
 
 ];

@@ -585,7 +585,7 @@
                             </div>
                         </form>
                         <div class="comment-form mt-3" >
-							<div id="AlreadyRegisteredQuestion" style="display:none">
+							<div id="" style="display:none">
 								<label for="">@lang('web/profile-details.spouse-already-registered') </label>
 								<div class="radio-wrap">
 									<div class="form__radio-group">
@@ -595,7 +595,7 @@
 										</label>
 									</div>
 									<div class="form__radio-group">
-										<input type="radio" value="No"  name="size" id="already_registered_no" class="form__radio-input">
+										<input type="radio" value="No"  checked name="size" id="already_registered_no" class="form__radio-input">
 										<label class="form__label-radio register-no" for="already_registered_no" class="form__radio-label">
 											<span class="form__radio-button"></span> @lang('web/profile-details.no')
 										</label>
@@ -617,7 +617,7 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="spouse-form divHide" id="AlreadyRegisteredNo" style="display:none">
+                            <div class="spouse-form " id="AlreadyRegisteredQuestion">
                                 <form id="donttHasSpouse" action="{{ url('admin/user/spouse-update') }}" class="row" enctype="multipart/form-data">
 									@csrf
 									<input type="hidden" name="user_id"  required value="{{$result['id']}}">
@@ -673,6 +673,94 @@
                                             </select>
                                         </div>
                                     </div>
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="input">Country:</label>
+												<select id="country" placeholder="- @lang('web/app.select_code') -" data-state_id="@if($SpouseDetails) {{$SpouseDetails->contact_state_id}} @endif" data-city_id="@if($SpouseDetails){{ $SpouseDetails->contact_city_id }}@endif" class="mt-2 country selectbox test" name="spouse_contact_country_id">
+													<option value="">--select country--</option>
+													@foreach($country as $con)
+													<option data-phoneCode="{{ $con['phonecode'] }}" @if($SpouseDetails && $SpouseDetails['contact_country_id']==$con['id']){{'selected'}}@endif value="{{ $con['id'] }}">{{ ucfirst($con['name']) }}</option>
+													@endforeach
+												</select>
+											</div>
+										</div>
+										<div class="col-lg-4">
+											<label for="alaska">State <span>*</span></label>
+											<div class="common-select">
+												<select id="alaska" autocomplete="off" placeholder="- @lang('web/ministry-details.select') -" class="mt-2 statehtml test selectbox" name="spouse_contact_state_id">
+													
+												</select>
+											</div>
+											
+										</div>
+										<div class="col-lg-4">
+											<label for="Illinois">City <span>*</span></label>
+											<div class="common-select">
+												<select id="Illinois" autocomplete="off" placeholder="- @lang('web/ministry-details.select') -" class="mt-2 cityHtml test selectbox" name="spouse_contact_city_id">
+													
+												</select>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										
+										<div class="col-sm-6">
+											<div class="form-group row">
+												<label for="input">@lang('admin.mobile'):</label>
+												<div class="col-sm-5">
+													<select class="form-control test phoneCode" name="spouse_user_mobile_code"> 
+														<option value="" >--@lang('web/app.select_code')--</option>
+														@foreach($country as $con)
+															<option @if($SpouseDetails && $SpouseDetails['phone_code']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
+														@endforeach
+													</select>
+												</div>
+												<div class="col-sm-7">
+													<input type="tel" class="form-control" name="spouse_mobile" onkeypress="return /[0-9 ]/i.test(event.key)"  value="@if($SpouseDetails) {{$SpouseDetails->mobile}} @endif" autocomplete="off" placeholder="Enter mobile number">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group row">
+												<label for="input">business Mobile:</label>
+												<div class="col-sm-5">
+													<select class="form-control test phoneCode" name="spouse_contact_business_codenumber"> 
+														<option value="" >--@lang('web/app.select_code')--</option>
+														@foreach($country as $con)
+															<option @if($SpouseDetails &&  $SpouseDetails['contact_business_codenumber']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
+														@endforeach
+													</select>
+												</div>
+												<div class="col-sm-7">
+													<input type="tel" class="form-control" name="spouse_contact_business_number" onkeypress="return /[0-9 ]/i.test(event.key)"  value="@if($SpouseDetails) {{$SpouseDetails->contact_business_number}} @endif" autocomplete="off" placeholder="Enter business number">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group row">
+												<label for="input">WhatsApp Number:</label>
+												<div class="col-sm-5">
+													<select class="form-control test phoneCode" name="spouse_contact_whatsapp_codenumber"> 
+														<option value="" >--@lang('web/app.select_code')--</option>
+														@foreach($country as $con)
+															<option @if($SpouseDetails && $SpouseDetails['contact_whatsapp_codenumber']==$con['phonecode']){{'selected'}}@endif value="{{$con['phonecode']}}">+{{$con['phonecode']}}</option>
+														@endforeach
+													</select>
+												</div>
+												<div class="col-sm-7">
+													<input type="tel" class="form-control" name="spouse_contact_whatsapp_number" onkeypress="return /[0-9 ]/i.test(event.key)"  value="@if($SpouseDetails) {{$SpouseDetails->contact_whatsapp_number}} @endif" autocomplete="off" placeholder="Enter whatsapp number">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="input">Zip Code:</label>
+												<input type="tel" class="form-control" name="spouse_contact_zip_code" onkeypress="return /[0-9 ]/i.test(event.key)"  value="@if($SpouseDetails) {{$SpouseDetails->contact_zip_code}} @endif" autocomplete="off" placeholder="Enter contact zip code">
+											</div>
+										</div>
+									</div>
                                     <div class="col-lg-12 mt-2">
                                         <div class="step-next register-submit">
                                             <button type="submit" class="btn btn-success" form="donttHasSpouse">@lang('web/profile-details.submit')</button> 

@@ -3114,7 +3114,7 @@ class commonHelper{
 		
 		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
 		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'You need a visa for GProCongress II ');
 		
 	}		
 	
@@ -3266,7 +3266,7 @@ class commonHelper{
 		
 		// \App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg, false, false, $pdf);
 		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'You need a visa for GProCongress II');
 		
 	}
 
@@ -3400,7 +3400,7 @@ class commonHelper{
 		});
 		
 		\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'financial information completed');
+		\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Good news!  You don’t need a visa for GProCongress II.');
 		
 		
 	}

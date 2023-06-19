@@ -187,9 +187,9 @@ class Dashboard2Controller extends Controller
 
       public function getGroupRegisteredChartAjax(){
       
-            $totalGroup1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','>=', '2']])->groupBy('parent_id')->count();
-            $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','>=', '2']])->get();
-            $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','>=', '2']])->count();
+            $totalGroup1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','=', '2']])->groupBy('parent_id')->count();
+            $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','=', '2']])->get();
+            $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','=', '2']])->count();
            
             if(!empty($totalGroup) && count($totalGroup)>0){
               $array =[];
@@ -216,11 +216,11 @@ class Dashboard2Controller extends Controller
       public function getSingleMarriedWSChartAjax(){
       
             $stages = array(
-                  'Single' => \App\Models\User::where([['room', 'Single'], ['stage','>=', 2]])->count(),
-                  'Twin Sharing' => \App\Models\User::where([['designation_id', 2], ['room', 'Sharing'], ['stage','>=', '2']])->orWhere('room','Twin Sharing Deluxe Room')->count(),
-                  'Suite' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Suite'], ['stage','>=', '2']])->count(),
-                  'Club Floor' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Club Floor'], ['stage','>=', '2']])->count(),
-                  'Double Deluxe' => \App\Models\User::where([['designation_id', 2],['added_as', 'Spouse'], ['room', null], ['stage','>=', '2']])->count(),
+                  'Single' => \App\Models\User::where([['room', 'Single'], ['stage','=', 2]])->count(),
+                  'Twin Sharing' => \App\Models\User::where([['designation_id', 2], ['room', 'Sharing'], ['stage','=', '2']])->orWhere('room','Twin Sharing Deluxe Room')->count(),
+                  'Suite' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Suite'], ['stage','=', '2']])->count(),
+                  'Club Floor' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Club Floor'], ['stage','=', '2']])->count(),
+                  'Double Deluxe' => \App\Models\User::where([['designation_id', 2],['added_as', 'Spouse'], ['room', null], ['stage','=', '2']])->count(),
             );
 
             return response()->json($stages);
@@ -228,13 +228,13 @@ class Dashboard2Controller extends Controller
 
       public function getMarriedWSChartAjax(){
       
-            $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage','>=', '2']])->get();
+            $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage','=', '2']])->get();
             if(!empty($Singles) && count($Singles)>0){
 
               $BothTotal = 0; $singleTotal = 0;$nonTrainerCount = 0; $AspirationalBothTotal = 0;  $PastoralAndAspirational = 0; $singleAspirationalTotal=0;
                 foreach($Singles as $Single){
 
-                    $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['stage','>=', '2'], ['parent_id', $Single->id]])->first();
+                    $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['stage','=', '2'], ['parent_id', $Single->id]])->first();
                     
                     
                     if($user && $user->ministry_pastor_trainer == 'Yes' && $Single->ministry_pastor_trainer == 'Yes'){
@@ -307,10 +307,10 @@ class Dashboard2Controller extends Controller
       
       public function getPastoralTrainersChartAjax(){
         
-            $Pastoral = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'Yes'], ['stage','>=', '2']])->count();
+            $Pastoral = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'Yes'], ['stage','=', '2']])->count();
             
-            $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'Yes'], ['stage', '>=','2']])->count();
-            $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'No'], ['stage','>=', '2']])->count();
+            $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'Yes'], ['stage', '=','2']])->count();
+            $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['doyouseek_postoral', 'No'], ['stage','=', '2']])->count();
             
             $stages = array(
                   'Pastoral Trainer' => $Pastoral,
@@ -346,8 +346,8 @@ class Dashboard2Controller extends Controller
     
     public function TotalGroupRegistration(){
           
-          $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','>=', '2']])->get();
-          $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','>=', '2']])->count();
+          $totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','=', '2']])->get();
+          $totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group'], ['stage','=', '2']])->count();
         
           if(!empty($totalGroup) && count($totalGroup)>0){
             $array =[];
@@ -375,8 +375,8 @@ class Dashboard2Controller extends Controller
         
         
         $stages = array(
-              'Total Married couples' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['stage','>=', '2']])->count(),
-              'Total Married Candidates' => (\App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['stage','>=', '2']])->count())*2,
+              'Total Married couples' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['stage','=', '2']])->count(),
+              'Total Married Candidates' => (\App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['stage','=', '2']])->count())*2,
         );
 
         return response()->json($stages);
@@ -385,13 +385,13 @@ class Dashboard2Controller extends Controller
 
     public function SingleMarriedComing(){
       
-      $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2],['marital_status', 'Married'], ['stage','>=', '2']])->get();
+      $Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2],['marital_status', 'Married'], ['stage','=', '2']])->get();
       if(!empty($Singles) && count($Singles)>0){
 
         $MarriedTotal = 0; $singleTotal = 0;
           foreach($Singles as $Single){
 
-              $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '>=','2'], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
+              $user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=','2'], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
 
               if(!$user && $Single->marital_status == 'Married'){
 
@@ -403,7 +403,7 @@ class Dashboard2Controller extends Controller
       }
 
       $stages = array(
-            'Single' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Unmarried'], ['stage','>=', '2']])->count(),
+            'Single' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Unmarried'], ['stage','=', '2']])->count(),
             'Married coming without Spouse' => $singleTotal,
       );
 

@@ -839,8 +839,27 @@
                                 <form id="formSubmit" action="{{ url('travel-information-submit') }}" class="row" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" name="id" required value="@if($travelInfo['result'] && $travelInfo['result']['id']) {{$travelInfo['result']['id']}} @endif" placeholder="id" class="mt-2" >
-
+                                    
+                                        
                                     <div class="step-form">
+                                        
+                                        <h5>@lang('web/home.Traveling_Country')</h5>
+                                        <div class="col-lg-6 " style="padding-bottom: 21px;">
+                                            <br>
+                                            <select class="form-control test" name="citizenship"> 
+                                                <option value="" >--@lang('web/ministry-details.select')--</option>
+                                                @php 
+                                                    $country=\App\Models\Country::select('id','name','phonecode')->get();
+                                                @endphp
+
+                                                @if($country)
+                                                    @foreach($country as $con)
+                                                        <option value="{{$con['id']}}">{{$con['name']}} </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            <br>
+                                        </div>
                                         <h4>@lang('web/home.flight-info')</h4>
                                         <div class="arrival">
                                             <h5><b>@lang('web/home.arrival-to-panama-attendee')</b> - &nbsp; &nbsp; @lang('web/home.attendee-name'): {{$resultData['result']['name']}} {{$resultData['result']['last_name']}}</h5>

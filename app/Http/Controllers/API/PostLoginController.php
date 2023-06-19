@@ -1327,6 +1327,7 @@ class PostLoginController extends Controller {
 				'logistics_picked' => 'required',
 				'mobile' => 'required',
 				'name' => 'required',
+				'citizenship' => 'required',
 			];
 
 			if($request->json()->get('spouse_arrival_flight_number')){
@@ -1444,6 +1445,14 @@ class PostLoginController extends Controller {
 						$userData->stage = '4';
 						$userData->status_change_at = date('Y-m-d H:i:s');
 						$userData->save();
+					}
+
+					$passportInfo =  \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
+					if($passportInfo){
+
+						$passportInfo->citizenship = $request->json()->get('citizenship');
+						$passportInfo->save();
+
 					}
 
 					\App\Helpers\commonHelper::userMailTrigger($userData->id,'Travel Info Submitted','Travel Info Submitted');

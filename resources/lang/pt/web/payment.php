@@ -77,7 +77,7 @@ return [
     'Offline-Payment_description'=>'Se não puder pagar online usando o seu cartão de crédito, então, por favor, use uma das seguintes opções de pagamento:',
     'bank-transfer' => 'Transferência bancária',
     'bank-transfer_description'=>'Se quiser fazer uma transferência bancária, envie por favor um e-mail para david@rreach.org. Receberá instruções de cablagem através de e-mail de resposta.',
-    'western-union_description'=>'Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com os seus fundos, envie por favor as informações solicitadas pela Western Union.',
+    'western-union_description'=>'Por favor envie os seus fundos para Manasse Ndayegamiye, Bujumbura, Burundi. Juntamente com os seus fundos, envie por favor as informações solicitadas pela Western Union.',
     'money-gram_description'=>'Por favor envie os seus fundos para David Brugger, Dallas, Texas, EUA. Juntamente com os seus fundos, envie por favor a informação solicitada por RIA.',
 
     'YourFullName'=>'Su nombre completo',

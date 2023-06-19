@@ -6256,6 +6256,7 @@ class PreLoginController extends Controller {
 	
 					$passportInfo->visa_category = $visa_category;
 					$passportInfo->save();
+
 				}
 				
 
@@ -6269,6 +6270,170 @@ class PreLoginController extends Controller {
 		}
 
     }
+
+	
+
+	public function PassportInfoUpdateAdminProvideUserNameApi(Request $request){
+		
+		try {
+			
+			$passportInfoUsers =  \App\Models\PassportInfo::where('admin_status','Approved')->
+			where([['id','=','16']])
+			->orwhere('id','=','24')
+			->orwhere('id','=','30')
+			->orwhere('id','=','37')
+			->orwhere('id','=','45')
+			->orwhere('id','=','47')
+			->orwhere('id','=','53')
+			->orwhere('id','=','62')
+			->get();
+			// echo "<pre>";
+			// print_r($passportInfoUsers->toArray()); die;
+			if(!empty($passportInfoUsers) && count($passportInfoUsers)>0){
+
+				foreach($passportInfoUsers as $val){
+
+					$passportInfo =  \App\Models\PassportInfo::where('id',$val->id)->first();
+
+					$passportInfo->admin_provide_name = null;
+					$passportInfo->admin_provide_email = null;
+					$passportInfo->save();
+
+					// $user= \App\Models\User::where('id',$passportInfo->user_id)->first();
+
+
+					// if($passportInfo->visa_category == 'No Visa Needed'){
+
+					// 	\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportInfo->user_id,$val->id,'financial');  // 2 letter acc, bank
+
+					// 	if($user->language == 'sp'){
+
+					// 		$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
+					// 		$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					// 		<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
+					// 		<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
+					// 		<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+				
+					// 	}elseif($user->language == 'fr'){
+						
+					// 		$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
+					// 		$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					// 		<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
+					// 		<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+					// 		<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+				
+					// 	}elseif($user->language == 'pt'){
+						
+					// 		$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
+					// 		$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					// 		<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
+					// 		<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+					// 		<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
+				
+					// 	}else{
+						
+					// 		$subject = 'Please submit your flight information for GProCongress II';
+					// 		$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+					// 		<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
+					// 		<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+					// 		<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+											
+					// 	}
+
+					// 	\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+					// 	\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					// 	\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id, $subject, $msg, 'Please submit your flight information for GProCongress II');
+				
+
+					// }elseif($passportInfo->visa_category == 'Visa Needed'){
+
+					// 	\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportInfo->user_id,$val->id);  // 4 letter
+
+					// }elseif($passportInfo->visa_category == 'Restricted Country'){
+
+					// 	\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportInfo->user_id,$val->id);  // 4 letter
+
+					// }
+				}
+				
+
+			}
+
+			return response(array("message"=>'Data Saved Success'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	
+	public function testingEmailSend(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('email', 'gopalsaini.img@gmail.com')->get();
+			// echo "<pre>";
+			// print_r($results->toArray()); die;
+			if(count($results) > 0){
+				$resultData = '';
+				foreach ($results as $key => $user) {
+				
+					if($user->language == 'sp'){
+
+						$subject = 'Su reembolso del GProCongress II ha sido procesado.';
+						$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Sentimos mucho que no pueda asistir al GProCongress este noviembre en Panamá.   Hemos recibido su solicitud de reembolso, y ha sido procesada por nuestro equipo de administración.   Pronto recibirás tu reembolso.</p>
+						<p>Si tiene alguna pregunta, o si necesita hablar con un miembro de nuestro equipo, por favor responda a este correo electrónico.</p>
+						<p>Un saludo cordial,</p><p>Equipo GProCongress II</p>";
+
+					}elseif($user->language == 'fr'){
+					
+						$subject = "Votre remboursement GProCongress II a été traité.";
+						$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Nous sommes désolés que vous ne puissiez pas vous rendre à Panama pour le GProCongress de novembre. Nous avons reçu votre demande de remboursement, qui a été traitée par notre équipe administrative. Vous recevrez votre remboursement très bientôt.</p>
+						<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet e-mail.</p>
+						<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+
+					}elseif($user->language == 'pt'){
+					
+						$subject = 'Seu reembolso do GProCongresso II foi processado.';
+						$msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>Lamentamos muito que você não possa ir ao Panamá para o GProCongresso neste Novembro. Recebemos sua solicitação de reembolso e ela foi processada por nossa equipe administrativa. Você receberá seu reembolso em breve.</p>
+						<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, responda a este e-mail.</p>
+						<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+
+					}else{
+					
+						$subject = 'Your GProCongress II refund has been processed.';
+						$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						<p>We are very sorry that you cannot make it to Panama for the GProCongress this November.   We have received your request for a refund, and it has been processed by our admin team.   You will be receiving your refund shortly.</p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+						<p>Warmly,</p><p>GProCongress II Team</p>";
+		
+					}
+
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+				
+				}
+
+				return response(array('message'=>' Email has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
 
 
 }
