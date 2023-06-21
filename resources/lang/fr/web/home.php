@@ -127,6 +127,7 @@ return [
     'PreRecordedVideo'=>'Pre Recorded Video',
     'subsidy_home'=>"Le coût de RREACH par délégué s'élève à 1 750 dollars. Les subventions pour les bourses varient entre 775 et 1500 dollars. Dieu pourvoit !",
     'Click_for_your_cost'=>'Cliquez pour savoir quel est votre coût !',
-    'Traveling_Country'=>'Current Residence/Travelling From (Country)',
+    'Traveling_Country'=>'Current Residence/Travelling From (Country)',    
+    'airline_name'=>'Airline Name',
 
 ];

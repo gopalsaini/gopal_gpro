@@ -1312,7 +1312,6 @@ class PostLoginController extends Controller {
 
 		$designation = \App\Models\StageSetting::where('designation_id', $request->user()->designation_id)->first();
 
-		if($designation->stage_three == '1' && $request->user()->stage == '3'){
 
 			$rules = [
 				'arrival_flight_number' => 'required',
@@ -1328,6 +1327,8 @@ class PostLoginController extends Controller {
 				'mobile' => 'required',
 				'name' => 'required',
 				'citizenship' => 'required',
+				'departure_airline_name' => 'required',
+				'arrival_airline_name' => 'required',
 			];
 
 			if($request->json()->get('spouse_arrival_flight_number')){
@@ -1404,6 +1405,8 @@ class PostLoginController extends Controller {
 						'departure_start_location'=>$request->json()->get('departure_start_location'),
 						'departure_date_departure'=>$request->json()->get('departure_date_departure'),
 						'departure_date_arrival'=>$request->json()->get('departure_date_arrival'),
+						'departure_airline_name'=>$request->json()->get('departure_airline_name'),
+						'arrival_airline_name'=>$request->json()->get('arrival_airline_name'),
 						
 					];
 				
@@ -1537,10 +1540,6 @@ class PostLoginController extends Controller {
 				}
 			}
 
-		}else{
-			$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Youarenot-allowedto-updateTravelInformation');
-			return response(array("error"=>true, "message" => $message), 403);
-		}
         
 	}
 
@@ -2470,6 +2469,8 @@ class PostLoginController extends Controller {
 				'departure_start_location'=>$flight_details->departure_start_location,
 				'departure_date_departure'=>$flight_details->departure_date_departure,
 				'departure_date_arrival'=>$flight_details->departure_date_arrival,					
+				'arrival_airline_name'=>$flight_details->arrival_airline_name,					
+				'departure_airline_name'=>$flight_details->departure_airline_name,					
 				'spouse_arrival_flight_number'=>$return_flight_details->spouse_arrival_flight_number ?? '',
 				'spouse_arrival_start_location'=>$return_flight_details->spouse_arrival_start_location ?? '',
 				'spouse_arrival_date_departure'=>$return_flight_details->spouse_arrival_date_departure ?? '',

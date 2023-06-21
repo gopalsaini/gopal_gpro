@@ -123,7 +123,8 @@ return [
     'PreRecordedVideo'=>'Pre Recorded Video',
     'subsidy_home'=>"O custo da RREACH por delegado é de até US$ 1.750. Os subsídios para a bolsas variam entre US$ 775 e US$ 1.500. Deus Provê!",
     'Click_for_your_cost'=>'Clique para o seu custo!!',
-    'Traveling_Country'=>'Current Residence/Travelling From (Country)',
+    'Traveling_Country'=>'Current Residence/Travelling From (Country)',  
+    'airline_name'=>'Airline Name',
 
 ];
 

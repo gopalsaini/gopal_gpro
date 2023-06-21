@@ -460,6 +460,7 @@
                                                             <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$flight_details1->arrival_start_location}}</p></div>
                                                             <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$flight_details1->arrival_date_departure}}</p></div>
                                                             <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$flight_details1->arrival_date_arrival}}</p></div>
+                                                            <div class="col-sm-4"><p><strong> @lang('web/home.airline_name') :</strong> {{$flight_details1->arrival_date_arrival}}</p></div>
 
                                                             <h5 style="margin-top:20px; "><b>@lang('web/home.departure-from-panama') - </b></h5>
                                                             <div class="col-sm-4"><p><strong> @lang('web/home.flight-number') :</strong> {{$flight_details1->departure_flight_number}}</p></div>
@@ -521,12 +522,13 @@
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$flight_details1->arrival_start_location}}</p></div>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$flight_details1->arrival_date_departure}}</p></div>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$flight_details1->arrival_date_arrival}}</p></div>
+                                                                    <div class="col-sm-4"><p><strong> @lang('web/home.airline_name') :</strong> {{$flight_details1->arrival_date_arrival}}</p></div>
 
                                                                     <h5 style="margin-top:20px; "><b>@lang('web/home.departure-from-panama') - </b></h5>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.flight-number') :</strong> {{$flight_details1->departure_flight_number}}</p></div>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$flight_details1->departure_start_location}}</p></div>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$flight_details1->departure_date_departure}}</p></div>
-                                                                    <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$flight_details1->departure_date_arrival}}</p></div>
+                                                                    <div class="col-sm-4"><p><strong> @lang('web/home.airline_name') :</strong> {{$flight_details1->departure_date_arrival}}</p></div>
                                                                 </div>
                                                             @endif
 
@@ -537,6 +539,7 @@
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.flight-number') :</strong> {{$return_flight_details1->spouse_arrival_flight_number}}</p></div>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$return_flight_details1->spouse_arrival_start_location}}</p></div>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$return_flight_details1->spouse_arrival_date_departure}}</p></div>
+                                                                    <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$return_flight_details1->spouse_arrival_date_arrival}}</p></div>
                                                                     <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$return_flight_details1->spouse_arrival_date_arrival}}</p></div>
 
                                                                     <h5 style="margin-top:20px; "><b>@lang('web/home.departure-from-panama') - </b></h5>
@@ -629,6 +632,14 @@
 
                                                     </div>
                                                 </div>
+                                                <div class="col-lg-6">
+                                                    <div class="info">
+                                                        
+                                                        <h6>@lang('web/home.airline_name') :</h6><br>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['arrival_airline_name']) {{$travelInfo['result']['arrival_airline_name']}} @endif</p>
+
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="arrival">
@@ -671,82 +682,18 @@
                                                     
                                                     </div>
                                                 </div>
+                                                
+                                                <div class="col-lg-6">
+                                                    <div class="info">
+                                                        
+                                                        <h6>@lang('web/home.airline_name') :</h6><br>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['departure_airline_name']) {{$travelInfo['result']['departure_airline_name']}} @endif</p>
+
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <!-- @if($SpouseInfoResult)
-
-                                            <div class="arrival">
-                                                <h5><b>@lang('web/home.arrival-to-panama-spouse') </b> - &nbsp; &nbsp; Spouse Name: {{$SpouseInfoResult->name}} {{$SpouseInfoResult->last_name}}</h5>
-                                            </div>
-                                            <div class="information-wrapper">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                    
-                                                            <h6>@lang('web/home.flight-number') :</h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_flight_number']) {{$travelInfo['result']['spouse_arrival_flight_number']}} @endif </p>
-                                                            
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        
-                                                            <h6>@lang('web/home.start-location') :</h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_start_location']) {{$travelInfo['result']['spouse_arrival_start_location']}} @endif </p>
-
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        
-                                                            <h6>@lang('web/home.date-time-of-departure') :</h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_date_departure']) {{$travelInfo['result']['spouse_arrival_date_departure']}} @endif </p>
-
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                    
-                                                            <h6>@lang('web/home.date-time-of-arrival') :</h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_arrival_date_arrival']) {{$travelInfo['result']['spouse_arrival_date_arrival']}} @endif </p>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="arrival">
-                                                <h5><b>@lang('web/home.departure-from-panama') -</b></h5>
-                                            </div>
-                                            <div class="information-wrapper">
-                                                <div class="row">
-                                                    <div class="col-lg-6">
-                                                        <div class="info">
-                                                            
-                                                            <h6>@lang('web/home.flight-number') :</h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_flight_number']) {{$travelInfo['result']['spouse_departure_flight_number']}} @endif </p>
-                                                        
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="info">
-                                                        
-                                                            <h6>@lang('web/home.start-location') :</h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_start_location']) {{$travelInfo['result']['spouse_departure_start_location']}} @endif </p>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="info">
-                                                            
-                                                            <h6>@lang('web/home.date-time-of-departure') <br></h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_date_departure']) {{$travelInfo['result']['spouse_departure_date_departure']}} @endif</p>
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6">
-                                                        <div class="info">
-                                                            
-                                                            <h6>@lang('web/home.date-time-of-arrival') :</h6><br>
-                                                            <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['spouse_departure_date_arrival']) {{$travelInfo['result']['spouse_departure_date_arrival']}} @endif</p>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif -->
                                         <div class="arrival">
                                             <h5><b>@lang('web/home.emergency-contact-info') -</b></h5>
                                         </div>
@@ -755,7 +702,7 @@
                                                 <div class="col-lg-6">
                                                     <div class="info">
                                                         
-                                                            <h6>@lang('web/home.mobile') :</h6><br>
+                                                            <h6>@lang('web/contact-details.phone') :</h6><br>
                                                             <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['mobile']) {{$travelInfo['result']['mobile']}} @endif </p>
                                                     
                                                     </div>
@@ -902,6 +849,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-lg-3 mt-3">
+                                                    <div class="info">
+                                                        <div class="information-box">
+                                                            <h6>@lang('web/home.airline_name') <span style="color:red">*</span></h6>
+                                                            <p><input type="text" name="arrival_airline_name" required value="@if($travelInfo['result'] && $travelInfo['result']['arrival_flight_number']) {{$travelInfo['result']['arrival_flight_number']}} @endif" placeholder="@lang('web/home.airline_name')" class="mt-2" ></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="arrival">
@@ -940,8 +895,16 @@
                                                     <div class="info">
                                                         <div class="information-box">
                                                             <h6>@lang('web/home.date-time-of-arrival') <span style="color:red">*</span></h6>
-                                                            <p><input type="datetime-local" name="departure_date_arrival" required value="@if($travelInfo['result'] && $travelInfo['result']['departure_date_arrival']) {{$travelInfo['result']['departure_date_arrival']}} @endif" class="mt-2" ></p>
+                                                            <p><input type="datetime-local" name="departure_date_arrival" required  class="mt-2" ></p>
 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-3 mt-3">
+                                                    <div class="info">
+                                                        <div class="information-box">
+                                                            <h6>@lang('web/home.airline_name') <span style="color:red">*</span></h6>
+                                                            <p><input type="text" name="departure_airline_name" required  placeholder="@lang('web/home.airline_name')" class="mt-2" ></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -956,7 +919,7 @@
                                                 <div class="col-lg-6">
                                                     <div class="info">
                                                         <div class="information-box">
-                                                            <h6>@lang('web/home.mobile')  <span style="color:red">*</span></h6>
+                                                            <h6>@lang('web/contact-details.phone')  <span style="color:red">*</span></h6>
                                                             <p><input type="text" onkeypress="return /[0-9 ]/i.test(event.key)"  name="mobile" required value="@if($travelInfo['result'] && $travelInfo['result']['mobile']) {{$travelInfo['result']['mobile']}} @endif" placeholder="Enter Mobile" class="mt-2" ></p>
                                                     
                                                         </div>

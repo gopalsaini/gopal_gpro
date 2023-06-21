@@ -612,12 +612,14 @@
                                                 <div class="col-sm-4"><p><strong> Start Location :</strong> {{$flight_details->arrival_start_location}}</p></div>
                                                 <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$flight_details->arrival_date_departure}}</p></div>
                                                 <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$flight_details->arrival_date_arrival}}</p></div>
+                                                <div class="col-sm-4"><p><strong> Airline Name :</strong> {{$flight_details->arrival_airline_name}}</p></div>
 
                                                 <h5 style="margin-top:20px; "><b>Departure from Panama - </b></h5>
                                                 <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$flight_details->departure_flight_number}}</p></div>
                                                 <div class="col-sm-4"><p><strong> Start Location :</strong> {{$flight_details->departure_start_location}}</p></div>
                                                 <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$flight_details->departure_date_departure}}</p></div>
                                                 <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$flight_details->departure_date_arrival}}</p></div>
+                                                <div class="col-sm-4"><p><strong> Airline Name :</strong> {{$flight_details->departure_airline_name}}</p></div>
                                             </div>
                                         @endif
                                         @if ($return_flight_details)

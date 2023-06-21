@@ -125,5 +125,6 @@ return [
     'subsidy_home'=>'RREACH’s cost per delegate is up to $1750. Scholarship subsidies range between $775-$1500. God Provides!',
     'Click_for_your_cost'=>'Click for your cost!!',
     'Traveling_Country'=>'Current Residence/Travelling From (Country)',
+    'airline_name'=>'Airline Name',
 
 ];

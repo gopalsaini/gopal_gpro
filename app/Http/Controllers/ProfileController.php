@@ -1066,6 +1066,8 @@ class ProfileController extends Controller
                     'departure_start_location'=>$request->post('departure_start_location'),
                     'departure_date_departure'=>$request->post('departure_date_departure'),
                     'departure_date_arrival'=>$request->post('departure_date_arrival'),
+                    'departure_airline_name'=>$request->post('departure_airline_name'),
+                    'arrival_airline_name'=>$request->post('arrival_airline_name'),
                     'spouse_arrival_flight_number'=>$request->post('spouse_arrival_flight_number'),
                     'spouse_arrival_start_location'=>$request->post('spouse_arrival_start_location'),
                     'spouse_arrival_date_departure'=>$request->post('spouse_arrival_date_departure'),
@@ -1084,7 +1086,7 @@ class ProfileController extends Controller
                 );
 
                 $result=\App\Helpers\commonHelper::callAPI('userTokenpost', '/travel-info', json_encode($data));
-                // print_r($result); die;
+                print_r($result); die;
                 $resultData=json_decode($result->content, true);
 
                 if($result->status==200){
