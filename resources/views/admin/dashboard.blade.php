@@ -68,98 +68,45 @@
             <h2>Summery</h2>
         </div>
         
-        <div class="col-2 p-0 box-inner">
+        <div class="col-md-2 p-0 box-inner">
             <a href="#">
                 <h2>Total candidates paid(Including Spouses) </h2>
 
                 @php 
             
-                $userPaid = [];
-                $candidatesWSPaid = 0;
-                $candidatesPartiallyPaid = 0;
-                $candidatesWSPartiallyPaid = 0;
-                $candidatesNotPaid = 0;
-                $totalUser = 0;
-
-                $results = \App\Models\User::where([
-                        ['user_type', '!=', '1'],
-                        ['designation_id', 2],
-                    ])
-                    ->where('profile_status', 'Approved')
-                    ->where(function ($query) {
-                        $query->where('added_as', null)
-                            ->orWhere('added_as', '=', 'Group')
-                            ->orWhere('parent_spouse_stage', '>=', '2');
-                    })
-                    ->get();
-
-                if ($results) {
-                    foreach ($results as $val) {
-                        $totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($val->id);
-                        
-                        if ($totalPendingAmount <= 0) {
-                            $candidatesWSPaid++;
-                        } elseif ($totalPendingAmount < $val->amount) {
-                            $candidatesPartiallyPaid++;
-                            $candidatesWSPartiallyPaid++;
-                        } else {
-                            $candidatesNotPaid++;
-                        }
-
-                        if (!in_array($val->id, $userPaid)) {
-                            $userPaid[] = $val->id;
-                        }
-
-                        $spouse = \App\Models\User::where([
-                            ['parent_id', '=', $val->id],
-                            ['added_as', '=', 'Spouse'],
-                        ])->first();
-
-                        if ($spouse && !in_array($spouse->id, $userPaid)) {
-                            $userPaid[] = $spouse->id;
-                            if ($totalPendingAmount <= 0) {
-                                $candidatesWSPaid++;
-                            } elseif ($totalPendingAmount < $val->amount) {
-                                $candidatesWSPartiallyPaid++;
-                            } else {
-                                $candidatesNotPaid++;
-                            }
-                        }
-                    }
-                }
-               
-                
+                    $dashboardData = json_decode($chartData->DashBoardData, true);
+                   
                 @endphp
-                <h4> {{ $candidatesWSPaid }} </h4>
+                <h4> {{ $dashboardData['candidatesWSPaid'] }} </h4>
             </a>
         </div>
-        <div class="col-2 p-0 box-inner">
+        <div class="col-md-2 p-0 box-inner">
             <a href="#">
                 <h2>Total Candidates Approved but Partially Paid </h2>
-                <h4> {{ $candidatesPartiallyPaid }} </h4>
+                <h4> {{ $dashboardData['candidatesPartiallyPaid'] }} </h4>
             </a>
         </div>
 
-        <div class="col-4 p-0 box-inner">
+        <div class="col-md-4 p-0 box-inner">
             <a href="#">
                 <h2>Total Candidates Approved but Partially Paid(Including Spouses)</h2>
-                <h4> {{ $candidatesWSPartiallyPaid}} </h4>
+                <h4> {{ $dashboardData['candidatesWSPartiallyPaid']}} </h4>
             
             </a>
         </div>
 
-        <div class="col-2 p-0 box-inner">
+        <div class="col-md-2 p-0 box-inner">
             <a href="#">
                 <h2>Total Candidates Approved but have not Paid yet</h2>
-                <h4> {{ $candidatesNotPaid }} </h4>
+                <h4> {{ $dashboardData['candidatesNotPaid'] }} </h4>
             
             </a>
         </div>
 
-        <div class="col-2 p-0 box-inner">
+        <div class="col-md-2 p-0 box-inner">
             <a href="#">
                 <h2>Total Candidates Registered(including Spouses)</h2>
-                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count() }} </h4>
+                <h4> {{ $dashboardData['TotalCandidatesRegisteredWS'] }} </h4>
             </a>
         </div>
 
@@ -168,57 +115,42 @@
             <h2>Attendees Stages</h2>
         </div>
         
-        <div class="col-1 p-0 box-inner">
+        <div class="col-md-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/all')}}">
                 <h2>STAGE ALL </h2>
-                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count() }} </h4>
+                <h4> {{ $dashboardData['STAGEALL'] }} </h4>
             </a>
         </div>
-        <div class="col-1 p-0 box-inner">
+        <div class="col-md-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/zero')}}">
                 <h2>STAGE 0 </h2>
-                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '0']])->count() }} </h4>
+                <h4> {{ $dashboardData['STAGE0'] }} </h4>
             </a>
         </div>
 
-        <div class="col-4  box-inner" id="stageOneDiv">
+        <div class="col-md-4  box-inner" id="stageOneDiv">
             
             <h2>STAGE 1 </h2>
-            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1']])->where(function ($query) {
-                              $query->where('added_as',null)
-                                ->orWhere('added_as', '=', 'Group');
-                            })->count() }} </h4>
+            <h4> {{ $dashboardData['STAGE1'] }} </h4>
 
             <div class="" style="display:none" id="stageOneDivShow">
                 <div >
                     <a href="{{url('admin/user/attendees/stage/one')}}" class="row" >
-                        <div class="col-2 p-0 box-inner">
+                        <div class="col-md-2 p-0 box-inner">
                             <h2>Pending </h2>
-                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Review']])->where(function ($query) {
-                              $query->where('added_as',null)
-                                ->orWhere('added_as', '=', 'Group');
-                            })->count() }} </h4>
+                            <h4> {{ $dashboardData['STAGE1Pending'] }} </h4>
                         </div>
-                        <div class="col-2 p-0 box-inner">
+                        <div class="col-md-2 p-0 box-inner">
                             <h2>Waiting </h2>
-                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Waiting']])->where(function ($query) {
-                              $query->where('added_as',null)
-                                ->orWhere('added_as', '=', 'Group');
-                            })->count() }} </h4>
+                            <h4> {{ $dashboardData['STAGE1Waiting'] }} </h4>
                         </div>
-                        <div class="col-3 p-0 box-inner">
+                        <div class="col-md-3 p-0 box-inner">
                             <h2>Declined </h2>
-                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Rejected']])->where(function ($query) {
-                              $query->where('added_as',null)
-                                ->orWhere('added_as', '=', 'Group');
-                            })->count() }} </h4>
+                            <h4> {{ $dashboardData['STAGE1Declined'] }} </h4>
                         </div>
-                        <div class="col-5 p-0 box-inner">
+                        <div class="col-md-5 p-0 box-inner">
                             <h2>Approve Not Coming </h2>
-                            <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'ApprovedNotComing']])->where(function ($query) {
-                              $query->where('added_as',null)
-                                ->orWhere('added_as', '=', 'Group');
-                            })->count() }} </h4>
+                            <h4> {{ $dashboardData['STAGE1ApproveNotComing'] }} </h4>
                         </div>
                     </a>
                 </div>
@@ -226,48 +158,43 @@
         </div>
 
 
-        <div class="col-1 p-0 box-inner">
+        <div class="col-md-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/two')}}">
                 <h2>STAGE 2 W/O Spouse </h2>
-                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])
-                        ->where(function ($query) {
-							$query->where('added_as',null)
-								->orWhere('added_as', '=', 'Group');
-						})->count() }} </h4>
+                <h4> {{ $dashboardData['STAGE2WOSpouse'] }} </h4>
             
             </a>
         </div>
 
-        <div class="col-1 p-0 box-inner">
+        <div class="col-md-1 p-0 box-inner">
             <a href="#">
                 <h2>STAGE 2 With Spouse </h2>
-                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])
-                        ->count() }} </h4>
+                <h4> {{ $dashboardData['STAGE2WithSpouse'] }} </h4>
             
             </a>
         </div>
 
-        <div class="col-1 p-0 box-inner">
+        <div class="col-md-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/three')}}">
                 <h2>STAGE 3 </h2>
-                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->count() }}
+                <h4> {{ $dashboardData['STAGE3'] }}
                 </h4>
             </a>
         </div>
 
 
-        <div class="col-1 p-0 box-inner">
+        <div class="col-md-1 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/four')}}">
                 <h2>STAGE 4 </h2>
-                <h4> {{ \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '4']])->count() }} </h4>
+                <h4> {{ $dashboardData['STAGE4'] }} </h4>
             </a>
         </div>
 
 
-        <div class="col-2 p-0 box-inner">
+        <div class="col-md-2 p-0 box-inner">
             <a href="{{url('admin/user/attendees/stage/five')}}">
                 <h2>STAGE 5 </h2>
-                <h4> {{ \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '5']])->count() }} </h4>
+                <h4> {{ $dashboardData['STAGE5'] }} </h4>
             </a>
         </div>
 
@@ -524,172 +451,172 @@ google.charts.load('current', {
     'packages': ['corechart', 'bar']
 });
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(drawChart);
+    setTimeout(() => {
+        
+        google.charts.setOnLoadCallback(drawChart);
 
-    function drawChart() {
+        function drawChart() {
 
-        $.getJSON(baseUrl+"/admin/get-payments", function(result){
+            $.getJSON(baseUrl+"/admin/get-payments", function(result){
 
-            var arr = [['Task', 'Hours per Day']]
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
+                var arr = [['Task', 'Hours per Day']]
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+                chart.draw(data, {});
             });
 
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        }
+
+    }, 1000);
+
+    setTimeout(() => {
+        
+        google.charts.setOnLoadCallback(drawChart1);
+
+        function drawChart1() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['Credit/Debit Card', 11],
+                ['PayPal', 2],
+                ['Western Union', 2],
+                ['RIA', 2],
+                ['Bank Wire Transfer', 7]
+            ]);
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart1'));
 
             chart.draw(data, {});
-        });
-
-    }
-
-}, 1000);
-
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(drawChart1);
-
-    function drawChart1() {
-
-        var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
-            ['Credit/Debit Card', 11],
-            ['PayPal', 2],
-            ['Western Union', 2],
-            ['RIA', 2],
-            ['Bank Wire Transfer', 7]
-        ]);
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart1'));
-
-        chart.draw(data, {});
-    }
-}, 2000);
+        }
+    }, 2000);
 
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(languageBar);
+    setTimeout(() => {
+        
+        google.charts.setOnLoadCallback(languageBar);
 
-    function languageBar() {
-        var data = new google.visualization.arrayToDataTable([
-            ['Opening Move', 'Percentage'],
-            ["English (en)", 44],
-            ["Spanish (sp)", 31],
-            ["Portuguese (pt)", 31]
-        ]);
+        function languageBar() {
+            var data = new google.visualization.arrayToDataTable([
+                ['Opening Move', 'Percentage'],
+                ["English (en)", 44],
+                ["Spanish (sp)", 31],
+                ["Portuguese (pt)", 31]
+            ]);
 
-        var options = {
-            title: 'Chess opening moves',
-            legend: {
-                position: 'none'
-            },
-            chart: {
-                // title: 'Chess opening moves',
-                // subtitle: 'popularity by percentage'
-            },
-            bars: 'vertical', // Required for Material Bar Charts.
-            axes: {
-                x: {
-                    0: {
-                        side: 'top',
-                        label: 'Percentage'
-                    } // Top x-axis.
+            var options = {
+                title: 'Chess opening moves',
+                legend: {
+                    position: 'none'
+                },
+                chart: {
+                    // title: 'Chess opening moves',
+                    // subtitle: 'popularity by percentage'
+                },
+                bars: 'vertical', // Required for Material Bar Charts.
+                axes: {
+                    x: {
+                        0: {
+                            side: 'top',
+                            label: 'Percentage'
+                        } // Top x-axis.
+                    }
+                },
+                bar: {
+                    groupWidth: "90%"
                 }
-            },
-            bar: {
-                groupWidth: "90%"
-            }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('top_y_div_language'));
+            chart.draw(data, options);
         };
 
-        var chart = new google.charts.Bar(document.getElementById('top_y_div_language'));
-        chart.draw(data, options);
-    };
-
-}, 3000);
+    }, 3000);
 
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(packagesChart);
+    setTimeout(() => {
+        
+        google.charts.setOnLoadCallback(packagesChart);
 
-    function packagesChart() {
+        function packagesChart() {
 
-        var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
-            ['Twin Sharing', 11],
-            ['Daypass', 2],
-            ['Single occupancy', 2]
-        ]);
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['Twin Sharing', 11],
+                ['Daypass', 2],
+                ['Single occupancy', 2]
+            ]);
 
-        var chart = new google.visualization.PieChart(document.getElementById('packages_chart'));
+            var chart = new google.visualization.PieChart(document.getElementById('packages_chart'));
 
-        chart.draw(data, {});
-    }
-}, 4000);
+            chart.draw(data, {});
+        }
+    }, 4000);
 
 
-setTimeout(() => {
+    setTimeout(() => {
 
-    google.charts.setOnLoadCallback(postoral_trainers);
+        google.charts.setOnLoadCallback(postoral_trainers);
 
-    function postoral_trainers() {
-        var data = new google.visualization.arrayToDataTable([
-            ['Opening Move', 'Percentage'],
-            ["Yes", 44],
-            ["No", 31]
-        ]);
+        function postoral_trainers() {
+            var data = new google.visualization.arrayToDataTable([
+                ['Opening Move', 'Percentage'],
+                ["Yes", 44],
+                ["No", 31]
+            ]);
 
-        var options = {
-            title: 'Chess opening moves',
-            legend: {
-                position: 'none'
-            },
-            chart: {
-                // title: 'Chess opening moves',
-                // subtitle: 'popularity by percentage'
-            },
-            bars: 'vertical', // Required for Material Bar Charts.
-            axes: {
-                x: {
-                    0: {
-                        side: 'top',
-                        label: 'Percentage'
-                    } // Top x-axis.
+            var options = {
+                title: 'Chess opening moves',
+                legend: {
+                    position: 'none'
+                },
+                chart: {
+                    // title: 'Chess opening moves',
+                    // subtitle: 'popularity by percentage'
+                },
+                bars: 'vertical', // Required for Material Bar Charts.
+                axes: {
+                    x: {
+                        0: {
+                            side: 'top',
+                            label: 'Percentage'
+                        } // Top x-axis.
+                    }
+                },
+                bar: {
+                    groupWidth: "90%"
                 }
-            },
-            bar: {
-                groupWidth: "90%"
-            }
+            };
+
+            var chart = new google.charts.Bar(document.getElementById('postoral_trainers'));
+            chart.draw(data, options);
         };
 
-        var chart = new google.charts.Bar(document.getElementById('postoral_trainers'));
-        chart.draw(data, options);
-    };
-
-}, 5000);
+    }, 5000);
 
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(graduates);
+    setTimeout(() => {
+        
+        google.charts.setOnLoadCallback(graduates);
 
-    function graduates() {
+        function graduates() {
 
-        var data = google.visualization.arrayToDataTable([
-            ['Task', 'Hours per Day'],
-            ['DGPA', 11],
-            ['NGPA', 2],
-            ['None', 2]
-        ]);
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Hours per Day'],
+                ['DGPA', 11],
+                ['NGPA', 2],
+                ['None', 2]
+            ]);
 
-        var chart = new google.visualization.PieChart(document.getElementById('graduates'));
+            var chart = new google.visualization.PieChart(document.getElementById('graduates'));
 
-        chart.draw(data, {});
-    }
-}, 6000);
+            chart.draw(data, {});
+        }
+    }, 6000);
 
 
 
@@ -741,312 +668,311 @@ setTimeout(() => {
 
 
 
-setTimeout(() => {
-    
-    google.charts.load("current", {packages:["corechart"]});
-        google.charts.setOnLoadCallback(drawChart);
-        function drawChart() {
+    setTimeout(() => {
         
-
-        
-            $.getJSON(baseUrl+"/admin/get-users-by-continents", function(result){
-
-            
-            arr = result;
-            console.log(arr);
-
-            var data = google.visualization.arrayToDataTable(arr);
-
-            var view = new google.visualization.DataView(data);
-            view.setColumns([0, 1,
-                            { calc: "stringify",
-                                sourceColumn: 1,
-                                type: "string",
-                                role: "annotation" }]);
-
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var chart = new google.visualization.BarChart(document.getElementById("continents_chart"));
-            chart.draw(view, options);
-        });
-    }
-}, 4000);
-
-
-
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(user_age_chart);
-
-    function user_age_chart() {
-
-        $.getJSON(baseUrl+"/admin/get-users-by-user-age", function(result){
-
-            var arr = result;
+        google.charts.load("current", {packages:["corechart"]});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
             
 
-            var data = google.visualization.arrayToDataTable(arr);
+            
+                $.getJSON(baseUrl+"/admin/get-users-by-continents", function(result){
+
+                
+                arr = result;
+                console.log(arr);
+
+                var data = google.visualization.arrayToDataTable(arr);
+
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1,
+                                { calc: "stringify",
+                                    sourceColumn: 1,
+                                    type: "string",
+                                    role: "annotation" }]);
+
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var chart = new google.visualization.BarChart(document.getElementById("continents_chart"));
+                chart.draw(view, options);
+            });
+        }
+    }, 9000);
+
+
+
+    setTimeout(() => {
+        
+        google.charts.setOnLoadCallback(user_age_chart);
+
+        function user_age_chart() {
+
+            $.getJSON(baseUrl+"/admin/get-users-by-user-age", function(result){
+
+                var arr = result;
+                
+
+                var data = google.visualization.arrayToDataTable(arr);
+
+                
+                var view = new google.visualization.DataView(data);
+                view.setColumns([0, 1,
+                                { calc: "stringify",
+                                    sourceColumn: 1,
+                                    type: "string",
+                                    role: "annotation" }]);
+
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
 
             
-            var view = new google.visualization.DataView(data);
-            view.setColumns([0, 1,
-                            { calc: "stringify",
-                                sourceColumn: 1,
-                                type: "string",
-                                role: "annotation" }]);
+                var chart = new google.visualization.BarChart(document.getElementById("user_age_chart"));
+                chart.draw(view, options);
 
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
+            });
 
+        };  
+    }, 10000);
+
+
+
+    setTimeout(() => {
         
-            var chart = new google.visualization.BarChart(document.getElementById("user_age_chart"));
-            chart.draw(view, options);
+        google.charts.setOnLoadCallback(stageChart);
 
-        });
+        function stageChart() {
 
-    };  
-}, 5000);
+            $.getJSON(baseUrl+"/admin/get-users-stage-ajax", function(result){
 
+                var arr = [['Task', 'Stage']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('stageChart'));
 
+                chart.draw(data, options);
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(stageChart);
+                
+                var chart = new google.charts.PieChart(document.getElementById('stageChart'));
+                
 
-    function stageChart() {
-
-        $.getJSON(baseUrl+"/admin/get-users-stage-ajax", function(result){
-
-            var arr = [['Task', 'Stage']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
             
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('stageChart'));
+        }
+    }, 4000);
 
-            chart.draw(data, options);
 
-            
-            var chart = new google.charts.PieChart(document.getElementById('stageChart'));
-            
-
-        });
+    setTimeout(() => {
         
-    }
-}, 6000);
+        google.charts.setOnLoadCallback(pieChartGroup);
+
+        function pieChartGroup() {
+
+            $.getJSON(baseUrl+"/admin/get-group-registered-chart-ajax", function(result){
+
+                var arr = [['Task', 'Group Registration /Non Group Registration']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('pieChartGroup'));
+
+                chart.draw(data, options);
 
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(pieChartGroup);
-
-    function pieChartGroup() {
-
-        $.getJSON(baseUrl+"/admin/get-group-registered-chart-ajax", function(result){
-
-            var arr = [['Task', 'Group Registration /Non Group Registration']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
             
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('pieChartGroup'));
-
-            chart.draw(data, options);
+        }
+    }, 2000);
 
 
-        });
-        
-    }
-}, 7000);
+    setTimeout(() => {
+        google.charts.setOnLoadCallback(getSingleMarriedWOSChartAjax);
+
+        function getSingleMarriedWOSChartAjax() {
+
+            $.getJSON(baseUrl+"/admin/get-single-married-ws-chart-ajax", function(result){
+
+                var arr = [['Task', 'Single/married without spouse (Single/TwinSharing)']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('getSingleMarriedWOSChartAjax'));
+
+                chart.draw(data, options);
 
 
-setTimeout(() => {
-    google.charts.setOnLoadCallback(getSingleMarriedWOSChartAjax);
-
-    function getSingleMarriedWOSChartAjax() {
-
-        $.getJSON(baseUrl+"/admin/get-single-married-ws-chart-ajax", function(result){
-
-            var arr = [['Task', 'Single/married without spouse (Single/TwinSharing)']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
             
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('getSingleMarriedWOSChartAjax'));
+        }
 
-            chart.draw(data, options);
+    }, 3000);
 
 
-        });
+    setTimeout(() => {
         
-    }
+        google.charts.setOnLoadCallback(getSingleMarriedWSChartAjax);
 
-}, 8000);
+        function getSingleMarriedWSChartAjax() {
+
+            $.getJSON(baseUrl+"/admin/get-married-ws-chart-ajax", function(result){
+
+                var arr = [['Task', 'Married with spouse (Both trainers/One of them is a trainer/Both are non trainers)']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('getSingleMarriedWSChartAjax'));
+
+                chart.draw(data, options);
 
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(getSingleMarriedWSChartAjax);
-
-    function getSingleMarriedWSChartAjax() {
-
-        $.getJSON(baseUrl+"/admin/get-married-ws-chart-ajax", function(result){
-
-            var arr = [['Task', 'Married with spouse (Both trainers/One of them is a trainer/Both are non trainers)']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
             
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('getSingleMarriedWSChartAjax'));
-
-            chart.draw(data, options);
+        }
+    }, 5000);
 
 
-        });
-        
-    }
-}, 9000);
+    setTimeout(() => {
+        google.charts.setOnLoadCallback(PastoralTrainersChart);
+
+        function PastoralTrainersChart() {
+
+            $.getJSON(baseUrl+"/admin/get-pastoral-trainers-chart-ajax", function(result){
+
+                var arr = [['Task', 'Pastoral TrainersChart']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('PastoralTrainersChart'));
+
+                chart.draw(data, options);
 
 
-setTimeout(() => {
-    google.charts.setOnLoadCallback(PastoralTrainersChart);
-
-    function PastoralTrainersChart() {
-
-        $.getJSON(baseUrl+"/admin/get-pastoral-trainers-chart-ajax", function(result){
-
-            var arr = [['Task', 'Pastoral TrainersChart']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
             
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('PastoralTrainersChart'));
-
-            chart.draw(data, options);
+        }
+    }, 6000);
 
 
-        });
+    setTimeout(() => {
         
-    }
-}, 10000);
+        google.charts.setOnLoadCallback(DoYouSeekPastoralTraining);
+
+        function DoYouSeekPastoralTraining() {
+
+            $.getJSON(baseUrl+"/admin/get-do-you-seek-pastoral-training-chart-ajax", function(result){
+
+                var arr = [['Task', 'Pastoral TrainersChart']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('DoYouSeekPastoralTraining'));
+
+                chart.draw(data, options);
 
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(DoYouSeekPastoralTraining);
-
-    function DoYouSeekPastoralTraining() {
-
-        $.getJSON(baseUrl+"/admin/get-do-you-seek-pastoral-training-chart-ajax", function(result){
-
-            var arr = [['Task', 'Pastoral TrainersChart']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
             
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('DoYouSeekPastoralTraining'));
-
-            chart.draw(data, options);
+        }
+    }, 11000);
 
 
-        });
+    setTimeout(() => {
         
-    }
-}, 11000);
+        google.charts.setOnLoadCallback(PaymentChartData);
+
+        function PaymentChartData() {
+
+            $.getJSON(baseUrl+"/admin/get-payment-chart-ajax", function(result){
+
+                var arr = [['Task', ' ']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                console.log(arr);
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('PaymentChartData'));
+
+                chart.draw(data, options);
 
 
-setTimeout(() => {
-    
-    google.charts.setOnLoadCallback(PaymentChartData);
-
-    function PaymentChartData() {
-
-        $.getJSON(baseUrl+"/admin/get-payment-chart-ajax", function(result){
-
-            var arr = [['Task', ' ']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
-            console.log(arr);
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('PaymentChartData'));
-
-            chart.draw(data, options);
+            
+        }
+    }, 7000);
 
 
-        });
-        
-    }
-}, 12000);
+    setTimeout(() => {
+        google.charts.setOnLoadCallback(PaymentTypeChartData);
+
+        function PaymentTypeChartData() {
+
+            $.getJSON(baseUrl+"/admin/get-payment-type-chart-ajax", function(result){
+
+                var arr = [['Task', ' ']];
+                $.each(Object.entries(result), function(i, field){
+                    arr.push(field);
+                });
+                console.log(arr);
+                var options = {
+                    pieSliceText: 'value',
+                    sliceVisibilityThreshold: 0,
+                };
+                var data = google.visualization.arrayToDataTable(arr);
+                var chart = new google.visualization.PieChart(document.getElementById('PaymentTypeChartData'));
+
+                chart.draw(data, options);
 
 
-setTimeout(() => {
-    google.charts.setOnLoadCallback(PaymentTypeChartData);
-
-    function PaymentTypeChartData() {
-
-        $.getJSON(baseUrl+"/admin/get-payment-type-chart-ajax", function(result){
-
-            var arr = [['Task', ' ']];
-            $.each(Object.entries(result), function(i, field){
-                arr.push(field);
             });
-            console.log(arr);
-            var options = {
-                pieSliceText: 'value',
-                sliceVisibilityThreshold: 0,
-            };
-            var data = google.visualization.arrayToDataTable(arr);
-            var chart = new google.visualization.PieChart(document.getElementById('PaymentTypeChartData'));
-
-            chart.draw(data, options);
+            
+        }
+    }, 8000);
 
 
-        });
-        
-    }
-}, 13000);
-
-
-setTimeout(() => {
     
     google.charts.setOnLoadCallback(TotalGroupRegistration);
 
@@ -1072,9 +998,7 @@ setTimeout(() => {
         });
         
     }
-}, 14000);
 
-setTimeout(() => {
     google.charts.setOnLoadCallback(TotalMarriedCouples);
 
     function TotalMarriedCouples() {
@@ -1099,11 +1023,8 @@ setTimeout(() => {
         });
         
     }
-}, 15000);
-
-
-setTimeout(() => {
     
+
     google.charts.setOnLoadCallback(SingleMarriedComing);
 
     function SingleMarriedComing() {
@@ -1128,7 +1049,7 @@ setTimeout(() => {
         });
         
     }
-}, 16000);
+    
 
 
     $(document).ready( function() {

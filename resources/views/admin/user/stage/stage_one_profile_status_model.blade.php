@@ -23,6 +23,23 @@
                 </select>
             </div>
         </div>
+
+        <div class="form-group" style="display: @if($user->designation_id == '3')) block @else none @endif">
+            <div class="form-line">
+                <label for="inputName">Select Volunteer Role </label>
+                <select name="role_id" class="form-control test" id="role_id">
+                    <option value="0">Select</option>
+                    @php $roles = \App\Models\Role::orderBy('name','Asc')->where('id','!=','1')->where('status','1')->get(); @endphp
+                    @if(!empty($roles))
+                        @foreach($roles as $key=>$role)
+                            <option value="{{$role->id}}" >{{$role->name}}</option>
+                        @endforeach
+
+                    @endif
+                    
+                </select>
+            </div>
+        </div>
         <div class="form-group">
             <div class="form-line">
                 <label for="inputName">@lang('admin.amount') <label class="text-danger">*</label></label>

@@ -6435,5 +6435,629 @@ class PreLoginController extends Controller {
     }
 
 
+	//dashboard API
+
+	public function getPayments(){
+          
+		$prices = array(
+		  'Fully Paid' => \App\Models\User::where([['user_type', '!=', '1'], ['payment_status', '1']])->count() ?? 0,
+		  'Partially Paid' => \App\Models\User::where([['user_type', '!=', '1'], ['payment_status', '0']])->count() ?? 0
+		);
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getPayments = json_encode($prices);
+			$chartData->save();		
+		}
+		
+		$country = [["Element", "No. of Users" ]];
+		
+		$userCountry = \App\Models\User::selectRaw('count(*) as count, region')
+			->where([['users.user_type', '!=', '1'], ['users.designation_id', 2]])
+			->join('countries','users.citizenship','=','countries.id')
+			->groupBy('countries.region')
+			->orderBy('countries.region', 'ASC')
+			->get();
+	
+		if(!empty($userCountry)){
+			foreach($userCountry as $countryData){
+				$totalCon = $countryData->count;
+				$country[] = [$countryData->region, $totalCon];
+			}
+		}
+		
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getUserByContinents = json_encode($country);
+			$chartData->save();		
+		}
+		
+        $stages = [["Element", "No. of Users" ]];
+        $stages[] = array(
+          
+          'Under 30 years Age',\App\Models\User::whereDate('dob', '>=', date('Y-m-d', strtotime('-29 years')))->where([['user_type', '!=', '1'], ['designation_id', 2]])->count()
+          
+          
+        );
+        $stages[] = array(
+          
+          '30-50 years Age',\App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])
+                            
+                                ->whereDate('dob', '<=', date('Y-m-d', strtotime('-29 years')))
+                                ->whereDate('dob', '>=', date('Y-m-d', strtotime('-50 years')))
+                                ->count(),
+        );
+        $stages[] = array(
+          
+          '50+ years Age',\App\Models\User::whereDate('dob', '<=', date('Y-m-d', strtotime('-50 years')))->where([['user_type', '!=', '1'], ['designation_id', 2]])->count(),
+          
+        );
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getUserByUserAge = json_encode($stages);
+			$chartData->save();		
+		}
+		
+		
+        $stages1 = array(
+                'stage0' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '0']])->count(),
+                'stage1' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1']])
+                            ->where(function ($query) {
+                              $query->where('added_as',null)
+                                ->orWhere('added_as', '=', 'Group');
+                            })->count(),
+                'stage2' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])->where(function ($query) {
+                              $query->where('added_as',null)
+                                ->orWhere('added_as', '=', 'Group');
+                            })->count(),
+                'stage3' => \App\Models\User::with('TravelInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->count(),
+                'stage4' => \App\Models\User::with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '4']])->count(),
+                'stage5' => \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '5']])->count(),
+                
+        );
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getStages = json_encode($stages1);
+			$chartData->save();		
+		}
+		
+		
+		$totalGroup1 = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->groupBy('parent_id')->count();
+		$totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->get();
+		$totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->count();
+	   
+		if(!empty($totalGroup) && count($totalGroup)>0){
+		  $array =[];
+
+			foreach($totalGroup as $key=>$Groups){
+
+			  $array[$key]= $Groups->parent_id;
+
+		  }
+
+		  $array = count(array_unique($array));
+
+		}
+
+		$stages2 = array(
+			  'Total Group' => $array,
+			  'Total Group Candidates' => $totalUser+$array,
+		);
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getGroupRegisteredChartAjax = json_encode($stages2);
+			$chartData->save();		
+		}
+		
+		
+		$stages3 = array(
+			  'Single' => \App\Models\User::where([['designation_id', 2], ['room', 'Single']])->count(),
+			  'Twin Sharing' => \App\Models\User::where([['designation_id', 2], ['room', 'Sharing']])->orWhere('room','Twin Sharing Deluxe Room')->count(),
+			  'Suite' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Suite']])->count(),
+			  'Club Floor' => \App\Models\User::where([['designation_id', 2], ['room', 'Upgrade to Club Floor']])->count(),
+			  'Double Deluxe' => \App\Models\User::where([['designation_id', 2],['added_as', 'Spouse'], ['room', null]])->count(),
+		);
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getSingleMarriedWSChartAjax = json_encode($stages3);
+			$chartData->save();		
+		}
+		
+		
+		$Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['marital_status', 'Married']])->get();
+		if(!empty($Singles) && count($Singles)>0){
+
+		  $BothTotal = 0; $singleTotal = 0;$nonTrainerCount = 0; $AspirationalBothTotal = 0;  $PastoralAndAspirational = 0; $singleAspirationalTotal=0;
+			foreach($Singles as $Single){
+
+				$user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
+
+				if($user && $user->ministry_pastor_trainer == 'Yes' && $Single->ministry_pastor_trainer == 'Yes'){
+
+						$BothTotal++;
+
+				}else if($user && $user->doyouseek_postoral == 'Yes' && $Single->doyouseek_postoral == 'Yes'){
+
+					$AspirationalBothTotal++;
+
+				}else if($user && $user->ministry_pastor_trainer == 'Yes' && $Single->doyouseek_postoral == 'No'){
+
+					$PastoralAndAspirational++;
+
+				}else if($user && $Single->ministry_pastor_trainer == 'No' && $user->doyouseek_postoral == 'Yes'){
+
+					$PastoralAndAspirational++;
+
+				}else if($Single->ministry_pastor_trainer == 'Yes'){
+
+					if($user && $user->ministry_pastor_trainer == 'No'){
+
+						$singleTotal++;
+					}
+					  
+				}else if($Single->ministry_pastor_trainer == 'No'){
+				  
+				  if($user && $user->ministry_pastor_trainer == 'Yes' ){
+
+					  $singleTotal++;
+
+				  }
+				  
+
+				}else if($Single->doyouseek_postoral == 'Yes'){
+
+					if($user && $user->doyouseek_postoral == 'No' ){
+
+						$singleAspirationalTotal++;
+					}
+					  
+				}else if($Single->doyouseek_postoral == 'No'){
+				  
+				  if($user && $user->doyouseek_postoral == 'Yes' ){
+
+					  $singleAspirationalTotal++;
+				  }
+				  
+
+				}else{
+
+						$nonTrainerCount++;
+
+				}
+			}
+
+		}
+
+		$stages4 = array(
+			  'Pastoral Trainer - Both' => $BothTotal,
+			  'Aspirational Trainer- Both' => $AspirationalBothTotal,
+			  'Pastoral Trainer and Aspirational Trainer' => $PastoralAndAspirational,
+			  'Pastoral Trainer and Not a Trainer' => $singleTotal,
+			  'Aspirational Trainer and Not a Trainer' => $singleAspirationalTotal,
+			  'Not Trainers - Both' => $nonTrainerCount,
+		);
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getMarriedWSChartAjax = json_encode($stages4);
+			$chartData->save();		
+		}
+		
+		
+		$Pastoral = 0; $Aspirational = 0; $Not = 0;
+		$Singles = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->get();
+		if(isset($Singles)){
+
+			foreach($Singles as $Single){
+
+				$user = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse'], ['parent_id', $Single->id]])->first();
+				
+				if(!$user && $Single->ministry_pastor_trainer == 'Yes'){
+
+					$Pastoral++;
+
+				}else if(!$user && $Single->doyouseek_postoral == 'Yes'){
+				  
+					$Aspirational++;
+
+				}else if(!$user &&  $Single->doyouseek_postoral == 'No'){
+
+					$Not++;
+				}else if($Single->ministry_pastor_trainer == 'No'){
+
+				  $Not++;
+			  }
+			}
+
+		}
+	  
+		$stages5 = array(
+			  'Pastoral Trainer' => $Pastoral,
+			  'Aspirational trainer' => $Aspirational,
+			  'Not a Trainer' => $Not,
+		);
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getPastoralTrainersChartAjax = json_encode($stages5);
+			$chartData->save();		
+		}
+		
+		
+        $totalPendingAmount = 0;
+
+        $results = \App\Models\User::where('profile_status','Approved')->where('stage','2')->get(); 
+        if($results){
+
+            foreach($results as $val){
+                $totalPendingAmount +=\App\Helpers\commonHelper::getTotalPendingAmount($val->id);
+            }
+        }
+        
+        $stages6 = array(
+                'Pending' => round($totalPendingAmount),
+                'Declined' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Failed']])->sum('amount')),
+                'In Process' => round(\App\Models\Transaction::where([['status', '=', Null]])->sum('amount')),
+                'Accepted' => round(\App\Models\Wallet::where([['type', '=', 'Cr'], ['status', '=', 'Success']])->sum('amount')),
+                
+        );
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getPaymentChartAjax = json_encode($stages6);
+			$chartData->save();		
+		}
+		
+		
+        $stages7 = array(
+                'Credit/Debit Card' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Card']])->count(),
+                'Western Union' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'WU']])->count(),
+                'MG' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'MG']])->count(),
+                'RIA' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'RIA']])->count(),
+                'Bank Wire Transfer' => \App\Models\Transaction::where([['status', '=', '1'],['bank', '=', 'Wire']])->count(),
+        );
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getPaymentTypeChartAjax = json_encode($stages7);
+			$chartData->save();		
+		}
+		
+		
+        $yes = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'],  ['doyouseek_postoral', 'Yes']])->count();
+        
+        $no = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['ministry_pastor_trainer', 'No'], ['doyouseek_postoral', 'No']])->count();
+        
+        $stages8 = array(
+              'Yes' => $yes,
+              'No' => $no,
+        );
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->getDoYouSeekPastoralTraining = json_encode($stages8);
+			$chartData->save();		
+		}
+		
+		
+		$totalGroup = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->get();
+		$totalUser = \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Group']])->count();
+	  
+		if(!empty($totalGroup) && count($totalGroup)>0){
+		  $array =[];
+
+			foreach($totalGroup as $key=>$Groups){
+
+			  $array[$key]= $Groups->parent_id;
+
+		  }
+
+		  $array = count(array_unique($array));
+
+		}
+
+		$stages9 = array(
+			  'Total Group' => $array,
+			  'Total Group Candidates' => $totalUser+$array,
+		);
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->TotalGroupRegistration = json_encode($stages9);
+			$chartData->save();		
+		}
+		
+		
+        $stages10 = array(
+              'Total Married couples' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse']])->count(),
+              'Total Married Candidates' => (\App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['added_as', 'Spouse']])->count())*2,
+        );
+
+		
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->TotalMarriedCouples = json_encode($stages10);
+			$chartData->save();		
+		}
+		
+		
+		$marriedWithoutSpouseCount = 0;
+		$unmarriedCount = 0;
+		$users = \App\Models\User::where('user_type', '!=', 1)
+			->where('designation_id', 2)
+			->whereIn('marital_status', ['Married', 'Unmarried'])
+			->get();
+
+		foreach ($users as $user) {
+			if ($user->marital_status === 'Married' && $user->added_as !== 'Spouse') {
+				$marriedWithoutSpouseCount++;
+			} else if ($user->marital_status === 'Unmarried') {
+				$unmarriedCount++;
+			}
+		}
+
+		$stages11 = [
+			'Single' => $unmarriedCount,
+			'Married coming without Spouse' => $marriedWithoutSpouseCount,
+		];
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->SingleMarriedComing = json_encode($stages11);
+			$chartData->save();		
+		}
+		
+		
+		$userPaid = [];
+		$candidatesWSPaid = 0;
+		$candidatesPartiallyPaid = 0;
+		$candidatesWSPartiallyPaid = 0;
+		$candidatesNotPaid = 0;
+		$totalUser = 0;
+
+		$results = \App\Models\User::where([
+				['user_type', '!=', '1'],
+				['designation_id', 2],
+			])
+			->where('profile_status', 'Approved')
+			->where(function ($query) {
+				$query->where('added_as', null)
+					->orWhere('added_as', '=', 'Group')
+					->orWhere('parent_spouse_stage', '>=', '2');
+			})
+			->get();
+
+		if ($results) {
+			foreach ($results as $val) {
+				$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($val->id);
+				
+				if ($totalPendingAmount <= 0) {
+					$candidatesWSPaid++;
+				} elseif ($totalPendingAmount < $val->amount) {
+					$candidatesPartiallyPaid++;
+					$candidatesWSPartiallyPaid++;
+				} else {
+					$candidatesNotPaid++;
+				}
+
+				if (!in_array($val->id, $userPaid)) {
+					$userPaid[] = $val->id;
+				}
+
+				$spouse = \App\Models\User::where([
+					['parent_id', '=', $val->id],
+					['added_as', '=', 'Spouse'],
+				])->first();
+
+				if ($spouse && !in_array($spouse->id, $userPaid)) {
+					$userPaid[] = $spouse->id;
+					if ($totalPendingAmount <= 0) {
+						$candidatesWSPaid++;
+					} elseif ($totalPendingAmount < $val->amount) {
+						$candidatesWSPartiallyPaid++;
+					} else {
+						$candidatesNotPaid++;
+					}
+				}
+			}
+		}
+
+		$stages12 = [
+			'candidatesWSPaid' => $candidatesWSPaid,
+			'candidatesPartiallyPaid' => $candidatesPartiallyPaid,
+			'candidatesWSPartiallyPaid' => $candidatesWSPartiallyPaid,
+			'candidatesNotPaid' => $candidatesNotPaid,
+			'TotalCandidatesRegisteredWS' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count(),
+			'STAGEALL' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2]])->count(),
+			'STAGE0' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '0']])->count(),
+			'STAGE1' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1']])->where(function ($query) {
+								$query->where('added_as',null)
+								->orWhere('added_as', '=', 'Group');
+							})->count(),
+
+			'STAGE1Pending' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Review']])->where(function ($query) {
+								$query->where('added_as',null)
+								->orWhere('added_as', '=', 'Group');
+							})->count(),
+			
+			'STAGE1Waiting' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Waiting']])->where(function ($query) {
+				$query->where('added_as',null)
+				  ->orWhere('added_as', '=', 'Group');
+			  })->count(),
+			
+			'STAGE1Declined' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'Rejected']])->where(function ($query) {
+				$query->where('added_as',null)
+				  ->orWhere('added_as', '=', 'Group');
+			  })->count(),
+			
+			'STAGE1ApproveNotComing' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '1'], ['profile_status', 'ApprovedNotComing']])->where(function ($query) {
+				$query->where('added_as',null)
+				  ->orWhere('added_as', '=', 'Group');
+			  })->count(),
+			
+			'STAGE2WOSpouse' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])
+			->where(function ($query) {
+				$query->where('added_as',null)
+					->orWhere('added_as', '=', 'Group');
+			})->count(),
+
+			'STAGE2WithSpouse' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '2']])->count(),
+			'STAGE3' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '3']])->count(),
+			'STAGE4' => \App\Models\User::where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '4']])->count(),
+			'STAGE5' => \App\Models\User::with('TravelInfo')->with('SessionInfo')->where([['user_type', '!=', '1'], ['designation_id', 2], ['stage', '=', '5']])->count(),
+		];
+
+		$chartData = \App\Models\ChartDataDB::where('id','1')->first();
+		if($chartData){
+			$chartData->DashBoardData = json_encode($stages12);
+			$chartData->save();		
+		}
+		echo "Done";
+
+	}
+
+	
+
+	public function CountryList2(Request $request){
+ 
+		try{
+
+			$result=[];
+			
+			$countries=\DB::table('countries_2')->orderBy('name','Asc')->get();
+			
+			if(!empty($countries) && count($countries)>0){
+
+				foreach($countries as $country){
+
+					
+					$result[]=[
+
+						'id'=>$country->id,
+						'name'=>$country->name2,
+					];
+				}
+				
+			}
+			
+			
+			return response(array("message" => 'data fetched successfully.','result'=>$result,'error'=>false),200); 
+			
+			
+		}catch (\Exception $e){
+			
+			return response(array("message" => $e->getMessage(),'error'=>true),403); 
+		
+		} 	 
+		
+	}
+
+	
+	
+	public function visaProcessingEmailSend(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('designation_id', '!=', '14')->where('profile_status', '!=', 'ApprovedNotComing')->where('user_type', '=', '2')->where('stage','=','3')->where('email_reminder','1')->get();
+			// echo "<pre>";
+			// print_r($results->toArray()); die;
+			if(count($results) > 0){
+				$resultData = '';
+				foreach ($results as $key => $user) {
+				
+					if($user->language == 'sp'){
+
+						$subject = 'Tramitación de visados';
+						$msg = '<p >Estimados Participantes,
+									<br>
+								</p>
+						<p>A medida que se acerca el GProCongress II, necesitamos aclarar un asunto importante relacionado con el trámite de visas para aquellos que planean asistir desde el exterior a Panamá. Queremos enfatizar que subir la información de su pasaporte en la página web gprocongress.org NO significa que RREACH esté tramitando la solicitud de visa para Panamá en su nombre.  Solamente necesitamos esa información sobre su llegada programada al Congreso para ayudarnos en los preparativos de dicha asistencia.  Para obtener la visa, se le pedirá que inicie y complete el proceso de visado usted mismo.</p>
+						<p>Para iniciar el trámite de visado, deberá seguir los siguientes pasos:</br>
+							<p>&nbsp;&nbsp;1. Póngase en contacto con la embajada o consulado panameño en su país o región lo antes posible. Ellos le guiarán a través del proceso de solicitud de visa y le proporcionarán el procedimiento que debe seguir. Visite https://mire.gob.pa/ministerio/embajadasyconsulados para conocer la ubicación e información de contacto de las embajadas panameñas en todo el mundo.</p>
+							<p>&nbsp;&nbsp;2. Aunque no podemos tramitar directamente su visa, le proporcionamos dos documentos de apoyo que le ayudarán con su solicitud. Estos documentos servirán como prueba para respaldar su solicitud de visa y demostrar su participación en el GProCongress.  También le hemos proporcionado una lista de los documentos necesarios para solicitar su visa, así como el formulario de solicitud de visa que debe entregar a la embajada.</p>
+							<p>&nbsp;&nbsp;3. Si viaja desde un país con visado restringido, el departamento de inmigración le concertará una cita para que presente su solicitud de visa y realice los trámites necesarios. Por favor, esté preparado para seguir todas sus instrucciones y normas. Cuando nos envíe su pasaporte y sus datos personales, un miembro de nuestro equipo se pondrá en contacto con usted para guiarle en el proceso.</p>
+						<p>Entendemos que el proceso de tramitación de la visa puede ser complejo y llevar mucho tiempo. Por ello, le recomendamos que inicie los trámites de solicitud con suficiente antelación para garantizar un proceso fluido y sin demoras. Si tiene alguna pregunta o necesita ayuda durante el proceso de solicitud de visado, póngase en contacto con nuestro equipo de asistencia. Estamos aquí para orientarle y ayudarle a que su viaje al GProCongress sea lo más sencillo posible. Envíe un correo electrónico a Nadine a nadine@gprocongress.org, si necesita ayuda o tiene alguna pregunta.  </p>
+						<p>Apreciamos su atención y esperamos darle la bienvenida al GProCongreso en Panamá. Juntos, busquemos al Señor con miras al GProCongress II, a fin de fortalecer y multiplicar a los pastores capacitadores para décadas de impacto evangélico.</p>
+						<p>Saludos cordiales,</p>
+						<p><img src="'.asset('images/rajiv_richard.png').'" style="width:100px;"></p><br>
+						<p>Rajiv Richard</p> <p>GProCongress II Team</p>';
+
+					}elseif($user->language == 'pt'){
+					
+						$subject = "Processamento de vistos";
+						$msg = '<p >Prezados Participantes,
+									<br>
+								</p>
+						<p>À medida que o GProCongresso II se aproxima, precisamos esclarecer uma questão importante sobre o processamento de vistos para aqueles que pretendem participar de fora do Panamá. Queremos enfatizar que o upload das informações do seu passaporte no site gprocongress.org NÃO significa que a RREACH está processando o pedido de visto para o Panamá em seu nome. Precisamos dessas informações sobre sua chegada planejada ao Congresso para nos ajudar na preparação para sua participação. Para obter um visto, você deverá iniciar e concluir o processo de visto por conta própria</p>
+						<p>Para iniciar o processo de visto, você deve seguir os seguintes passos:</br>
+							<p>&nbsp;&nbsp;1. Entre em contato com a embaixada ou consulado do Panamá em seu país ou região o mais rápido possível. Eles irão guiá-lo através do processo de solicitação de visto e fornecer-lhe o procedimento que você precisa seguir. Visite https://mire.gob.pa/ministerio/embajadasyconsulados para obter os locais e informações de contato das embaixadas panamenhas em todo o mundo. </p>
+							<p>&nbsp;&nbsp;2. Embora não possamos processar seu visto diretamente, estamos fornecendo dois documentos de apoio que o ajudarão com sua solicitação. Esses documentos servirão como prova para apoiar seu pedido de visto e demonstrar sua participação no GProCongresso. Também fornecemos uma lista dos documentos necessários para solicitar seu visto, bem como o formulário de solicitação de visto que deve ser entregue na embaixada.</p>
+							<p>&nbsp;&nbsp;3. Se você estiver viajando de um país com visto restrito, o departamento de imigração agendará um horário para você enviar seu pedido de visto e concluir as formalidades necessárias. Por favor, esteja preparado para seguir todas as suas instruções e orientações. Quando nos enviar o seu passaporte e os seus dados pessoais, um membro da nossa equipe entrará em contato com você para lhe orientar no processo.</p>
+						<p>Entendemos que o processamento de vistos pode ser um processo complexo e demorado. Portanto, recomendamos iniciar o procedimento de inscrição com bastante antecedência para garantir um processo tranquilo e oportuno. Se você tiver dúvidas ou precisar de assistência durante o processo de solicitação de visto, entre em contato com nossa equipe de suporte dedicada. Estamos aqui para fornecer orientação e suporte para tornar sua jornada para o GProCongresso  mais tranquila possível. Envie um e-mail para Nadine em nadine@gprocongress.org, se precisar de ajuda ou tiver alguma dúvida. </p>
+						<p>Agradecemos sua atenção a este assunto e esperamos recebê-lo no GProCongresso no Panamá. Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os treinadores de pastores por décadas de impacto no evangelho.</p>
+						<p>Atenciosamente,</p>
+						<p><img src="'.asset('images/rajiv_richard.png').'" style="width:100px;"></p><br>
+						<p>Rajiv Richard</p> <p>GProCongress II Team</p>';
+
+					}elseif($user->language == 'fr'){
+					
+						$subject = 'Traitement des visas';
+						$msg = "<p >Dear Participants,
+									<br>
+								</p>
+						<p>À l'approche de GProCongress II, nous devons clarifier un aspect important concernant le traitement des visas pour ceux qui envisagent de participer de l'extérieur du Panama. Nous tenons à souligner que le fait de télécharger les informations relatives à votre passeport sur le site web gprocongress.org NE signifie PAS que RREACH traite la demande de visa pour le Panama pour vous. Nous avons besoin de ces informations concernant votre arrivée prévue au Congrès pour nous aider à préparer votre participation. Pour obtenir un visa, vous devrez initier et compléter la procédure de visa vous-même.</p>
+						<p>Pour entamer la procédure de visa, vous devez suivre les étapes suivantes :</p>
+							<p>&nbsp;&nbsp;1. Contactez l'ambassade ou le consulat du Panama dans votre pays ou région dès que possible. Ils vous guideront dans la procédure de demande de visa et vous indiqueront la procédure à suivre. Pour connaître l'emplacement et les coordonnées des ambassades panaméennes dans le monde, veuillez consulter le site https://mire.gob.pa/ministerio/embajadasyconsulados. </br>
+							<p>&nbsp;&nbsp;2. Bien que nous ne puissions pas traiter directement votre demande de visa, nous vous fournissons deux documents d'appui qui vous aideront dans votre démarche. Ces documents serviront de preuves pour appuyer votre demande de visa et démontrer votre participation au GProCongrès. Nous vous avons également fourni une liste des documents nécessaires pour demander votre visa, ainsi que le formulaire de demande de visa que vous devez remettre à l'ambassade.</br>
+							<p>&nbsp;&nbsp;3. Si vous venez d'un pays à visa restreint, le service d'immigration vous fixera un rendez-vous pour déposer votre demande de visa et remplir les formalités nécessaires. Soyez prêt à suivre toutes les instructions et directives. Lorsque vous nous aurez envoyé votre passeport et vos données personnelles, un membre de notre équipe vous contactera pour vous guider dans la procédure.</p>
+						<p>Nous comprenons que le traitement des demandes de visa peut être un processus complexe et long. C'est pourquoi nous vous recommandons d'entamer la procédure de demande bien à l'avance afin de garantir un traitement rapide et sans heurts. Si vous avez des questions ou si vous avez besoin d'aide au cours de la procédure de demande de visa, n'hésitez pas à contacter notre équipe d'assistance dévouée. Nous sommes là pour vous guider et vous aider à faire en sorte que votre voyage vers le GProCongrès se déroule de la manière la plus agréable possible. Si vous avez besoin d'aide ou si vous avez des questions, envoyez un e-mail à Nadine à l'adresse nadine@gprocongress.org .</p>
+						<p>Nous vous remercions de l'attention que vous portez à cette initiative et nous nous réjouissons de vous accueillir au GProCongress de Panama. Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les formateurs de pasteurs pour des décennies d'impact de l'Evangile.</p>
+						<p>Cordialement,</p>
+						<p><img src='".asset('images/rajiv_richard.png')."' style='width:100px;'></p><br>
+						<p>Rajiv Richard</p> <p>GProCongress II Team</p>";
+
+					}else{
+					
+						$subject = 'Visa Processing';
+						
+						$msg = '<p >Chers participants,
+									<br>
+								</p>
+						<p>As GProCongress II approaches, we need to clarify an important matter regarding visa processing for those planning to attend from outside Panama. We want to emphasize that uploading your passport information on the gprocongress.org website DOES NOT mean that RREACH is processing the visa application to Panama on your behalf.  We need that information regarding your planned arrival at the Congress to assist us in preparing for your attendance.  To obtain a visa, you will be required to initiate and complete the visa process yourself.</p>
+						<p>To initiate the visa process, you must take the following steps:</br></p>
+							<p>&nbsp;&nbsp;1. Contact the Panamanian embassy or consulate in your country or region as soon as possible. They will guide you through the visa application process and provide you with the procedure you need to follow. Please visit https://mire.gob.pa/ministerio/embajadasyconsulados for the locations and contact information of Panamanian embassies around the world. </p>
+							<p>&nbsp;&nbsp;2. While we cannot directly process your visa, we are providing two supporting documents that will help you with your application. These documents will serve as evidence to support your visa application and demonstrate your participation in the GProCongress.  We have also given you a list of the documents needed to apply for your visa, as well as the visa form application you must give to the embassy.</p>
+							<p>&nbsp;&nbsp;3. If you are traveling from a restricted visa country, the immigration department will schedule an appointment for you to submit your visa application and complete the necessary formalities. Please be prepared to follow all of their instructions and guidelines. When you send us your passport and personal details, a member of our team will contact you to guide you in the process.</p></br>
+						<p>We understand that visa processing can be a complex and time-consuming process. Therefore, we recommend initiating the application procedure well in advance to ensure a smooth and timely process. If you have questions or need assistance during the visa application process, please reach out to our dedicated support team. We are here to provide guidance and support to make your journey to the GProCongress as seamless as possible. Please email Nadine at nadine@gprocongress.org, if you need assistance or have any questions. </p>
+						<p>We appreciate your attention to this matter and look forward to welcoming you to the GProCongress in Panama. Together, let’s seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+						<p>Best regards,</p>
+						<p><img src="'.asset('images/rajiv_richard.png').'" style="width:100px;"></p><br>
+						<p>Rajiv Richard</p> <p>GProCongress II Team</p>';
+
+						
+		
+					}
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Visa processing');
+				
+				}
+
+				return response(array('message'=>' Email has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
 
 }

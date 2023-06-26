@@ -121,7 +121,12 @@
                 @endif
                 <h4 class="inner-head" style="display: flex;justify-content: space-between;">
                     <p>@lang('web/profile-details.personal-details-combined')</p>
-                    <a href="{{url('invite-user')}}" class="main-btn bg-gray-btn m-1" >Send Invitation</a>
+                    <span style="display: flex;">
+                        <a href="{{url('invite-user')}}" class="main-btn bg-gray-btn m-1" >Send Invitation</a>
+                        @if($resultData['result']['profile_status']=='Approved' && $resultData['result']['designation_id'] == '3' && $resultData['result']['amount']  == 0)
+                            <a href="{{ route('donate') }}" class="main-btn bg-gray-btn m-1" >@lang('web/app.donate')</a>
+                        @endif
+                    </span>
                 </h4>
                 <div class="detail-wrap">
                     <ul>

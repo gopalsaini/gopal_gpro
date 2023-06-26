@@ -17,8 +17,6 @@ class UserController extends Controller {
 					'id' => 'numeric|required',
 					'first_name' => 'required|string',
 					'last_name' => 'required|string',
-					'contact_business_number' => 'required|numeric',
-					'contact_whatsapp_number' => 'required|numeric',
 					'contact_zip_code' => 'required',
 					'gender' => 'required|in:1,2',
 					'dob' => 'required|date',
@@ -170,9 +168,82 @@ class UserController extends Controller {
 							$data->room = $request->post('room') ?? null;
 							$data->profile_submit_type = 'submit';
 							$data->status_change_at = date('Y-m-d H:i:s');
+							$data->password = \Hash::make($password);
 
+							
 							$name = $request->post('first_name').' '.$request->post('last_name');
-
+							$to = $data->email;
+	
+							if($data->language == 'sp'){
+	
+								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">enlace</a>';
+	
+								$subject = 'Este es su nombre de usuario y contraseña para el GProCongress II.';
+								$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
+								<p>Gracias por su participación en el GProCongress II, y por su compromiso con la causa vital de la capacitación de pastores. Nuestro equipo de administración le ha inscrito para asistir al GProCongress II.</p>
+								<p>Su nombre de usuario y contraseña son los siguientes:</p>
+								<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
+								<p >&nbsp;&nbsp;&nbsp;<b>Contraseña : ".$password."</b></p><p></p>
+								<p>Por favor, utilice estas credenciales para iniciar sesión en ".$url.", y cambie su contraseña después de haber iniciado sesión por primera vez.</p>
+								<p>Por favor, también proporcione la información de su pasaporte en nuestro sitio web tan pronto como sea posible (Su nombre completo; País de residencia; Número de pasaporte). También puede utilizar nuestro Asistente de Visa (".$link.") para ver si necesita visa para entrar a Panamá este noviembre.</p>
+								<p>Si tiene alguna pregunta, o si necesita hablar con uno de los miembros de nuestro equipo, por favor responda a este correo electrónico.</p>
+								<p>Atentamente,</p><p>Equipo del GProCongreso II</p>";
+		
+							}elseif($data->language == 'fr'){
+							
+								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">lien</a>';
+	
+								$subject = 'Voici votre identifiant et mot de passe GProCongress II.';
+								$msg = "<p>Cher ".$name.",&nbsp;</p><p><br></p>
+								<p>Merci pour votre participation au GProCongress II, et pour votre engagement pour la cause vitale de la formation des pasteurs.  Vous êtes maintenant inscrit pour assister au GProCongress II par notre équipe d'administration.</p>
+								<p>Votre ID de connexion et votre mot de passe sont les suivants :</p>
+								<p >&nbsp;&nbsp;&nbsp;<b>ID de connexion : ".$to."</b></p><p></p>
+								<p >&nbsp;&nbsp;&nbsp;<b>Mot de passe : ".$password."</b></p><p></p>
+								<p>Veuillez utiliser ces informations d'identification pour vous connecter sur ".$url.", et modifier votre mot de passe après vous être connecté pour la première fois.</p>
+								<p>Veuillez également fournir les informations de votre passeport sur notre site Web dès que possible (Votre nom complet; Pays de résidence; Passeport #). Vous pouvez également utiliser notre assistant de visa (".$link.") pour voir si vous aurez besoin d'un visa pour entrer au Panama en novembre.</p>
+								<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à ce courriel.</p>
+								<p>Cordialement,</p><p>L'équipe GProCongress II</p>";
+		
+							}elseif($data->language == 'pt'){
+							
+								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
+	
+								$subject = 'Aqui estão  os seus dados de  login e senha do GProCongress II';
+								$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
+								<p>Obrigado por sua participação no GProCongress II e por seu compromisso com a causa vital do treinamento de pastores. Agora que você foi inscrito  para participar do GProCongress II por nossa equipe de administração.</p>
+								<p>Seu ID de login e senha são os seguintes:</p>
+								<p >&nbsp;&nbsp;&nbsp;<b>Identificação de usuário : ".$to."</b></p><p></p>
+								<p >&nbsp;&nbsp;&nbsp;<b>Senha : ".$password."</b></p><p></p>
+								<p>Use essas credenciais para fazer login em ".$url.", e altere sua senha depois de fazer login pela primeira vez.</p>
+								<p>Por favor, forneça também as informações do seu passaporte em nosso site o mais rápido possível (seu nome completo; país de residência; número do passaporte). Você também pode usar nosso Assistente de Visto (".$link.") para verificar se precisará de visto para entrar no Panamá em Novembro. </p>
+								<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+								<p>Calorosamente,</p><p>Equipe do GProCongress II</p>";
+		
+							}else{
+							
+								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
+	
+								$subject = 'Here is your GProCongress II login and password';
+								$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
+								<p>Thank you for your participation in GProCongress II, and for your commitment to the vital cause of pastor training.  You have now been registered to attend GProCongress II by our admin team.   </p>
+								<p>Your Login ID and Password are as follows:</p>
+								<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
+								<p >&nbsp;&nbsp;&nbsp;<b>Password : ".$password."</b></p><p></p>
+								<p>Please use these credentials to login at ".$url.", and change your password after you have logged in for the first time.</p>
+								<p>Please also provide your passport information at our website as soon as possible (Your full name; Country of residence; Passport #). You can also use our Visa Wizard (".$link.") to see if you will need a visa to enter Panama this November.  </p>
+								<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+								<p>Warmly,</p><p>GProCongress II Team</p>";
+				
+							}
+		
+							\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+							\App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+						
 							if($data->language == 'sp'){
 
 								$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
@@ -238,10 +309,12 @@ class UserController extends Controller {
 								<p>Warmly,</p><p>GProCongress II Team</p>";
 				
 							}
-		
+
 							\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
 							\App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
 							\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+						
+						
 						}
 						
 					}
@@ -277,88 +350,21 @@ class UserController extends Controller {
 					$to = $request->post('email');
 
 					if($request->post('designation_id') == '4' || $request->post('designation_id') == '6'){
+						
 						$userUpdate = url('admin/user/edit/'.$data->id);
-
-						$name = $data->name;
-
-						if($data->language == 'sp'){
-
-							$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-							$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">enlace</a>';
-
-							$subject = 'Este es su nombre de usuario y contraseña para el GProCongress II.';
-							$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
-							<p>Gracias por su participación en el GProCongress II, y por su compromiso con la causa vital de la capacitación de pastores. Nuestro equipo de administración le ha inscrito para asistir al GProCongress II.</p>
-							<p>Su nombre de usuario y contraseña son los siguientes:</p>
-							<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
-							<p >&nbsp;&nbsp;&nbsp;<b>Contraseña : ".$password."</b></p><p></p>
-							<p>Por favor, utilice estas credenciales para iniciar sesión en ".$url.", y cambie su contraseña después de haber iniciado sesión por primera vez.</p>
-							<p>Por favor, también proporcione la información de su pasaporte en nuestro sitio web tan pronto como sea posible (Su nombre completo; País de residencia; Número de pasaporte). También puede utilizar nuestro Asistente de Visa (".$link.") para ver si necesita visa para entrar a Panamá este noviembre.</p>
-							<p>Si tiene alguna pregunta, o si necesita hablar con uno de los miembros de nuestro equipo, por favor responda a este correo electrónico.</p>
-							<p>Atentamente,</p><p>Equipo del GProCongreso II</p>";
 	
-						}elseif($data->language == 'fr'){
-						
-							$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-							$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">lien</a>';
-
-							$subject = 'Voici votre identifiant et mot de passe GProCongress II.';
-							$msg = "<p>Cher ".$name.",&nbsp;</p><p><br></p>
-							<p>Merci pour votre participation au GProCongress II, et pour votre engagement pour la cause vitale de la formation des pasteurs.  Vous êtes maintenant inscrit pour assister au GProCongress II par notre équipe d'administration.</p>
-							<p>Votre ID de connexion et votre mot de passe sont les suivants :</p>
-							<p >&nbsp;&nbsp;&nbsp;<b>ID de connexion : ".$to."</b></p><p></p>
-							<p >&nbsp;&nbsp;&nbsp;<b>Mot de passe : ".$password."</b></p><p></p>
-							<p>Veuillez utiliser ces informations d'identification pour vous connecter sur ".$url.", et modifier votre mot de passe après vous être connecté pour la première fois.</p>
-							<p>Veuillez également fournir les informations de votre passeport sur notre site Web dès que possible (Votre nom complet; Pays de résidence; Passeport #). Vous pouvez également utiliser notre assistant de visa (".$link.") pour voir si vous aurez besoin d'un visa pour entrer au Panama en novembre.</p>
-							<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à ce courriel.</p>
-							<p>Cordialement,</p><p>L'équipe GProCongress II</p>";
-	
-						}elseif($data->language == 'pt'){
-						
-							$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-							$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
-
-							$subject = 'Aqui estão  os seus dados de  login e senha do GProCongress II';
-							$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
-							<p>Obrigado por sua participação no GProCongress II e por seu compromisso com a causa vital do treinamento de pastores. Agora que você foi inscrito  para participar do GProCongress II por nossa equipe de administração.</p>
-							<p>Seu ID de login e senha são os seguintes:</p>
-							<p >&nbsp;&nbsp;&nbsp;<b>Identificação de usuário : ".$to."</b></p><p></p>
-							<p >&nbsp;&nbsp;&nbsp;<b>Senha : ".$password."</b></p><p></p>
-							<p>Use essas credenciais para fazer login em ".$url.", e altere sua senha depois de fazer login pela primeira vez.</p>
-							<p>Por favor, forneça também as informações do seu passaporte em nosso site o mais rápido possível (seu nome completo; país de residência; número do passaporte). Você também pode usar nosso Assistente de Visto (".$link.") para verificar se precisará de visto para entrar no Panamá em Novembro. </p>
-							<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
-							<p>Calorosamente,</p><p>Equipe do GProCongress II</p>";
-	
-						}else{
-						
-							$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-							$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
-
-							$subject = 'Here is your GProCongress II login and password';
-							$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
-							<p>Thank you for your participation in GProCongress II, and for your commitment to the vital cause of pastor training.  You have now been registered to attend GProCongress II by our admin team.   </p>
-							<p>Your Login ID and Password are as follows:</p>
-							<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
-							<p >&nbsp;&nbsp;&nbsp;<b>Password : ".$password."</b></p><p></p>
-							<p>Please use these credentials to login at ".$url.", and change your password after you have logged in for the first time.</p>
-							<p>Please also provide your passport information at our website as soon as possible (Your full name; Country of residence; Passport #). You can also use our Visa Wizard (".$link.") to see if you will need a visa to enter Panama this November.  </p>
-							<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
-							<p>Warmly,</p><p>GProCongress II Team</p>";
-			
-						}
-
 					}else{
 
 						$subject = 'Your registration for GProCongress II has started!';
 						$msg = '<div>Dear '.$request->post('name').',</div><div><br></div><div>Based on your discussion with '.\Auth::user()->name.' your registration for the GProCongress II has been initiated. Please use this link '.$url.' to edit and complete your application at any time.<br> Your registered email and password are:</div><div><br>Email: '.$to.'<br>Password: '.$password.'<br></div><div>To find out more about the criteria to attend the Congress, '.$faq.'</div><div><br></div><div>'.$request->post('name').', We are here to help! To talk with one of our team members, simply respond to this email.</div><div><br></div><div>Pray with us toward multiplying the quantity and quality of trainers of pastors.</div><div><br></div><div>Warmly,</div><div>GProCongress II Team</div>';
 						$userUpdate = '';
+
+						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+						\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+						
 					}
-					
-					\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
-					\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
-					
-					
+
 					return response(array('message'=>'User added successfully.', 'userUpdateUrl'=>$userUpdate, 'reset'=>true), 200);
 
 				} else {
@@ -2662,6 +2668,7 @@ class UserController extends Controller {
 						$result->amount = $request->post('amount');
 						$result->payment_country = $request->post('citizenship');
 						$result->cash_payment_option = $request->post('cash_payment');
+						$result->role_id = $request->post('role_id');
 						$result->status_change_at = date('Y-m-d H:i:s');
 						$result->stage = '2';
 						$result->profile_update = '1';
@@ -2835,6 +2842,7 @@ class UserController extends Controller {
 							$result->amount = $request->post('amount');
 							$result->payment_country = $request->post('citizenship');
 							$result->cash_payment_option = $request->post('cash_payment');
+							$result->role_id = $request->post('role_id');
 							$result->status_change_at = date('Y-m-d H:i:s');
 							$result->stage = '2';
 							$result->profile_update = '1';
@@ -2948,6 +2956,7 @@ class UserController extends Controller {
 					$result->amount = $request->post('amount');
 					$result->payment_country = $request->post('citizenship');
 					$result->cash_payment_option = $request->post('cash_payment');
+					$result->role_id = $request->post('role_id');
 					$result->status_change_at = date('Y-m-d H:i:s');
 					$result->stage = '2';
 					$result->profile_update = '1';

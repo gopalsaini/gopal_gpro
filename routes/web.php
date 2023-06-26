@@ -398,6 +398,15 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::post('status', 'Admin\SubAdminController@status')->name('status');
 	});
 
+	// Role
+	Route::group(['prefix'=>'role', 'as'=>'role.'], function() {
+		Route::match(['get','post'], 'add', 'Admin\RoleController@add')->name('add');
+		Route::get('list', 'Admin\RoleController@list')->name('list');
+		Route::get('edit/{id}', 'Admin\RoleController@edit')->name('edit');
+		Route::get('delete/{id}', 'Admin\RoleController@delete')->name('delete');
+		Route::post('status', 'Admin\RoleController@status')->name('status');
+	});
+
 	
 	// speaker
 	Route::group(['prefix'=>'speaker', 'as'=>'speaker.'], function() {
@@ -425,6 +434,15 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('delete/{id}', 'Admin\CommunityController@delete')->name('delete'); 
 		Route::post('status', 'Admin\CommunityController@status')->name('status');
 		Route::get('group/update/{id}', 'Admin\CommunityController@groupUsersGroupUpdate')->name('group.update');
+
+	});
+
+	
+	// Community
+	Route::group(['prefix'=>'spouse-connect', 'as'=>'spouse-connect.'], function() {
+		Route::match(['get','post'], 'add', 'Admin\SpouseConnectController@add')->name('add');
+		Route::get('list', 'Admin\SpouseConnectController@list')->name('list');
+		Route::get('group/update/{id}', 'Admin\SpouseConnectController@groupUsersGroupUpdate')->name('group.update');
 
 	});
 	

@@ -78,7 +78,7 @@ return [
     'confirm' => 'Confirmar',
     'decline' => 'Rechazar',
     // '[name] has registered for the GProCongress II as your spouse. Would you please confirm that [spouse Name] is your spouse and that you both plan to attend? Please click here to confirm' =>
-    'arrival-to-panama-attendee' => 'Llegada a Panamá - Participante',
+    'arrival-to-panama-attendee' => 'Llegada a Panamá ',
     'arrival-to-panama-spouse' => 'Llegada a Panamá - Cónyuge',
     'flight-number' => 'Número de Vuelo',
     'start-location' => 'Lugar de Salida',
@@ -93,10 +93,11 @@ return [
     'emergency-contact-info' => 'Información de contacto en caso de emergencia',
     'hotel-info' => 'Información del hotel',
     'attendee-name' => 'Nombre del Participante',
-    'check-in-date-time' => 'Fecha y hora de llegada (configurable por el administrador para determinadas personas)',
-    'user-information-only' => '(Pre-rellenado) - Sólo información del usuario',
-    'spouse-picked-by-gpro-from-airport' => '¿Desean usted y su cónyuge que alguien del equipo de GproCongress les recoja en el aeropuerto?',
-    'spouse-dropped-by-gpro-at-airport' => '¿Desean usted y su cónyuge que alguien del equipo de GproCongress les deje en el aeropuerto?',
+    'check-in-date-time' => 'The Westin Playa Bonita Panama Hotel',
+    'user-information-only' => 'Información para el Check-in (ingreso) :',
+    'user-information-only2' => 'Información para el Check-out (salida):',
+    'spouse-picked-by-gpro-from-airport' => '¿Desea que GProCongress le recoja en el aeropuerto (PTY)?',
+    'spouse-dropped-by-gpro-at-airport' => '¿Desea que GProCongress le deje en el aeropuerto (PTY)?',    
     'flight-details-landing-in-panama' => 'Por favor, ingrese los detalles del vuelo que aterriza en Panamá o sale desde Panamá.',
     'travel_note'=>'A cambio de su pago de inscripción, RREACH se hará cargo de su habitación del 12 al 17 de noviembre, por un total de cinco noches (de domingo a jueves).  Los delegados pueden llegar antes del 12 de noviembre y marcharse después del 17 de noviembre, pero deberán pagar por las noches adicionales.  RREACH ha llegado a un acuerdo con los hoteles Westin Playa Bonita Panamá y Dreams Playa Bonita Panamá para que los delegados del GProCongress II paguen tarifas reducidas por las noches adicionales.  Los delegados que deseen llegar antes o marcharse más tarde deberán realizar la reserva por las noches adicionales con el hotel directamente (Ms. Nelly Morales nelly.morales@westinplayabonita.com cc:carolina.lezcano@westinplayabonita.com).    ',
     'like_to_share_your_room'=>'Do you know who would you like to share your room with?',
@@ -122,8 +123,8 @@ return [
     'PreRecordedVideo'=>'Pre Recorded Video',
     'subsidy_home'=>"El costo de RREACH por delegado es de hasta $1750. Las becas oscilan entre $775 y $1500 dólares. ¡Dios provee!",
     'Click_for_your_cost'=>'¡¡Haga clic para ver cuánto le cuesta a usted!!',
-    'Traveling_Country'=>'Current Residence/Travelling From (Country)',  
-    'airline_name'=>'Airline Name',
+    'Traveling_Country'=>'Residencia Actual/Viajando desde (País)',  
+    'airline_name'=>'Nombre de la Aerolínea',
 
 
 

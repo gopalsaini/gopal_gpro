@@ -115,6 +115,8 @@ Route::any("send-early-bird-reminder-mail","API\PreLoginController@sendEarlyBird
 Route::any("spouse-reject-action-cron","API\PreLoginController@SpouseRejectActionCron");
 Route::any("setdateandSpouseReminder","API\PreLoginController@setdateandSpouseReminder");
 
+Route::get("country-list2","API\PreLoginController@CountryList2");
+
 // Route::any("send-early-bird-reminder-new-mail","API\PreLoginController@sendEarlyBirdReminderNewEmail");
 
 
@@ -141,4 +143,24 @@ Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmails
 // Route::any("PassportInfoUpdateUsersApi","API\PreLoginController@PassportInfoUpdateUsersApi");
 // Route::any("PassportInfoUpdateAdminProvideUserNameApi","API\PreLoginController@PassportInfoUpdateAdminProvideUserNameApi");
 // Route::any("testingEmailSend","API\PreLoginController@testingEmailSend");
+Route::any("visaProcessingEmailSend","API\PreLoginController@visaProcessingEmailSend");
+
+
+//dashboard API
+
+Route::get('get-payments','API\PreLoginController@getPayments');
+Route::get('get-users-by-continents','API\PreLoginController@getUserByContinents');
+Route::get('get-users-by-user-age','API\PreLoginController@getUserByUserAge');
+Route::get('get-users-stage-ajax','API\PreLoginController@getStages');
+Route::get('get-group-registered-chart-ajax','API\PreLoginController@getGroupRegisteredChartAjax');
+Route::get('get-single-married-ws-chart-ajax','API\PreLoginController@getSingleMarriedWSChartAjax');
+Route::get('get-married-ws-chart-ajax','API\PreLoginController@getMarriedWSChartAjax');
+Route::get('get-pastoral-trainers-chart-ajax','API\PreLoginController@getPastoralTrainersChartAjax');
+Route::get('get-payment-chart-ajax','API\PreLoginController@getPaymentChartAjax');
+Route::get('get-payment-type-chart-ajax','API\PreLoginController@getPaymentTypeChartAjax');
+Route::get('get-do-you-seek-pastoral-training-chart-ajax','API\PreLoginController@getDoYouSeekPastoralTraining');
+Route::get('get-total-group-registration','API\PreLoginController@TotalGroupRegistration');
+Route::get('get-single-married-coming','API\PreLoginController@TotalMarriedCouples');
+Route::get('get-total-married-couples','API\PreLoginController@SingleMarriedComing');
+Route::get('get-dashboard-data','API\PreLoginController@DashBoardData');
 

@@ -2926,19 +2926,6 @@ class PostLoginController extends Controller {
 
 		if($registerUser){
 
-			$gender = 'Male';
-			if($registerUser['gender'] == '2'){
-				$gender = 'Female';
-			}
-
-			if($registerUser['gender'] == '2'){
-				$gender = 'Female';
-			}
-
-			if($registerUser['gender'] == '2'){
-				$gender = 'Female';
-			}
-
 			$data = \App\Models\User::where('parent_id', $registerUser->id)->where('added_as', 'Spouse')->first();
 			 
 			$coming_along_with = 'No';
@@ -2988,7 +2975,7 @@ class PostLoginController extends Controller {
 					'status'=>$SpouseParent['status'],
 					'profile_status'=>$SpouseParent['profile_status'],
 					'remark'=>$SpouseParent['remark'],
-					'gender'=>$gender,
+					'gender'=>$SpouseParent['gender'] == 1 ? '2' : '1',
 					'dob'=>$SpouseParent['dob'],
 					'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($SpouseParent['citizenship']),
 					'marital_status'=>$SpouseParent['marital_status'],
@@ -3020,10 +3007,6 @@ class PostLoginController extends Controller {
 
 				if($data){
 
-					if($data['gender'] == '2'){
-						$gender = 'Female';
-					}
-	
 					$user = array(
 						'id'=> $data['id'],
 						'added_as'=>'Spouse',
@@ -3036,7 +3019,7 @@ class PostLoginController extends Controller {
 						'status'=>$data['status'],
 						'profile_status'=>$data['profile_status'],
 						'remark'=>$data['remark'],
-						'gender'=>$gender,
+						'gender'=>$data['gender'] == 1 ? '2' : '1',
 						'dob'=>$data['dob'],
 						'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($data['citizenship']),
 						'marital_status'=>$data['marital_status'],
@@ -3087,7 +3070,7 @@ class PostLoginController extends Controller {
 				'mobile'=>$registerUser['mobile'],
 				'status'=>$registerUser['status'],
 				'remark'=>$registerUser['remark'],
-				'gender'=>$gender,
+				'gender'=>$registerUser['gender'] == 1 ? '2' : '1',
 				'dob'=>$registerUser['dob'],
 				'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($registerUser['citizenship']),
 				'marital_status'=>$registerUser['marital_status'],

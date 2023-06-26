@@ -69,8 +69,17 @@
             <div class="section-wz ">
                 <div class="container-fluid">
                     <div class="row">
-
+                        
                         <div class="col-md-12 ml-auto mr-auto">
+                            @if(App::getLocale() == 'pt')
+                                <a target="_blank" href="{{ asset('pdf/visa_processing/visa_processing_pt.pdf') }}" class="main-btn" style="float: right;">Informações sobre vistos</a>
+                            @elseif(App::getLocale() == 'sp')
+                                <a target="_blank" href="{{ asset('pdf/visa_processing/visa_processing_sp.pdf') }}" class="main-btn" style="float: right;">Información sobre Visas</a>
+                            @elseif(App::getLocale() == 'fr')
+                                <a target="_blank" href="{{ asset('pdf/visa_processing/visa_processing_fr.pdf') }}" class="main-btn" style="float: right;"> Information sur les visas</a>
+                            @else
+                                <a target="_blank" href="{{ asset('pdf/visa_processing/visa_processing_en.pdf') }}" class="main-btn" style="float: right;">Visa Information</a>
+                            @endif
                             <h4 id="ques" class="wz-title fadeInUp animated a-duration-5 a-delay-05 pr-settings-title" style="margin-bottom: 19px;font-size: 2.5em !important;">@lang('web/wizard.Gpro_Visa_Eligibility_Wizard')</h4>
                             <p style="color:white">@lang('web/wizard.Visa_wizard_desc')</p><p><br></p>
                             <p style="color:white">@lang('web/wizard.Visa_wizard_note')</p>
@@ -82,7 +91,7 @@
                                             <form action="#" method="get" target="_blank" id="myform"
                                                 class="wz_form wz_form-full" autocomplete="off">
                                                 <ol class="wz_fields">
-
+                                                    
                                                     <!-- Question 1 -->
                                                     <li>
                                                         <label class="wz_field-label wz_anim-upper pr-settings-title"
@@ -538,6 +547,7 @@
 
                 </div>
             </div>
+            
 
         </div>
             
