@@ -69,6 +69,7 @@ Route::group([
     Route::post("mobile-invite-user","API\PostLoginController@MobileInviteUser");
     Route::post("visa-is-not-granted","API\PostLoginController@visaIsNotGranted");
     Route::post("visa-granted","API\PostLoginController@visaIsGranted");
+    Route::get('yourPreferredRoommate', 'API\PostLoginController@yourPreferredRoommate');
 
 
 });
@@ -132,6 +133,7 @@ Route::get('get-user-profile', 'API\PreLoginController@userProfile');
 Route::get('get-total-member-for-community', 'API\PreLoginController@getTotalMemberForCommunity');
 Route::get('sendcheckUserDetailsPendingAmount', 'API\PreLoginController@sendcheckUserDetailsPendingAmount');
 Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmailsToPaymentCompleteDone');
+
 // Route::get('takingApplicationsForExhibitors', 'API\PreLoginController@takingApplicationsForExhibitors');
 // Route::get('registrationFeeUntilJune30', 'API\PreLoginController@registrationFeeUntilJune30');
 // Route::get('june-offer-stage01', 'API\PreLoginController@juneOfferStage01');
@@ -143,7 +145,8 @@ Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmails
 // Route::any("PassportInfoUpdateUsersApi","API\PreLoginController@PassportInfoUpdateUsersApi");
 // Route::any("PassportInfoUpdateAdminProvideUserNameApi","API\PreLoginController@PassportInfoUpdateAdminProvideUserNameApi");
 // Route::any("testingEmailSend","API\PreLoginController@testingEmailSend");
-Route::any("visaProcessingEmailSend","API\PreLoginController@visaProcessingEmailSend");
+// Route::any("visaProcessingEmailSend","API\PreLoginController@visaProcessingEmailSend");
+Route::any("PaymenDeadlineMissed100OFF","API\PreLoginController@PaymenDeadlineMissed100OFF");
 
 
 //dashboard API

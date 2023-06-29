@@ -5693,7 +5693,7 @@ class PreLoginController extends Controller {
 
     }
 
-	public static function sendcheckUserDetailsPendingAmount() {
+	public function sendcheckUserDetailsPendingAmount() {
 		
 		$results = \App\Models\User::where([['user_type', '=', '2'],['designation_id', '!=', '14'], ['profile_status','=','Approved'],['stage', '=', '2'],['amount', '!=', '0']])->get();
 		if(!empty($results)){
@@ -6137,6 +6137,9 @@ class PreLoginController extends Controller {
 		
 					}
 
+					$resultData.=$user->id.','.$user->name.','.$user->added_as.','.$user->email.','.$user->stage.','.$user->amount.'<br>';
+
+
 					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
@@ -6157,8 +6160,6 @@ class PreLoginController extends Controller {
 		}
 
     }
-
-	
 
 	public function PassportInfoUpdateUsersApi(Request $request){
 		
@@ -6271,8 +6272,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
-
 	public function PassportInfoUpdateAdminProvideUserNameApi(Request $request){
 		
 		try {
@@ -6369,7 +6368,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
 	public function testingEmailSend(Request $request){
 		
 		try {
@@ -6433,7 +6431,6 @@ class PreLoginController extends Controller {
 		}
 
     }
-
 
 	//dashboard API
 
@@ -6920,8 +6917,6 @@ class PreLoginController extends Controller {
 
 	}
 
-	
-
 	public function CountryList2(Request $request){
  
 		try{
@@ -6956,8 +6951,6 @@ class PreLoginController extends Controller {
 		
 	}
 
-	
-	
 	public function visaProcessingEmailSend(Request $request){
 		
 		try {
@@ -6975,13 +6968,13 @@ class PreLoginController extends Controller {
 						$msg = '<p >Estimados Participantes,
 									<br>
 								</p>
-						<p>A medida que se acerca el GProCongress II, necesitamos aclarar un asunto importante relacionado con el trámite de visas para aquellos que planean asistir desde el exterior a Panamá. Queremos enfatizar que subir la información de su pasaporte en la página web gprocongress.org NO significa que RREACH esté tramitando la solicitud de visa para Panamá en su nombre.  Solamente necesitamos esa información sobre su llegada programada al Congreso para ayudarnos en los preparativos de dicha asistencia.  Para obtener la visa, se le pedirá que inicie y complete el proceso de visado usted mismo.</p>
+						<p>A medida que se acerca el GProCongress II, necesitamos aclarar un asunto importante relacionado con el trámite de visas para aquellos que planean asistir desde el exterior a Panamá. Queremos enfatizar que subir la información de su pasaporte en la página web gprocongress.org NO significa que RREACH esté tramitando la solicitud de visa para Panamá en su nombre.  Solamente necesitamos esa información sobre su llegada programada al Congreso para ayudarnos en los preparativos de dicha asistencia.  <b><u>Para obtener la visa, se le pedirá que inicie y complete el proceso de visado usted mismo.</u></b></p>
 						<p>Para iniciar el trámite de visado, deberá seguir los siguientes pasos:</br>
 							<p>&nbsp;&nbsp;1. Póngase en contacto con la embajada o consulado panameño en su país o región lo antes posible. Ellos le guiarán a través del proceso de solicitud de visa y le proporcionarán el procedimiento que debe seguir. Visite https://mire.gob.pa/ministerio/embajadasyconsulados para conocer la ubicación e información de contacto de las embajadas panameñas en todo el mundo.</p>
 							<p>&nbsp;&nbsp;2. Aunque no podemos tramitar directamente su visa, le proporcionamos dos documentos de apoyo que le ayudarán con su solicitud. Estos documentos servirán como prueba para respaldar su solicitud de visa y demostrar su participación en el GProCongress.  También le hemos proporcionado una lista de los documentos necesarios para solicitar su visa, así como el formulario de solicitud de visa que debe entregar a la embajada.</p>
 							<p>&nbsp;&nbsp;3. Si viaja desde un país con visado restringido, el departamento de inmigración le concertará una cita para que presente su solicitud de visa y realice los trámites necesarios. Por favor, esté preparado para seguir todas sus instrucciones y normas. Cuando nos envíe su pasaporte y sus datos personales, un miembro de nuestro equipo se pondrá en contacto con usted para guiarle en el proceso.</p>
-						<p>Entendemos que el proceso de tramitación de la visa puede ser complejo y llevar mucho tiempo. Por ello, le recomendamos que inicie los trámites de solicitud con suficiente antelación para garantizar un proceso fluido y sin demoras. Si tiene alguna pregunta o necesita ayuda durante el proceso de solicitud de visado, póngase en contacto con nuestro equipo de asistencia. Estamos aquí para orientarle y ayudarle a que su viaje al GProCongress sea lo más sencillo posible. Envíe un correo electrónico a Nadine a nadine@gprocongress.org, si necesita ayuda o tiene alguna pregunta.  </p>
-						<p>Apreciamos su atención y esperamos darle la bienvenida al GProCongreso en Panamá. Juntos, busquemos al Señor con miras al GProCongress II, a fin de fortalecer y multiplicar a los pastores capacitadores para décadas de impacto evangélico.</p>
+						<p><u>Entendemos que el proceso de tramitación de la visa puede ser complejo y llevar mucho tiempo. Por ello, le recomendamos que inicie los trámites de solicitud con suficiente antelación para garantizar un proceso fluido y sin demoras. Si tiene alguna pregunta o necesita ayuda durante el proceso de solicitud de visado, póngase en contacto con nuestro equipo de asistencia. Estamos aquí para orientarle y ayudarle a que su viaje al GProCongress sea lo más sencillo posible. Envíe un correo electrónico a Nadine a nadine@gprocongress.org, si necesita ayuda o tiene alguna pregunta.</u> </p>
+						<p>Apreciamos su atención y esperamos darle la bienvenida al GProCongreso en Panamá. Juntos, busquemos al Señor con miras al GProCongress II, a fin de fortalecer y multiplicar a los capacitadores de pastores para décadas de impacto evangélico.</p>
 						<p>Saludos cordiales,</p>
 						<p><img src="'.asset('images/rajiv_richard.png').'" style="width:100px;"></p><br>
 						<p>Rajiv Richard</p> <p>GProCongress II Team</p>';
@@ -6992,12 +6985,12 @@ class PreLoginController extends Controller {
 						$msg = '<p >Prezados Participantes,
 									<br>
 								</p>
-						<p>À medida que o GProCongresso II se aproxima, precisamos esclarecer uma questão importante sobre o processamento de vistos para aqueles que pretendem participar de fora do Panamá. Queremos enfatizar que o upload das informações do seu passaporte no site gprocongress.org NÃO significa que a RREACH está processando o pedido de visto para o Panamá em seu nome. Precisamos dessas informações sobre sua chegada planejada ao Congresso para nos ajudar na preparação para sua participação. Para obter um visto, você deverá iniciar e concluir o processo de visto por conta própria</p>
+						<p>À medida que o GProCongresso II se aproxima, precisamos esclarecer uma questão importante sobre o processamento de vistos para aqueles que pretendem participar de fora do Panamá. Queremos enfatizar que o upload das informações do seu passaporte no site gprocongress.org NÃO significa que a RREACH está processando o pedido de visto para o Panamá em seu nome. Precisamos dessas informações sobre sua chegada planejada ao Congresso para nos ajudar na preparação para sua participação. <b><u>Para obter um visto, você deverá iniciar e concluir o processo de visto por conta própria</u></b></p>
 						<p>Para iniciar o processo de visto, você deve seguir os seguintes passos:</br>
 							<p>&nbsp;&nbsp;1. Entre em contato com a embaixada ou consulado do Panamá em seu país ou região o mais rápido possível. Eles irão guiá-lo através do processo de solicitação de visto e fornecer-lhe o procedimento que você precisa seguir. Visite https://mire.gob.pa/ministerio/embajadasyconsulados para obter os locais e informações de contato das embaixadas panamenhas em todo o mundo. </p>
 							<p>&nbsp;&nbsp;2. Embora não possamos processar seu visto diretamente, estamos fornecendo dois documentos de apoio que o ajudarão com sua solicitação. Esses documentos servirão como prova para apoiar seu pedido de visto e demonstrar sua participação no GProCongresso. Também fornecemos uma lista dos documentos necessários para solicitar seu visto, bem como o formulário de solicitação de visto que deve ser entregue na embaixada.</p>
 							<p>&nbsp;&nbsp;3. Se você estiver viajando de um país com visto restrito, o departamento de imigração agendará um horário para você enviar seu pedido de visto e concluir as formalidades necessárias. Por favor, esteja preparado para seguir todas as suas instruções e orientações. Quando nos enviar o seu passaporte e os seus dados pessoais, um membro da nossa equipe entrará em contato com você para lhe orientar no processo.</p>
-						<p>Entendemos que o processamento de vistos pode ser um processo complexo e demorado. Portanto, recomendamos iniciar o procedimento de inscrição com bastante antecedência para garantir um processo tranquilo e oportuno. Se você tiver dúvidas ou precisar de assistência durante o processo de solicitação de visto, entre em contato com nossa equipe de suporte dedicada. Estamos aqui para fornecer orientação e suporte para tornar sua jornada para o GProCongresso  mais tranquila possível. Envie um e-mail para Nadine em nadine@gprocongress.org, se precisar de ajuda ou tiver alguma dúvida. </p>
+						<p><u>Entendemos que o processamento de vistos pode ser um processo complexo e demorado. Portanto, recomendamos iniciar o procedimento de inscrição com bastante antecedência para garantir um processo tranquilo e oportuno. Se você tiver dúvidas ou precisar de assistência durante o processo de solicitação de visto, entre em contato com nossa equipe de suporte dedicada. Estamos aqui para fornecer orientação e suporte para tornar sua jornada para o GProCongresso  mais tranquila possível. Envie um e-mail para Nadine em nadine@gprocongress.org, se precisar de ajuda ou tiver alguma dúvida.</u> </p>
 						<p>Agradecemos sua atenção a este assunto e esperamos recebê-lo no GProCongresso no Panamá. Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os treinadores de pastores por décadas de impacto no evangelho.</p>
 						<p>Atenciosamente,</p>
 						<p><img src="'.asset('images/rajiv_richard.png').'" style="width:100px;"></p><br>
@@ -7006,15 +6999,15 @@ class PreLoginController extends Controller {
 					}elseif($user->language == 'fr'){
 					
 						$subject = 'Traitement des visas';
-						$msg = "<p >Dear Participants,
+						$msg = "<p >Chers participants,
 									<br>
 								</p>
-						<p>À l'approche de GProCongress II, nous devons clarifier un aspect important concernant le traitement des visas pour ceux qui envisagent de participer de l'extérieur du Panama. Nous tenons à souligner que le fait de télécharger les informations relatives à votre passeport sur le site web gprocongress.org NE signifie PAS que RREACH traite la demande de visa pour le Panama pour vous. Nous avons besoin de ces informations concernant votre arrivée prévue au Congrès pour nous aider à préparer votre participation. Pour obtenir un visa, vous devrez initier et compléter la procédure de visa vous-même.</p>
+						<p>À l'approche de GProCongress II, nous devons clarifier un aspect important concernant le traitement des visas pour ceux qui envisagent de participer de l'extérieur du Panama. Nous tenons à souligner que le fait de télécharger les informations relatives à votre passeport sur le site web gprocongress.org NE signifie PAS que RREACH traite la demande de visa pour le Panama pour vous. Nous avons besoin de ces informations concernant votre arrivée prévue au Congrès pour nous aider à préparer votre participation. <b><u>Pour obtenir un visa, vous devrez initier et compléter la procédure de visa vous-même.</u></b></p>
 						<p>Pour entamer la procédure de visa, vous devez suivre les étapes suivantes :</p>
 							<p>&nbsp;&nbsp;1. Contactez l'ambassade ou le consulat du Panama dans votre pays ou région dès que possible. Ils vous guideront dans la procédure de demande de visa et vous indiqueront la procédure à suivre. Pour connaître l'emplacement et les coordonnées des ambassades panaméennes dans le monde, veuillez consulter le site https://mire.gob.pa/ministerio/embajadasyconsulados. </br>
 							<p>&nbsp;&nbsp;2. Bien que nous ne puissions pas traiter directement votre demande de visa, nous vous fournissons deux documents d'appui qui vous aideront dans votre démarche. Ces documents serviront de preuves pour appuyer votre demande de visa et démontrer votre participation au GProCongrès. Nous vous avons également fourni une liste des documents nécessaires pour demander votre visa, ainsi que le formulaire de demande de visa que vous devez remettre à l'ambassade.</br>
 							<p>&nbsp;&nbsp;3. Si vous venez d'un pays à visa restreint, le service d'immigration vous fixera un rendez-vous pour déposer votre demande de visa et remplir les formalités nécessaires. Soyez prêt à suivre toutes les instructions et directives. Lorsque vous nous aurez envoyé votre passeport et vos données personnelles, un membre de notre équipe vous contactera pour vous guider dans la procédure.</p>
-						<p>Nous comprenons que le traitement des demandes de visa peut être un processus complexe et long. C'est pourquoi nous vous recommandons d'entamer la procédure de demande bien à l'avance afin de garantir un traitement rapide et sans heurts. Si vous avez des questions ou si vous avez besoin d'aide au cours de la procédure de demande de visa, n'hésitez pas à contacter notre équipe d'assistance dévouée. Nous sommes là pour vous guider et vous aider à faire en sorte que votre voyage vers le GProCongrès se déroule de la manière la plus agréable possible. Si vous avez besoin d'aide ou si vous avez des questions, envoyez un e-mail à Nadine à l'adresse nadine@gprocongress.org .</p>
+						<p><u>Nous comprenons que le traitement des demandes de visa peut être un processus complexe et long. C'est pourquoi nous vous recommandons d'entamer la procédure de demande bien à l'avance afin de garantir un traitement rapide et sans heurts. Si vous avez des questions ou si vous avez besoin d'aide au cours de la procédure de demande de visa, n'hésitez pas à contacter notre équipe d'assistance dévouée. Nous sommes là pour vous guider et vous aider à faire en sorte que votre voyage vers le GProCongrès se déroule de la manière la plus agréable possible. Si vous avez besoin d'aide ou si vous avez des questions, envoyez un e-mail à Nadine à l'adresse nadine@gprocongress.org .</u></p>
 						<p>Nous vous remercions de l'attention que vous portez à cette initiative et nous nous réjouissons de vous accueillir au GProCongress de Panama. Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les formateurs de pasteurs pour des décennies d'impact de l'Evangile.</p>
 						<p>Cordialement,</p>
 						<p><img src='".asset('images/rajiv_richard.png')."' style='width:100px;'></p><br>
@@ -7024,15 +7017,15 @@ class PreLoginController extends Controller {
 					
 						$subject = 'Visa Processing';
 						
-						$msg = '<p >Chers participants,
+						$msg = '<p >Dear  participants,
 									<br>
 								</p>
-						<p>As GProCongress II approaches, we need to clarify an important matter regarding visa processing for those planning to attend from outside Panama. We want to emphasize that uploading your passport information on the gprocongress.org website DOES NOT mean that RREACH is processing the visa application to Panama on your behalf.  We need that information regarding your planned arrival at the Congress to assist us in preparing for your attendance.  To obtain a visa, you will be required to initiate and complete the visa process yourself.</p>
+						<p>As GProCongress II approaches, we need to clarify an important matter regarding visa processing for those planning to attend from outside Panama. We want to emphasize that uploading your passport information on the gprocongress.org website DOES NOT mean that RREACH is processing the visa application to Panama on your behalf.  We need that information regarding your planned arrival at the Congress to assist us in preparing for your attendance.  <b><u>To obtain a visa, you will be required to initiate and complete the visa process yourself.</u></b></p>
 						<p>To initiate the visa process, you must take the following steps:</br></p>
 							<p>&nbsp;&nbsp;1. Contact the Panamanian embassy or consulate in your country or region as soon as possible. They will guide you through the visa application process and provide you with the procedure you need to follow. Please visit https://mire.gob.pa/ministerio/embajadasyconsulados for the locations and contact information of Panamanian embassies around the world. </p>
 							<p>&nbsp;&nbsp;2. While we cannot directly process your visa, we are providing two supporting documents that will help you with your application. These documents will serve as evidence to support your visa application and demonstrate your participation in the GProCongress.  We have also given you a list of the documents needed to apply for your visa, as well as the visa form application you must give to the embassy.</p>
 							<p>&nbsp;&nbsp;3. If you are traveling from a restricted visa country, the immigration department will schedule an appointment for you to submit your visa application and complete the necessary formalities. Please be prepared to follow all of their instructions and guidelines. When you send us your passport and personal details, a member of our team will contact you to guide you in the process.</p></br>
-						<p>We understand that visa processing can be a complex and time-consuming process. Therefore, we recommend initiating the application procedure well in advance to ensure a smooth and timely process. If you have questions or need assistance during the visa application process, please reach out to our dedicated support team. We are here to provide guidance and support to make your journey to the GProCongress as seamless as possible. Please email Nadine at nadine@gprocongress.org, if you need assistance or have any questions. </p>
+						<p><u>We understand that visa processing can be a complex and time-consuming process. Therefore, we recommend initiating the application procedure well in advance to ensure a smooth and timely process. If you have questions or need assistance during the visa application process, please reach out to our dedicated support team. We are here to provide guidance and support to make your journey to the GProCongress as seamless as possible. Please email Nadine at nadine@gprocongress.org, if you need assistance or have any questions.</u> </p>
 						<p>We appreciate your attention to this matter and look forward to welcoming you to the GProCongress in Panama. Together, let’s seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
 						<p>Best regards,</p>
 						<p><img src="'.asset('images/rajiv_richard.png').'" style="width:100px;"></p><br>
@@ -7042,11 +7035,14 @@ class PreLoginController extends Controller {
 		
 					}
 
+					$resultData.=$user->id.','.$user->name.','.$user->added_as.','.$user->email.','.$user->stage.','.$user->amount.'<br>';
 					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Visa processing');
-				
 				}
+
+				echo "<pre>";
+				print_r($resultData); die;
 
 				return response(array('message'=>' Email has been sent successfully.'), 200);
 			}
@@ -7059,5 +7055,106 @@ class PreLoginController extends Controller {
 		}
 
     }
+
+	
+	public function PaymenDeadlineMissed100OFF(Request $request){
+		
+		try {
+			
+			$results = \App\Models\User::where('designation_id', '!=', '14')->where('user_type', '=', '2')->where('email_reminder','1')->where('stage','<=','2')->get();
+			// echo "<pre>";
+			// print_r($results->toArray()); die;
+			if(count($results) > 0){
+				$resultData = '';
+				foreach ($results as $key => $user) {
+				
+					
+					$Spouse = \App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->first(); 
+
+					$SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
+			
+					if($Spouse){
+						$amount = $user->amount;
+			
+					}elseif($SpouseParent && $user->added_as == 'Spouse'){
+			
+						$amount = $SpouseParent->amount;
+			
+					}else{
+			
+						$amount = $user->amount;
+					}
+
+					$resultData.=$user->id.','.$user->name.','.$user->added_as.','.$amount.','.$user->email.','.$user->stage.','.$user->parent_id.'<br>';
+
+					if($user->language == 'sp'){
+
+						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+						$subject = 'RECORDATORIO: El pago para asistir al GProCongress II ha vencido.';
+						$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>El pago para asistir al GProCongress II ha vencido.  Por favor, vaya a '.$url.', y realice su pago ahora.</p>
+						<p ><i><b>POR FAVOR, TENGA EN CUENTA: Debido a que no recibió su pago el 30 de junio de 2023 o antes, ha perdido su descuento de "$100 de descuento" y ahora tendrá que pagar $100 más para poder asistir al Congreso.</b></i></p>
+						<p><i><b>Su nuevo monto de pago es $'.$amount.'  ATENCIÓN: Este importe debe pagarse antes del 31 de agosto de 2023, o aumentará aún más su costo.</b></i></p>
+						<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+						<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores</i></p>
+						<p>Cordialmente,</p><p>Equipo GProCongress II</p>';
+
+					}elseif($user->language == 'fr'){
+					
+						$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
+						$subject = "RAPPEL - Votre paiement GProCongress II est maintenant dû";
+						$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant.</p>
+						<p ><i><b>VEUILLEZ NOTER : Parce que le paiement n’a pas été reçu de votre part avant le 30 juin 2023, vous avez perdu votre rabais « 100$ de réduction » et vous devrez payer 100 $ de plus pour assister au Congrès.</b></i></p>
+						<p><i><b>Le montant de votre nouveau paiement est de $'.$amount.' VEUILLEZ NOTER: Ce montant doit être payé avant le 31 août 2023, sinon votre coût augmentera encore plus.</b></i></p>
+						<p>Si vous avez des questions sur votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+						<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
+						<p>Cordialement,</p><p>L’équipe GProCongress II</p>';
+
+					}elseif($user->language == 'pt'){
+					
+						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+						$subject = 'LEMBRETE - O pagamento do GProCongress II está ainda em aberto.';
+						$msg = '<p>Caro  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>O pagamento da sua participação no GProCongress II está em aberto.  Por favor, visite o '.$url.', e faça o seu pagamento agora.</p>
+						<p ><i><b>Uma vez que o pagamento não for recebido até 30 de Junho de 2023, perderá o  desconto de "$100 de desconto" e tem agora de pagar mais $100 para participar no Congresso.</b></i></p>
+						<p><i><b>O seu novo montante de pagamento é de $'.$amount.' ATENÇÃO: Esse valor deve ser pago até 31 de agosto de 2023, ou seu custo aumentará ainda mais.</b></i></p>
+						<p>Se tiver alguma dúvida sobre como efectuar o pagamento, ou se precisar de falar com um dos membros da nossa equipa, basta responder a este e-mail.</p>
+						<p><i>Reze connosco para multiplicar a quantidade e a qualidade dos pastores-formadores. </i></p>
+						<p>Cordialmente,</p><p>Equipa do GProCongress II</p>';
+
+					}else{
+					
+						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+						$subject = 'REMINDER – Your GProCongress II payment is now due';
+						$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>Payment for your attendance at GProCongress II is now due.  Please go to '.$url.', and make your payment now.</p>
+						<p ><i><b>Because payment was not received from you by June 30, 2023, you have lost your “$100 off” discount, and you must now pay an additional $100 to attend the Congress.</b></i></p>
+						<p><i><b>Your new payment amount is $'.$amount.' PLEASE NOTE: This amount must be paid by August 31, 2023, or your cost will go up even more.</b></i></p>
+						<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+						<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
+						<p>Warmly,</p><p>GProCongress II Team</p>';
+		
+					}
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – Your GProCongress II payment is now due');
+				
+				}
+
+				
+				return response(array('message'=>' Email has been sent successfully.'), 200);
+			}
+
+			return response(array("message"=>'No results found for reminder.'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
 
 }

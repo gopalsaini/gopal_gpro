@@ -2527,6 +2527,7 @@ class UserController extends Controller {
         }
 
 	}
+	
 
 	public function groupUsersListEdit(Request $request) {
 
@@ -8775,6 +8776,49 @@ class UserController extends Controller {
 			return response(array('error'=>true,"message" => "Something went wrong.please try again"),200); 
 		
 		}
+
+	}
+
+	public function spouseUsersList(Request $request) {
+
+		if ($request->ajax()) {
+
+			$id = \App\Models\User::where('email', $request->post('email'))->first()->id;
+			$results = \App\Models\User::where([['parent_id', $id],['added_as', 'Spouse']])->get();
+
+			$html = '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;"> <thead> <tr> <th class="text-center">'. \Lang::get('admin.id') .'</th> <th class="text-center">'. \Lang::get('admin.addedas') .'</th> <th class="text-center">Name</th> <th class="text-center">'. \Lang::get('admin.action') .'</th> </tr> </thead><tbody>';
+			
+			if (count($results) > 0) {
+				foreach ($results as $key=>$result) {
+
+					$spouse = \App\Models\User::where([['parent_id', $result->id]])->first();
+
+					$key += 1;
+					$html .= '<tr>';
+					$html .= '<td class="text-center">'.$key.'.</td>';
+
+					$html .= '<td class="text-center">'.$result->added_as;
+					$html .= '</td>';
+
+					$html .= '<td class="text-center">'.$result->name.' '.$result->last_name;
+					$html .= '</td>';
+
+					$html .= '<td class="text-center">'.$result->email;
+					$html .= '</td>';
+
+					$html .= '<td class="text-center"><a href="'.route('admin.user.profile', ['id' => $result->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a>';
+					$html .= '</td>';
+
+					$html .= '</tr>';
+				}
+			} else {
+				$html .= '<tr colspan="9"><td class="text-center">No Group Users Found</td></tr>';
+			}
+			$html .= '</tbody></table>';
+
+			return response()->json(array('html'=>$html));
+			
+        }
 
 	}
 

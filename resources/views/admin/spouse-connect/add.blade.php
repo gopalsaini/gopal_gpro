@@ -54,10 +54,10 @@
                                         
 										@if(!$results  && $user->gender == '1')
 											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
-												<label for="user{{$user->id}}" style="font-size: 19px;">
-													<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
-													{{$user->name}} {{$user->last_name}} ({{$user->email}})
-												</label>
+												
+												<input value="{{$user->id}}" type="hidden" name="users[]" > 
+												{{$user->name}} {{$user->last_name}} ({{$user->email}})
+												
 												<hr>
 											</div>
 										@endif
@@ -71,7 +71,7 @@
 								<p>Female - Any Female candidate who is coming alone(whether Married or Unmarried), is at Stage-3 and no Spouse confirmations Pending</p>
 								
 								<div class="pb-3" tabindex="0"><span class="current">
-									<input type="text" style="height: 50px;" class="form-control" id="myInput" onkeyup="userSearch2()" placeholder="Search Users.." title="User"></span>
+									<input type="text" style="height: 50px;" class="form-control" id="spousesearch" onkeyup="userSearch2()" placeholder="Search Users.." title="User"></span>
 								</div>
 								<div style="border: 1px solid #00000014;height:400px;padding:10px;overflow: scroll;" id="div2" ondrop="drop(event)" ondragover="allowDrop(event)">
 									
@@ -82,10 +82,10 @@
                                         
 										@if(!$results && $user->gender == '2')
 											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
-												<label for="user{{$user->id}}" style="font-size: 19px;">
-													<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
-													{{$user->name}} {{$user->last_name}} ({{$user->email}})
-												</label>
+												
+												<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
+												{{$user->name}} {{$user->last_name}} ({{$user->email}})
+												
 												<hr>
 											</div>
 										@endif
@@ -115,6 +115,7 @@
 									
 									</div>
 								</div>
+								
 							</div>
 							
 
@@ -142,7 +143,6 @@
 
 	function drag(ev) {
 
-		
 		ev.dataTransfer.setData("text", ev.target.id);
 		
 	}
@@ -151,9 +151,11 @@
 		
 		ev.preventDefault();
 		if(ev.target.id){
+			
 			var data = ev.dataTransfer.getData("text");
 			
 			ev.target.appendChild(document.getElementById(data));
+			
 		}else{
 			return
 		}
@@ -185,7 +187,7 @@
 <script>
 	function userSearch2() {
 		var input, filter, ul, li, a, i, txtValue;
-		input = document.getElementById("myInput");
+		input = document.getElementById("spousesearch");
 		filter = input.value.toUpperCase();
 		ul = document.getElementById("div2");
 		a = ul.getElementsByClassName("SelectLocality");

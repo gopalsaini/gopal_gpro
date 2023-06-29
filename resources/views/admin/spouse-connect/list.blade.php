@@ -76,8 +76,8 @@
                                 @if(!empty($datas) && count($datas)>0)
                                     @php $sn = 1; @endphp
                                     @foreach($datas as $data)
-                                        @php $results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $data->id],['added_as', 'Group']])->get() @endphp
-                                        @if(!empty($results) && count($results)>0)
+                                        @php $results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $data->id],['added_as', 'Spouse']])->first() @endphp
+                                        @if($results)
                                             <tr>
                                                 <td>{{$sn}}</td>
                                                 <td>{{$data->name}} {{$data->last_name}}</td>
@@ -85,7 +85,7 @@
                                                 <td>+{{$data->phone_code}} {{$data->mobile}}</td>
                                                 
                                                 <td>
-                                                    <div style="display:flex"><a href="{{route('admin.spouse-connect.group.update', ['id' => $data->id] )}}" title="Update Group" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-edit"></i></a></div>
+                                                    <div style="display:flex"><a href="{{route('admin.spouse-connect.update', ['id' => $data->id] )}}" title="Update Group" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-edit"></i></a></div>
                                                 </td>
                                             </tr>
 
@@ -140,7 +140,7 @@
             } else {
 
                 $('#preloader').css('display', 'block');
-                $.post("{{ route('admin.user.group.users.list.edit') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
+                $.post("{{ route('admin.user.spouse.users.list') }}", { _token: "{{ csrf_token() }}", email: email }, function(data) {
                     row.child(data.html).show();
                     $('#preloader').css('display', 'none');
                 }, "json");

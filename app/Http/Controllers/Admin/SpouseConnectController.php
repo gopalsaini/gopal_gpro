@@ -29,45 +29,57 @@ class SpouseConnectController extends Controller
 				
 			} else {
             
-				if(!empty($request->post('users')) && count($request->post('users'))>1){
+				if(!empty($request->post('users')) && (count($request->post('users'))>1) && (count($request->post('users')) < 3)){
 
-					if($request->post('type') == 'update'){
+					$userExitsInGroup = \App\Models\User::where('parent_id',$request->post('users')[0])->where('added_as','Spouse')->first();
+					$userMain = \App\Models\User::where('id',$request->post('users')[0])->first();
 
-						$userExitsInGroup = \App\Models\User::where('parent_id',$request->post('users')[0])->where('added_as','Spouse')->get();
-						if(!empty($userExitsInGroup) && count($userExitsInGroup)>0){
+					if($userMain && $userExitsInGroup && $userMain->gender == $userExitsInGroup->gender){
 
-							foreach($userExitsInGroup as $key=>$userVal){
+						return response(array('message'=>'Selected user both gender are same'),403);
 
-								$user = \App\Models\User::where('id',$userVal->id)->first();
+					}else{
+
+						if($request->post('type') == 'update'){
+
+							$userExitsInGroup = \App\Models\User::where('parent_id',$request->post('users')[0])->where('added_as','Spouse')->get();
+						
+							if(!empty($userExitsInGroup) && count($userExitsInGroup)>0){
+	
+								foreach($userExitsInGroup as $key=>$userVal){
+	
+									$user = \App\Models\User::where('id',$userVal->id)->first();
+									if($user){
+										$user->parent_id = null;
+										$user->added_as = null;
+										$user->save();
+									}
+									
+								}
+							}
+	
+						}
+	
+						foreach($request->post('users') as $key=>$user){
+	
+							if($key++){
+								$user = \App\Models\User::where('id',$user)->first();
 								if($user){
-									$user->parent_id = null;
-									$user->added_as = null;
+									$user->parent_id = $request->post('users')[0];
+									$user->added_as = 'Spouse';
 									$user->save();
 								}
-								
 							}
+							
 						}
-
 					}
-
-					foreach($request->post('users') as $key=>$user){
-
-						if($key++){
-							$user = \App\Models\User::where('id',$user)->first();
-							if($user){
-								$user->parent_id = $request->post('users')[0];
-								$user->added_as = 'Spouse';
-								$user->save();
-							}
-						}
-						
-					}
+					
 
 					return response(array('message'=>'Spouse connected successfully.', 'reload'=>true),200);
 
 				}else{
 
-					return response(array('message'=>'Please select at least one spouse'),403);
+					return response(array('message'=>'Please select at least one or not more then one spouse'),403);
 				}
                 
 			}
@@ -110,14 +122,20 @@ class SpouseConnectController extends Controller
 
 	}
 
-    public function groupUsersGroupUpdate(Request $request,$id) {
+    public function spouseUpdate(Request $request,$id) {
 		
 		$userLeader = \App\Models\User::where('id', $id)->first();
-		$results = \App\Models\User::where([['parent_id', $id],['added_as', 'Group']])->get();
+		$results = \App\Models\User::where([['parent_id', $id],['added_as', 'Spouse']])->first();
+		
+		$query = \App\Models\User::where([['stage', '>=', '3'],['designation_id', 2],['designation_id', '!=', '14']])
 
-		$users = \App\Models\User::where([['id', '!=', '1'],['designation_id', '2'],['name','!=', '']])
-									->where('added_as',null)->orderBy('updated_at', 'desc')->get();
+					->where(function ($query1) {
+						$query1->where('added_as',null)
+							->orWhere('added_as', '=', 'Group');
+					})->orderBy('updated_at', 'desc');
 
+		$users = $query->get();
+		
         return view('admin.spouse-connect.update',compact('users','results','userLeader'));
 
 	}

@@ -1315,13 +1315,9 @@ class PostLoginController extends Controller {
 
 			$rules = [
 				'arrival_flight_number' => 'required',
-				'arrival_start_location' => 'required',
-				'arrival_date_departure' => 'required',
 				'arrival_date_arrival' => 'required',
 				'departure_flight_number' => 'required',
-				'departure_start_location' => 'required',
 				'departure_date_departure' => 'required',
-				'departure_date_arrival' => 'required',
 				'logistics_dropped' => 'required',
 				'logistics_picked' => 'required',
 				'mobile' => 'required',
@@ -1398,13 +1394,9 @@ class PostLoginController extends Controller {
 
 					$flight_details = [
 						'arrival_flight_number'=>$request->json()->get('arrival_flight_number'),
-						'arrival_start_location'=>$request->json()->get('arrival_start_location'),
 						'arrival_date_arrival'=>$request->json()->get('arrival_date_arrival'),
-						'arrival_date_departure'=>$request->json()->get('arrival_date_departure'),
 						'departure_flight_number'=>$request->json()->get('departure_flight_number'),
-						'departure_start_location'=>$request->json()->get('departure_start_location'),
 						'departure_date_departure'=>$request->json()->get('departure_date_departure'),
-						'departure_date_arrival'=>$request->json()->get('departure_date_arrival'),
 						'departure_airline_name'=>$request->json()->get('departure_airline_name'),
 						'arrival_airline_name'=>$request->json()->get('arrival_airline_name'),
 						
@@ -2462,13 +2454,9 @@ class PostLoginController extends Controller {
 			$result=[
 				'id'=>$result['id'],
 				'arrival_flight_number'=>$flight_details->arrival_flight_number,
-				'arrival_start_location'=>$flight_details->arrival_start_location,
-				'arrival_date_departure'=>$flight_details->arrival_date_departure,
 				'arrival_date_arrival'=>$flight_details->arrival_date_arrival,
 				'departure_flight_number'=>$flight_details->departure_flight_number,
-				'departure_start_location'=>$flight_details->departure_start_location,
-				'departure_date_departure'=>$flight_details->departure_date_departure,
-				'departure_date_arrival'=>$flight_details->departure_date_arrival,					
+				'departure_date_departure'=>$flight_details->departure_date_departure,			
 				'arrival_airline_name'=>$flight_details->arrival_airline_name,					
 				'departure_airline_name'=>$flight_details->departure_airline_name,					
 				'spouse_arrival_flight_number'=>$return_flight_details->spouse_arrival_flight_number ?? '',
@@ -3839,22 +3827,40 @@ class PostLoginController extends Controller {
 				'visa_not_ranted_comment'=>$resultData['visa_not_ranted_comment'],
 				'visa_granted'=>$resultData['visa_granted'],
 				'status'=>$resultData['status'],
+				'visa_category'=>$resultData['visa_category'],
 			];
 
 			$sponsorshipInfo=[];
 
 			if($resultData['admin_status'] == 'Approved'){
 
-				$sponsorshipInfo=[
+				if($resultData['visa_category'] == 'No Visa Needed'){
+
+					$sponsorshipInfo=[
 					
-					'financial_letter'=> $resultData->financial_letter != null ? asset('uploads/file/'.$resultData->financial_letter) : null,
-					'financial_spanish_letter'=> $resultData->financial_spanish_letter != null ? asset('uploads/file/'.$resultData->financial_spanish_letter) : null,
-					'visa_granted_docs'=> $resultData->visa_granted_docs != null ? asset('uploads/visa_file/'.$resultData->visa_granted_docs) : null,
-					'BANK_LETTER_CERTIFICATION'=> asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
-					'Visa_Request_Form'=> asset('uploads/file/Visa_Request_Form.pdf'),
-					'DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING'=> asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
+						'financial_letter'=> $resultData->financial_letter != null ? asset('uploads/file/'.$resultData->financial_letter) : null,
+						'financial_spanish_letter'=> $resultData->financial_spanish_letter != null ? asset('uploads/file/'.$resultData->financial_spanish_letter) : null,
+						'visa_granted_docs'=> $resultData->visa_granted_docs != null ? asset('uploads/visa_file/'.$resultData->visa_granted_docs) : null,
+						'BANK_LETTER_CERTIFICATION'=> asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
+						'Visa_Request_Form'=> null,
+						'DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING'=> null,
+						
+					];
+
+				}else{
+
+					$sponsorshipInfo=[
 					
-				];
+						'financial_letter'=> $resultData->financial_letter != null ? asset('uploads/file/'.$resultData->financial_letter) : null,
+						'financial_spanish_letter'=> $resultData->financial_spanish_letter != null ? asset('uploads/file/'.$resultData->financial_spanish_letter) : null,
+						'visa_granted_docs'=> $resultData->visa_granted_docs != null ? asset('uploads/visa_file/'.$resultData->visa_granted_docs) : null,
+						'BANK_LETTER_CERTIFICATION'=> asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
+						'Visa_Request_Form'=> asset('uploads/file/Visa_Request_Form.pdf'),
+						'DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING'=> asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
+						
+					];
+				}
+				
 			}
 
 			return response(array("error"=>false, "message"=>'data fetche succesully', "PassportInfo"=>$PassportInfo, "sponsorshipInfo"=>$sponsorshipInfo), 200);
@@ -4420,6 +4426,47 @@ class PostLoginController extends Controller {
 				return response(array("error"=>true, "message" => $e->getMessage()),200); 
 			
 			}
+		}
+	
+	}
+
+	public function yourPreferredRoommate(Request $request){
+	
+		try{
+
+			$result = [];
+			$SpouseInfoResult=\App\Models\User::where('parent_id',$request->user()->id)->where('added_as','Spouse')->first();
+
+			if($request->user()->added_as == null && !$SpouseInfoResult) {
+                
+				$users = \App\Models\User::where([['status', '!=', '1']])
+						->where(function ($query) {
+							$query->where('added_as',null)
+								->orWhere('added_as', '=', 'Group');
+						})->where('id','!=',$request->user()->id)->where('stage','>','2')->where('gender',$request->user()->gender)->orderBy('updated_at', 'desc')->get();
+				
+
+				if($users){
+
+					foreach($users as $con){
+
+						$result[]=[
+							'id'=>$con['id'],
+							'name'=>$con['name'].' '.$con['last_name'],
+						];
+					}
+				}
+
+				
+						
+			}
+
+			return response(array("error"=>false, 'message'=>'Request get successfully','result'=>$result),200);
+				
+		}catch (\Exception $e){
+		
+			return response(array("error"=>true, "message" => $e->getMessage()),200); 
+		
 		}
 	
 	}

@@ -54,10 +54,10 @@
                                         
 										@if(!$resultsData)
 											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
-												<label for="user{{$user->id}}" style="font-size: 19px;">
-													<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
-													{{$user->name}} {{$user->last_name}} ({{$user->email}})
-												</label>
+												
+												<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
+												{{$user->name}} {{$user->last_name}} ({{$user->email}})
+												
 												<hr>
 											</div>
 										@endif
@@ -80,10 +80,10 @@
 										<div style="border: 1px solid #00000014;height:50px;padding:10px"  >
 											@if($userLeader)
 												<div class="SelectLocality" >
-													<label for="user{{$userLeader->id}}" style="font-size: 19px;">
-														<input id="user{{$userLeader->id}}" value="{{$userLeader->id}}" type="hidden" name="users[]" > 
-														{{$userLeader->name}} {{$userLeader->last_name}} ({{$userLeader->email}})
-													</label>
+													
+													<input id="user{{$userLeader->id}}" value="{{$userLeader->id}}" type="hidden" name="users[]" > 
+													{{$userLeader->name}} {{$userLeader->last_name}} ({{$userLeader->email}})
+												
 													<hr>
 												</div>
 											@endif
@@ -97,10 +97,10 @@
 												@foreach($results as $user)
 
 													<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
-														<label for="user{{$user->id}}" style="font-size: 19px;">
-															<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
-															{{$user->name}} {{$user->last_name}} ({{$user->email}})
-														</label>
+														
+														<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
+														{{$user->name}} {{$user->last_name}} ({{$user->email}})
+														
 														<hr>
 													</div>
 												@endforeach

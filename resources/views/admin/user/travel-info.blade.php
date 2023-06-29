@@ -34,38 +34,18 @@
                     
                     <h5 style="margin-top:20px; "><b>@lang('admin.flight') @lang('admin.details') </b></h5>
                     <div class="row col-sm-12" style="margin-left:10px">
-                        <h5 style="margin-top:20px; "><b>Arrival to Panama - Attendee </b></h5>
-                        <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$flight_details->arrival_flight_number}}</p></div>
-                        <div class="col-sm-4"><p><strong> Start Location :</strong> {{$flight_details->arrival_start_location}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$flight_details->arrival_date_departure}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$flight_details->arrival_date_arrival}}</p></div>
+                        <h5 style="margin-top:20px; "><b>Arrival to Panama -  </b></h5>
                         <div class="col-sm-4"><p><strong> Airline Name :</strong> {{$flight_details->arrival_airline_name}}</p></div>
-
+                        <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$flight_details->arrival_flight_number}}</p></div>
+                        <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$flight_details->arrival_date_arrival}}</p></div>
+                        
                         <h5 style="margin-top:20px; "><b>Departure from Panama - </b></h5>
-                        <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$flight_details->departure_flight_number}}</p></div>
-                        <div class="col-sm-4"><p><strong> Start Location :</strong> {{$flight_details->departure_start_location}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$flight_details->departure_date_departure}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$flight_details->departure_date_arrival}}</p></div>
                         <div class="col-sm-4"><p><strong> Airline Name :</strong> {{$flight_details->departure_airline_name}}</p></div>
+                        <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$flight_details->departure_flight_number}}</p></div>
+                        <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$flight_details->departure_date_departure}}</p></div>
                     </div>
                 @endif
-                @if($return_flight_details)
-                    <div class="row col-sm-12" style="margin-left:10px">
-                        <h5 style="margin-top:20px; "><b>Arrival to Panama -   Spouse</b></h5>
-                        <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$return_flight_details->spouse_arrival_flight_number}}</p></div>
-                        <div class="col-sm-4"><p><strong> Start Location :</strong> {{$return_flight_details->spouse_arrival_start_location}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$return_flight_details->spouse_arrival_date_departure}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$return_flight_details->spouse_arrival_date_arrival}}</p></div>
-
-                        <h5 style="margin-top:20px; "><b>Departure from Panama - </b></h5>
-                        <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$return_flight_details->spouse_departure_flight_number}}</p></div>
-                        <div class="col-sm-4"><p><strong> Start Location :</strong> {{$return_flight_details->spouse_departure_start_location}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$return_flight_details->spouse_departure_date_departure}}</p></div>
-                        <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$return_flight_details->spouse_departure_date_arrival}}</p></div>
-                    </div>
-                   
-                   
-                @endif
+                
             @endif
 
             

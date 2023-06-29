@@ -263,6 +263,9 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::post('upload-draft-information', 'Admin\UserController@uploadDraftInformation')->name('upload-draft-information');
 		Route::post('upload-final-information', 'Admin\UserController@uploadFinalInformation')->name('upload-final-information');
 
+		
+		Route::post('spouse/users/list', 'Admin\UserController@spouseUsersList')->name('spouse.users.list');
+
 	});
 
 	// exhibitor
@@ -442,7 +445,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 	Route::group(['prefix'=>'spouse-connect', 'as'=>'spouse-connect.'], function() {
 		Route::match(['get','post'], 'add', 'Admin\SpouseConnectController@add')->name('add');
 		Route::get('list', 'Admin\SpouseConnectController@list')->name('list');
-		Route::get('group/update/{id}', 'Admin\SpouseConnectController@groupUsersGroupUpdate')->name('group.update');
+		Route::get('update/{id}', 'Admin\SpouseConnectController@spouseUpdate')->name('update');
 
 	});
 	

@@ -54,10 +54,10 @@
                                         
 										@if(!$results)
 											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
-												<label for="user{{$user->id}}" style="font-size: 19px;">
-													<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
-													{{$user->name}} {{$user->last_name}} ({{$user->email}})
-												</label>
+												
+												<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
+												{{$user->name}} {{$user->last_name}} ({{$user->email}})
+												
 												<hr>
 											</div>
 										@endif
