@@ -44,6 +44,7 @@ Route::match(['get','post'],'stripe', 'HomeController@stripePost')->name('stripe
 Route::match(['get','post'],'stripe/{id}', 'HomeController@stripePaymentPage')->name('stripe.page');
 
 Route::match(['get','post'],'exhibitor-payment/{token?}', "HomeController@exhibitorPaymentLink")->name('exhibitor.payment');
+Route::match(['get','post'],'room-change-payment/{token?}', "HomeController@roomChangePaymentLink")->name('room-change.payment');
 
 
 Route::match(['get','post'],'spouse-confirm-registration/{token?}', "HomeController@SpouseConfirmRegistration")->name('spouse-confirm-registration');
@@ -103,6 +104,9 @@ Route::group(['middleware'=>'Userauth'],function(){
 		Route::post('sponsorship-confirm/decline/', "ProfileController@PassportInfoReject")->name('sponsorshipLetterReject');
 		Route::post('visa-is-not-granted', "ProfileController@visaIsNotGranted")->name('visa-is-not-granted');
 		Route::get('passport/visa-granted', 'ProfileController@visaGranted')->name('visa-granted');
+
+		Route::get('room-partner/{type}/{id}', "ProfileController@roomPartnerStatus")->name('roomPartnerStatus');
+
 
 	});
 });
@@ -191,6 +195,8 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::post('cash-payment-submit', 'Admin\UserController@cashPaymentSubmit')->name('cash-payment-submit'); 
 
 		Route::post('profile-status', 'Admin\UserController@profileStatus')->name('profile.status');
+		Route::post('profile-room-upgrade', 'Admin\UserController@profileRoomUpgrade')->name('profile.room-upgrade');
+
 		Route::match(['get', 'post'], 'comment-to-user', 'Admin\UserController@commentToUser')->name('comment.to.user');
 		Route::match(['get'], 'userHistoryList', 'Admin\UserController@userHistoryList')->name('userHistoryList');
 		Route::match(['get'], 'userMailTriggerList', 'Admin\UserController@userMailTriggerList')->name('userMailTriggerList');
@@ -253,6 +259,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('user-details/{id}', 'Admin\UserController@userDetails')->name('details');
 
 		Route::post('get-profile-base-price', 'Admin\UserController@getProfileBasePrice')->name('get-profile-base-price');
+		Route::post('get-profile-room-upgrade', 'Admin\UserController@getProfileRoomUpgrade')->name('get-profile-room-upgrade');
 		Route::post('get-offer-price', 'Admin\UserController@getOfferPrice')->name('get-offer-price');
 
 		Route::post('group/users/list', 'Admin\UserController@groupUsersList')->name('group.users.list');
@@ -437,6 +444,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('delete/{id}', 'Admin\CommunityController@delete')->name('delete'); 
 		Route::post('status', 'Admin\CommunityController@status')->name('status');
 		Route::get('group/update/{id}', 'Admin\CommunityController@groupUsersGroupUpdate')->name('group.update');
+		Route::get('group/delete/{id}', 'Admin\CommunityController@groupUsersGroupDelete')->name('group.delete');
 
 	});
 

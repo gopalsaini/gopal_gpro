@@ -114,11 +114,11 @@
 
 	function drag(ev) {
 		ev.dataTransfer.setData("text", ev.target.id);
-		alert(ev.target.id);
+		
 	}
 
 	function drop(ev) {
-		alert();
+		
 		ev.preventDefault();
 		if(ev.target.id){
 			var data = ev.dataTransfer.getData("text");

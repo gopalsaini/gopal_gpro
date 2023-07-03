@@ -198,13 +198,13 @@
                                                 <ul>
                                                     <li>
                                                         <p><span class=""><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB blink">0</span> 
-                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WOEB">0</span></del></span>
+                                                        <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WEB ">0</span> </del>
+                                                        &nbsp; &nbsp;$<span class="twin-sharing-WOEB blink">0</span></span>
                                                     </li>
                                                     <li>
                                                         <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB blink">0</span>
-                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WOEB">0</span></del>
+                                                        <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WEB ">0</span></del>
+                                                        &nbsp; &nbsp;$<span class="single-room-WOEB blink">0</span>
                                                     </li>
                                                 </ul>
                                             </div>

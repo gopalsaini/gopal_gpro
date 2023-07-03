@@ -101,7 +101,7 @@ class CommunityController extends Controller
 
 	}
 
-    public function edit($id) {
+    public function edit(Request $request,$id) {
 		
 		$result = \App\Models\Community::find($id);
 
@@ -157,6 +157,28 @@ class CommunityController extends Controller
 									->where('added_as',null)->orderBy('updated_at', 'desc')->get();
 
         return view('admin.community.update',compact('users','results','userLeader'));
+
+	}
+
+    public function groupUsersGroupDelete(Request $request,$id) {
+		
+		$userExitsInGroup = \App\Models\User::where('parent_id',$id)->where('added_as','Group')->get();
+		if(!empty($userExitsInGroup) && count($userExitsInGroup)>0){
+
+			foreach($userExitsInGroup as $key=>$userVal){
+
+				$user = \App\Models\User::where('id',$userVal->id)->first();
+				if($user){
+					$user->parent_id = null;
+					$user->added_as = null;
+					$user->save();
+				}
+				
+			}
+		}
+
+		$request->session()->flash('5fernsadminsuccess','Group deleted successfully.');
+		return redirect()->back();
 
 	}
 }

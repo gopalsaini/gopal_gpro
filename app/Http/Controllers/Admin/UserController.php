@@ -96,7 +96,6 @@ class UserController extends Controller {
 					$data->name = $request->post('first_name');
 					$data->last_name = $request->post('last_name');
 					$data->gender = $request->post('gender');
-					$data->citizenship = $request->post('citizenship');
 					$data->dob = $dob;
 					
 					$data->mobile = $request->post('mobile');
@@ -115,6 +114,7 @@ class UserController extends Controller {
 
 					if($data && $data->designation_id != '4' && $data->designation_id != '6'){
 
+						
 						$data->ministry_name = $request->post('ministry_name');
 						$data->ministry_zip_code = $request->post('ministry_zip_code');
 						$data->ministry_address = $request->post('ministry_address');
@@ -156,9 +156,9 @@ class UserController extends Controller {
 							}
 						}
 						
-
 						if($data && $data->stage == '0'){
 
+							$data->citizenship = $request->post('citizenship');
 							$data->profile_status = 'Approved';
 							$data->profile_update = 'Approved';
 							$data->amount = '0.00';
@@ -3529,7 +3529,31 @@ class UserController extends Controller {
 										'Stage 2', 
 										'Stage 3', 
 										'Stage 4', 
-										'Stage 5'); 
+										'Stage 5',
+										'Status',
+										'Full name', 
+										'Passport number', 
+										'Passport Copy', 
+										'Passport Issued by (Country)', 
+										'Current Residence/Travelling From (Country)',
+										'Is this a diplomatic passport?',
+										"Do you have a valid Visa or Residence, duly issued by Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union?",
+										"Is your visa from one of the countries identified in the previous step a multiple entry visa, and is 6 month visa validity?",
+										"Have you used your multiple entry visa at least once before to enter the country that granted it? ",
+										"Is your passport valid until May 31, 2024?",
+										'What countries among Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union you hold the Valid Visa?',
+										'Is your Visa Granted ?',
+										'Arrival Airline Name',
+										'Arrival Flight Number',
+										'Arrival Date Time Of Arrival',
+										'Departure Airline Name',
+										'Departure Flight Number',
+										'Departure Date Time Of Arrival',
+										'Emergency Contact Name',
+										'Emergency Contact Phone',
+										'Would you like to be picked by GProCongress from Airport(PTY)',
+										'Would you like to be dropped by GProCongress at Airport(PTY)',
+									); 
 					fputcsv($f, $fields, $delimiter); 
 
 					$i=1;
@@ -3604,18 +3628,114 @@ class UserController extends Controller {
 
 						
 						if($row['TravelInfo'] && $row['TravelInfo']['flight_details']) {
+
 							$flight_details = json_decode($row['TravelInfo']['flight_details']);
-							$cabNeededOnArrival = $row['TravelInfo']['logistics_dropped'];
-							$cabNeededOnDeparture = $row['TravelInfo']['logistics_picked'];
+							$logistics_dropped = $row['TravelInfo']['logistics_dropped'];
+							$logistics_picked = $row['TravelInfo']['logistics_picked'];
+							$emergency_mobile = $row['TravelInfo']['mobile'];
+							$emergency_name = $row['TravelInfo']['name'];
+
 							if(!empty($flight_details)){
-								$arrivalDate = date('d-m-Y',strtotime($flight_details->arrival_date_arrival));
-								$departureDate = date('d-m-Y',strtotime($flight_details->departure_date_departure));
+
+								$arrival_airline_name = '';
+								if(isset($flight_details->arrival_airline_name)){
+									$arrival_airline_name = $flight_details->arrival_airline_name;
+								}
+
+								$departure_airline_name = '';
+								if(isset($flight_details->departure_airline_name)){
+									$departure_airline_name = $flight_details->departure_airline_name;
+								}
+
+								$arrival_flight_number = $flight_details->arrival_flight_number;
+								$arrival_date_arrival = date('d-m-Y H:s:i',strtotime($flight_details->arrival_date_arrival));
+								$departure_flight_number = $flight_details->departure_flight_number;
+								$departure_date_departure = date('d-m-Y H:s:i',strtotime($flight_details->departure_date_departure));
 							}
 							
+						}else{
+
+							$logistics_dropped = '';
+							$logistics_picked = '';
+							$emergency_mobile = '';
+							$emergency_name = '';
+							$arrival_airline_name = '';
+							$arrival_flight_number = '';
+							$arrival_date_arrival = '';
+							$departure_airline_name = '';
+							$departure_flight_number = '';
+							$departure_date_departure = '';
+
 						}
 
 						if($row['mobile']){
 							$mobile = '+'.$row['phone_code'].' '.$row['mobile'];
+						}
+
+						$queryPass = \App\Models\PassportInfo::select('passport_infos.*','users.language','users.citizenship as citizenship')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', '2')->orderBy('updated_at', 'desc');
+
+						$passportValuedata = $queryPass->where('user_id',$row['id'])->first(); $passportCopy = ''; $ResidenceProof = '';
+						
+						if($passportValuedata){
+
+							$passportName= $passportValuedata['salutation'].' '.$passportValuedata['name'];
+							$passport_no = $passportValuedata['passport_no'];
+							$countryPass= \App\Helpers\commonHelper::getCountry2NameById($passportValuedata['country_id']);
+							$passportcountry= \App\Helpers\commonHelper::getCountryNameById($passportValuedata['citizenship']);
+							
+							$diplomatic_passport = $passportValuedata['diplomatic_passport'];
+							$visa_residence = $passportValuedata['visa_residence'] == Null ? 'N/A' : $passportValuedata['visa_residence'];
+							$multiple_entry_visa_country = $passportValuedata['multiple_entry_visa_country'] == Null ? 'N/A' : $passportValuedata['multiple_entry_visa_country'];
+							$multiple_entry_visa = $passportValuedata['multiple_entry_visa'] == Null ? 'N/A' : $passportValuedata['multiple_entry_visa'];
+							$passport_valid = $passportValuedata['passport_valid'] == Null ? 'N/A' : $passportValuedata['passport_valid'];
+
+							if($passportValuedata['passport_copy'] != ''){
+								foreach(explode(",",rtrim($passportValuedata['passport_copy'], ',')) as $key=>$img){
+									$passportCopy .= asset('/uploads/passport/'.$img);
+								}
+							}
+
+							if($passportValuedata['valid_residence_country'] != Null){
+
+								if($passportValuedata['valid_residence_country'] != ''){
+
+									$countryDoc = json_decode($passportValuedata['valid_residence_country'],true); 
+
+									foreach($countryDoc as $key=>$img){
+
+										if($img['id'] == '15'){
+											$ResidenceProof.= 'Visa/Residence Proof for European Union, '.asset('/uploads/passport/'.$img['file']).', ';
+
+										}else{
+
+											$ResidenceProof.= 'Visa/Residence Proof for '.\App\Helpers\commonHelper::getCountry2NameById($img['id']).' '.asset('/uploads/passport/'.$img['file']).', ';
+											
+										}
+										
+									}
+								}
+
+							}else{
+								$ResidenceProof = 'N/A';
+							}
+
+							$visa_granted = $passportValuedata['visa_granted'] == Null ? 'N/A' : $passportValuedata['visa_granted'];
+
+						}else{
+
+							$passportName= '';
+							$passport_no = '';
+							$countryPass= '';
+							$passportcountry= '';
+							$diplomatic_passport = '';
+							$visa_residence = '';
+							$multiple_entry_visa_country = '';
+							$multiple_entry_visa = '';
+							$passport_valid = '';
+							$visa_granted = '';
+							$ResidenceProof = '';
+							
+							
 						}
 
 						$lineData = array(($i), 'Stage '.$row['stage'], 
@@ -3642,7 +3762,31 @@ class UserController extends Controller {
 						$cabNeededOnArrival,
 						$cabNeededOnDeparture,
 						$stage0, $stage1, 
-						$stage2, $stage3, $stage4, $stage5); 
+						$stage2, $stage3, $stage4, $stage5,$row['profile_status'],
+						$passportName,
+						$passport_no,
+						$passportCopy,
+						$countryPass,
+						$passportcountry,
+						$diplomatic_passport,
+						$visa_residence,
+						$multiple_entry_visa_country,
+						$multiple_entry_visa,
+						$passport_valid,
+						$ResidenceProof,
+						$visa_granted,
+
+						$arrival_airline_name,
+						$arrival_flight_number,
+						$arrival_date_arrival,
+						$departure_airline_name,
+						$departure_flight_number,
+						$departure_date_departure,
+						$emergency_name,
+						$emergency_mobile,
+						$logistics_picked,
+						$logistics_dropped,
+					); 
 						
 						fputcsv($f, $lineData, $delimiter); 
 						
@@ -3660,14 +3804,45 @@ class UserController extends Controller {
 								$j = 1;
 							foreach($results as $val){
 
-								if(isset($val['TravelInfo']) && $val['TravelInfo']['flight_details']) {
+								if($val['TravelInfo'] && $val['TravelInfo']['flight_details']) {
+
 									$flight_details = json_decode($val['TravelInfo']['flight_details']);
-									$cabNeededOnArrival = $val['TravelInfo']['logistics_dropped'];
-									$cabNeededOnDeparture = $val['TravelInfo']['logistics_picked'];
+									$logistics_dropped = $val['TravelInfo']['logistics_dropped'];
+									$logistics_picked = $val['TravelInfo']['logistics_picked'];
+									$emergency_mobile = $val['TravelInfo']['mobile'];
+									$emergency_name = $val['TravelInfo']['name'];
+		
 									if(!empty($flight_details)){
-										$arrivalDate = date('d-m-Y',strtotime($flight_details->arrival_date_arrival));
-										$departureDate = date('d-m-Y',strtotime($flight_details->departure_date_departure));
+		
+										$arrival_airline_name = '';
+										if(isset($flight_details->arrival_airline_name)){
+											$arrival_airline_name = $flight_details->arrival_airline_name;
+										}
+
+										$departure_airline_name = '';
+										if(isset($flight_details->departure_airline_name)){
+											$departure_airline_name = $flight_details->departure_airline_name;
+										}
+
+										$arrival_flight_number = $flight_details->arrival_flight_number;
+										$arrival_date_arrival = date('d-m-Y H:s:i',strtotime($flight_details->arrival_date_arrival));
+										$departure_flight_number = $flight_details->departure_flight_number;
+										$departure_date_departure = date('d-m-Y H:s:i',strtotime($flight_details->departure_date_departure));
 									}
+									
+								}else{
+		
+									$logistics_dropped = '';
+									$logistics_picked = '';
+									$emergency_mobile = '';
+									$emergency_name = '';
+									$arrival_airline_name = '';
+									$arrival_flight_number = '';
+									$arrival_date_arrival = '';
+									$departure_airline_name = '';
+									$departure_flight_number = '';
+									$departure_date_departure = '';
+		
 								}
 
 
@@ -3738,6 +3913,72 @@ class UserController extends Controller {
 									$mobile = '+'.$val['phone_code'].' '.$val['mobile'];
 								}
 
+								$queryPass = \App\Models\PassportInfo::select('passport_infos.*','users.language','users.citizenship as citizenship')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', '2')->orderBy('updated_at', 'desc');
+
+								$passportValuedata = $queryPass->where('user_id',$val['id'])->first(); $passportCopy = ''; $ResidenceProof = '';
+								
+								if($passportValuedata){
+
+									$passportName= $passportValuedata['salutation'].' '.$passportValuedata['name'];
+									$passport_no = $passportValuedata['passport_no'];
+									$countryPass= \App\Helpers\commonHelper::getCountry2NameById($passportValuedata['country_id']);
+									$passportcountry= \App\Helpers\commonHelper::getCountryNameById($passportValuedata['citizenship']);
+									
+									$diplomatic_passport = $passportValuedata['diplomatic_passport'];
+									$visa_residence = $passportValuedata['visa_residence'] == Null ? 'N/A' : $passportValuedata['visa_residence'];
+									$multiple_entry_visa_country = $passportValuedata['multiple_entry_visa_country'] == Null ? 'N/A' : $passportValuedata['multiple_entry_visa_country'];
+									$multiple_entry_visa = $passportValuedata['multiple_entry_visa'] == Null ? 'N/A' : $passportValuedata['multiple_entry_visa'];
+									$passport_valid = $passportValuedata['passport_valid'] == Null ? 'N/A' : $passportValuedata['passport_valid'];
+
+									if($passportValuedata['passport_copy'] != ''){
+										foreach(explode(",",rtrim($passportValuedata['passport_copy'], ',')) as $key=>$img){
+											$passportCopy .= asset('/uploads/passport/'.$img);
+										}
+									}
+
+									if($passportValuedata['valid_residence_country'] != Null){
+
+										if($passportValuedata['valid_residence_country'] != ''){
+
+											$countryDoc = json_decode($passportValuedata['valid_residence_country'],true); 
+
+											foreach($countryDoc as $key=>$img){
+
+												if($img['id'] == '15'){
+													$ResidenceProof.= 'Visa/Residence Proof for European Union, '.asset('/uploads/passport/'.$img['file']).', ';
+
+												}else{
+
+													$ResidenceProof.= 'Visa/Residence Proof for '.\App\Helpers\commonHelper::getCountry2NameById($img['id']).' '.asset('/uploads/passport/'.$img['file']).', ';
+													
+												}
+												
+											}
+										}
+
+									}else{
+										$ResidenceProof = 'N/A';
+									}
+
+									$visa_granted = $passportValuedata['visa_granted'] == Null ? 'N/A' : $passportValuedata['visa_granted'];
+
+								}else{
+
+									$passportName= '';
+									$passport_no = '';
+									$countryPass= '';
+									$passportcountry= '';
+									$diplomatic_passport = '';
+									$visa_residence = '';
+									$multiple_entry_visa_country = '';
+									$multiple_entry_visa = '';
+									$passport_valid = '';
+									$visa_granted = '';
+									$ResidenceProof = '';
+									
+									
+								}
+
 								$lineData = array(($i), 'Stage '.$val['stage'], 
 									$val['name'].' '.$val['last_name'], 
 									$val['email'], 
@@ -3762,7 +4003,31 @@ class UserController extends Controller {
 									$cabNeededOnArrival,
 									$cabNeededOnDeparture,
 									$stage0, $stage1, 
-									$stage2, $stage3, $stage4, $stage5); 
+									$stage2, $stage3, $stage4, $stage5,$val['profile_status'],
+									$passportName,
+									$passport_no,
+									$passportCopy,
+									$countryPass,
+									$passportcountry,
+									$diplomatic_passport,
+									$visa_residence,
+									$multiple_entry_visa_country,
+									$multiple_entry_visa,
+									$passport_valid,
+									$ResidenceProof,
+									$visa_granted,
+
+									$arrival_airline_name,
+									$arrival_flight_number,
+									$arrival_date_arrival,
+									$departure_airline_name,
+									$departure_flight_number,
+									$departure_date_departure,
+									$emergency_name,
+									$emergency_mobile,
+									$logistics_picked,
+									$logistics_dropped,
+								); 
 								fputcsv($f, $lineData, $delimiter);
 
 								$j++;
@@ -5801,9 +6066,11 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-				
+					
 					return '<div style="display:flex">
-						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a></div>';
+							<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+							<a href="javascript:void(0)" title="Room Upgrade" data-id="'.$data->id.'" class="btn btn-sm btn-success px-3 m-1 text-white room_upgrade">Room Upgrade</a>
+							</div>';
 				
 		    })
 
@@ -6328,6 +6595,12 @@ class UserController extends Controller {
 									
 				}
 
+				if($user){
+					$user->stage = '4';
+					$user->status_change_at = date('Y-m-d H:i:s');
+					$user->save();
+				}
+
 				\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 
 				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
@@ -6612,7 +6885,7 @@ class UserController extends Controller {
 				$passportApprove->save();
 
 				$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
-
+				
 				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$passportApprove->id);  // 4 letter
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id, 'Passport Info Approved', 'Passport Info Approved', 'Passport Info Approved');
 		
@@ -8819,6 +9092,201 @@ class UserController extends Controller {
 			return response()->json(array('html'=>$html));
 			
         }
+
+	}
+	
+	public function getProfileRoomUpgrade(Request $request) {
+
+		if ($request->ajax()) {
+
+			// echo "sdsdsd"; die;
+
+			$basePrice = 0; $Spouse = []; $category = []; $trainer = '';
+
+			$user = \App\Models\User::where('id', $request->post('id'))->where('stage','3')->first();
+
+			if($user){
+
+				$citizenship = $user->citizenship;
+
+				if($request->post('citizenship')){
+
+					$citizenship = $request->post('citizenship');
+
+				}
+				
+				$countryPrice=\App\Models\Pricing::where('country_id',$citizenship)->first();
+
+				$Spouse = \App\Models\User::where('parent_id', $request->post('id'))->where('added_as', 'Spouse')->first();
+				
+				if($user->marital_status == 'Unmarried'){
+
+					$data = \App\Helpers\commonHelper::getBasePriceOfUnmarried($user->room,$countryPrice->base_price);
+					
+					$basePrice = $data ['basePrice'];
+					$category = $data ['category'];
+
+
+				}else if($user->marital_status == 'Married' && !$Spouse){
+
+					$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWOSpouse($user->room,$countryPrice->base_price);
+
+					$basePrice = $data ['basePrice'];
+					$category = $data ['category'];
+
+				}else if($user->marital_status == 'Married' && $Spouse){
+
+					if($user->parent_spouse_stage >= 2){
+
+						$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWOSpouse($user->room,$countryPrice->base_price);
+						$basePrice = $data ['basePrice'];
+						$category = $data ['category'];
+
+					}else{
+
+						$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$countryPrice->base_price);
+
+						$basePrice = $data ['basePrice'];
+						$category = $data ['category'];
+						$trainer = $data ['trainer'];
+					}
+					
+				}
+
+				if($user->early_bird == 'Yes'){
+					$basePrice = $basePrice-100;
+				}
+
+
+				$Offers = \App\Models\Offer::where([
+					['status','=','1'],
+					['start_date','<=',date('Y-m-d')],
+					['end_date','>=',date('Y-m-d')]
+					])->orderBy('id','desc')->get();
+
+				$country = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
+
+				$html=view('admin.user.stage.stage_three_romm_upgrade_model',compact('basePrice','Offers','category','trainer','country','user','citizenship'))->render();
+
+				return response()->json(array('html'=>$html));
+				
+
+			}
+			
+        }
+
+	}
+
+	
+	public function profileRoomUpgrade(Request $request) {
+		
+		$result = \App\Models\User::find($request->post('user_id'));
+		
+		if ($result) {
+
+			if($request->post('room_type') == 'Yes' && $request->post('category') != ''){
+
+				$token = md5(rand(1111111,4444444));
+
+				$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$request->post('user_id'))->first();
+				
+				if(!$roomupgrade){
+
+					$roomupgrade = new \App\Models\RoomUpgrade();
+				}
+				$roomupgrade->user_id =$request->post('user_id');
+				$roomupgrade->room_type =$request->post('room_type');
+				$roomupgrade->category =$request->post('category');
+				$roomupgrade->amount=$request->post('amount')-$result->amount;
+				$roomupgrade->token = $token;
+				$roomupgrade->save();			
+				
+				$name= $result->name.' '.$result->last_name;
+
+				if($request->post('amount') > $result->amount){
+
+					$website = '<a href="'.url('room-change-payment/'.$token).'">Website</a>';
+
+					if($result->language == 'sp'){
+
+						$subject = '¡Felicidades! ¡Has sido aprobado! Por favor, realice su pago ahora.';
+						$msg = '<p>Estimado '.$name.',</p>
+						<p>Nuestro equipo ha revisado su solicitud y nos complace informarle que ha sido aprobado como exhibidor para el GProCongress II. ¡Esperamos tenerle con nosotros en Panamá este noviembre! </p>
+						<p>Le pedimos que realice su pago lo antes posible. Le recordamos que los exhibidores se eligen por orden de llegada, “primero en pagar, primero en entrar”. En consecuencia, si espera demasiado para realizar su pago, podría quedar fuera del Congreso como exhibidor, debido a que todos los cupos de exhibidores ya podrían estar llenos.</p>
+						<p>Puede pagar su inscripción como exhibidor de $800 USD utilizando este enlace en el que puede hacer clic una sola '.$website.', mediante cualquiera de las tarjetas de crédito permitidas.&nbsp;</p>
+						<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+						<p>Ore con nosotros para que se multiplique la cantidad y calidad de capacitadores de pastores.</p>
+						<p>Cordialmente,</p>
+						<p>Equipo GProCongress II</p>';
+
+					}elseif($result->language == 'fr'){
+
+						$subject = 'Félicitations!  Vous avez été approuvé !  Prière d’effectuer votre paiement maintenant.';
+						$msg = '<p>Cher  '.$name.',</p>
+						<p>Notre équipe a examiné votre demande et nous sommes heureux de vous informer que vous avez été approuvé en tant qu’exposant pour GProCongress II.  Nous sommes impatients de vous avoir avec nous au Panama en novembre!</p>
+						<p>Nous vous demandons d’effectuer votre paiement dès que possible.  Nous vous rappelons que les exposants sont choisis selon le principe du « premier à payer, premier arrivé».  Par conséquent, si vous attendez trop longtemps pour effectuer votre paiement, vous pourriez être exclu du Congrès en tant qu’exposant, car tous les créneaux d’exposants pourraient déjà être pris.</p>
+						<p>Vous pouvez payer vos frais d’exposition de 800 USD en utilisant une seule fois ce lien cliquable '.$website.', par l’intermédiaire de n’importe quelle carte de crédit majeure.&nbsp;</p>
+						<p>Si vous avez des questions, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à ce courriel.</p>
+						<p>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</p>
+						<p>Cordialement,</p>
+						<p>L’équipe GProCongress II</p>';
+
+					}elseif($result->language == 'pt'){
+
+						$subject = 'Parabéns! Você foi aprovado! Por favor, faça seu pagamento agora.';
+						$msg = "<p>Caro  '.$name.',</p>
+						<p>Nossa equipe revisou sua inscrição e temos o prazer de informar que você foi aprovado como Expositor do GProCongresso II. Estamos ansiosos para tê-lo conosco no Panamá em novembro! </p>
+						<p>Pedimos que efetue seu pagamento o quanto antes. Lembramos que os expositores são escolhidos na base do “primeiro a pagar, primeiro a chegar”. Dessa forma, se você demorar muito para efetuar o pagamento, poderá ficar de fora do Congresso como expositor, pois todas as vagas de expositor já podem estar preenchidas</p>
+						<p>Você pode pagar sua taxa de exibição de $ 800 USD usando este '.$website.', usando qualquer cartão de crédito.'&nbsp;</p>
+						<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, basta responder a este e-mail</p>
+						<p>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</p>
+						<p>Calorosamente,,</p>
+						<p>Equipe GProCongresso  II</p>";
+
+					}else{
+				
+						$subject = 'Congratulations!  You have been approved!  Please make your payment now';
+						$msg = '<p>Dear '.$name.',</p>
+						<p>Our team has reviewed your submission, and we are pleased to inform you that you have been approved as an Exhibitor for GProCongress II.  We are looking forward to having you with us in Panama this November!  </p>
+						<p>We ask that you make your payment as soon as possible.  We would remind you that exhibitors are chosen on a “first pay, first come” basis.  Accordingly, if you wait too long to make your payment, you could be left out of the Congress as an exhibitor, because all exhibitor slots could already be full.</p>
+						<p>You may pay your $800 USD exhibition fee using this one time clickable '.$website.', using any major credit card.&nbsp;</p>
+						<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
+						<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+						<p>Warmly,</p>
+						<p>The GProCongress II Team</p>';
+
+					}
+
+					\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+
+
+				}else{
+
+					if($request->post('room_type') == 'Yes' && $request->post('category') != ''){
+						$result->room = $request->post('category');
+						$result->change_room_type = $request->post('room_type');
+						$result->upgrade_category = $request->post('category');
+						$result->save();	
+					}
+
+				}
+				
+				$UserHistory=new \App\Models\UserHistory();
+				$UserHistory->user_id=$result->id;
+				$UserHistory->action_id=\Auth::user()->id;
+				$UserHistory->action='Room Change Request send';
+				$UserHistory->save();
+
+				return response(array('error'=>false, 'reload'=>true, 'message'=>'Room Change Request send'), 200);
+			}
+			
+			return response(array('error'=>true, 'reload'=>false, 'message'=>'Something went wrong. Please try again.'), 403);
+		
+		} else {
+
+			return response(array('error'=>true, 'reload'=>false, 'message'=>'Something went wrong. Please try again.'), 403);
+		}
 
 	}
 

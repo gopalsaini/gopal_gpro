@@ -1135,5 +1135,36 @@ class HomeController extends Controller
 
     }
 
+    
+    public function roomChangePaymentLink(Request $request,$token){
+
+        $linkPayment = \App\Models\RoomUpgrade::where('token',$token)->first();
+
+        if($linkPayment && $linkPayment->amount >0){
+
+            $data = \App\Helpers\commonHelper::paymentGateway($linkPayment->user_id,$linkPayment->amount,5);
+
+            // 5 -> particular type of room upgrade
+
+            $id = $data['order_id'];
+            
+            $intent = $data['intent'];
+            \Session::put('intent',$intent);
+            \Session::put('roomUpgradeUser',$linkPayment);
+            
+            $linkPayment->order_id = $id;
+            $linkPayment->save();
+
+            \App\Helpers\commonHelper::setLocale();
+            return view('stripe',compact('intent','id'));
+                
+        }else{
+
+            $message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-link-hasbeen-expired');
+            \Session::flash('gpro_error', $message);
+
+            return redirect('/');
+        }
+    }
 
 }

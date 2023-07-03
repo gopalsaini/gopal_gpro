@@ -571,6 +571,50 @@
                             </div>
                         
                             @if($travelInfo['result'] && $travelInfo['result']['arrival_flight_number'])
+                                @if(env('TESTING')==true)
+                                    <div class="table-responsive">
+                                        <div class="step-form" style="margin-top: 0px;">
+                                            <h4>Room Partner Preference Approval</h4>
+                                        </div>
+                                        <div class="step-form" style="margin-top: 0px;">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th>Request User Name</th>
+                                                        <th>Status</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php $roomPartner = \App\Models\RoomPartnerPreference::where('from_user_id',$result['id'])->orWhere('to_user_id',$result['id'])->get(); @endphp
+                                                    @if(!empty($roomPartner))
+                                                        @foreach($roomPartner as $room)
+                                                            <tr>
+                                                                <th>{{\App\Helpers\commonHelper::getUserNameById($room->from_user_id)}}</th>
+                                                                <td>{{\App\Helpers\commonHelper::getUserNameById($room->to_user_id)}}</td>
+                                                                <td>{{$room->status}}</td>
+                                                                <td>
+                                                                    @if($room->status == 'Pending' && $room->from_user_id != $result['id'])
+                                                                        <div style="display: flex;">
+                                                                            <a href="{{url('room-partner/approved/'.$room->id)}}" class="btn btn-primary " style="margin-right: 6px;"> Accept </a>
+                                                                            <a href="{{url('room-partner/declined/'.$room->id)}}" class="btn btn-danger">  Declined</a>
+
+                                                                        </div>
+                                                                    @else
+                                                                        {{$room->status}}
+                                                                    @endif
+                                                                </td>
+                                                                
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
+                                                    
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div >
                                     <div class="step-form">
                                         <h4>@lang('web/home.flight-info')</h4>

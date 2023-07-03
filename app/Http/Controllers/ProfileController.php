@@ -1212,7 +1212,6 @@ class ProfileController extends Controller
 
 	}
 	
-
     public function sponsorshipLetterApprove(Request $request){
 
         
@@ -1232,7 +1231,6 @@ class ProfileController extends Controller
        
 		return view('sponsorship_letter_approve',compact('passportInfo','groupInfoResult'));
 	}
-
 
     public function PassportInfoApprove(Request $request,$id){
 
@@ -1279,7 +1277,6 @@ class ProfileController extends Controller
 		
 	}
 
-    
     public function sponsorshipLetter(Request $request){
 
         $result=\App\Helpers\commonHelper::callAPI('userTokenget', '/user-profile');
@@ -1359,6 +1356,65 @@ class ProfileController extends Controller
 			
         
     }
+
+    public function roomPartnerStatus(Request $request,$type,$id){
+
+        
+        $roomPartner = \App\Models\RoomPartnerPreference::where('id',$id)->first();
+        
+        if($roomPartner){
+
+            if($type == 'approved'){
+
+                $roomPartner->status = 'Accept';
+
+                $user= \App\Models\User::where('id',\Session::get('gpro_result')['id'])->first();
+                $user->share_your_room_with=$roomPartner->to_user_id;
+                $user->save();
+
+                $roomPartnerData = \App\Models\RoomPartnerPreference::
+                                where(function ($query) use($id) {
+                                    $query->where('from_user_id',\Session::get('gpro_result')['id'])
+                                        ->orWhere('to_user_id',\Session::get('gpro_result')['id']);
+                                })->get();
+                                
+                                
+                                
+                // echo "<pre>"; print_r($roomPartnerData->toArray()); die;
+                if(!empty($roomPartnerData) && count($roomPartnerData)>0){
+
+                    foreach($roomPartnerData as $val){
+                        
+                        if($id != $val->id){
+
+                            $roomPartner1 = \App\Models\RoomPartnerPreference::where('id',$val->id)->first();
+                            $roomPartner1->status = 'Declined';
+                            $roomPartner1->save();
+
+                        }
+                    
+                    }
+                }
+
+                $roomPartner->save();
+
+                return redirect('travel-information')->with('gpro_success','Request Approved successfully');
+                
+            }else{
+
+                $roomPartner->status = 'Declined';
+                $roomPartner->save();
+
+                return redirect('travel-information')->with('gpro_success','Request Declined successfully');
+            }
+
+
+        }else{
+
+            return redirect('travel-information')->with('gpro_error','Something went wrong.please try again');
+        }
+        
+	}
     
 
 }

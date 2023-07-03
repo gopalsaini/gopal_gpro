@@ -85,12 +85,12 @@
             
             <div class="form-group" style="display: @if(!in_array($user->designation_id,$userType)) block @else none @endif">
                 <div class="form-line">
-                    @if (strtotime(date('Y-m-d H:i:s')) > strtotime('2023-06-01 05:00:00'))
+                    @if (strtotime(date('Y-m-d H:i:s')) > strtotime('2023-07-01 05:00:00'))
                         <label for="inputName">Apply June Offer  <label class="text-danger">*</label></label>
                     @else
                         <label for="inputName">Apply Early Bird <label class="text-danger">*</label></label>
                     @endif
-                    <select name="early_bird" class="form-control" required id="early_bird" @if(date('Y-m-d') == '2023-6-1') disabled @endif>
+                    <select name="early_bird" class="form-control" required id="early_bird" @if (date('Y-m-d') >= date('2023-07-01')) disabled @endif>
                         <option value="No" selected >No</option>
                         <option value="Yes">Yes</option>
                     </select>

@@ -1430,18 +1430,18 @@ class PostLoginController extends Controller {
 
 					if($request->json()->get('share_your_room_with')){
 
-						$user= \App\Models\User::where('id',$request->user()->id)->first();
-						$user->share_your_room_with=$request->json()->get('share_your_room_with');
-						$user->save();
+						$RoomPartnerPreference = new \App\Models\RoomPartnerPreference();
+
+						$RoomPartnerPreference->from_user_id = $request->user()->id;
+						$RoomPartnerPreference->to_user_id = $request->json()->get('share_your_room_with');
+						$RoomPartnerPreference->status = 'Pending';
+						$RoomPartnerPreference->save();
+						
+						
 					}
 
 					$userData = \App\Models\User::where('id',$request->user()->id)->first();
-					if($userData){
-						$userData->stage = '4';
-						$userData->status_change_at = date('Y-m-d H:i:s');
-						$userData->save();
-					}
-
+					
 					$passportInfo =  \App\Models\PassportInfo::where('user_id',$request->user()->id)->first();
 					if($passportInfo){
 
@@ -3130,13 +3130,11 @@ class PostLoginController extends Controller {
 			$TravelInfo=[
 				'id'=>$getTravelInfo['id'],
 				'arrival_flight_number'=>$flight_details->arrival_flight_number,
-				'arrival_start_location'=>$flight_details->arrival_start_location,
-				'arrival_date_departure'=>$flight_details->arrival_date_departure,
 				'arrival_date_arrival'=>$flight_details->arrival_date_arrival,
 				'departure_flight_number'=>$flight_details->departure_flight_number,
-				'departure_start_location'=>$flight_details->departure_start_location,
-				'departure_date_departure'=>$flight_details->departure_date_departure,
-				'departure_date_arrival'=>$flight_details->departure_date_arrival,					
+				'departure_date_departure'=>$flight_details->departure_date_departure,			
+				'arrival_airline_name'=>$flight_details->arrival_airline_name,					
+				'departure_airline_name'=>$flight_details->departure_airline_name,					
 				'spouse_arrival_flight_number'=>$return_flight_details->spouse_arrival_flight_number ?? '',
 				'spouse_arrival_start_location'=>$return_flight_details->spouse_arrival_start_location ?? '',
 				'spouse_arrival_date_departure'=>$return_flight_details->spouse_arrival_date_departure ?? '',
@@ -4414,6 +4412,14 @@ class PostLoginController extends Controller {
 									
 				}
 
+				
+				$user= \App\Models\User::where('id',$request->user()->id)->first();
+				if($user){
+					$user->stage = '4';
+					$user->status_change_at = date('Y-m-d H:i:s');
+					$user->save();
+				}
+
 				\App\Helpers\commonHelper::emailSendToUser($request->user()->email, $subject, $msg);
 
 				\App\Helpers\commonHelper::userMailTrigger($request->user()->id,$msg,$subject);
@@ -4470,4 +4476,96 @@ class PostLoginController extends Controller {
 		}
 	
 	}
+
+    public function roomPartnerRequestList(){
+
+		$result = [];
+        $roomPartner = \App\Models\RoomPartnerPreference::where('from_user_id',$result['id'])->orWhere('to_user_id',$result['id'])->get();
+		if(!empty($roomPartner)){
+
+			foreach($roomPartner as $room){
+
+				if($room->status == 'Pending' && $room->from_user_id != $result['id']){
+					$action = true;
+				}else{
+					$action = false;
+				}
+				
+				$result[] = [
+
+					'from_user_id' =>\App\Helpers\commonHelper::getUserNameById($room->from_user_id),
+					'to_user_id' =>\App\Helpers\commonHelper::getUserNameById($room->to_user_id),
+					'status' =>$room->status,
+					'action' =>$action,
+				];
+
+			}
+
+			return response(array("error"=>false, 'message'=>'Data get success','result'=>$result),200);
+
+		}else{
+
+			return response(array("error"=>true, 'message'=>'Something went wrong.please try again','result'=>$result),200);
+        }
+        
+	}
+
+    public function roomPartnerStatus(Request $request,$type,$id){
+
+        
+        $roomPartner = \App\Models\RoomPartnerPreference::where('id',$id)->first();
+        
+        if($roomPartner){
+
+            if($type == 'approved'){
+
+                $roomPartner->status = 'Accept';
+
+                $user= \App\Models\User::where('id',$request->user()->id)->first();
+                $user->share_your_room_with=$roomPartner->to_user_id;
+                $user->save();
+
+                $roomPartnerData = \App\Models\RoomPartnerPreference::
+                                where(function ($query) use($request) {
+                                    $query->where('from_user_id',$request->user()->id)
+                                        ->orWhere('to_user_id',$request->user()->id);
+                                })->get();
+                                
+                                
+                                
+                // echo "<pre>"; print_r($roomPartnerData->toArray()); die;
+                if(!empty($roomPartnerData) && count($roomPartnerData)>0){
+
+                    foreach($roomPartnerData as $val){
+                        
+                        if($id != $val->id){
+
+                            $roomPartner1 = \App\Models\RoomPartnerPreference::where('id',$val->id)->first();
+                            $roomPartner1->status = 'Declined';
+                            $roomPartner1->save();
+
+                        }
+                    
+                    }
+                }
+
+                $roomPartner->save();
+
+				return response(array("error"=>false, 'message'=>'Request Approved successfully'),200);
+				
+            }else{
+
+                $roomPartner->status = 'Declined';
+                $roomPartner->save();
+
+				return response(array("error"=>false, 'message'=>'Request Declined successfully'),200);
+            }
+
+        }else{
+
+			return response(array("error"=>false, 'message'=>'Something went wrong.please try again'),200);
+        }
+        
+	}
+    
 }

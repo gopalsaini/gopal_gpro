@@ -53,7 +53,7 @@
 										@php $results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $user->id],['added_as', 'Spouse']])->first() @endphp
                                         
 										@if(!$results  && $user->gender == '1')
-											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
+											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}"  data-id="Male">
 												
 												<input value="{{$user->id}}" type="hidden" name="users[]" > 
 												{{$user->name}} {{$user->last_name}} ({{$user->email}})
@@ -73,7 +73,7 @@
 								<div class="pb-3" tabindex="0"><span class="current">
 									<input type="text" style="height: 50px;" class="form-control" id="spousesearch" onkeyup="userSearch2()" placeholder="Search Users.." title="User"></span>
 								</div>
-								<div style="border: 1px solid #00000014;height:400px;padding:10px;overflow: scroll;" id="div2" ondrop="drop(event)" ondragover="allowDrop(event)">
+								<div style="border: 1px solid #00000014;height:400px;padding:10px;overflow: scroll;" id="div2" ondrop="drop(event)" ondragover="allowDrop(event)" data-div="Female">
 									
 								@if(!empty($users) && count($users)>0)
 									@foreach($users as $user)
@@ -81,7 +81,7 @@
 										@php $results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $user->id],['added_as', 'Spouse']])->first() @endphp
                                         
 										@if(!$results && $user->gender == '2')
-											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" >
+											<div class="SelectLocality" draggable="true" ondragstart="drag(event)" id="drag{{$user->id}}" data-id="Female">
 												
 												<input id="user{{$user->id}}" value="{{$user->id}}" type="hidden" name="users[]" > 
 												{{$user->name}} {{$user->last_name}} ({{$user->email}})
@@ -145,11 +145,15 @@
 
 		ev.dataTransfer.setData("text", ev.target.id);
 		
+		
 	}
 
 	function drop(ev) {
 		
 		ev.preventDefault();
+
+		var dataId = $('#'+ev.target.id).attr('data-id');
+		
 		if(ev.target.id){
 			
 			var data = ev.dataTransfer.getData("text");

@@ -31,10 +31,11 @@ class SpouseConnectController extends Controller
             
 				if(!empty($request->post('users')) && (count($request->post('users'))>1) && (count($request->post('users')) < 3)){
 
-					$userExitsInGroup = \App\Models\User::where('parent_id',$request->post('users')[0])->where('added_as','Spouse')->first();
 					$userMain = \App\Models\User::where('id',$request->post('users')[0])->first();
 
-					if($userMain && $userExitsInGroup && $userMain->gender == $userExitsInGroup->gender){
+					$userCheckExitsInGroup = \App\Models\User::where('id',$request->post('users')[1])->first();
+
+					if($userMain && $userCheckExitsInGroup && $userMain->gender == $userCheckExitsInGroup->gender){
 
 						return response(array('message'=>'Selected user both gender are same'),403);
 
@@ -89,7 +90,7 @@ class SpouseConnectController extends Controller
 		
 		$result = array();
 
-		$query = \App\Models\User::where([['stage', '>=', '3'],['designation_id', 2],['designation_id', '!=', '14']])
+		$query = \App\Models\User::where([['stage', '>=', '3'],['designation_id', 2],['designation_id', '!=', '14'],['marital_status', '=', 'Married']])
 
 					->where(function ($query1) {
 						$query1->where('added_as',null)
@@ -127,7 +128,7 @@ class SpouseConnectController extends Controller
 		$userLeader = \App\Models\User::where('id', $id)->first();
 		$results = \App\Models\User::where([['parent_id', $id],['added_as', 'Spouse']])->first();
 		
-		$query = \App\Models\User::where([['stage', '>=', '3'],['designation_id', 2],['designation_id', '!=', '14']])
+		$query = \App\Models\User::where([['stage', '>=', '3'],['designation_id', 2],['designation_id', '!=', '14'],['marital_status', '=', 'Married']])
 
 					->where(function ($query1) {
 						$query1->where('added_as',null)

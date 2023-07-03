@@ -824,6 +824,47 @@
     </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="roomUpgradeModel" tabindex="-1" role="dialog" aria-labelledby="roomUpgradeModel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header px-3">
+                <h5 class="modal-title" id="exampleModalLongTitle">User Room Upgrade</h5>
+                <button type="button" class="close" onclick="modalHide()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <hr class="m-0">
+            <form id="form" action="{{ route('admin.user.profile.room-upgrade') }}" method="post">
+                @csrf
+                <div class="modal-body px-3">
+                    <input type="hidden" name="user_id" value="0" required />
+                    <input type="hidden" name="status" required />
+                    
+                    <div class="row" >
+                        <div class="col-sm-12">
+                            <div id="ProfileStatusData"></div>
+
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <label for="inputName">@lang('admin.remark')</label>
+                                    <textarea name="remark" class="form-control" cols="30" rows="5" placeholder="Enter remark here..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger px-4 mx-2" onclick="modalHide()">@lang('admin.close')</button>
+                    <button type="submit" class="btn btn-dark px-4 mx-2">@lang('admin.save')</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @push('custom_js')
@@ -874,6 +915,7 @@
             },
             "fnDrawCallback": function() {
                 fill_datatable();
+                roomUpgrade();
             },
             "order": [0, 'desc'],
             "columnDefs": [{
@@ -1654,7 +1696,7 @@
             $('#refundUserId').val(id);
 
         });
-
+      
     }
 
  
@@ -1835,6 +1877,7 @@
     function modalHide() {
 
         $('#exampleModalCenter').modal('hide');
+        $('#roomUpgradeModel').modal('hide');
         $('#row_id').val(0);
         $('#remark').val(null);
     }
@@ -1933,6 +1976,63 @@
     $('#coordinateName').change(function(){
         $('#emailData').val(($(this).children('option:selected').data('email')));
     });
+
+    
+
+    function modalHide() {
+        $('#exampleModalCenter').modal('hide');
+        $('input[name="user_id"]').val(0);
+        $('input[name="status"]').val(null);
+        $('form#form')[0].reset();
+    }
+
+    function roomUpgrade() {
+        $('.room_upgrade').click(function() {
+            var id = $(this).data('id');
+            
+            var status = $(this).data('status');
+
+            $('.approved-section').show();
+
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "{{url('admin/user/get-profile-room-upgrade')}}",
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'id': id,
+                },
+                beforeSend: function() {
+                    $('#preloader').css('display', 'block');
+                },
+                error: function(xhr, textStatus) {
+
+                    if (xhr && xhr.responseJSON.message) {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                    } else {
+                        sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                    }
+                    $('#preloader').css('display', 'none');
+                },
+                success: function(data) {
+                    $('#preloader').css('display', 'none');
+                    $('#ProfileStatusData').html(data.html);
+                }
+            });
+
+
+
+            $("#exampleModalLongTitle").html('User Profile '+status);
+            $('#roomUpgradeModel').modal('show');
+            $('input[name="user_id"]').val(id);
+            $('input[name="status"]').val(status);
+            
+            return false;
+
+        });
+    }
 
 </script>
 @endpush

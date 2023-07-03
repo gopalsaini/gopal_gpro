@@ -70,6 +70,8 @@ Route::group([
     Route::post("visa-is-not-granted","API\PostLoginController@visaIsNotGranted");
     Route::post("visa-granted","API\PostLoginController@visaIsGranted");
     Route::get('yourPreferredRoommate', 'API\PostLoginController@yourPreferredRoommate');
+    Route::get('room-partner/{type}/{id}', "API\PostLoginController@roomPartnerStatus")->name('roomPartnerStatus');
+    Route::get('room-partner-request-list', "API\PostLoginController@roomPartnerRequestList")->name('roomPartnerRequestList');
 
 
 });

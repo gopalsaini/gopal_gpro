@@ -1069,35 +1069,161 @@ class PreLoginController extends Controller {
 									
 							if(!$userDataresult){
 
-								$user = \App\Models\User::find($transaction->user_id);
 
-								if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
+								if($transaction->particular_id == '5'){
 
-									$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
-									$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
-									$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
-									$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
+									$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$transaction->user_id)->first();
+				
+									if($roomupgrade){
 
-									$userData = \App\Models\User::where('id',$user->id)->first();
+										$roomupgrade->status ='Accept';
+										$roomupgrade->token =null;
+										$roomupgrade->save();
+									}
+									
+									$user = \App\Models\User::find($transaction->user_id);
 
-									$userData->stage = '3';
-									$userData->status_change_at = date('Y-m-d H:i:s');
-									$userData->save();
+									if($user){
+										$user->room = $roomupgrade->category;
+										$user->change_room_type = $roomupgrade->room_type;
+										$user->upgrade_category = $roomupgrade->category;
+										$user->save();	
+									}
+									
 
-									$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
+								}else{
+
+									$user = \App\Models\User::find($transaction->user_id);
+
+									if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) <= 0) {
+
+										$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
+										$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
+										$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
+										$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
+
+										$userData = \App\Models\User::where('id',$user->id)->first();
+
+										$userData->stage = '3';
+										$userData->status_change_at = date('Y-m-d H:i:s');
+										$userData->save();
+
+										$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
+									
+										if($resultSpouse){
+
+											$resultSpouse->stage = '3';
+											$resultSpouse->payment_status = '2';
+											$resultSpouse->status_change_at = date('Y-m-d H:i:s');
+											$resultSpouse->save();
+
+											if($resultSpouse->language == 'sp'){
+
+												$url = '<a href="'.url('pricing').'" target="_blank">enlace</a>';
+												$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+												$msg = "<p>Estimado ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+												<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+												<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+												<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+												<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+												<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+												<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+												<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+												<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+						
+											}elseif($resultSpouse->language == 'fr'){
+											
+												$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+												$msg = "<p>Cher  ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+												<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
+												<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+												<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+												<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+												<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+												<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+												<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+												<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+						
+											}elseif($resultSpouse->language == 'pt'){
+											
+												$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+												$msg = "<p>Caro ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+												<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+												<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+												<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+												<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+												<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+												<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+												<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+												<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+						
+											}else{
+											
+												$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
+												$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+												$msg = "<p>Dear ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+												<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+												<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+												<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+												<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+												<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+												<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+												<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+												<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+												<p>Warmly,</p><p>GProCongress II Team</p>";
 								
-									if($resultSpouse){
+											}
+						
+											\App\Helpers\commonHelper::userMailTrigger($resultSpouse->id,$msg,$subject);
+											\App\Helpers\commonHelper::emailSendToUser($resultSpouse->email, $subject, $msg);
+											\App\Helpers\commonHelper::sendNotificationAndUserHistory($resultSpouse->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+						
+										}
 
-										$resultSpouse->stage = '3';
-										$resultSpouse->payment_status = '2';
-										$resultSpouse->status_change_at = date('Y-m-d H:i:s');
-										$resultSpouse->save();
+										if($user->language == 'sp'){
 
-										if($resultSpouse->language == 'sp'){
+											$subject = 'Pago recibido. ¡Gracias!';
+											$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha recibido la cantidad de $'.$user->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p><p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
+
+										}elseif($user->language == 'fr'){
+										
+											$subject = 'Paiement intégral reçu.  Merci !';
+											$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de '.$user->amount.'$ a été reçu sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+										}elseif($user->language == 'pt'){
+										
+											$subject = 'Pagamento recebido na totalidade. Obrigado!';
+											$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Uma quantia de $'.$user->amount.' foi recebido na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p><p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+
+										}else{
+										
+											$subject = 'Payment received in full. Thank you!';
+											$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$user->amount.' has been received on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+							
+										}
+										
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Payment received in full. Thank you!');
+		
+										// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
+										
+										if($user->language == 'sp'){
 
 											$url = '<a href="'.url('pricing').'" target="_blank">enlace</a>';
 											$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
-											$msg = "<p>Estimado ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
 											<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
 											<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
 											<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
@@ -1110,10 +1236,10 @@ class PreLoginController extends Controller {
 											<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
 											<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
 					
-										}elseif($resultSpouse->language == 'fr'){
+										}elseif($user->language == 'fr'){
 										
 											$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
-											$msg = "<p>Cher  ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
 											<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
 											<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
 											<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
@@ -1126,10 +1252,10 @@ class PreLoginController extends Controller {
 											<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
 											<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
 					
-										}elseif($resultSpouse->language == 'pt'){
+										}elseif($user->language == 'pt'){
 										
 											$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
-											$msg = "<p>Caro ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											$msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
 											<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
 											<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
 											<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
@@ -1146,7 +1272,7 @@ class PreLoginController extends Controller {
 										
 											$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
 											$subject = 'GProCongress II registration!  Please login and submit your passport information.';
-											$msg = "<p>Dear ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
 											<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
 											<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
 											<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
@@ -1161,162 +1287,62 @@ class PreLoginController extends Controller {
 							
 										}
 					
-										\App\Helpers\commonHelper::userMailTrigger($resultSpouse->id,$msg,$subject);
-										\App\Helpers\commonHelper::emailSendToUser($resultSpouse->email, $subject, $msg);
-										\App\Helpers\commonHelper::sendNotificationAndUserHistory($resultSpouse->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
 					
-									}
-
-									if($user->language == 'sp'){
-
-										$subject = 'Pago recibido. ¡Gracias!';
-										$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha recibido la cantidad de $'.$user->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p><p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
-
-									}elseif($user->language == 'fr'){
-									
-										$subject = 'Paiement intégral reçu.  Merci !';
-										$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de '.$user->amount.'$ a été reçu sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p><p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
-
-									}elseif($user->language == 'pt'){
-									
-										$subject = 'Pagamento recebido na totalidade. Obrigado!';
-										$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Uma quantia de $'.$user->amount.' foi recebido na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p><p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
 
 									}else{
-									
-										$subject = 'Payment received in full. Thank you!';
-										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$user->amount.' has been received on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p><p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
-						
+
+										$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
+										$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
+										$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
+										$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
+
+										if($user->language == 'sp'){
+
+											$subject = 'Pago parcial Aprobado. ¡Gracias!';
+											$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha aprobado una cantidad de  $'.$transaction->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+											<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p><p></p>
+											<p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p><br></p>
+					
+											<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
+
+										}elseif($user->language == 'fr'){
+										
+											$subject = 'Paiement partiel Approuvéu.  Merci !';
+											$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de  '.$transaction->amount.'$ a été approuvé sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p>
+											<p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
+											<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p><p></p>
+											<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</mark><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+
+										}elseif($user->language == 'pt'){
+										
+											$subject = 'Aprovado o pagamento parcial. Obrigado!';
+											$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Foi aprovado um montante de $'.$transaction->amount.' na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+											<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p><p></p>
+											<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
+					
+											<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
+
+										}else{
+										
+											$subject = 'Partial payment Approved. Thank you!';
+											$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$transaction->amount.' has been approved on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+											<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p><p></p>
+											<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
+					
+											<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
+							
+										}
+										
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Partial payment Approved. Thank you!');
+		
 									}
-									
-									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Payment received in full. Thank you!');
-	
-									// \App\Helpers\commonHelper::sendSMS($result->User->mobile);
-									
-									if($user->language == 'sp'){
-
-										$url = '<a href="'.url('pricing').'" target="_blank">enlace</a>';
-										$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
-										$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
-										<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
-										<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
-										<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
-										<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
-										<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
-										<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
-				
-									}elseif($user->language == 'fr'){
-									
-										$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
-										$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
-										<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
-										<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
-										<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
-										<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
-										<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
-										<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
-				
-									}elseif($user->language == 'pt'){
-									
-										$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
-										$msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
-										<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
-										<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
-										<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
-										<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
-										<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
-										<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
-										<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
-				
-									}else{
-									
-										$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
-										$subject = 'GProCongress II registration!  Please login and submit your passport information.';
-										$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
-										<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
-										<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
-										<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
-										<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
-										<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
-										<p>Warmly,</p><p>GProCongress II Team</p>";
-						
-									}
-				
-									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
-				
-
-								}else{
-
-									$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($transaction->user_id, true);
-									$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($transaction->user_id, true);
-									$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($transaction->user_id, true);
-									$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id, true);
-
-									if($user->language == 'sp'){
-
-										$subject = 'Pago parcial Aprobado. ¡Gracias!';
-										$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Se ha aprobado una cantidad de  $'.$transaction->amount.' en su cuenta.  </p><p><br></p><p>Gracias por hacer este pago.</p><p> <br></p><p>Aquí tiene un resumen actual del estado de su pago:</p><p>IMPORTE TOTAL A PAGAR:'.$user->amount.'</p><p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p><p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p><p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"> <i><b>El descuento por “inscripción anticipada” finalizó el 31 de mayo. Si paga la totalidad antes del 30 de junio, aún puede aprovechar $100 de descuento en el costo regular de inscripción. Desde el 1 de julio hasta el 31 de agosto, se utilizará la tarifa de inscripción regular completa, que es $100 más que la tarifa de reserva anticipada.</b></i></p><p></p>
-    									<p>TENGA EN CUENTA: Si no se recibe el pago completo antes del 31 de Agosto, 2023, se cancelará su inscripción, se le dará su lugar a otra persona, y perderá todos los fondos que usted haya pagado previamente.</p><p><br></p>
-				
-										<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p><p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p><p>Atentamente,</p><p>El equipo del GProCongress II</p>';
-
-									}elseif($user->language == 'fr'){
-									
-										$subject = 'Paiement partiel Approuvéu.  Merci !';
-										$msg = '<p>Cher '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Un montant de  '.$transaction->amount.'$ a été approuvé sur votre compte.  </p><p><br></p><p>Vous avez maintenant payé la somme totale pour le GProCongrès II.  Merci !</p><p> <br></p>
-										<p>Voici un résumé de l’état de votre paiement :</p><p>MONTANT TOTAL À PAYER:'.$user->amount.'</p><p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p><p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p><p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>Le rabais de « l’inscription anticipée » a pris fin le 31 mai. Si vous payez en totalité avant le 30 juin, vous pouvez toujours profiter de 100 $ de rabais sur le tarif d’inscription régulière. Du 1er juillet au 31 août, le plein tarif d’inscription régulière sera expiré, soit 100 $ de plus que le tarif d’inscription anticipée.</b></i></p><p></p>
-    									<p>VEUILLEZ NOTER : Si le paiement complet n’est pas reçu avant le 31st August 2023, votre inscription sera annulée et votre place sera donnée à quelqu’un d’autre.&nbsp;</mark><p><br></p><p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p><p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p><p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
-
-									}elseif($user->language == 'pt'){
-									
-										$subject = 'Aprovado o pagamento parcial. Obrigado!';
-										$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>Foi aprovado um montante de $'.$transaction->amount.' na sua conta.  </p><p><br></p><p>Você agora pagou na totalidade para o II CongressoGPro. Obrigado!</p><p> <br></p><p>Aqui está o resumo do estado do seu pagamento:</p><p>VALOR TOTAL A SER PAGO:'.$user->amount.'</p><p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p><p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p><p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>O desconto “early bird” terminou em 31 de maio. Se você pagar integralmente até 30 de junho, ainda poderá aproveitar o desconto de $100 na taxa de registro regular. De 1º de julho a 31 de agosto, será  cobrado o valor de inscrição regular completa, que é $100 a mais do que a taxa de inscrição antecipada.</b></i></p><p></p>
-    									<p>POR FAVOR NOTE: Se seu pagamento não for recebido até o dia 31st August 2023, a sua inscrição será cancelada, e a sua vaga será atribuída a outra pessoa.</p><p><br></p>
-				
-										<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p><p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p><p><br></p><p>Calorosamente,</p><p>A Equipe do II CongressoGPro</p>';
-
-									}else{
-									
-										$subject = 'Partial payment Approved. Thank you!';
-										$msg = '<p>Dear '.$user->name.' '.$user->last_name.' ,&nbsp;</p><p><br></p><p>An amount of $'.$transaction->amount.' has been approved on your account.  </p><p><br></p><p>You have now paid in full for GProCongress II.  Thank you!</p><p> <br></p><p>Here is a summary of your payment status:</p><p>TOTAL AMOUNT TO BE PAID:'.$user->amount.'</p><p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p><p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p><p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
-										<p style="background-color:yellow; display: inline;"><i><b>The “early bird” discount ended on May 31. If you pay in full by June 30, you can still take advantage of $100 off the Regular Registration rate. From July 1 to August 31, the full Regular Registration rate will be used, which is $100 more than the early bird rate.</b></i></p><p></p>
-    									<div>PLEASE NOTE: If full payment is not received by 31st August 2023, your registration will be cancelled, and your spot will be given to someone else.</div><div><br></div>
-				
-										<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p><p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p><p>Warmly,</p><p>GProCongress II Team</p>';
-						
-									}
-									
-									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Partial payment Approved. Thank you!');
-	
 								}
+								
 
 							}else{
 
@@ -7056,94 +7082,126 @@ class PreLoginController extends Controller {
 
     }
 
-	
 	public function PaymenDeadlineMissed100OFF(Request $request){
 		
 		try {
 			
-			$results = \App\Models\User::where('designation_id', '!=', '14')->where('user_type', '=', '2')->where('email_reminder','1')->where('stage','<=','2')->get();
-			// echo "<pre>";
-			// print_r($results->toArray()); die;
+			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '=', '2'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
+			
 			if(count($results) > 0){
 				$resultData = '';
-				foreach ($results as $key => $user) {
+				foreach ($results as $result) {
 				
-					
-					$Spouse = \App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->first(); 
+					if(\App\Helpers\commonHelper::getTotalPendingAmount($result->id) > 0) {
 
-					$SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
-			
-					if($Spouse){
-						$amount = $user->amount;
-			
-					}elseif($SpouseParent && $user->added_as == 'Spouse'){
-			
-						$amount = $SpouseParent->amount;
-			
-					}else{
-			
-						$amount = $user->amount;
-					}
+						$user = \App\Models\User::where('id', $result->id)->first();
+						
+						if($user){
 
-					$resultData.=$user->id.','.$user->name.','.$user->added_as.','.$amount.','.$user->email.','.$user->stage.','.$user->parent_id.'<br>';
+							$Spouse = \App\Models\User::where('parent_id', $user->id)->where('added_as', 'Spouse')->first();
+							
+							if($user->marital_status == 'Unmarried'){
 
-					if($user->language == 'sp'){
+								$trainer = 'No';
 
-						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
-						$subject = 'RECORDATORIO: El pago para asistir al GProCongress II ha vencido.';
-						$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-						<p>El pago para asistir al GProCongress II ha vencido.  Por favor, vaya a '.$url.', y realice su pago ahora.</p>
-						<p ><i><b>POR FAVOR, TENGA EN CUENTA: Debido a que no recibió su pago el 30 de junio de 2023 o antes, ha perdido su descuento de "$100 de descuento" y ahora tendrá que pagar $100 más para poder asistir al Congreso.</b></i></p>
-						<p><i><b>Su nuevo monto de pago es $'.$amount.'  ATENCIÓN: Este importe debe pagarse antes del 31 de agosto de 2023, o aumentará aún más su costo.</b></i></p>
-						<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
-						<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores</i></p>
-						<p>Cordialmente,</p><p>Equipo GProCongress II</p>';
+							}else if($user->marital_status == 'Married' && !$Spouse){
 
-					}elseif($user->language == 'fr'){
-					
-						$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
-						$subject = "RAPPEL - Votre paiement GProCongress II est maintenant dû";
-						$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-						<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant.</p>
-						<p ><i><b>VEUILLEZ NOTER : Parce que le paiement n’a pas été reçu de votre part avant le 30 juin 2023, vous avez perdu votre rabais « 100$ de réduction » et vous devrez payer 100 $ de plus pour assister au Congrès.</b></i></p>
-						<p><i><b>Le montant de votre nouveau paiement est de $'.$amount.' VEUILLEZ NOTER: Ce montant doit être payé avant le 31 août 2023, sinon votre coût augmentera encore plus.</b></i></p>
-						<p>Si vous avez des questions sur votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
-						<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
-						<p>Cordialement,</p><p>L’équipe GProCongress II</p>';
+								$trainer = 'No';
 
-					}elseif($user->language == 'pt'){
-					
-						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
-						$subject = 'LEMBRETE - O pagamento do GProCongress II está ainda em aberto.';
-						$msg = '<p>Caro  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-						<p>O pagamento da sua participação no GProCongress II está em aberto.  Por favor, visite o '.$url.', e faça o seu pagamento agora.</p>
-						<p ><i><b>Uma vez que o pagamento não for recebido até 30 de Junho de 2023, perderá o  desconto de "$100 de desconto" e tem agora de pagar mais $100 para participar no Congresso.</b></i></p>
-						<p><i><b>O seu novo montante de pagamento é de $'.$amount.' ATENÇÃO: Esse valor deve ser pago até 31 de agosto de 2023, ou seu custo aumentará ainda mais.</b></i></p>
-						<p>Se tiver alguma dúvida sobre como efectuar o pagamento, ou se precisar de falar com um dos membros da nossa equipa, basta responder a este e-mail.</p>
-						<p><i>Reze connosco para multiplicar a quantidade e a qualidade dos pastores-formadores. </i></p>
-						<p>Cordialmente,</p><p>Equipa do GProCongress II</p>';
+							}else if($user->marital_status == 'Married' && $Spouse){
 
-					}else{
-					
-						$url = '<a href="'.url('payment').'" target="_blank">link</a>';
-						$subject = 'REMINDER – Your GProCongress II payment is now due';
-						$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-						<p>Payment for your attendance at GProCongress II is now due.  Please go to '.$url.', and make your payment now.</p>
-						<p ><i><b>Because payment was not received from you by June 30, 2023, you have lost your “$100 off” discount, and you must now pay an additional $100 to attend the Congress.</b></i></p>
-						<p><i><b>Your new payment amount is $'.$amount.' PLEASE NOTE: This amount must be paid by August 31, 2023, or your cost will go up even more.</b></i></p>
-						<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
-						<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
-						<p>Warmly,</p><p>GProCongress II Team</p>';
+								if($user->parent_spouse_stage >= 2){
+
+									$trainer = 'No';
+
+								}else{
+
+									$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$user->amount);
+
+									$trainer = $data ['trainer'];
+								}
+								
+							}
+							
+							if($trainer == 'Yes'){
+								$amount = $result->amount+200;
+							}else{
+								$amount = $result->amount+100;
+							}
+
+							
+
+							$resultData.=$result->id.','.$result->email.','.$result->amount.','.$amount.','.$result->stage.','.$result->parent_id.','.$result->added_as.'<br>';
+
+							// $user->amount = $amount;
+							// $user->early_bird = 'No';
+							// $user->save();
+
+							$amount = $result->amount;
+
+							if($user->language == 'sp'){
+
+								$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+								$subject = 'RECORDATORIO: El pago para asistir al GProCongress II ha vencido.';
+								$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>El pago para asistir al GProCongress II ha vencido.  Por favor, vaya a '.$url.', y realice su pago ahora.</p>
+								<p ><i><b>POR FAVOR, TENGA EN CUENTA: Debido a que no recibió su pago el 30 de junio de 2023 o antes, ha perdido su descuento de "$100 de descuento" y ahora tendrá que pagar $100 más para poder asistir al Congreso.</b></i></p>
+								<p><i><b>Su nuevo monto de pago es $'.$amount.'  ATENCIÓN: Este importe debe pagarse antes del 31 de agosto de 2023, o aumentará aún más su costo.</b></i></p>
+								<p>Si tiene alguna pregunta sobre cómo realizar su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+								<p><i>Ore con nosotros para multiplicar la cantidad y calidad de capacitadores de pastores</i></p>
+								<p>Cordialmente,</p><p>Equipo GProCongress II</p>';
 		
+							}elseif($user->language == 'fr'){
+							
+								$url = '<a href="'.url('payment').'" target="_blank">lien</a>';
+								$subject = "RAPPEL - Votre paiement GProCongress II est maintenant dû";
+								$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>Le paiement de votre participation au GProCongress II est maintenant dû.  Prière d’aller sur '.$url.', et effectuer votre paiement maintenant.</p>
+								<p ><i><b>VEUILLEZ NOTER : Parce que le paiement n’a pas été reçu de votre part avant le 30 juin 2023, vous avez perdu votre rabais « 100$ de réduction » et vous devrez payer 100 $ de plus pour assister au Congrès.</b></i></p>
+								<p><i><b>Le montant de votre nouveau paiement est de $'.$amount.' VEUILLEZ NOTER: Ce montant doit être payé avant le 31 août 2023, sinon votre coût augmentera encore plus.</b></i></p>
+								<p>Si vous avez des questions sur votre paiement, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+								<p><i>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</i></p>
+								<p>Cordialement,</p><p>L’équipe GProCongress II</p>';
+		
+							}elseif($user->language == 'pt'){
+							
+								$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+								$subject = 'LEMBRETE - O pagamento do GProCongress II está ainda em aberto.';
+								$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>O pagamento da sua Inscrição para o GProCongress II está em aberto. Por favor, visite o '.$url.', e faça o seu pagamento já.</p>
+								<p ><i><b>Caso o seu pagamento não for recebido até 30 de Junho de 2023, perderá o desconto de "$100 Dólares" e terá de pagar a mais, $100 Dólares para participar no Congresso.</b></i></p>
+								<p><i><b>O seu novo saldo a pagar é de $'.$amount.' Dólares. ATENÇÃO: Esse valor deve ser pago até 31 de Agosto de 2023, ou a sua taxa de inscrição aumentará ainda mais</b></i></p>
+								<p>Se tiver alguma dúvida sobre como efetuar o pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+								<p><i>Ore conosco para multiplicar a quantidade e a qualidade dos treinadores de Pastores.</i></p>
+								<p>Cordialmente,</p><p>Equipe do GProCongress II</p>';
+		
+							}else{
+							
+								$url = '<a href="'.url('payment').'" target="_blank">link</a>';
+								$subject = 'REMINDER – Your GProCongress II payment is now due';
+								$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>Payment for your attendance at GProCongress II is now due.  Please go to '.$url.', and make your payment now.</p>
+								<p ><i><b>Because payment was not received from you by June 30, 2023, you have lost your “$100 off” discount, and you must now pay an additional $100 to attend the Congress.</b></i></p>
+								<p><i><b>Your new payment amount is $'.$amount.' PLEASE NOTE: This amount must be paid by August 31, 2023, or your cost will go up even more.</b></i></p>
+								<p>If you have any questions about making your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+								<p><i>Pray with us toward multiplying the quantity and quality of pastor-trainers. </i></p>
+								<p>Warmly,</p><p>GProCongress II Team</p>';
+				
+							}
+		
+							// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+		
+							// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+		
+							// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'July1st - Early Bird - Marked No');
+						
+						}
 					}
-
-					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
-					\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'REMINDER – Your GProCongress II payment is now due');
-				
 				}
-
 				
+				echo "<pre>";
+				print_r($resultData); die;
+
 				return response(array('message'=>' Email has been sent successfully.'), 200);
 			}
 

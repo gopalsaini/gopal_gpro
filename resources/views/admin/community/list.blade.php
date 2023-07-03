@@ -86,7 +86,10 @@
                                                 <td>+{{$data->phone_code}} {{$data->mobile}}</td>
                                                 
                                                 <td>
-                                                    <div style="display:flex"><a href="{{route('admin.community.group.update', ['id' => $data->id] )}}" title="Update Group" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-edit"></i></a></div>
+                                                    <div style="display:flex">
+                                                        <a href="{{route('admin.community.group.update', ['id' => $data->id] )}}" title="Update Group" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-edit"></i></a>
+                                                        <a href="{{route('admin.community.group.delete', ['id' => $data->id] )}}" title="Delete Group" class="btn btn-sm btn-danger px-3 m-1 text-white "><i class="fas fa-trash"></i></a>
+                                                    </div>
                                                 </td>
                                             </tr>
 
