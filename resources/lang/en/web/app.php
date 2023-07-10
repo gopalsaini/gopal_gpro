@@ -126,6 +126,11 @@ return [
     'Credit_Card_Payment' => "Credit Card Payment",
     'Exhibitor' => "Exhibitor",
     'Accepted_File_Formats' => "Accepted File Formats - jpg, png and pdf",
+    'Room_Partner_Preference_Requests' => "Room Partner Preference Requests",
+    'Preferred_Partner_Name' => "Preferred Partner Name",
+    'Request_Status' => "Request Status",
+    'Request_Approved_successfully' => "Request Approved successfully",
+    'Request_Declined_successfully' => "Request Declined successfully",
 
 
 

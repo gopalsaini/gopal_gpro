@@ -139,7 +139,7 @@
                         <input style="margin-left:-4px;width: 70%;" type="tel" id="home" class="mt-2" name="contact_business_number" onkeypress="return /[0-9 ]/i.test(event.key)"  value="{{$resultData['result']['contact_business_number']}}" autocomplete="off">
                     </div>
                     <div class="col-lg-4"  id="whatsup"  style="display:@if($resultData['result']['contact_whatsapp_number']==$resultData['result']['mobile']){{'none'}}@else{{'block'}}@endif">
-                        <label for="">@lang('web/app.select_code') <span>*</span></label>
+                        <label for="">@lang('web/contact-details.whatsapp') <span>*</span></label>
                         <select class="form-control test phoneCode" name="contact_whatsapp_codenumber"> 
                             <option value="" >--@lang('web/app.select_code')--</option>
                             @foreach($country as $con)

@@ -7,20 +7,41 @@
     </style>
     <div class="approved-section">
         <label for="inputName">User Type : {{\App\Helpers\commonHelper::getDesignationName($user->designation_id)}}</label><br>
-        <label for="inputName">User Amount : {{$user->amount}}</label>
-        @php $userType = [6,4]; @endphp
+        <label for="inputName">Amount Paid by user : {{$user->amount}}</label><br>
+        
+        @php $spouseResult=\App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->first(); 
+
+        @endphp
+
+        @if($spouseResult)
+
+            <label for="inputName">Spouse : {{$spouseResult->name}} {{$spouseResult->last_name}}</label><br>
+        @endif
+        <label for="inputName">Current Room Category : {{$user->upgrade_category ?? ($user->room ?? 'Single')}}</label><br><br>
+        @php $userType = [6,4];  $room= ''; $roomKey = 0;
+            if($user->room == null || $user->room == 'Single'){
+                $room= 'Upgrade to Single Deluxe Room';
+            }elseif($user->room == 'Sharing'){
+
+                $room= 'Twin Sharing Deluxe Room';
+            }else{
+
+                $room= $user->upgrade_category;
+            }
+        
+        @endphp
        
 
-        <div class="form-group">
-            <div class="form-line">
-                <label for="inputName">@lang('admin.amount') <label class="text-danger">*</label></label>
-                <input type="number" class="form-control" name="base_amount" placeholder="Enter amount value" value="{{ $basePrice}}" readonly required>
-            </div>
-        </div>
+            <!-- <div class="form-group">
+                <div class="form-line">
+                    <label for="inputName">@lang('admin.amount') <label class="text-danger">*</label></label>
+                    <input type="number" class="form-control" name="base_amount" placeholder="Enter amount value" value="{{ $basePrice}}" readonly required>
+                </div>
+            </div> -->
         
             <div class="form-group" style="display: @if(!in_array($user->designation_id,$userType)) block @else none @endif">
                 <div class="form-line">
-                    <label for="inputName">Do you want to change User Room Type</label>
+                    <label for="inputName">Do you want to change User Room Type: </label>
                     <select name="room_type" class="form-control" id="change_room_type" required>
                         <option value="Yes" >Yes</option>
                         <option value="No" selected>No</option>
@@ -31,22 +52,53 @@
                 <div class="form-line">
                     <label for="inputName">Select Category <label class="text-danger">*</label></label>
                     <select name="category" class="form-control" id="selectCategory">
-                        <option value="">Select</option>
+                        <option value="">Select </option>
+                        @php $arrayData  = []; @endphp
                         @if(!empty($category))
                             @foreach($category as $key=>$val)
-                                <option value="{{$key}}" data-amount="{{$val}}">{{$key}}</option>
+                                @php $arrayData[]  = [
+                                        'id'=>$key,
+                                        'val'=>$val,
+                                    ];
+
+                                @endphp
+
                             @endforeach
 
                         @endif
-                        
+                        @if(!empty($arrayData))
+                            @foreach($arrayData as $key=>$val)
+                                @php 
+                                
+                                    if($room == $val['id']){
+                                        $roomKey = $key;
+                                    }else{
+                                        $roomKey = 1;
+                                    }
+                                @endphp
+
+                            @endforeach
+
+                        @endif
+
+                        @if(!empty($arrayData))
+                            @foreach($arrayData as $key=>$val)
+                                @if($key >= $roomKey )
+                                    <option value="{{$val['id']}}" data-amount="{{$val['val']}}">{{$val['id']}}</option>
+                                @endif
+                            @endforeach
+
+                        @endif
+                                    
                     </select>
+                    
                 </div>
             </div>
        
-            <div class="form-group">
+            <div class="form-group" id="AmountDiv" style="display:none">
                 <div class="form-line">
-                    <label for="inputName">Payable Amount <label class="text-danger">*</label></label>
-                    <input type="number" class="form-control" name="amount" id="payable_amount" value="{{in_array($user->designation_id,$userType) ? '0' : $basePrice }}" readonly required>
+                    <label for="inputName">Additional  amount to be paid by user: <label class="text-danger">*</label></label>
+                    <input type="number" class="form-control" name="amount" id="payable_amount" value="{{in_array($user->designation_id,$userType) ? '0' :  ($basePrice <= 0 ? 0 : $basePrice) }}" readonly required>
                 </div>
             </div>
     </div>
@@ -56,6 +108,7 @@
     $(document).ready(function() {
         var payable_amount = $('#payable_amount').val();
         var base_amount = "{{$basePrice}}";
+        var user_amount = "{{$userAmount}}";
         var early_bird = "{{$user->early_bird}}";
         var finAmount = payable_amount;
             
@@ -64,14 +117,20 @@
             if(this.value == 'Yes'){
                 
                 $('#CategoryDiv').css('display','block');
+                $('#AmountDiv').css('display','block');
+                $('#RemarkDibRoomUpGrade').css('display','block');
                 $('#selectCategory').attr('required',true);
+                $('#SubmitButtonRoomUpgrade').attr('disabled',false);
                 $('#selectCategory').val("");
                 $('#selectOffer').val('');
 
             }else{
                 
                 $('#CategoryDiv').css('display','none');
+                $('#AmountDiv').css('display','none');
+                $('#RemarkDibRoomUpGrade').css('display','none');
                 $('#selectCategory').attr('required',false);
+                $('#SubmitButtonRoomUpgrade').attr('disabled',true);
                 
                 $('#selectCategory').val("");
                 $('#selectOffer').val('');
@@ -176,6 +235,12 @@
                 
             }
 
+            finAmount = (parseInt(finAmount)-parseInt(user_amount));
+
+            if(finAmount <= 0){
+
+                finAmount = 0;
+            }
             $('#payable_amount').val(finAmount);
             
         });

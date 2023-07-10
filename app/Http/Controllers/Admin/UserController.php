@@ -165,12 +165,11 @@ class UserController extends Controller {
 							$data->stage = '3';
 							$data->payment_status = '2';
 							$data->marital_status = $request->post('marital_status');
-							$data->room = $request->post('room') ?? null;
+							$data->room = $request->post('room') ?? 'Sharing';
 							$data->profile_submit_type = 'submit';
 							$data->status_change_at = date('Y-m-d H:i:s');
 							$data->password = \Hash::make($password);
 
-							
 							$name = $request->post('first_name').' '.$request->post('last_name');
 							$to = $data->email;
 	
@@ -314,6 +313,167 @@ class UserController extends Controller {
 							\App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
 							\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
 						
+							$existSpouse = \App\Models\User::where([
+								['parent_id', '=', $request->post('id')],
+								['added_as', '=', 'Spouse']
+								])->first();
+
+							if($existSpouse){
+
+								$password = \Str::random(10);
+
+								$existSpouse->profile_status = 'Approved';
+								$existSpouse->profile_update = 'Approved';
+								$existSpouse->amount = '0.00';
+								$existSpouse->stage = '3';
+								$existSpouse->payment_status = '2';
+								$existSpouse->room = 'Sharing';
+								$existSpouse->password = \Hash::make($password);
+								$existSpouse->save();
+								
+								$name = $existSpouse->name.' '.$existSpouse->last_name;
+								$to = $existSpouse->email;
+		
+								if($existSpouse->language == 'sp'){
+		
+									$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+									$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">enlace</a>';
+		
+									$subject = 'Este es su nombre de usuario y contraseña para el GProCongress II.';
+									$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
+									<p>Gracias por su participación en el GProCongress II, y por su compromiso con la causa vital de la capacitación de pastores. Nuestro equipo de administración le ha inscrito para asistir al GProCongress II.</p>
+									<p>Su nombre de usuario y contraseña son los siguientes:</p>
+									<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
+									<p >&nbsp;&nbsp;&nbsp;<b>Contraseña : ".$password."</b></p><p></p>
+									<p>Por favor, utilice estas credenciales para iniciar sesión en ".$url.", y cambie su contraseña después de haber iniciado sesión por primera vez.</p>
+									<p>Por favor, también proporcione la información de su pasaporte en nuestro sitio web tan pronto como sea posible (Su nombre completo; País de residencia; Número de pasaporte). También puede utilizar nuestro Asistente de Visa (".$link.") para ver si necesita visa para entrar a Panamá este noviembre.</p>
+									<p>Si tiene alguna pregunta, o si necesita hablar con uno de los miembros de nuestro equipo, por favor responda a este correo electrónico.</p>
+									<p>Atentamente,</p><p>Equipo del GProCongreso II</p>";
+			
+								}elseif($existSpouse->language == 'fr'){
+								
+									$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+									$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">lien</a>';
+		
+									$subject = 'Voici votre identifiant et mot de passe GProCongress II.';
+									$msg = "<p>Cher ".$name.",&nbsp;</p><p><br></p>
+									<p>Merci pour votre participation au GProCongress II, et pour votre engagement pour la cause vitale de la formation des pasteurs.  Vous êtes maintenant inscrit pour assister au GProCongress II par notre équipe d'administration.</p>
+									<p>Votre ID de connexion et votre mot de passe sont les suivants :</p>
+									<p >&nbsp;&nbsp;&nbsp;<b>ID de connexion : ".$to."</b></p><p></p>
+									<p >&nbsp;&nbsp;&nbsp;<b>Mot de passe : ".$password."</b></p><p></p>
+									<p>Veuillez utiliser ces informations d'identification pour vous connecter sur ".$url.", et modifier votre mot de passe après vous être connecté pour la première fois.</p>
+									<p>Veuillez également fournir les informations de votre passeport sur notre site Web dès que possible (Votre nom complet; Pays de résidence; Passeport #). Vous pouvez également utiliser notre assistant de visa (".$link.") pour voir si vous aurez besoin d'un visa pour entrer au Panama en novembre.</p>
+									<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à ce courriel.</p>
+									<p>Cordialement,</p><p>L'équipe GProCongress II</p>";
+			
+								}elseif($existSpouse->language == 'pt'){
+								
+									$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+									$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
+		
+									$subject = 'Aqui estão  os seus dados de  login e senha do GProCongress II';
+									$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
+									<p>Obrigado por sua participação no GProCongress II e por seu compromisso com a causa vital do treinamento de pastores. Agora que você foi inscrito  para participar do GProCongress II por nossa equipe de administração.</p>
+									<p>Seu ID de login e senha são os seguintes:</p>
+									<p >&nbsp;&nbsp;&nbsp;<b>Identificação de usuário : ".$to."</b></p><p></p>
+									<p >&nbsp;&nbsp;&nbsp;<b>Senha : ".$password."</b></p><p></p>
+									<p>Use essas credenciais para fazer login em ".$url.", e altere sua senha depois de fazer login pela primeira vez.</p>
+									<p>Por favor, forneça também as informações do seu passaporte em nosso site o mais rápido possível (seu nome completo; país de residência; número do passaporte). Você também pode usar nosso Assistente de Visto (".$link.") para verificar se precisará de visto para entrar no Panamá em Novembro. </p>
+									<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+									<p>Calorosamente,</p><p>Equipe do GProCongress II</p>";
+			
+								}else{
+								
+									$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+									$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
+		
+									$subject = 'Here is your GProCongress II login and password';
+									$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
+									<p>Thank you for your participation in GProCongress II, and for your commitment to the vital cause of pastor training.  You have now been registered to attend GProCongress II by our admin team.   </p>
+									<p>Your Login ID and Password are as follows:</p>
+									<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
+									<p >&nbsp;&nbsp;&nbsp;<b>Password : ".$password."</b></p><p></p>
+									<p>Please use these credentials to login at ".$url.", and change your password after you have logged in for the first time.</p>
+									<p>Please also provide your passport information at our website as soon as possible (Your full name; Country of residence; Passport #). You can also use our Visa Wizard (".$link.") to see if you will need a visa to enter Panama this November.  </p>
+									<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+									<p>Warmly,</p><p>GProCongress II Team</p>";
+					
+								}
+			
+								\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
+								\App\Helpers\commonHelper::emailSendToUser($existSpouse->email, $subject, $msg);
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+							
+								if($existSpouse->language == 'sp'){
+
+									$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+									$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
+									<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+									<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+									<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+									<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+									<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+									<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+									<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+									<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+			
+								}elseif($existSpouse->language == 'fr'){
+								
+									$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+									$msg = "<p>Cher  ".$name.",&nbsp;</p><p><br></p>
+									<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
+									<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+									<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+									<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+									<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+									<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+									<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+									<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+			
+								}elseif($existSpouse->language == 'pt'){
+								
+									$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+									$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
+									<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+									<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+									<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+									<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+									<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+									<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+									<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+									<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+			
+								}else{
+								
+									$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+									$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
+									<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+									<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+									<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+									<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+									<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+									<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+									<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+									<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+									<p>Warmly,</p><p>GProCongress II Team</p>";
+					
+								}
+
+								\App\Helpers\commonHelper::userMailTrigger($existSpouse->id,$msg,$subject);
+								\App\Helpers\commonHelper::emailSendToUser($existSpouse->email, $subject, $msg);
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($existSpouse->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+							}
 						
 						}
 						
@@ -361,7 +521,7 @@ class UserController extends Controller {
 
 						\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
 						\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
-						\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
 						
 					}
 
@@ -1702,8 +1862,18 @@ class UserController extends Controller {
 		$result = \App\Models\User::find($id);
 
 		if (!$result) {
-			$request->session()->flash('error','Something went wrong.please try again.');
+			$request->session()->flash('5fernsadminerror','Something went wrong.please try again.');
 			return redirect()->back();
+		}
+
+
+		if ($result->stage ==0) {
+
+			if($result && $result->designation_id != '4' && $result->designation_id != '6'){
+				$request->session()->flash('5fernsadminerror','Sorry, you are not allowed to edit');
+				return redirect()->back();
+			}
+			
 		}
 
         \App\Helpers\commonHelper::setLocale();
@@ -2077,11 +2247,21 @@ class UserController extends Controller {
 			$order = $columns[$request->input('order.0.column')];
 			$dir = $request->input('order.0.dir');
 
-			$query = \App\Models\Transaction::where('user_id', $id)->where('particular_id', '2')->orderBy($order,$dir);
+			$query = \App\Models\Transaction::where('user_id', $id)
+											->where(function ($query1) {
+												$query1->where('particular_id', '2')
+													->orWhere('particular_id','7')
+													->orWhere('particular_id','6');
+											})->orderBy($order,$dir);
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\Transaction::where('user_id', $id)->where('particular_id', '2')->count();
+			$totalData = \App\Models\Transaction::where('user_id', $id)
+													->where(function ($query1) {
+														$query1->where('particular_id', '2')
+															->orWhere('particular_id','7')
+															->orWhere('particular_id','6');
+													})->count();
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));
@@ -2108,12 +2288,18 @@ class UserController extends Controller {
 		    })
 
 			->addColumn('bank', function($data){
-				return $data->bank." Transfer";
+				return $data->bank."";
 		    })
 
 			->addColumn('type', function($data){
 				
-				return 'Credit';
+				$Wallet = \App\Models\Wallet::where('user_id',$data->user_id)->where('transaction_id',$data->id)->where('type','Dr')->first();
+				if($Wallet){
+					return 'Debit';
+				}else{
+					return 'Credit';
+				}
+				
 				
 		    })
 
@@ -2528,7 +2714,6 @@ class UserController extends Controller {
 
 	}
 	
-
 	public function groupUsersListEdit(Request $request) {
 
 		if ($request->ajax()) {
@@ -3634,6 +3819,7 @@ class UserController extends Controller {
 							$logistics_picked = $row['TravelInfo']['logistics_picked'];
 							$emergency_mobile = $row['TravelInfo']['mobile'];
 							$emergency_name = $row['TravelInfo']['name'];
+							$passportcountry= \App\Helpers\commonHelper::getCountryNameById($row['TravelInfo']['citizenship']);
 
 							if(!empty($flight_details)){
 
@@ -3665,6 +3851,7 @@ class UserController extends Controller {
 							$departure_airline_name = '';
 							$departure_flight_number = '';
 							$departure_date_departure = '';
+							$passportcountry = '';
 
 						}
 
@@ -3681,7 +3868,7 @@ class UserController extends Controller {
 							$passportName= $passportValuedata['salutation'].' '.$passportValuedata['name'];
 							$passport_no = $passportValuedata['passport_no'];
 							$countryPass= \App\Helpers\commonHelper::getCountry2NameById($passportValuedata['country_id']);
-							$passportcountry= \App\Helpers\commonHelper::getCountryNameById($passportValuedata['citizenship']);
+							
 							
 							$diplomatic_passport = $passportValuedata['diplomatic_passport'];
 							$visa_residence = $passportValuedata['visa_residence'] == Null ? 'N/A' : $passportValuedata['visa_residence'];
@@ -3726,7 +3913,6 @@ class UserController extends Controller {
 							$passportName= '';
 							$passport_no = '';
 							$countryPass= '';
-							$passportcountry= '';
 							$diplomatic_passport = '';
 							$visa_residence = '';
 							$multiple_entry_visa_country = '';
@@ -3811,6 +3997,8 @@ class UserController extends Controller {
 									$logistics_picked = $val['TravelInfo']['logistics_picked'];
 									$emergency_mobile = $val['TravelInfo']['mobile'];
 									$emergency_name = $val['TravelInfo']['name'];
+									$passportcountry= \App\Helpers\commonHelper::getCountryNameById($val['TravelInfo']['citizenship']);
+
 		
 									if(!empty($flight_details)){
 		
@@ -3842,6 +4030,7 @@ class UserController extends Controller {
 									$departure_airline_name = '';
 									$departure_flight_number = '';
 									$departure_date_departure = '';
+									$passportcountry = '';
 		
 								}
 
@@ -3922,7 +4111,6 @@ class UserController extends Controller {
 									$passportName= $passportValuedata['salutation'].' '.$passportValuedata['name'];
 									$passport_no = $passportValuedata['passport_no'];
 									$countryPass= \App\Helpers\commonHelper::getCountry2NameById($passportValuedata['country_id']);
-									$passportcountry= \App\Helpers\commonHelper::getCountryNameById($passportValuedata['citizenship']);
 									
 									$diplomatic_passport = $passportValuedata['diplomatic_passport'];
 									$visa_residence = $passportValuedata['visa_residence'] == Null ? 'N/A' : $passportValuedata['visa_residence'];
@@ -3967,7 +4155,6 @@ class UserController extends Controller {
 									$passportName= '';
 									$passport_no = '';
 									$countryPass= '';
-									$passportcountry= '';
 									$diplomatic_passport = '';
 									$visa_residence = '';
 									$multiple_entry_visa_country = '';
@@ -4352,15 +4539,15 @@ class UserController extends Controller {
 			
 							$transaction = new \App\Models\Transaction();
 							$transaction->user_id = $request->post('user_id');
-							$transaction->bank = 'Wire';
+							$transaction->bank = 'Refund to Self';
 							$transaction->order_id = $orderId;
 							$transaction->transaction_id = $transactionId;
 							$transaction->method = 'Manual';
 							$transaction->amount = $request->post('amount');
 							$transaction->bank_transaction_id = $request->post('reference_number');
 							$transaction->payment_status = '3';
-							$transaction->status = '3';
-							$transaction->particular_id = '4';
+							$transaction->status = '1';
+							$transaction->particular_id = '7';
 							$transaction->save();
 		
 							$Wallet = new \App\Models\Wallet();
@@ -4371,12 +4558,34 @@ class UserController extends Controller {
 							$Wallet->status = 'Success';
 							$Wallet->save();
 			
-							$user = \App\Models\User::where('id',$request->post('user_id'))->first();
-							$user->status = '1';
-							$user->refund_amount = $request->post('amount');
-							$user->reference_number = $request->post('reference_number');
-							$user->save();
 
+							// transaction charge
+
+							$transactionId=strtotime("now").rand(11,99);
+
+							$transaction = new \App\Models\Transaction();
+							$transaction->user_id = $request->post('user_id');
+							$transaction->bank = 'Refund transaction charge';
+							$transaction->order_id = $transactionId;
+							$transaction->transaction_id = $transactionId;
+							$transaction->method = 'Manual';
+							$transaction->amount = $totalAcceptedAmount-$request->post('amount');
+							$transaction->bank_transaction_id = $transactionId;
+							$transaction->payment_status = '3';
+							$transaction->status = '1';
+							$transaction->particular_id = '7';
+							$transaction->save();
+		
+							$Wallet = new \App\Models\Wallet();
+							$Wallet->user_id = $request->post('user_id');
+							$Wallet->type  = 'Dr';
+							$Wallet->amount = $totalAcceptedAmount-$request->post('amount');
+							$Wallet->transaction_id = $transaction->id;
+							$Wallet->status = 'Success';
+							$Wallet->save();
+
+							$user = \App\Models\User::where('id',$request->post('user_id'))->first();
+							
 							$to = $user->email;
 							$name = $user->name.' '.$user->last_name;
 							$amount = $request->post('amount');
@@ -6066,11 +6275,44 @@ class UserController extends Controller {
 
 			->addColumn('action', function($data){
 				
-					
+				if(env('TESTING')==false){
+
 					return '<div style="display:flex">
 							<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
-							<a href="javascript:void(0)" title="Room Upgrade" data-id="'.$data->id.'" class="btn btn-sm btn-success px-3 m-1 text-white room_upgrade">Room Upgrade</a>
 							</div>';
+
+				}else{
+
+					$queryUser = \App\Models\User::where([['id', $data->id]])
+												->where(function ($query) {
+													$query->where('added_as',null)
+														->orWhere('added_as', '=', 'Group');
+												})->first();
+												
+					if($queryUser){
+
+						$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$data->id)->where('status','Pending')->first();
+						if($roomupgrade){
+							$disabled = 'style="cursor: default;pointer-events: none;background-color: #9ea5a3 !important"';
+						}else{
+							$disabled = '';
+						}
+
+						return '<div style="display:flex">
+						<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+						<a href="javascript:void(0)" title="Room Upgrade" data-id="'.$data->id.'" class="btn btn-sm btn-success px-3 m-1 text-white room_upgrade" '.$disabled.'>Room Upgrade</a>
+						</div>';
+
+					}else{
+						return '<div style="display:flex">
+							<a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary m-1 text-white" ><i class="fas fa-eye"></i></a>
+							</div>';
+					}
+
+					
+				}
+					
+					
 				
 		    })
 
@@ -6493,30 +6735,42 @@ class UserController extends Controller {
 
 			->addColumn('Refund', function($data){
 				
-				if (\Auth::user()->designation_id == '1' || Auth::user()->designation_id == 16) {
+				if(env('TESTING')==true){
 
-					if($data->reference_number == null){
+					if (\Auth::user()->designation_id == '1' || Auth::user()->designation_id == 16) {
 
-						$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($data->user_id, true);
-						$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($data->user_id, true);
-
-						return '<div style="display:flex">
-								<a data-pending_amount="'.$totalPendingAmount.'" data-accepted_mount="'.$totalAcceptedAmount.'" data-id="'.$data->user_id.'" data-type="1" title="Refund Money" class="btn btn-sm btn-outline-success m-1 moneyRefunded" id="staticBackdropButton">Refund Money</a>
-								</div>';
-					}else{
-
-						return '<div class="span badge rounded-pill pill-badge-success">Money Refunded</div>';
+						if($data->reference_number == null){
+	
+							$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($data->user_id, true);
+							$totalAcceptedAmount = \App\Helpers\commonHelper::userTotalBalance($data->user_id, true);
+							if($totalAcceptedAmount>0){
+	
+								return '<div style="display:flex">
+									<a data-pending_amount="'.$totalPendingAmount.'" data-accepted_mount="'.$totalAcceptedAmount.'" data-id="'.$data->user_id.'" data-type="1" title="Refund Money" class="btn btn-sm btn-outline-success m-1 moneyRefunded" id="staticBackdropButton">Refund Money</a>
+									</div>';
+							}
+							
+						}else{
+	
+							return '<div class="span badge rounded-pill pill-badge-success">Money Refunded</div>';
+						}
+	
+						
 					}
 
+				}else{
 					
+					return '-';
 				}
+				
 				
 		    })
 
 			
 			->addColumn('refund_amount', function($data){
 				
-				return $data->refund_amount;
+				return \App\Helpers\commonHelper::userDrBalance($data->user_id);
+
 			
 			})
 
@@ -8398,7 +8652,6 @@ class UserController extends Controller {
 			
 	}
 
-
 	public function spouseUpdate(Request $request){ 
 
 		$usersMain = \App\Models\User::where('id', $request->post('user_id'))->first();
@@ -8422,6 +8675,7 @@ class UserController extends Controller {
 			$rules['date_of_birth'] = 'required|date';
 			$rules['citizenship'] = 'required';
 			$rules['salutation'] = 'required';
+			$rules['contact_address'] = 'required';
 			$rules['spouse_contact_country_id'] = 'required';
 			$rules['spouse_contact_state_id'] = 'required';
 			$rules['spouse_contact_city_id'] = 'required';
@@ -8519,7 +8773,7 @@ class UserController extends Controller {
 						if($existSpouse){
 		
 							$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Youhave-already-updated-spouse-detail');
-							return response(array("error"=>true, 'message'=>$message), 200);
+							return response(array("error"=>true, 'message'=>$message), 403);
 		
 						}else{
 
@@ -8528,7 +8782,7 @@ class UserController extends Controller {
 							if($users && $users->added_as == 'Spouse'){
 								
 								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'Spouse-already-associated-withother-user');
-								return response(array("error"=>true, "message"=>$message), 200);
+								return response(array("error"=>true, "message"=>$message), 403);
 							}
 
 							$date1 = $dob;
@@ -8539,10 +8793,11 @@ class UserController extends Controller {
 							if($years<18){
 
 								$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($usersMain->language,'DateOfBirthyear-mustbemore-than-18years');
-								return response(array("error"=>true, "message"=>$message), 200);
+								return response(array("error"=>true, "message"=>$message), 403);
 							
 							}else{
-								
+
+								$usersParent = \App\Models\User::where('id', $request->post('user_id'))->first();
 								
 								$token = md5(rand(1111,4444));
 								$reminderData = [
@@ -8563,11 +8818,13 @@ class UserController extends Controller {
 									'dob'=>$dob,
 									'citizenship'=>$request->post('citizenship'),
 									'reg_type'=>'email',
-									'designation_id'=>'2',
+									'marital_status'=>'Married',
+									'designation_id'=>$usersParent->designation_id,
 									'otp_verified'=>'No',
 									'system_generated_password'=>'1',
 									'spouse_confirm_token'=>$token,
 									'spouse_confirm_reminder_email'=>json_encode($reminderData),
+									'contact_address'=>$request->post('contact_address'),
 									'contact_country_id'=>$request->post('spouse_contact_country_id'),
 									'contact_state_id'=>$request->post('spouse_contact_state_id'),
 									'contact_city_id'=>$request->post('spouse_contact_city_id'),
@@ -8584,6 +8841,7 @@ class UserController extends Controller {
 
 								$spouse_id = \DB::getPdo()->lastInsertId();
 
+	
 							}
 						}
 
@@ -8602,6 +8860,17 @@ class UserController extends Controller {
 						'last_name'=>$request->post('last_name'),
 						'email'=>$request->post('email'),
 						'gender'=>$request->post('gender'),
+						'contact_address'=>$request->post('contact_address'),
+						'contact_country_id'=>$request->post('spouse_contact_country_id'),
+						'contact_state_id'=>$request->post('spouse_contact_state_id'),
+						'contact_city_id'=>$request->post('spouse_contact_city_id'),
+						'phone_code'=>$request->post('spouse_user_mobile_code'),
+						'mobile'=>$request->post('spouse_mobile'),
+						'contact_business_codenumber'=>$request->post('spouse_contact_business_codenumber'),
+						'contact_business_number'=>$request->post('spouse_contact_business_number'),
+						'contact_whatsapp_codenumber'=>$request->post('spouse_contact_whatsapp_codenumber'),
+						'contact_whatsapp_number'=>$request->post('spouse_contact_whatsapp_number'),
+						'contact_zip_code'=>$request->post('spouse_contact_zip_code'),
 						'dob'=>$dob,
 						'citizenship'=>$request->post('citizenship'),
 					);
@@ -9166,7 +9435,19 @@ class UserController extends Controller {
 
 				$country = \App\Models\Pricing::orderBy('country_name', 'asc')->get();
 
-				$html=view('admin.user.stage.stage_three_romm_upgrade_model',compact('basePrice','Offers','category','trainer','country','user','citizenship'))->render();
+				$spouseAmount = 0;
+
+				$spouseResult=\App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->first();
+				if($spouseResult){
+
+					$spouseAmount = $spouseResult->amount;
+				}
+
+				$userAmount = $user->amount+$spouseAmount;
+				$basePrice = $basePrice-($userAmount);
+				
+
+				$html=view('admin.user.stage.stage_three_romm_upgrade_model',compact('basePrice','Offers','category','trainer','country','user','citizenship','userAmount'))->render();
 
 				return response()->json(array('html'=>$html));
 				
@@ -9177,7 +9458,6 @@ class UserController extends Controller {
 
 	}
 
-	
 	public function profileRoomUpgrade(Request $request) {
 		
 		$result = \App\Models\User::find($request->post('user_id'));
@@ -9197,86 +9477,63 @@ class UserController extends Controller {
 				$roomupgrade->user_id =$request->post('user_id');
 				$roomupgrade->room_type =$request->post('room_type');
 				$roomupgrade->category =$request->post('category');
-				$roomupgrade->amount=$request->post('amount')-$result->amount;
+				$roomupgrade->amount=$request->post('amount');
 				$roomupgrade->token = $token;
 				$roomupgrade->save();			
 				
 				$name= $result->name.' '.$result->last_name;
 
-				if($request->post('amount') > $result->amount){
+				$website = '<a href="'.url('room-change-payment/'.$token).'">Website</a>';
 
-					$website = '<a href="'.url('room-change-payment/'.$token).'">Website</a>';
+				if($result->language == 'sp'){
 
-					if($result->language == 'sp'){
+					$subject = 'Le hemos mejorado la categoría de su habitación en el GProCongress II.';
+					$msg = '<p>Estimado '.$name.',</p>
+					<p>Gracias por su solicitud de cambio de categoría.  Su habitación ha sido mejorada a una '.$request->post('category').'. </p>
+					<p>Si aún no lo ha hecho, le rogamos que pague la diferencia de precio por la mejora de su habitación en '.$website.'</p>
+					<p>Si necesita hablar con un miembro de nuestro equipo, simplemente responda a este correo electrónico.</p>
+					<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+					<p>Cordialmente,</p>
+					<p>Equipo GProCongress II</p>';
 
-						$subject = '¡Felicidades! ¡Has sido aprobado! Por favor, realice su pago ahora.';
-						$msg = '<p>Estimado '.$name.',</p>
-						<p>Nuestro equipo ha revisado su solicitud y nos complace informarle que ha sido aprobado como exhibidor para el GProCongress II. ¡Esperamos tenerle con nosotros en Panamá este noviembre! </p>
-						<p>Le pedimos que realice su pago lo antes posible. Le recordamos que los exhibidores se eligen por orden de llegada, “primero en pagar, primero en entrar”. En consecuencia, si espera demasiado para realizar su pago, podría quedar fuera del Congreso como exhibidor, debido a que todos los cupos de exhibidores ya podrían estar llenos.</p>
-						<p>Puede pagar su inscripción como exhibidor de $800 USD utilizando este enlace en el que puede hacer clic una sola '.$website.', mediante cualquiera de las tarjetas de crédito permitidas.&nbsp;</p>
-						<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
-						<p>Ore con nosotros para que se multiplique la cantidad y calidad de capacitadores de pastores.</p>
-						<p>Cordialmente,</p>
-						<p>Equipo GProCongress II</p>';
+				}elseif($result->language == 'fr'){
 
-					}elseif($result->language == 'fr'){
+					$subject = 'Votre chambre à GProCongress II a été surclassée.';
+					$msg = "<p>Cher ".$name.",</p>
+					<p>Nous vous remercions pour votre demande de surclassement. Votre chambre a été surclassée à ".$request->post('category').". </p>
+					<p>Si vous ne l'avez pas encore fait, veuillez payer la différence de prix pour votre surclassement en vous rendant sur ".$website."</p>
+					<p>Si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+					<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+					<p>Chaleureusement,</p>
+					<p>L'équipe de GProCongress II</p>";
 
-						$subject = 'Félicitations!  Vous avez été approuvé !  Prière d’effectuer votre paiement maintenant.';
-						$msg = '<p>Cher  '.$name.',</p>
-						<p>Notre équipe a examiné votre demande et nous sommes heureux de vous informer que vous avez été approuvé en tant qu’exposant pour GProCongress II.  Nous sommes impatients de vous avoir avec nous au Panama en novembre!</p>
-						<p>Nous vous demandons d’effectuer votre paiement dès que possible.  Nous vous rappelons que les exposants sont choisis selon le principe du « premier à payer, premier arrivé».  Par conséquent, si vous attendez trop longtemps pour effectuer votre paiement, vous pourriez être exclu du Congrès en tant qu’exposant, car tous les créneaux d’exposants pourraient déjà être pris.</p>
-						<p>Vous pouvez payer vos frais d’exposition de 800 USD en utilisant une seule fois ce lien cliquable '.$website.', par l’intermédiaire de n’importe quelle carte de crédit majeure.&nbsp;</p>
-						<p>Si vous avez des questions, ou si vous avez besoin de parler à l’un des membres de notre équipe, répondez simplement à ce courriel.</p>
-						<p>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</p>
-						<p>Cordialement,</p>
-						<p>L’équipe GProCongress II</p>';
+				}elseif($result->language == 'pt'){
 
-					}elseif($result->language == 'pt'){
-
-						$subject = 'Parabéns! Você foi aprovado! Por favor, faça seu pagamento agora.';
-						$msg = "<p>Caro  '.$name.',</p>
-						<p>Nossa equipe revisou sua inscrição e temos o prazer de informar que você foi aprovado como Expositor do GProCongresso II. Estamos ansiosos para tê-lo conosco no Panamá em novembro! </p>
-						<p>Pedimos que efetue seu pagamento o quanto antes. Lembramos que os expositores são escolhidos na base do “primeiro a pagar, primeiro a chegar”. Dessa forma, se você demorar muito para efetuar o pagamento, poderá ficar de fora do Congresso como expositor, pois todas as vagas de expositor já podem estar preenchidas</p>
-						<p>Você pode pagar sua taxa de exibição de $ 800 USD usando este '.$website.', usando qualquer cartão de crédito.'&nbsp;</p>
-						<p>Se você tiver alguma dúvida ou precisar falar com um dos membros de nossa equipe, basta responder a este e-mail</p>
-						<p>Ore conosco para multiplicar a quantidade e qualidade de pastores-treinadores.</p>
-						<p>Calorosamente,,</p>
-						<p>Equipe GProCongresso  II</p>";
-
-					}else{
-				
-						$subject = 'Congratulations!  You have been approved!  Please make your payment now';
-						$msg = '<p>Dear '.$name.',</p>
-						<p>Our team has reviewed your submission, and we are pleased to inform you that you have been approved as an Exhibitor for GProCongress II.  We are looking forward to having you with us in Panama this November!  </p>
-						<p>We ask that you make your payment as soon as possible.  We would remind you that exhibitors are chosen on a “first pay, first come” basis.  Accordingly, if you wait too long to make your payment, you could be left out of the Congress as an exhibitor, because all exhibitor slots could already be full.</p>
-						<p>You may pay your $800 USD exhibition fee using this one time clickable '.$website.', using any major credit card.&nbsp;</p>
-						<p>If you have any questions, or if you need to speak to one of our team members, simply reply to this email.</p>
-						<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
-						<p>Warmly,</p>
-						<p>The GProCongress II Team</p>';
-
-					}
-
-					\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
-					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
-
+					$subject = 'O seu quarto no GProCongress II foi melhorado.';
+					$msg = '<p>Caro '.$name.',</p>
+					<p>Obrigado pelo seu pedido de upgrade.  O seu quarto foi atualizado para um '.$request->post('category').'. </p>
+					<p>Se ainda não o fez, pague a diferença de preço para o seu upgrade de quarto indo ao '.$website.'</p>
+					<p>Se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+					<p>Ore conosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+					<p>Cordialmente,</p>
+					<p>Equipe do GProCongress II</p>';
 
 				}else{
-
-					if($request->post('room_type') == 'Yes' && $request->post('category') != ''){
-						$result->room = $request->post('category');
-						$result->change_room_type = $request->post('room_type');
-						$result->upgrade_category = $request->post('category');
-						$result->save();	
-					}
+			
+					$subject = 'Your room at GProCongress II has been upgraded';
+					$msg = '<p>Dear '.$name.',</p>
+					<p>Thank you for your upgrade request.  Your room has been upgraded to a '.$request->post('category').'. </p>
+					<p>If you have not already done so, please pay the price difference for your room upgrade by going to '.$website.'</p>
+					<p>If you need to speak with one of our team members, simply reply to this email.</p>
+					<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+					<p>Warmly,</p>
+					<p>The GProCongress II Team</p>';
 
 				}
-				
-				$UserHistory=new \App\Models\UserHistory();
-				$UserHistory->user_id=$result->id;
-				$UserHistory->action_id=\Auth::user()->id;
-				$UserHistory->action='Room Change Request send';
-				$UserHistory->save();
+
+				\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+				\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,'Room Upgrade','Room Upgrade','Room Upgrade');
 
 				return response(array('error'=>false, 'reload'=>true, 'message'=>'Room Change Request send'), 200);
 			}
@@ -9287,6 +9544,397 @@ class UserController extends Controller {
 
 			return response(array('error'=>true, 'reload'=>false, 'message'=>'Something went wrong. Please try again.'), 403);
 		}
+
+	}
+
+	public function refundAmountToAnotherUser(Request $request){
+ 
+        if($request->ajax()){
+
+			$rules = [
+				'to_user_id' => 'required',
+				'user_id' => 'required|numeric',
+			];
+	
+			$validator = \Validator::make($request->all(), $rules);
+				
+			if ($validator->fails()) {
+				$message = [];
+				$messages_l = json_decode(json_encode($validator->messages()), true);
+				foreach ($messages_l as $msg) {
+					$message = $msg[0];
+					break;
+				}
+				
+				return response(array("error"=>true, 'message'=>$message), 403);
+				
+			}else{
+	
+				try {
+
+					$referenceCheck = \App\Models\User::where('id',$request->post('to_user_id'))->first();
+					if(!$referenceCheck){
+
+						return response(array("error"=>true, "message"=>'User not found'), 403);
+
+					}else{
+
+						$totalAcceptedAmount = \App\Helpers\commonHelper::userTotalBalance($request->post('user_id'));
+						$totalPendingAmountToUser = \App\Helpers\commonHelper::getTotalPendingAmount($request->post('to_user_id'));
+
+						if($totalAcceptedAmount>0  && $totalPendingAmountToUser>0){
+		
+							if($totalAcceptedAmount > $totalPendingAmountToUser){
+
+								$amount = $totalPendingAmountToUser;
+
+							}else{
+
+								$amount = $totalAcceptedAmount;
+							}
+							
+
+							$transactionId=strtotime("now").rand(11,99);
+							$orderId=strtotime("now").rand(11,99);
+
+							$transaction = new \App\Models\Transaction();
+							$transaction->user_id = $request->post('to_user_id');
+							$transaction->bank = 'Refund Adj';
+							$transaction->order_id = $orderId;
+							$transaction->transaction_id = $transactionId;
+							$transaction->method = 'Manual';
+							$transaction->amount = $amount;
+							$transaction->bank_transaction_id = $transactionId;
+							$transaction->payment_status = '2';
+							$transaction->status = '1';
+							$transaction->particular_id = '6';
+							$transaction->save();
+		
+							$Wallet = new \App\Models\Wallet();
+							$Wallet->user_id = $request->post('to_user_id');
+							$Wallet->type  = 'Cr';
+							$Wallet->amount = $amount;
+							$Wallet->transaction_id = $transaction->id;
+							$Wallet->status = 'Success';
+							$Wallet->save();
+
+
+							// refunded user amount
+
+							$transactionId=strtotime("now").rand(11,99);
+							$orderId=strtotime("now").rand(11,99);
+			
+							$transaction = new \App\Models\Transaction();
+							$transaction->user_id = $request->post('user_id');
+							$transaction->bank = 'Refund Adj';
+							$transaction->order_id = $orderId;
+							$transaction->transaction_id = $transactionId;
+							$transaction->method = 'Manual';
+							$transaction->amount = $amount;
+							$transaction->bank_transaction_id = $transactionId;
+							$transaction->payment_status = '3';
+							$transaction->status = '1';
+							$transaction->particular_id = '6';
+							$transaction->save();
+		
+							$Wallet = new \App\Models\Wallet();
+							$Wallet->user_id = $request->post('user_id');
+							$Wallet->type  = 'Dr';
+							$Wallet->amount = $amount;
+							$Wallet->transaction_id = $transaction->id;
+							$Wallet->status = 'Success';
+							$Wallet->save();
+			
+							$RefundAmount = new \App\Models\RefundAmount();
+
+							$RefundAmount->user_id = $request->post('user_id');
+							$RefundAmount->to_user_id = $request->post('to_user_id');
+							$RefundAmount->amount = $amount;
+							$RefundAmount->save();
+
+							$user = \App\Models\User::where('id',$request->post('user_id'))->first();
+							
+							$to = $user->email;
+
+							$name = $user->name.' '.$user->last_name;
+							$referenceCheckName = $referenceCheck->name.' '.$referenceCheck->last_name;
+							
+							$totalAcceptedAmountUser = \App\Helpers\commonHelper::userTotalBalance($request->post('user_id'));
+
+							// if($user->language == 'sp'){
+
+							// 	$subject = '¡Gracias por su donación!';
+							// 	$msg = "<p>Estimado ".$user->name." ".$user->last_name.",&nbsp;</p><p><br></p>
+							// 	<p>Gracias por haber aceptado donar su pago de inscripción para que otra persona pueda asistir al GProCongress II.  Su bondadosa donación hará posible que ".$referenceCheckName." venga a Panamá este noviembre.</p>
+							// 	<p>El saldo restante de su cuenta GProCongress es de $ ".$totalAcceptedAmountUser."</p>
+							// 	<p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+							// 	<p>Únase a nosotros en oración para multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+							// 	<p>Cordialmente,</p><p> Equipo GProCongress II </p>";
+		
+							// }elseif($user->language == 'fr'){
+							
+							// 	$subject = "Nous vous remercions pour votre don!";
+							// 	$msg = "<p>Cher ".$user->name." ".$user->last_name.",&nbsp;</p><p><br></p>
+							// 	<p>Nous vous remercions d'avoir accepté de faire une donation de vos frais d'inscription afin que quelqu'un d'autre puisse assister à GProCongress II. Votre don permettra à ".$referenceCheckName." de se rendre à Panama en novembre prochain.</p>
+							// 	<p>Le solde de votre compte GProCongress est de $ ".$totalAcceptedAmountUser."</p>
+							// 	<p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+							// 	<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+							// 	<p>Chaleureusement,</p><p>L'équipe de GProCongress II </p>";
+		
+							// }elseif($user->language == 'pt'){
+							
+								$subject = 'Obrigado pelo seu donativo!';
+								$msg = "<p>Caro ".$user->name." ".$user->last_name.",&nbsp;</p><p><br></p>
+								<p>Obrigado por ter aceite doar a sua taxa de inscrição para que outra pessoa possa participar no GProCongress II. O seu generoso donativo permitirá que ".$referenceCheckName." possa ir ao Panamá em Novembro.</p>
+								<p>O saldo restante da sua conta GProCongress é de $ ".$totalAcceptedAmountUser."</p>
+								<p>Se tiver alguma dúvida sobre o seu donativo, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+								<p>Ore connosco para multiplicar a quantidade e a qualidade dos pastores-formadores.</p>
+								<p>Cordialmente,</p><p>Equipe do GProCongress II</p>";
+		
+							// }else{
+							
+							// 	$subject = 'Thank you for your donation!.';
+							// 	$msg = "<p>Dear ".$user->name." ".$user->last_name.",&nbsp;</p><p><br></p>
+							// 	<p>Thank you for agreeing to donate your registration fee so that someone else can attend GProCongress II.  Your kind donation will make it possible for".$referenceCheckName." to come to Panama this November.</p>
+							// 	<p>Your remaining balance of your GProCongress account is $ ".$totalAcceptedAmountUser."</p>
+							// 	<p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+							// 	<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+							// 	<p>Warmly,</p><p>GProCongress II Team</p>";
+				
+							// }
+
+							\App\Helpers\commonHelper::emailSendToUser($to, $subject, $msg);
+							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Thank you for your donation!');
+
+
+							$totalAcceptedAmount = \App\Helpers\commonHelper::userTotalBalance($request->post('to_user_id'));
+						
+							$to_user_id = \App\Models\User::where('id',$request->post('to_user_id'))->first();
+							if($totalAcceptedAmount == $to_user_id->amount){
+
+								$to_user_id->stage = '3';
+								$to_user_id->status_change_at = date('Y-m-d H:i:s');
+								$to_user_id->save();
+							}
+
+							$totalPendingAmount = \App\Helpers\commonHelper::getTotalPendingAmount($to_user_id->id, true);
+							$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($to_user_id->id, true);
+							$totalAmountInProcess = \App\Helpers\commonHelper::getTotalAmountInProcess($to_user_id->id, true);
+							$totalRejectedAmount = \App\Helpers\commonHelper::getTotalRejectedAmount($to_user_id->id, true);
+							
+							if($to_user_id->language == 'sp'){
+
+								$subject = 'Pago recibido del patrocinador '.$name.'. ¡Gracias!';
+								$msg = '<p>Estimado  '.$to_user_id->name.' '.$to_user_id->last_name.' ,&nbsp;</p><p><br></p>
+										<p>Se ha recibido una cantidad de $'.$amount.' en su cuenta de su patrocinador '.$name.'.</p><p><br></p>
+										<p>Le notificaremos tan pronto como el pago sea aprobado en nuestro sistema. Hasta entonces, este pago se reflejará como Pago en proceso.</p><p> <br></p>
+										<p>Aquí tiene un resumen actual del estado de su pago:</p>
+										<p>IMPORTE TOTAL A PAGAR:'.$to_user_id->amount.'</p>
+										<p>PAGOS REALIZADOS Y ACEPTADOS ANTERIORMENTE:'.$totalAcceptedAmount.'</p>
+										<p>PAGOS ACTUALMENTE EN PROCESO:'.$totalAmountInProcess.'</p>
+										<p>SALDO PENDIENTE DE PAGO:'.$totalPendingAmount.'</p><p><br></p>
+										<p>Si tiene alguna pregunta sobre el proceso de la visa, responda a este correo electrónico para hablar con uno de los miembros de nuestro equipo.</p>
+										<p>Por favor, ore con nosotros en nuestro esfuerzo por multiplicar el número de capacitadores de pastores y desarrollar sus competencias.</p><p><br></p>
+										<p>Atentamente,</p>
+										<p>El equipo del GProCongress II</p>';
+				
+							}elseif($to_user_id->language == 'fr'){
+							
+								$subject = 'Paiement reçu du '.$name.'. Merci !';
+								$msg = '<p>Cher '.$to_user_id->name.' '.$to_user_id->last_name.' ,&nbsp;</p><p><br></p>
+										<p>Un montant de $'.$amount.' a été reçu sur votre compte de la part de votre '.$name.' . </p><p><br></p>
+										<p>Nous vous informerons dès que le paiement sera approuvé dans notre système. Jusqu’à ce moment-là, ce paiement apparaîtra comme un paiement en cours de traitement.</p>
+										<p>Voici un résumé de l’état de votre paiement :</p>
+										<p>MONTANT TOTAL À PAYER:'.$to_user_id->amount.'</p>
+										<p>PAIEMENTS DÉJÀ EFFECTUÉS ET ACCEPTÉS:'.$totalAcceptedAmount.'</p>
+										<p>PAIEMENTS EN COURS:'.$totalAmountInProcess.'</p>
+										<p>SOLDE RESTANT DÛ:'.$totalPendingAmount.'</p><p><br></p>
+										<p>Si vous avez des questions concernant votre paiement, répondez simplement à cet e-mail et notre équipe communiquera avec vous.   </p>
+										<p>Priez avec nous, alors que nous nous efforçons de multiplier les nombres et de renforcer les capacités des formateurs de pasteurs.</p><p><br></p>
+										<p>Cordialement,</p><p>L’équipe du GProCongrès II</p>';
+				
+							}elseif($to_user_id->language == 'pt'){
+							
+								$subject = 'Pagamento recebido do patrocinador '.$name.'. Obrigado!';
+								$msg = '<p>Prezado  '.$to_user_id->name.' '.$to_user_id->last_name.' ,&nbsp;</p><p><br></p>
+										<p>Um montante de $'.$amount.' foi recebido na sua conta do seu patrocinador '.$name.'.</p><p><br></p>
+										<p>Iremos notificá-lo assim que o pagamento for aprovado no nosso sistema. Até lá, este pagamento reflectirá como Pagamento em Processo.</p><p> <br></p>
+										<p>Aqui está o resumo do estado do seu pagamento:</p>
+										<p>VALOR TOTAL A SER PAGO:'.$to_user_id->amount.'</p>
+										<p>PAGAMENTO PREVIAMENTE FEITO E ACEITE:'.$totalAcceptedAmount.'</p>
+										<p>PAGAMENTO ATUALMENTE EM PROCESSO:'.$totalAmountInProcess.'</p>
+										<p>SALDO REMANESCENTE EM DÍVIDA:'.$totalPendingAmount.'</p><p><br></p>
+										<p>Se você tem alguma pergunta sobre o seu pagamento, Simplesmente responda a este e-mail, e nossa equipe ira se conectar com você. </p>
+										<p>Ore conosco a medida que nos esforçamos para multiplicar os números e desenvolvemos a capacidade dos treinadores de pastores.</p>
+										<p><br></p><p>Calorosamente,</p>
+										<p>A Equipe do II CongressoGPro</p>';
+				
+							}else{
+							
+								$subject = 'Payment received from sponsor '.$name.'. Thank you!';
+								$msg = '<p>Dear '.$to_user_id->name.' '.$to_user_id->last_name.' ,&nbsp;</p><p><br></p>
+										<p>An amount of $'.$amount.' has been received on your account from your sponsor '.$name.'.  </p><p><br></p>
+										<p>We will notify you as soon as the payment is approved in our system. Until then, this payment will reflect as Payment in Process.</p><p> <br></p>
+										<p>Here is a summary of your payment status:</p>
+										<p>TOTAL AMOUNT TO BE PAID:'.$to_user_id->amount.'</p>
+										<p>PAYMENTS PREVIOUSLY MADE AND ACCEPTED:'.$totalAcceptedAmount.'</p>
+										<p>PAYMENTS CURRENTLY IN PROCESS:'.$totalAmountInProcess.'</p>
+										<p>REMAINING BALANCE DUE:'.$totalPendingAmount.'</p><p><br></p>
+										<p>If you have any questions about your payment, simply respond to this email, and our team will connect with you.  </p>
+										<p>Pray with us, as we endeavour to multiply the numbers, and build the capacities of pastor trainers.</p><p><br></p>
+										<p>Warmly,</p>
+										<p>GProCongress II Team</p>';
+				
+							}
+
+							\App\Helpers\commonHelper::emailSendToUser($to_user_id->email, $subject, $msg);
+							\App\Helpers\commonHelper::userMailTrigger($to_user_id->id,$msg,$subject);
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($to_user_id->id,$subject,$msg,'Payment received from sponsor');
+
+
+							$subject = '[GProCongress II Admin]  Payment refund';
+							$msg = '<p><span style="font-size: 14px;">Hi,&nbsp;</span></p><p><span style="font-size: 14px;">Refund has been initiated for GProCongress II. Here are the candidate details:</span></p><p><span style="font-size: 14px;">Name: '.$name.'</span></p><p><span style="font-size: 14px;">Email: '.$to.'</span></p><p><span style="font-size: 14px;">Refund Amount : '.$amount.'</span></p><p><span style="font-size: 14px;">Regards,</span></p><p><span style="font-size: 14px;">Team GPro</span></p>';
+							\App\Helpers\commonHelper::emailSendToAdmin($subject, $msg);
+		
+							// \App\Helpers\commonHelper::sendSMS($request->user()->mobile);
+		
+							return response(array("reset"=>true, "error"=>false, "message"=>'Manual payment refund successful'), 200);
+			
+						}else{
+		
+							return response(array("error"=>true, "message"=>'Payment not refund'), 403);
+			
+						}
+						
+					}
+	
+					
+					
+				} catch (\Exception $e) {
+					return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+				}
+			}
+
+            
+        }
+        
+    }
+
+	public function roomUpgradeList(Request $request,$id) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('room_upgrades');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			// $order = $columns[$request->input('order.0.column')];
+			// $dir = $request->input('order.0.dir');
+
+			$query = \App\Models\RoomUpgrade::where('user_id',$id)->orderBy('id','desc');
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData = \App\Models\RoomUpgrade::where('user_id',$id)->orderBy('id','desc')->count();
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));  
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('user_name', function($data){
+
+				return '<a style="color: blue !important;" href="'.url('admin/user/user-profile/'.$data->user_id).'" target="_blank" title="User Profile">'.\App\Helpers\commonHelper::getUserNameById($data->user_id).'</a>';
+				
+		    })
+
+			->addColumn('category', function($data){
+
+				return $data->category;
+				
+		    })
+			->addColumn('payment_by', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+					return $Transaction->bank;
+				}else{
+					return '';
+				}
+
+				
+		    })
+
+			->addColumn('method', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+					return $Transaction->method;
+				}else{
+					return '';
+				}
+				
+		    })
+			->addColumn('transaction_id', function($data){
+				return $data->order_id;
+		    })
+			->addColumn('bank_transaction_id', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+					return $Transaction->bank_transaction_id;
+				}else{
+					return '';
+				}
+		    })
+
+			->addColumn('amount', function($data){
+
+				return '$'.$data->amount;
+				
+				
+		    })
+
+			->addColumn('payment_status', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+
+					if($Transaction->payment_status=='0' || $Transaction->payment_status=='1' || $Transaction->payment_status=='7' || $Transaction->payment_status=='8' || $Transaction->payment_status=='9') {
+						return '<div class="span badge rounded-pill pill-badge-danger">'.\App\Helpers\commonHelper::getPaymentStatusName($Transaction->payment_status).'</div>';
+					} else if($Transaction->payment_status=='3' || $Transaction->payment_status=='4' || $Transaction->payment_status=='6') {
+						return '<div class="span badge rounded-pill pill-badge-orange">'.\App\Helpers\commonHelper::getPaymentStatusName($Transaction->payment_status).'</div>';
+					} else if($Transaction->payment_status=='2' || $Transaction->payment_status=='5') {
+						return '<div class="span badge rounded-pill pill-badge-success">'.\App\Helpers\commonHelper::getPaymentStatusName($Transaction->payment_status).'</div>';
+					}
+
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-orange" style="background-color: #b76d0a;">Pending</div>';
+				}
+
+				
+		    })
+
+			->addColumn('created_at', function($data){
+				return date('d-M-Y H:i:s',strtotime($data->created_at));
+		    })
+			
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+        \App\Helpers\commonHelper::setLocale();
+
+        return view('admin.transaction.room_upgrade');
 
 	}
 

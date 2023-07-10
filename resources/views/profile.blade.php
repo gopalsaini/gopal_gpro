@@ -220,7 +220,20 @@
                                
                                 </li> 
                             <ul>
+                        @else
+                            <ul>
+                                <li colspan="2"><strong>@lang('web/home.stay-in-twin-sharing-or-single') :</strong> &nbsp;
+                                @if($resultData['result']['room'] == 'Single')
+                                    @lang('web/profile-details.single-room')
+                                @elseif($resultData['result']['room'] == 'Sharing')
+                                    @lang('web/profile-details.twin')
 
+                                @else
+                                    {{$resultData['result']['room']}}
+                                @endif
+                               
+                                </li> 
+                            <ul>
                         @endif
                         
                         @if($Spouse && $Spouse->spouse_confirm_status=='Approve')
@@ -298,7 +311,7 @@
                     </ul>
                 </div> 
 
-                @if($resultData['result']['designation_id'] != '3' && $resultData['result']['designation_id'] != '4' && $resultData['result']['designation_id'] != '15')
+                @if($resultData['result']['designation_id'] != '3' && $resultData['result']['designation_id'] != '4' && $resultData['result']['designation_id'] != '6' && $resultData['result']['designation_id'] != '15')
                     <!-- //Vineet - 080123 -->
                     <!-- <h4 class="inner-head section-gap">@lang('web/profile.ministry') @lang('web/profile.details')</h4> -->
                     <h4 class="inner-head section-gap">@lang('web/ministry-details.ministry-details-combined')</h4>

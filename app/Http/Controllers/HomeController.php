@@ -271,7 +271,7 @@ class HomeController extends Controller
             \App\Helpers\commonHelper::setLocale();
             \Session::flash('gpro_success', \App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Payment-Successful'));
                 
-            return redirect('payment')->with('gpro_success', \Lang::get('web/home.Payment-Successful'));
+            return redirect('/')->with('gpro_success', \Lang::get('web/home.Payment-Successful'));
 			
 			
 		}
@@ -1156,7 +1156,7 @@ class HomeController extends Controller
             $linkPayment->save();
 
             \App\Helpers\commonHelper::setLocale();
-            return view('stripe',compact('intent','id'));
+            return view('stripe_roomupgrade',compact('intent','id','linkPayment'));
                 
         }else{
 

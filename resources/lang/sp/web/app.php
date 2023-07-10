@@ -126,4 +126,9 @@ return [
     'Exhibitor' => "Exhibidor",
     'Accepted_File_Formats' => "Formatos de archivo aceptados - jpg, png y pdf",
 
+    'Room_Partner_Preference_Requests' => "Solicitudes de Preferencia de Compañero de Habitación",
+    'Preferred_Partner_Name' => "Nombre del Compañero de Elección",
+    'Request_Status' => "Estado de la Solicitud",
+    'Request_Approved_successfully' => "Solicitud Aprobada con éxito",
+    'Request_Declined_successfully' => "Solicitud Rechazada correctamente",
 ];

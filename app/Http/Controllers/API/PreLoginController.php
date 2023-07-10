@@ -1088,6 +1088,68 @@ class PreLoginController extends Controller {
 										$user->change_room_type = $roomupgrade->room_type;
 										$user->upgrade_category = $roomupgrade->category;
 										$user->save();	
+
+										$spouseResult=\App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->first();
+										if($spouseResult){
+											$spouseResult->change_room_type = $roomupgrade->room_type;
+											$spouseResult->upgrade_category = $roomupgrade->category;
+											$spouseResult->save();	
+										}
+
+										$spouseParentResult=\App\Models\User::where('id',$user->parent_id)->first();
+										if($spouseParentResult){
+											$spouseParentResult->change_room_type = $roomupgrade->room_type;
+											$spouseParentResult->upgrade_category = $roomupgrade->category;
+											$spouseParentResult->save();	
+										}
+
+										if($user->language == 'sp'){
+
+											$subject = 'Hemos recibido el pago por el cambio de habitación en el GProCongress II.';
+											$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',</p>
+											<p>Se ha recibido un pago suyo por un importe de $'.$transaction->amount.'.  Gracias por su pago.  Ha efectuado el pago correspondiente a la mejora de categoría de su habitación en el GProCongress II. </p>
+											<p>Si usted tiene alguna pregunta acerca de su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+											<p>Únase a nosotros en oración para multiplicar la cantidad y calidad de capacitadores de pastores.</p>
+											<p>Cordialmente,</p>
+											<p>Equipo GProCongress II</p>';
+
+										}elseif($user->language == 'fr'){
+
+											$subject = 'Le paiement de votre surclassement à GProCongress II a été reçu.';
+											$msg = "<p>Cher ".$user->name." ".$user->last_name.",</p>
+											<p>Nous avons reçu un paiement de votre part d'un montant de $".$transaction->amount."  Nous vous remercions pour votre paiement. Vous avez maintenant réglé le surclassement de votre chambre au GProCongress II.</p>
+											<p>Si vous avez des questions concernant votre paiement ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+											<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+											<p>Chaleureusement,</p>
+											<p>L'équipe de GProCongress II</p>";
+
+										}elseif($user->language == 'pt'){
+
+											$subject = 'O pagamento do upgrade do seu quarto no GProCongress II foi recebido.';
+											$msg = '<p>Prezado  '.$user->name.' '.$user->last_name.',</p>
+											<p>Foi recebido um pagamento da sua parte no valor de $'.$transaction->amount.'.  Obrigado pelo seu pagamento.  Já pagou o upgrade de quarto no GProCongress II.  </p>
+											<p>Se tiver alguma dúvida sobre o seu pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.											</p>
+											<p>Ore connosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+											<p>Cordialmente,</p>
+											<p>Equipe do GProCongress II</p>';
+
+										}else{
+									
+											$subject = 'Payment for your room upgrade at GProCongress II has been received';
+											$msg = '<p>Dear '.$user->name.' '.$user->last_name.',</p>
+											<p>A payment has been received from you in the amount of $'.$transaction->amount.' Thank you for your payment.  You have now paid for your room upgrade at GProCongress II.  </p>
+											<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+											<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+											<p>Warmly,</p>
+											<p>The GProCongress II Team</p>';
+
+										}
+
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,'Payment for your room upgrade at GProCongress II has been received','Payment for your room upgrade at GProCongress II has been received','Payment for your room upgrade at GProCongress II has been received');
+
+										
 									}
 									
 
@@ -1498,6 +1560,76 @@ class PreLoginController extends Controller {
 								}
 								
 
+							}elseif($transaction->particular_id == '5'){
+
+								$user = \App\Models\User::find($transaction->user_id);
+
+								if($user){
+
+									$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$user->id)->first();
+									
+									if($user->language == 'sp'){
+
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">ENLACE</a>';
+
+										$subject = 'El pago correspondiente a la actualización de su habitación en el GProCongress II ha sido ';
+										$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',</p>
+										<p>Gracias por enviar su pago correspondiente a una mejora de habitación en el GProCongress II.</p>
+										<p>Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace: '.$website.'</p>
+										<p>Si tiene alguna pregunta sobre su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+										<p>Únase a nosotros en oración para multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+										<p>Cordialmente,</p>
+										<p>Equipo GProCongress II</p>';
+
+									}elseif($user->language == 'fr'){
+
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+										$subject = 'Le paiement de votre surclassement au GProCongress II a été refusé.';
+										$msg = "<p>Cher ".$user->name." ".$user->last_name.",</p>
+										<p>Merci d'avoir soumis votre paiement pour un surclassement de chambre à GProCongress II.</p>
+										<p>Malheureusement, nous n'avons pas pu traiter votre paiement. Veuillez réessayer votre paiement en vous rendant sur ce lien :".$website."</p>
+										<p>Si vous avez des questions concernant votre paiement, ou si vous souhaitez parler à un membre de notre équipe, répondez simplement à cet e-mail.</p>
+										<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+										<p>Chaleureusement,</p>
+										<p>L'équipe de GProCongress II</p>";
+
+									}elseif($user->language == 'pt'){
+
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+										$subject = 'O pagamento do upgrade do seu quarto no GProCongress II foi recusado.';
+										$msg = '<p>Caro '.$user->name.' '.$user->last_name.',</p>
+										<p>Obrigado por enviar o seu pagamento para um upgrade de quarto no GProCongress II.</p>
+										<p>Infelizmente, não foi possível processar o seu pagamento.  Por favor, tente efetuar o pagamento novamente, acedendo a este link: '.$website.'</p>
+										<p>Se tiver alguma dúvida sobre o seu pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+										<p>Ore connosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+										<p>Cordialmente,</p>
+										<p>Equipe do GProCongress II</p>';
+
+									}else{
+								
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+										$subject = 'Payment for your room upgrade at GProCongress II has been declined';
+										$msg = '<p>Dear '.$user->name.' '.$user->last_name.',</p>
+										<p>Thank you for submitting your payment for a room upgrade at GProCongress II.</p>
+										<p>Unfortunately, we could not process your payment.  Please try your payment again, by going to this link: '.$website.'</p>
+										<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+										<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+										<p>Warmly,</p>
+										<p>The GProCongress II Team</p>';
+
+									}
+
+									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$subject,$subject);
+
+									
+								}
+								
+
 							}else{
 
 								if($user->language == 'sp'){
@@ -1554,8 +1686,10 @@ class PreLoginController extends Controller {
 		$results = \App\Models\Transaction::where('payment_status','0')
 											->where('method','Online')
 											->where('bank_transaction_id','=',null)
-											->whereDate('updated_at', now()->subDays(1)->setTime(0, 0, 0)->toDateTimeString())
+											->whereDate('updated_at','>=', now()->subDays(1)->setTime(0, 0, 0)->toDateTimeString())
 											->get();
+
+		$userDataSet = '';
 		
 		if(!empty($results)){
 
@@ -1699,6 +1833,75 @@ class PreLoginController extends Controller {
 										\App\Helpers\commonHelper::sendSponsorPaymentApprovedToUserMail($transaction->user_id,$transaction->amount,'full',$transaction->order_id);
 									}
 
+								}elseif($transaction->particular_id == '5'){
+
+									$user = \App\Models\User::find($transaction->user_id);
+	
+									if($user){
+	
+										$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$user->id)->first();
+										
+										if($user->language == 'sp'){
+	
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">ENLACE</a>';
+	
+											$subject = 'El pago correspondiente a la actualización de su habitación en el GProCongress II ha sido ';
+											$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',</p>
+											<p>Gracias por enviar su pago correspondiente a una mejora de habitación en el GProCongress II.</p>
+											<p>Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace: '.$website.'</p>
+											<p>Si tiene alguna pregunta sobre su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+											<p>Únase a nosotros en oración para multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+											<p>Cordialmente,</p>
+											<p>Equipo GProCongress II</p>';
+	
+										}elseif($user->language == 'fr'){
+	
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+	
+											$subject = 'Le paiement de votre surclassement au GProCongress II a été refusé.';
+											$msg = "<p>Cher ".$user->name." ".$user->last_name.",</p>
+											<p>Merci d'avoir soumis votre paiement pour un surclassement de chambre à GProCongress II.</p>
+											<p>Malheureusement, nous n'avons pas pu traiter votre paiement. Veuillez réessayer votre paiement en vous rendant sur ce lien :".$website."</p>
+											<p>Si vous avez des questions concernant votre paiement, ou si vous souhaitez parler à un membre de notre équipe, répondez simplement à cet e-mail.</p>
+											<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+											<p>Chaleureusement,</p>
+											<p>L'équipe de GProCongress II</p>";
+	
+										}elseif($user->language == 'pt'){
+	
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+	
+											$subject = 'O pagamento do upgrade do seu quarto no GProCongress II foi recusado.';
+											$msg = '<p>Caro '.$user->name.' '.$user->last_name.',</p>
+											<p>Obrigado por enviar o seu pagamento para um upgrade de quarto no GProCongress II.</p>
+											<p>Infelizmente, não foi possível processar o seu pagamento.  Por favor, tente efetuar o pagamento novamente, acedendo a este link: '.$website.'</p>
+											<p>Se tiver alguma dúvida sobre o seu pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+											<p>Ore connosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+											<p>Cordialmente,</p>
+											<p>Equipe do GProCongress II</p>';
+	
+										}else{
+									
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+	
+											$subject = 'Payment for your room upgrade at GProCongress II has been declined';
+											$msg = '<p>Dear '.$user->name.' '.$user->last_name.',</p>
+											<p>Thank you for submitting your payment for a room upgrade at GProCongress II.</p>
+											<p>Unfortunately, we could not process your payment.  Please try your payment again, by going to this link: '.$website.'</p>
+											<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+											<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+											<p>Warmly,</p>
+											<p>The GProCongress II Team</p>';
+	
+										}
+	
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$subject,$subject);
+	
+									}
+									
+	
 								}else{
 
 									if($user->language == 'sp'){
@@ -1814,7 +2017,78 @@ class PreLoginController extends Controller {
 										\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsApproved($transaction->order_id);
 										\App\Helpers\commonHelper::sendSponsorPaymentApprovedToUserMail($transaction->user_id,$transaction->amount,'partial',$transaction->order_id);
 									}
-								}else{
+
+								}elseif($transaction->particular_id == '5'){
+
+									$user = \App\Models\User::find($transaction->user_id);
+
+									if($user){
+
+										$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$user->id)->first();
+										
+										if($user->language == 'sp'){
+
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">ENLACE</a>';
+
+											$subject = 'El pago correspondiente a la actualización de su habitación en el GProCongress II ha sido ';
+											$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',</p>
+											<p>Gracias por enviar su pago correspondiente a una mejora de habitación en el GProCongress II.</p>
+											<p>Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace: '.$website.'</p>
+											<p>Si tiene alguna pregunta sobre su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+											<p>Únase a nosotros en oración para multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+											<p>Cordialmente,</p>
+											<p>Equipo GProCongress II</p>';
+
+										}elseif($user->language == 'fr'){
+
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+											$subject = 'Le paiement de votre surclassement au GProCongress II a été refusé.';
+											$msg = "<p>Cher ".$user->name." ".$user->last_name.",</p>
+											<p>Merci d'avoir soumis votre paiement pour un surclassement de chambre à GProCongress II.</p>
+											<p>Malheureusement, nous n'avons pas pu traiter votre paiement. Veuillez réessayer votre paiement en vous rendant sur ce lien :".$website."</p>
+											<p>Si vous avez des questions concernant votre paiement, ou si vous souhaitez parler à un membre de notre équipe, répondez simplement à cet e-mail.</p>
+											<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+											<p>Chaleureusement,</p>
+											<p>L'équipe de GProCongress II</p>";
+
+										}elseif($user->language == 'pt'){
+
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+											$subject = 'O pagamento do upgrade do seu quarto no GProCongress II foi recusado.';
+											$msg = '<p>Caro '.$user->name.' '.$user->last_name.',</p>
+											<p>Obrigado por enviar o seu pagamento para um upgrade de quarto no GProCongress II.</p>
+											<p>Infelizmente, não foi possível processar o seu pagamento.  Por favor, tente efetuar o pagamento novamente, acedendo a este link: '.$website.'</p>
+											<p>Se tiver alguma dúvida sobre o seu pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+											<p>Ore connosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+											<p>Cordialmente,</p>
+											<p>Equipe do GProCongress II</p>';
+
+										}else{
+									
+											$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+											$subject = 'Payment for your room upgrade at GProCongress II has been declined';
+											$msg = '<p>Dear '.$user->name.' '.$user->last_name.',</p>
+											<p>Thank you for submitting your payment for a room upgrade at GProCongress II.</p>
+											<p>Unfortunately, we could not process your payment.  Please try your payment again, by going to this link: '.$website.'</p>
+											<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+											<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+											<p>Warmly,</p>
+											<p>The GProCongress II Team</p>';
+
+										}
+
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$subject,$subject);
+
+										
+									}
+								
+
+							}else{
 									
 									if($user->language == 'sp'){
 
@@ -1859,6 +2133,8 @@ class PreLoginController extends Controller {
 								}
 							}
 
+							$userDataSet.= 'Email : '.$user->email.'Status : Success <br>';
+
 						}
 
 					}else{
@@ -1894,6 +2170,76 @@ class PreLoginController extends Controller {
 								}
 
 
+							}elseif($transaction->particular_id == '5'){
+
+								$user = \App\Models\User::find($transaction->user_id);
+
+								if($user){
+
+									$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$user->id)->first();
+									
+									if($user->language == 'sp'){
+
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">ENLACE</a>';
+
+										$subject = 'El pago correspondiente a la actualización de su habitación en el GProCongress II ha sido ';
+										$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',</p>
+										<p>Gracias por enviar su pago correspondiente a una mejora de habitación en el GProCongress II.</p>
+										<p>Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace: '.$website.'</p>
+										<p>Si tiene alguna pregunta sobre su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+										<p>Únase a nosotros en oración para multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+										<p>Cordialmente,</p>
+										<p>Equipo GProCongress II</p>';
+
+									}elseif($user->language == 'fr'){
+
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+										$subject = 'Le paiement de votre surclassement au GProCongress II a été refusé.';
+										$msg = "<p>Cher ".$user->name." ".$user->last_name.",</p>
+										<p>Merci d'avoir soumis votre paiement pour un surclassement de chambre à GProCongress II.</p>
+										<p>Malheureusement, nous n'avons pas pu traiter votre paiement. Veuillez réessayer votre paiement en vous rendant sur ce lien :".$website."</p>
+										<p>Si vous avez des questions concernant votre paiement, ou si vous souhaitez parler à un membre de notre équipe, répondez simplement à cet e-mail.</p>
+										<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+										<p>Chaleureusement,</p>
+										<p>L'équipe de GProCongress II</p>";
+
+									}elseif($user->language == 'pt'){
+
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+										$subject = 'O pagamento do upgrade do seu quarto no GProCongress II foi recusado.';
+										$msg = '<p>Caro '.$user->name.' '.$user->last_name.',</p>
+										<p>Obrigado por enviar o seu pagamento para um upgrade de quarto no GProCongress II.</p>
+										<p>Infelizmente, não foi possível processar o seu pagamento.  Por favor, tente efetuar o pagamento novamente, acedendo a este link: '.$website.'</p>
+										<p>Se tiver alguma dúvida sobre o seu pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+										<p>Ore connosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+										<p>Cordialmente,</p>
+										<p>Equipe do GProCongress II</p>';
+
+									}else{
+								
+										$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+										$subject = 'Payment for your room upgrade at GProCongress II has been declined';
+										$msg = '<p>Dear '.$user->name.' '.$user->last_name.',</p>
+										<p>Thank you for submitting your payment for a room upgrade at GProCongress II.</p>
+										<p>Unfortunately, we could not process your payment.  Please try your payment again, by going to this link: '.$website.'</p>
+										<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+										<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+										<p>Warmly,</p>
+										<p>The GProCongress II Team</p>';
+
+									}
+
+									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$subject,$subject);
+
+									
+								}
+								
+
 							}else{
 
 								if($user->language == 'sp'){
@@ -1922,6 +2268,8 @@ class PreLoginController extends Controller {
 								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your payment has been declined');
 							}
+
+							$userDataSet.= 'Email : '.$user->email.'Status : Failed <br>';
 
 						}
 					}
@@ -1957,6 +2305,76 @@ class PreLoginController extends Controller {
 		
 							}
 
+						}elseif($transaction->particular_id == '5'){
+
+							$user = \App\Models\User::find($transaction->user_id);
+
+							if($user){
+
+								$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$user->id)->first();
+								
+								if($user->language == 'sp'){
+
+									$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">ENLACE</a>';
+
+									$subject = 'El pago correspondiente a la actualización de su habitación en el GProCongress II ha sido ';
+									$msg = '<p>Estimado '.$user->name.' '.$user->last_name.',</p>
+									<p>Gracias por enviar su pago correspondiente a una mejora de habitación en el GProCongress II.</p>
+									<p>Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace: '.$website.'</p>
+									<p>Si tiene alguna pregunta sobre su pago, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+									<p>Únase a nosotros en oración para multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+									<p>Cordialmente,</p>
+									<p>Equipo GProCongress II</p>';
+
+								}elseif($user->language == 'fr'){
+
+									$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+									$subject = 'Le paiement de votre surclassement au GProCongress II a été refusé.';
+									$msg = "<p>Cher ".$user->name." ".$user->last_name.",</p>
+									<p>Merci d'avoir soumis votre paiement pour un surclassement de chambre à GProCongress II.</p>
+									<p>Malheureusement, nous n'avons pas pu traiter votre paiement. Veuillez réessayer votre paiement en vous rendant sur ce lien :".$website."</p>
+									<p>Si vous avez des questions concernant votre paiement, ou si vous souhaitez parler à un membre de notre équipe, répondez simplement à cet e-mail.</p>
+									<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+									<p>Chaleureusement,</p>
+									<p>L'équipe de GProCongress II</p>";
+
+								}elseif($user->language == 'pt'){
+
+									$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+									$subject = 'O pagamento do upgrade do seu quarto no GProCongress II foi recusado.';
+									$msg = '<p>Caro '.$user->name.' '.$user->last_name.',</p>
+									<p>Obrigado por enviar o seu pagamento para um upgrade de quarto no GProCongress II.</p>
+									<p>Infelizmente, não foi possível processar o seu pagamento.  Por favor, tente efetuar o pagamento novamente, acedendo a este link: '.$website.'</p>
+									<p>Se tiver alguma dúvida sobre o seu pagamento, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+									<p>Ore connosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+									<p>Cordialmente,</p>
+									<p>Equipe do GProCongress II</p>';
+
+								}else{
+							
+									$website = '<a href="'.url('room-change-payment/'.$roomupgrade->token).'">LINK</a>';
+
+									$subject = 'Payment for your room upgrade at GProCongress II has been declined';
+									$msg = '<p>Dear '.$user->name.' '.$user->last_name.',</p>
+									<p>Thank you for submitting your payment for a room upgrade at GProCongress II.</p>
+									<p>Unfortunately, we could not process your payment.  Please try your payment again, by going to this link: '.$website.'</p>
+									<p>If you have any questions about your payment, or if you need to speak to one of our team members, simply reply to this email.</p>
+									<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+									<p>Warmly,</p>
+									<p>The GProCongress II Team</p>';
+
+								}
+
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$subject,$subject);
+
+								
+							}
+							
+
 						}else{
 
 							if($user->language == 'sp'){
@@ -1988,6 +2406,8 @@ class PreLoginController extends Controller {
 							
 						}
 
+						$userDataSet.= 'Email : '.$user->email.'Status : Failed <br>';
+
 					}
 				}
 				
@@ -1995,6 +2415,17 @@ class PreLoginController extends Controller {
 			}
 		}
 		
+		$subject = 'Cron Job Ran - '.date('d-m-Y H:s:i');
+		$msg = $userDataSet;
+		$result = array();
+		$to = 'vineet@d2rtech.com';
+
+		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
+			$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
+			$message->subject($subject);
+			$message->to($to);
+		});
+
 
 		echo 'done';
 	}
@@ -5382,7 +5813,7 @@ class PreLoginController extends Controller {
 
 							$name= $additionalUser->name.' '.$additionalUser->last_name;
 
-							$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+							$doNotRequireVisa = ['82','6','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
 							$diplomaticPassportNotRequireVisa = [56,62,95,102,174,45,239]; 
 							$authorizedVisa = [1,3,4,16,18,19,24,35,36,43,50,60,65,68,70,67,80,92,93,95,102,103,104,54,111,112,248,118,119,121,122,123,124,134,139,149,150,151,154,160,161,166,167,169,116,183,195,198,203,208,209,210,215,217,218,224,226,229,236,245,246]; 
 							$stampedVisa = [38,42,56,62,83,101,131,174,45,51,212,220,239,247];
@@ -6200,8 +6631,8 @@ class PreLoginController extends Controller {
 
 					$passportInfo =  \App\Models\PassportInfo::where('id',$val->id)->first();
 
-					$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-					$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
+					$doNotRequireVisa = ['82','6','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+					$RequireVisa = ['1','3','4','7','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','40','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','113','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
 					$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 					$visa_category = 'No Visa Needed';
 					
@@ -7086,58 +7517,61 @@ class PreLoginController extends Controller {
 		
 		try {
 			
-			$results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '=', '2'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
+			// $results = \App\Models\User::where([['user_type', '=', '2'], ['stage', '=', '2'], ['amount', '>', 0], ['early_bird', '=', 'Yes']])->get();
 			
-			if(count($results) > 0){
+			$results = [
+				4189,4192,4196,4197,4203,4207,4216,4218,4219,4225,4238,4260,4263,4264,4272,4277,4284,4285,4289,4296,4318,4332,4339,4359,4366,4368,4372,4385,4387,4391,4398,4406,4408,4416,4421,4422,4431,4441,4442,4446,4456,4458,4460,4463,4466,4470,4477,4494,4510,4513,4574,4585,4595,4597,4601,4615,4621,4624,4647,4713,4714,4721,4731,4734,4738,4744,4770,4773,4780,4784,4795,4805,4808,4814,4819,4836,4854,4880,4909,4917,4918,4939,4943,4958,4959,4966,4997,4999,5011,5031,5043,5050,5068,5074,5075,5086,5096,5101,5103,5113,5114,5117,5152,5157,5165,5167,5168,5170,5177,5193,5196];
+			if(count($results) > 0)
+			{
 				$resultData = '';
 				foreach ($results as $result) {
 				
-					if(\App\Helpers\commonHelper::getTotalPendingAmount($result->id) > 0) {
+					// if(\App\Helpers\commonHelper::getTotalPendingAmount($result->id) > 0) 
+					// {
 
-						$user = \App\Models\User::where('id', $result->id)->first();
+						$user = \App\Models\User::where('id', $result)->first();
 						
 						if($user){
 
-							$Spouse = \App\Models\User::where('parent_id', $user->id)->where('added_as', 'Spouse')->first();
+							// $Spouse = \App\Models\User::where('parent_id', $user->id)->where('added_as', 'Spouse')->first();
 							
-							if($user->marital_status == 'Unmarried'){
+							// if($user->marital_status == 'Unmarried'){
 
-								$trainer = 'No';
+							// 	$trainer = 'No';
 
-							}else if($user->marital_status == 'Married' && !$Spouse){
+							// }else if($user->marital_status == 'Married' && !$Spouse){
 
-								$trainer = 'No';
+							// 	$trainer = 'No';
 
-							}else if($user->marital_status == 'Married' && $Spouse){
+							// }
+							// else if($user->marital_status == 'Married' && $Spouse){
 
-								if($user->parent_spouse_stage >= 2){
+							// 	if($user->parent_spouse_stage >= 2){
 
-									$trainer = 'No';
+							// 		$trainer = 'No';
 
-								}else{
+							// 	}else{
 
-									$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$user->amount);
+							// 		$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$user->amount);
 
-									$trainer = $data ['trainer'];
-								}
+							// 		$trainer = $data ['trainer'];
+							// 	}
 								
-							}
+							// }
 							
-							if($trainer == 'Yes'){
-								$amount = $result->amount+200;
-							}else{
-								$amount = $result->amount+100;
-							}
-
-							
-
-							$resultData.=$result->id.','.$result->email.','.$result->amount.','.$amount.','.$result->stage.','.$result->parent_id.','.$result->added_as.'<br>';
+							// if($trainer == 'Yes'){
+							// 	$amount = $result->amount+200;
+							// }else{
+							// 	$amount = $result->amount+100;
+							// }
+							$amount = $user->amount;
+							$resultData.=$user->id.','.$user->email.','.$amount.','.$user->stage.','.$user->parent_id.','.$user->added_as.'<br>';
 
 							// $user->amount = $amount;
 							// $user->early_bird = 'No';
 							// $user->save();
 
-							$amount = $result->amount;
+							
 
 							if($user->language == 'sp'){
 
@@ -7189,14 +7623,14 @@ class PreLoginController extends Controller {
 				
 							}
 		
-							// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
 		
-							// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+							\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
 		
-							// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'July1st - Early Bird - Marked No');
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'July1st - Early Bird - Marked No');
 						
 						}
-					}
+					// }
 				}
 				
 				echo "<pre>";

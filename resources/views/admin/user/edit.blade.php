@@ -189,6 +189,12 @@
 												</div>
 											</div>
 										<div class="tab-pane fade" id="contact-details" role="tabpanel" aria-labelledby="list-profile-list">
+											<div class="col-lg-12 mt-12">
+												<div class="form-group">
+													<label for="input">Address:</label>
+													<input type="text" autocomplete="off" placeholder="Address" class="form-control" required name="contact_address" value="@if($result) {{$result->contact_address}} @endif">
+												</div>
+											</div>
 											<div class="row">
 												<div class="col-sm-4">
 														<div class="form-group">
@@ -672,6 +678,12 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                    </div>
+									<div class="col-lg-12 mt-12">
+										<div class="form-group">
+											<label for="input">Address:</label>
+                                        	<input type="text" autocomplete="off" placeholder="Address" class="form-control" required name="contact_address" value="@if($SpouseDetails) {{$SpouseDetails->contact_address}} @endif">
+                                    	</div>
                                     </div>
 									<div class="row">
 										<div class="col-sm-4">

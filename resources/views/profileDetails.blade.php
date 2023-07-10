@@ -166,66 +166,76 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-lg-12 unmarried" style="display: @if($resultData['result']['marital_status']=='Unmarried'){{'block'}}@else{{'none'}}@endif">
-                            <label>@lang('web/profile-details.stay-in-twin-or-single') - <span>*</span></label>
-                            <div class="radio-wrap">
-                                <div class="form__radio-group">
-                                    <input type="radio" name="room" value="Single" id="yes" class="form__radio-input" @if($resultData['result']['room']=='Single'){{'checked'}}@endif>
-                                    <label class="form__label-radio" for="yes" class="form__radio-label" >
-                                    <span class="form__radio-button"></span> @lang('web/profile-details.single-room')
-                                    </label>
+                        @if($resultData['result']['designation_id'] != 3)
+                            <div class="col-lg-12 unmarried" style="display: @if($resultData['result']['marital_status']=='Unmarried'){{'block'}}@else{{'none'}}@endif">
+                                <label>@lang('web/profile-details.stay-in-twin-or-single') - <span>*</span></label>
+                                <div class="radio-wrap">
+                                    <div class="form__radio-group">
+                                        <input type="radio" name="room" value="Single" id="yes" class="form__radio-input" @if($resultData['result']['room']=='Single'){{'checked'}}@endif>
+                                        <label class="form__label-radio" for="yes" class="form__radio-label" >
+                                        <span class="form__radio-button"></span> @lang('web/profile-details.single-room')
+                                        </label>
+                                    </div>
+                                    <div class="form__radio-group">
+                                        <input type="radio" name="room" value="Sharing" id="no" class="form__radio-input" @if($resultData['result']['room']=='Sharing'){{'checked'}}@endif>
+                                        <label class="form__label-radio" for="no" class="form__radio-label" >
+                                        <span class="form__radio-button"></span> @lang('web/profile-details.twin')
+                                        </label>
+                                    </div>
                                 </div>
-                                <div class="form__radio-group">
-                                    <input type="radio" name="room" value="Sharing" id="no" class="form__radio-input" @if($resultData['result']['room']=='Sharing'){{'checked'}}@endif>
-                                    <label class="form__label-radio" for="no" class="form__radio-label" >
-                                    <span class="form__radio-button"></span> @lang('web/profile-details.twin')
-                                    </label>
-                                </div>
-                            </div>
 
-                                        
-                            <div class="detail-price-wrap">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.Regular_Registration')</a>
-                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.Late_Registration')</a>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="tab-content" id="nav-tabContent">
-                                            <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
-                                                <ul>
-                                                    <li>
-                                                        <p><span class=""><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WEB ">0</span> </del>
-                                                        &nbsp; &nbsp;$<span class="twin-sharing-WOEB blink">0</span></span>
-                                                    </li>
-                                                    <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WEB ">0</span></del>
-                                                        &nbsp; &nbsp;$<span class="single-room-WOEB blink">0</span>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
-                                                <ul>
-                                                    <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB-registration blink">0</span></span>
-                                                    </li>
-                                                    <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB-registration blink">0</span></span>
-                                                    </li>
-                                                </ul>
+                                            
+                                <div class="detail-price-wrap">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="list-group flex-row text-center" id="list-tab" role="tablist">
+                                                <a class="list-group-item list-group-item-action active blink" id="list-home-list" data-bs-toggle="list" href="#list-home" role="tab" aria-controls="list-home">@lang('web/pricing.Regular_Registration')</a>
+                                                <a class="list-group-item list-group-item-action blink" id="list-profile-list" data-bs-toggle="list" href="#list-profile" role="tab" aria-controls="list-profile">@lang('web/pricing.Late_Registration')</a>
                                             </div>
                                         </div>
+                                        <div class="col-sm-12">
+                                            <div class="tab-content" id="nav-tabContent">
+                                                <div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                                                    <ul>
+                                                        <li>
+                                                            <p><span class=""><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
+                                                            <span>:
+                                                                <!-- &nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WEB ">0</span> </del> -->
+                                                                &nbsp; &nbsp;$<span class="twin-sharing-WOEB ">0</span>
+                                                            </span>
+                                                        </li>
+                                                        <li>
+                                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
+                                                            <span>:
+                                                                <!-- &nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WEB ">0</span></del> -->
+                                                                &nbsp; &nbsp;$<span class="single-room-WOEB ">0
+
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                                                    <ul>
+                                                        <li>
+                                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
+                                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB-registration blink">0</span></span>
+                                                        </li>
+                                                        <li>
+                                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
+                                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB-registration blink">0</span></span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    
                                 </div>
-                                
                             </div>
-                        </div>
+                        @else
+                            <input type="radio" name="room" value="Sharing" checked id="no" class="form__radio-input" @if($resultData['result']['room']=='Sharing'){{'checked'}}@endif>
+                                        
+                        @endif
                     @endif
                     <div class="col-lg-12">
                         <div class="step-next">
@@ -238,7 +248,7 @@
         </div>
     </div>
     <!-- banner-end -->
-
+    @if($resultData['result']['designation_id'] != 3)
     <div class="login-modal minister-modal prsnl-modal">
         <div class="modal fade" id="exampleModalToggle4" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
         tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" >
@@ -350,77 +360,99 @@
                             </div> 
                         </div>
                         <div class="room-form">
-                            <label for="">@lang('web/profile-details.stay-in-twin-or-single')</label>
-                            <form id="updateRoom" action="{{ route('room-update') }}" class="p-0" enctype="multipart/form-data">
-                                <div class="radio-wrap">
-                                    <div class="form__radio-group">
-                                        <input type="radio" name="room" id="single-room" class="form__radio-input" value="Single" required>
-                                        <label class="form__label-radio" for="single-room" class="form__radio-label">
-                                            <span class="form__radio-button"></span> @lang('web/profile-details.single-room')
-                                        </label>
+                            @if($resultData['result']['designation_id'] != 3)
+                                <label for="">@lang('web/profile-details.stay-in-twin-or-single')</label>
+                            
+                                <form id="updateRoom" action="{{ route('room-update') }}" class="p-0" enctype="multipart/form-data">
+                                    <div class="radio-wrap">
+                                        <div class="form__radio-group">
+                                            <input type="radio" name="room" id="single-room" class="form__radio-input" value="Single" required>
+                                            <label class="form__label-radio" for="single-room" class="form__radio-label">
+                                                <span class="form__radio-button"></span> @lang('web/profile-details.single-room')
+                                            </label>
+                                        </div>
+                                        <div class="form__radio-group">
+                                            <input type="radio" name="room" id="twin-share" class="form__radio-input" value="Sharing" required>
+                                            <label class="form__label-radio" for="twin-share" class="form__radio-label">
+                                                <span class="form__radio-button"></span> @lang('web/profile-details.twin')
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div class="form__radio-group">
-                                        <input type="radio" name="room" id="twin-share" class="form__radio-input" value="Sharing" required>
-                                        <label class="form__label-radio" for="twin-share" class="form__radio-label">
-                                            <span class="form__radio-button"></span> @lang('web/profile-details.twin')
-                                        </label>
+                                    <div class="col-lg-12">
+                                        <div class="step-next register-submit">
+                                            <button type="submit" class="main-btn bg-gray-btn" form="updateRoom">@lang('web/profile-details.submit')</button> 
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-12">
-                                    <div class="step-next register-submit">
-                                        <button type="submit" class="main-btn bg-gray-btn" form="updateRoom">@lang('web/profile-details.submit')</button> 
-                                    </div>
-                                </div>
-                            </form>
+                                </form>
 
                                     
-                            <div class="detail-price-wrap">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="list-group flex-row text-center" id="list-tab" role="tablist">
-                                            <a class="list-group-item list-group-item-action active blink" id="list-home-list1" data-bs-toggle="list" href="#list-home1" role="tab" aria-controls="list-home">@lang('web/pricing.Regular_Registration')</a>
-                                            <a class="list-group-item list-group-item-action blink" id="list-profile-list1" data-bs-toggle="list" href="#list-profile1" role="tab" aria-controls="list-profile">@lang('web/pricing.Late_Registration')</a>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="tab-content" id="nav-tabContent">
-                                            <div class="tab-pane fade show active mt-5" id="list-home1" role="tabpanel" aria-labelledby="list-home-list1">
-                                                <ul>
-                                                    <li>
-                                                        <p><span class=""><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB blink">0</span> 
-                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WOEB">0</span></del></span>
-                                                    </li>
-                                                    <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB blink">0</span>
-                                                        &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WOEB">0</span></del>
-                                                    </li>
-                                                </ul>
+                                <div class="detail-price-wrap">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="list-group flex-row text-center" id="list-tab" role="tablist">
+                                                <a class="list-group-item list-group-item-action active blink" id="list-home-list1" data-bs-toggle="list" href="#list-home1" role="tab" aria-controls="list-home">@lang('web/pricing.Regular_Registration')</a>
+                                                <a class="list-group-item list-group-item-action blink" id="list-profile-list1" data-bs-toggle="list" href="#list-profile1" role="tab" aria-controls="list-profile">@lang('web/pricing.Late_Registration')</a>
                                             </div>
-                                            <div class="tab-pane fade" id="list-profile1" role="tabpanel" aria-labelledby="list-profile-list1">
-                                                <ul>
-                                                    <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB-registration blink">0</span></span>
-                                                    </li>
-                                                    <li>
-                                                        <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                                        <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB-registration blink">0</span></span>
-                                                    </li>
-                                                </ul>
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="tab-content" id="nav-tabContent">
+                                                <div class="tab-pane fade show active mt-5" id="list-home1" role="tabpanel" aria-labelledby="list-home-list1">
+                                                    <ul>
+                                                        <li>
+                                                            <p><span class=""><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
+                                                            <span>:
+                                                                <!-- &nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WEB blink">0</span></del>  -->
+                                                                &nbsp; &nbsp;$<span class="twin-sharing-WOEB">0</span>
+                                                            </span>
+                                                        </li>
+                                                        <li>
+                                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
+                                                            <span>:
+                                                                <!-- &nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WEB blink">0</span> </del>-->
+                                                                &nbsp; &nbsp;$<span class="single-room-WOEB">0</span>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="tab-pane fade" id="list-profile1" role="tabpanel" aria-labelledby="list-profile-list1">
+                                                    <ul>
+                                                        <li>
+                                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
+                                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WOEB-registration blink">0</span></span>
+                                                        </li>
+                                                        <li>
+                                                            <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
+                                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WOEB-registration blink">0</span></span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @else
+                                <form id="updateRoom" action="{{ route('room-update') }}" class="p-0" enctype="multipart/form-data">
+                                    <div class="radio-wrap">
+                                        
+                                        <div class="form__radio-group">
+                                            <input type="radio" name="room" id="twin-share" checked class="form__radio-input" value="Sharing" required>
+                                           
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="step-next register-submit">
+                                            <button type="submit" class="main-btn bg-gray-btn" form="updateRoom">@lang('web/profile-details.submit')</button> 
+                                        </div>
+                                    </div>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+@endif
 
 
 @endsection

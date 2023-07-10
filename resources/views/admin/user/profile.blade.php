@@ -608,14 +608,14 @@
                                             <h5 style="margin-top:20px; "><b>@lang('admin.flight') @lang('admin.details') </b></h5>
                                             <div class="row col-sm-12" style="margin-left:10px">
                                                 <h5 style="margin-top:20px; "><b>Arrival to Panama -  </b></h5>
-                                                <div class="col-sm-4"><p><strong> Airline Name :</strong> {{$flight_details->arrival_airline_name}}</p></div>
-                                                <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$flight_details->arrival_flight_number}}</p></div>
-                                               <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> {{$flight_details->arrival_date_arrival}}</p></div>
+                                                <div class="col-sm-4"><p><strong> Airline Name :</strong> @if(isset($flight_details->arrival_airline_name)){{$flight_details->arrival_airline_name}} @endif</p></div>
+                                                <div class="col-sm-4"><p><strong> Flight Number :</strong> @if(isset($flight_details->arrival_flight_number)){{$flight_details->arrival_flight_number}} @endif</p></div>
+                                               <div class="col-sm-4"><p><strong> Date & Time of Arrival :</strong> @if(isset($flight_details->arrival_date_arrival)){{$flight_details->arrival_date_arrival}} @endif</p></div>
                                                 
                                                 <h5 style="margin-top:20px; "><b>Departure from Panama - </b></h5>
-                                                <div class="col-sm-4"><p><strong> Airline Name :</strong> {{$flight_details->departure_airline_name}}</p></div>
-                                                <div class="col-sm-4"><p><strong> Flight Number :</strong> {{$flight_details->departure_flight_number}}</p></div>
-                                                <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> {{$flight_details->departure_date_departure}}</p></div>
+                                                <div class="col-sm-4"><p><strong> Airline Name :</strong> @if(isset($flight_details->departure_airline_name)){{$flight_details->departure_airline_name}} @endif</p></div>
+                                                <div class="col-sm-4"><p><strong> Flight Number :</strong> @if(isset($flight_details->departure_flight_number)){{$flight_details->departure_flight_number}} @endif</p></div>
+                                                <div class="col-sm-4"><p><strong> Date & Time of Departure :</strong> @if(isset($flight_details->departure_date_departure)){{$flight_details->departure_date_departure}} @endif</p></div>
                                             </div>
                                         @endif
                                         
@@ -705,8 +705,8 @@
                                 <thead>
                                     <tr>
                                         <th> @lang('admin.id') </th>
-                                        <th> @lang('admin.user') @lang('admin.name') </th>
                                         <th> @lang('admin.created_at') </th>
+                                        <th> @lang('admin.user') @lang('admin.name') </th>
                                         <th> @lang('admin.transfer-id') </th>
                                         <th> @lang('admin.utr-no') </th>
                                         <th> @lang('admin.Mode') </th>
@@ -727,8 +727,8 @@
                                 <tfoot>
                                     <tr>
                                         <th> @lang('admin.id') </th>
-                                        <th> @lang('admin.user') @lang('admin.name') </th>
                                         <th> @lang('admin.created_at') </th>
+                                        <th> @lang('admin.user') @lang('admin.name') </th>
                                         <th> @lang('admin.transfer-id') </th>
                                         <th> @lang('admin.utr-no') </th>
                                         <th> @lang('admin.Mode') </th>
@@ -757,8 +757,8 @@
                                             <thead>
                                                 <tr>
                                                     <th> @lang('admin.id') </th>
-                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.created_at') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.transfer-id') </th>
                                                     <th> @lang('admin.utr-no') </th>
                                                     <th> @lang('admin.Mode') </th>
@@ -779,8 +779,8 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> @lang('admin.id') </th>
-                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.created_at') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.transfer-id') </th>
                                                     <th> @lang('admin.utr-no') </th>
                                                     <th> @lang('admin.Mode') </th>
@@ -807,8 +807,8 @@
                                             <thead>
                                                 <tr>
                                                     <th> @lang('admin.id') </th>
-                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.created_at') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.transfer-id') </th>
                                                     <th> @lang('admin.utr-no') </th>
                                                     <th> @lang('admin.Mode') </th>
@@ -829,8 +829,8 @@
                                             <tfoot>
                                                 <tr>
                                                     <th> @lang('admin.id') </th>
-                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.created_at') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
                                                     <th> @lang('admin.transfer-id') </th>
                                                     <th> @lang('admin.utr-no') </th>
                                                     <th> @lang('admin.Mode') </th>
@@ -839,6 +839,52 @@
                                                     <th> @lang('admin.amount') </th>
                                                     <th> @lang('admin.status') </th>
                                                     <th> @lang('admin.updated_at') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Room Upgrade Payment</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="tablelist_room_upgrade">
+                                            <thead>
+                                                <tr>
+                                                    <th> @lang('admin.id') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
+                                                    <th> Room Category </th>
+                                                    <th> @lang('admin.mode') </th>
+                                                    <th> @lang('admin.transfer-id') </th>
+                                                    <th> @lang('admin.utr-no') </th>
+                                                    <th> @lang('admin.amount') </th>
+                                                    <th> @lang('admin.payment') @lang('admin.status') </th>
+                                                    <th> @lang('admin.date') & @lang('admin.time') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="7">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> @lang('admin.id') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
+                                                    <th> Room Category </th>
+                                                    <th> @lang('admin.mode') </th>
+                                                    <th> @lang('admin.transfer-id') </th>
+                                                    <th> @lang('admin.utr-no') </th>
+                                                    <th> @lang('admin.amount') </th>
+                                                    <th> @lang('admin.payment') @lang('admin.status') </th>
+                                                    <th> @lang('admin.date') & @lang('admin.time') </th>
                                                 </tr>
                                             </tfoot>
                                         </table>
@@ -1383,7 +1429,7 @@ $(document).ready(function() {
         ]
     });
 
-    $('#tablelist_donate').DataTable({
+     $('#tablelist_donate').DataTable({
         "processing": true,
         "serverSide": true,
         "searching": true,
@@ -1450,6 +1496,74 @@ $(document).ready(function() {
             }
         ]
     });
+
+
+    $('#tablelist_room_upgrade').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "searching": true,
+        "ordering": false,
+
+        "ajax": {
+            "url": "{{ route('admin.user.room-upgrade-payment-history', [$id]) }}",
+            "dataType": "json",
+            "async": false,
+            "type": "get",
+            "error": function(xhr, textStatus) {
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+            },
+        },
+        "fnDrawCallback": function() {
+            fill_datatable();
+        },
+        "order": [0, 'desc'],
+        "columnDefs": [{
+                className: "text-center",
+                targets: "_all"
+            },
+            {
+                orderable: false,
+                targets: [-1, -2]
+            },
+        ],
+        "columns": [{
+                "data": null,
+                render: function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                },
+                className: "text-center font-weight-bold"
+            },
+            {
+                "data": "user_name"
+            },
+            {
+                "data": "category"
+            },
+            {
+                "data": "method"
+            },
+            {
+                "data": "transaction_id"
+            },
+            {
+                "data": "bank_transaction_id"
+            },
+            {
+                "data": "amount"
+            },
+            {
+                "data": "payment_status"
+            },
+            {
+                "data": "created_at"
+            }
+        ]
+    });
+
 });
 
 function fill_datatable() {

@@ -35,6 +35,15 @@
         .shown .group-user-list {
             background: url('{{asset("admin-assets/images/details_close.png")}}') no-repeat center center;
         }
+
+        .fs-search {
+            padding: 6px 8px !important;
+        }
+
+        .fs-dropdown {
+           
+            width: 95% !important;
+        }
     </style>
     <style>
         
@@ -780,7 +789,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger " onclick="modalHide()">Close</button>
-                <button type="submit" class="btn btn-dark " form="Passport">Submit</button>
+                <button type="submit" class="btn btn-dark " form="Passport" >Submit</button>
             </div>
         </div>
     </div>
@@ -794,31 +803,79 @@
                 <h5 class="modal-title" id="staticBackdropLabel">Payment Refund</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form id="paymentRefund" action="{{ route('admin.user.refund.amount') }}" method="post" enctype="multipart/form-data" autocomplete="off">
-                    @csrf
-                    <input type="hidden" value="" name="user_id" required id="refundUserId"/>
-                    <p>Total Accepted Amount : <span id="totalAcceptedAmount">0.00</span></p>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="input">Enter Amount:</label>
-                                <input type="test" class="form-control" value="" name="amount" required />
+            <div class="modal-body" >
+                <label for="theme-grey">
+                    <input type="radio" id="theme-grey" name="refundRadio" value="1" />&nbsp;&nbsp;Self</label>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="theme-pink">
+                    <input type="radio" id="theme-pink" name="refundRadio" value="2" />&nbsp;&nbsp;Other</label>
+                 
+                
+                <div id="DivSelf" style="display:none" class="DivRefundAmount">
+                    <form id="paymentRefund" action="{{ route('admin.user.refund.amount') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                        @csrf
+                        <input type="hidden" value="" name="user_id" required id="refundSelfUserId"/>
+                        <p>Total Balance : <span class="totalAcceptedAmount">0.00</span></p>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="input">Enter Amount:</label>
+                                    <input type="test" class="form-control" value="" name="amount" required />
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="input">Enter Reference Number:</label>
+                                    <input type="test" class="form-control" value="" name="reference_number" required />
+                                </div>
+                            </div>
+                            <div class="col-sm-12 d-flex justify-content-center align-items-center">
+                                <div class="btn-showcase text-center">
+                                    <button class="btn btn-primary" type="submit" form="paymentRefund">@lang('admin.submit')</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-sm-12">
-                            <div class="form-group">
-                                <label for="input">Enter Reference Number:</label>
-                                <input type="test" class="form-control" value="" name="reference_number" required />
+                    </form>
+                </div>
+            
+                
+                <div id="DivAnother"  style="display:none" class="DivRefundAmount">
+                    <form id="paymentRefundOther" action="{{ route('admin.user.refund.amount.to.another.user') }}" method="post" enctype="multipart/form-data" autocomplete="off">
+                        @csrf
+                        <input type="hidden" value="" name="user_id" required id="refundUserId"/>
+                        <p>Total Balance : <span class="totalAcceptedAmount">0.00</span></p>
+                        <div class="row">
+                            @php 
+                                $query = \App\Models\User::where([['designation_id', 2], ['stage', '=', '2']])
+                                        ->where(function ($query) {
+                                            $query->where('added_as',null)
+                                                ->orWhere('added_as', '=', 'Group')
+                                                ->orWhere('parent_spouse_stage', '>=', '2');
+                                        })->orderBy('updated_at', 'desc');
+
+                                $users = $query->get();
+                            @endphp
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="input">Select User :</label>
+                                    <select class="form-control test" name="to_user_id"> 
+                                        <option value="" >--@lang('web/home.attendee-name')--</option>
+                                        
+                                        @if($users)
+                                            @foreach($users as $con)
+                                                <option value="{{$con['id']}}">{{$con['name']}} {{$con['last_name']}}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 d-flex justify-content-center align-items-center">
+                                <div class="btn-showcase text-center">
+                                    <button class="btn btn-primary" type="submit" form="paymentRefundOther">@lang('admin.submit')</button>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-sm-12 d-flex justify-content-center align-items-center">
-                            <div class="btn-showcase text-center">
-                                <button class="btn btn-primary" type="submit" form="paymentRefund">@lang('admin.submit')</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -847,7 +904,7 @@
                         <div class="col-sm-12">
                             <div id="ProfileStatusData"></div>
 
-                            <div class="form-group">
+                            <div class="form-group" id="RemarkDibRoomUpGrade" style="display:none">
                                 <div class="form-line">
                                     <label for="inputName">@lang('admin.remark')</label>
                                     <textarea name="remark" class="form-control" cols="30" rows="5" placeholder="Enter remark here..."></textarea>
@@ -858,7 +915,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-danger px-4 mx-2" onclick="modalHide()">@lang('admin.close')</button>
-                    <button type="submit" class="btn btn-dark px-4 mx-2">@lang('admin.save')</button>
+                    <button type="submit" id="SubmitButtonRoomUpgrade" class="btn btn-dark px-4 mx-2" disabled>@lang('admin.save')</button>
                 </div>
             </form>
         </div>
@@ -872,20 +929,36 @@
 <script>
 
     $(document).ready(function () {
-            $('input:radio[name=type]').change(function () {
-            
-                if ($("input[name='type']:checked").val() == '1') {
+        $('input:radio[name=refundRadio]').change(function () {
+        
+            if ($("input[name='refundRadio']:checked").val() == '1') {
 
-                    $('#UploadFileDiv').hide();
-                    $('#fileData').attr('required',false);
-                    
-                }else{
-                    $('#UploadFileDiv').show();
-                    $('#fileData').attr('required',true);
-                }
+                $('.DivRefundAmount').hide();
+                $('#DivSelf').show();
                 
-            });
+            }else{
+                $('.DivRefundAmount').hide();
+                $('#DivAnother').show();
+            }
+            
         });
+    });
+
+    $(document).ready(function () {
+        $('input:radio[name=type]').change(function () {
+        
+            if ($("input[name='type']:checked").val() == '1') {
+
+                $('#UploadFileDiv').hide();
+                $('#fileData').attr('required',false);
+                
+            }else{
+                $('#UploadFileDiv').show();
+                $('#fileData').attr('required',true);
+            }
+            
+        });
+    });
 
 
     $(document).ready(function() {
@@ -1690,10 +1763,11 @@
         $('#staticBackdropButton').click(function() {
             var id = $(this).data('id');
             $('#totalPendingAmount').html($(this).data('pending_amount'));
-            $('#totalAcceptedAmount').html($(this).data('accepted_mount'));
+            $('.totalAcceptedAmount').html($(this).data('accepted_mount'));
             
             $('#staticBackdrop').modal('show');
             $('#refundUserId').val(id);
+            $('#refundSelfUserId').val(id);
 
         });
       
@@ -1875,7 +1949,7 @@
     });
 
     function modalHide() {
-
+       
         $('#exampleModalCenter').modal('hide');
         $('#roomUpgradeModel').modal('hide');
         $('#row_id').val(0);
@@ -1971,6 +2045,55 @@
         });
 
     });
+    
+    $("form#paymentRefundOther").submit(function(e) {
+        
+        e.preventDefault();
+
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+        var btnhtml = $("button[form="+formId+"]").html();
+
+        $.ajax({
+            url: formAction,
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                submitButton(formId, btnhtml, true);
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+                submitButton(formId, btnhtml, false);
+            },
+            success: function(data) {
+                if (data.error) {
+                    sweetAlertMsg('error', data.message);
+                } else {
+
+                    if (data.reset) {
+                        $('#' + formId)[0].reset();
+                        $('#staticBackdrop').modal('hide');
+                        window.location.reload();
+
+                    }
+
+                    sweetAlertMsg('success', data.message);
+
+                }
+                submitButton(formId, btnhtml, false);
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+
+    });
 
 
     $('#coordinateName').change(function(){
@@ -1981,6 +2104,7 @@
 
     function modalHide() {
         $('#exampleModalCenter').modal('hide');
+        $('#roomUpgradeModel').modal('hide');
         $('input[name="user_id"]').val(0);
         $('input[name="status"]').val(null);
         $('form#form')[0].reset();
@@ -2033,6 +2157,8 @@
 
         });
     }
+
+    $('.test').fSelect();
 
 </script>
 @endpush

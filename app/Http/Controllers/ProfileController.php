@@ -1372,6 +1372,10 @@ class ProfileController extends Controller
                 $user->share_your_room_with=$roomPartner->to_user_id;
                 $user->save();
 
+                $userOtherData= \App\Models\User::where('id',$roomPartner->to_user_id)->first();
+                $userOtherData->share_your_room_with=$roomPartner->from_user_id;
+                $userOtherData->save();
+
                 $roomPartnerData = \App\Models\RoomPartnerPreference::
                                 where(function ($query) use($id) {
                                     $query->where('from_user_id',\Session::get('gpro_result')['id'])
@@ -1398,20 +1402,20 @@ class ProfileController extends Controller
 
                 $roomPartner->save();
 
-                return redirect('travel-information')->with('gpro_success','Request Approved successfully');
+                return redirect('travel-information')->with('gpro_success',\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Request_Approved_successfully'));
                 
             }else{
 
                 $roomPartner->status = 'Declined';
                 $roomPartner->save();
 
-                return redirect('travel-information')->with('gpro_success','Request Declined successfully');
+                return redirect('travel-information')->with('gpro_success',\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Request_Declined_successfully'));
             }
 
 
         }else{
 
-            return redirect('travel-information')->with('gpro_error','Something went wrong.please try again');
+            return redirect('travel-information')->with('gpro_error',\App\Helpers\commonHelper::ApiMessageTranslaterLabel(\Session::get('lang'),'Something-went-wrongPlease-try-again'));
         }
         
 	}

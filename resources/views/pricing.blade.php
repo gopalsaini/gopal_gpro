@@ -137,29 +137,29 @@
                                     <ul>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.twin-sharing')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="twin-sharing-WEB">0</span> 
-                                            &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WOEB">0</span></del></span>
+                                            <!-- <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="twin-sharing-WEB">0</span></del>  -->
+                                            &nbsp; &nbsp;$<span class="twin-sharing-WOEB">0</span></span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_room_per_person')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-room-WEB">0</span>
-                                            &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WOEB">0</span></del>
+                                            <!-- <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="single-room-WEB">0</span></del> -->
+                                            &nbsp; &nbsp;$<span class="single-room-WOEB">0</span>
                                         </span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.deluxe-room-early-bird')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="trainers-early">0</span>
-                                            &nbsp; &nbsp;<del style="color: red;">$<span class="trainers-after-WOEB">0</span></del>
+                                            <!-- <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="trainers-early">0</span></del> -->
+                                            &nbsp; &nbsp;$<span class="trainers-after-WOEB">0</span>
                                         </span>
                                         </li>
                                         <li>
                                             <p><span><img src="{{ asset('assets/images/vector.svg') }}" alt=""></span>@lang('web/pricing.single_spouse_trainer')</p>
-                                            <span>:&nbsp; &nbsp; &nbsp;$<span class="single-trainer-WEB">0</span>
-                                            &nbsp; &nbsp;<del style="color: red;">$<span class="single-trainer-WOEB">0</span></del>
+                                            <!-- <span>:&nbsp; &nbsp; &nbsp;<del style="color: red;">$<span class="single-trainer-WEB">0</span></del> -->
+                                            &nbsp; &nbsp;$<span class="single-trainer-WOEB">0</span>
                                         </span>
                                         </li>
                                     </ul>
-                                    <!-- <p style="color:red"> @lang('web/pricing.regular-registration-ends-on-august')  </p> -->
+                                    <p style="color:red"> @lang('web/pricing.regular-registration-ends-on-august')  </p>
                               
                                 </div>
                                  <div class="tab-pane fade" id="list-registration" role="tabpanel" aria-labelledby="list-registration-list">

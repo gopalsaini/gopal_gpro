@@ -409,7 +409,52 @@
                     </div>
                 @endif
 
-                
+                    <div class="table-responsive">
+                        <div class="" style="margin: 10px;">
+                            <h4>@lang('web/app.Room_Partner_Preference_Requests')</h4>
+                        </div>
+                        <div class="" style="margin: 10px;">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <!-- <th>Name</th> -->
+                                        <th>@lang('web/app.Preferred_Partner_Name')</th>
+                                        <th>@lang('web/app.Request_Status')</th>
+                                        <!-- <th></th> -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php $roomPartner = \App\Models\RoomPartnerPreference::where('from_user_id',$userId)->orWhere('to_user_id',$userId)->get(); @endphp
+                                    @if(!empty($roomPartner))
+                                        @foreach($roomPartner as $room)
+                                            <tr>
+                                                <!-- <th>{{\App\Helpers\commonHelper::getUserNameById($room->from_user_id)}}</th> -->
+                                                <td>@if($room->from_user_id == $userId)
+                                                        {{\App\Helpers\commonHelper::getUserNameById($room->to_user_id)}}
+                                                    @else
+                                                        {{\App\Helpers\commonHelper::getUserNameById($room->from_user_id)}}
+                                                    @endif</td>
+                                                
+                                                <td>
+                                                    @if($room->status == 'Pending' && $room->from_user_id != $userId)
+                                                        <div style="display: flex;">
+                                                            <a href="{{url('room-partner/approved/'.$room->id)}}" class="btn btn-primary " style="margin-right: 6px;"> Accept </a>
+                                                            <a href="{{url('room-partner/declined/'.$room->id)}}" class="btn btn-danger">  Decline</a>
+
+                                                        </div>
+                                                    @else
+                                                        {{$room->status}}
+                                                    @endif
+                                                </td>
+                                                
+                                            </tr>
+                                        @endforeach
+                                    @endif
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 
                 <div id="TravelInfoShowDiv" style="display:@if($TravelInfoShow) block @else none @endif">
                     @if($passportInfo['status']=='Approve')
@@ -426,77 +471,7 @@
                             
                             @endphp
 
-                            @if($result && $result['admin_status'] == '1')
-
-                                @if($result['final_file'] != '')
-                                    <div class="row step-form">   
-                                    
-                                        <!-- <h4>visa letter file</h4> -->
-                                        <!-- <div class="row">
-                                            <div class="alphabet-vd-box">
-                                                <iframe width="100%" height="400"  src="{{asset('uploads/file/'.$result['final_file'])}}#toolbar=0" title="Phonics Song for Children (Official Video) Alphabet Song | Letter Sounds | Signing for babies | ASL" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3">
-                                            <div class="step-next">
-                                                <a href="{{asset('uploads/file/'.$result['final_file'])}}" target="_blank" class="main-btn bg-gray-btn" >Download</a>
-                                            
-                                            </div>
-                                        </div> -->
-                                    </div>
-                                @else
-                                    <div class="row step-form">  
-                                                
-                                        @if ($result['flight_details'])
-                                            @if ($result['flight_details'])
-                                                @php $flight_details1 = json_decode($result['flight_details']); @endphp
-                                                @php $return_flight_details1 = json_decode($result['return_flight_details']); @endphp
-                                                    @if ($flight_details1)
-                                                    
-                                                        <h5 style="margin-top:20px; "><b>@lang('admin.flight') @lang('admin.details') </b></h5>
-                                                        <div class="row col-sm-12" style="margin-left:10px">
-                                                            <h5 style="margin-top:20px; "><b>@lang('web/home.arrival-to-panama-attendee') </b></h5>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.flight-number') :</strong> {{$flight_details1->arrival_flight_number}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$flight_details1->arrival_start_location}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$flight_details1->arrival_date_departure}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$flight_details1->arrival_date_arrival}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.airline_name') :</strong> {{$flight_details1->arrival_date_arrival}}</p></div>
-
-                                                            <h5 style="margin-top:20px; "><b>@lang('web/home.departure-from-panama') - </b></h5>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.flight-number') :</strong> {{$flight_details1->departure_flight_number}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$flight_details1->departure_start_location}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$flight_details1->departure_date_departure}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$flight_details1->departure_date_arrival}}</p></div>
-                                                        </div>
-                                                    @endif
-
-                                                    @if($return_flight_details1)
-                                                    
-                                                        <div class="row col-sm-12" style="margin-left:10px">
-                                                            <h5 style="margin-top:20px; "><b>@lang('web/home.arrival-to-panama-spouse') </b></h5>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.flight-number') :</strong> {{$return_flight_details1->spouse_arrival_flight_number}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$return_flight_details1->spouse_arrival_start_location}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$return_flight_details1->spouse_arrival_date_departure}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$return_flight_details1->spouse_arrival_date_arrival}}</p></div>
-
-                                                            <h5 style="margin-top:20px; "><b>@lang('web/home.departure-from-panama') - </b></h5>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.flight-number') :</strong> {{$return_flight_details1->spouse_departure_flight_number}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.start-location') :</strong> {{$return_flight_details1->spouse_departure_start_location}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-departure') :</strong> {{$return_flight_details1->spouse_departure_date_departure}}</p></div>
-                                                            <div class="col-sm-4"><p><strong> @lang('web/home.date-time-of-arrival') :</strong> {{$return_flight_details1->spouse_departure_date_arrival}}</p></div>
-                                                        </div>
-                                                    @endif
-                                                    
-                                                
-                                            @endif
-
-                                        @else
-                                            <h5>@lang('web/home.travel-info-not-available')</h5>
-                                        @endif
-                                    </div>
-                                @endif
-                                
-                            @elseif($result && $result['user_status'] == '1')
+                            @if($result && $result['user_status'] == '1')
                                 <div class="row step-form">              
                                     <h4>@lang('web/home.admin-verifying-visa-info')</h4>
                                 </div>
@@ -571,50 +546,7 @@
                             </div>
                         
                             @if($travelInfo['result'] && $travelInfo['result']['arrival_flight_number'])
-                                @if(env('TESTING')==true)
-                                    <div class="table-responsive">
-                                        <div class="step-form" style="margin-top: 0px;">
-                                            <h4>Room Partner Preference Approval</h4>
-                                        </div>
-                                        <div class="step-form" style="margin-top: 0px;">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th>Request User Name</th>
-                                                        <th>Status</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @php $roomPartner = \App\Models\RoomPartnerPreference::where('from_user_id',$result['id'])->orWhere('to_user_id',$result['id'])->get(); @endphp
-                                                    @if(!empty($roomPartner))
-                                                        @foreach($roomPartner as $room)
-                                                            <tr>
-                                                                <th>{{\App\Helpers\commonHelper::getUserNameById($room->from_user_id)}}</th>
-                                                                <td>{{\App\Helpers\commonHelper::getUserNameById($room->to_user_id)}}</td>
-                                                                <td>{{$room->status}}</td>
-                                                                <td>
-                                                                    @if($room->status == 'Pending' && $room->from_user_id != $result['id'])
-                                                                        <div style="display: flex;">
-                                                                            <a href="{{url('room-partner/approved/'.$room->id)}}" class="btn btn-primary " style="margin-right: 6px;"> Accept </a>
-                                                                            <a href="{{url('room-partner/declined/'.$room->id)}}" class="btn btn-danger">  Declined</a>
-
-                                                                        </div>
-                                                                    @else
-                                                                        {{$room->status}}
-                                                                    @endif
-                                                                </td>
-                                                                
-                                                            </tr>
-                                                        @endforeach
-                                                    @endif
-                                                    
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                @endif
+                                
                                 <div >
                                     <div class="step-form">
                                         <h4>@lang('web/home.flight-info')</h4>
@@ -628,14 +560,14 @@
                                                     <div class="info">
                                                         
                                                         <h6>@lang('web/home.airline_name') :</h6><br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['arrival_airline_name']) {{$travelInfo['result']['arrival_airline_name']}} @endif</p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['arrival_airline_name'])) {{$travelInfo['result']['arrival_airline_name']}} @endif</p>
 
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-4">
                                                     <div class="info">
                                                         <h6>@lang('web/home.flight-number') : </h6><br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['arrival_flight_number']) {{$travelInfo['result']['arrival_flight_number']}} @endif</p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['arrival_flight_number'])) {{$travelInfo['result']['arrival_flight_number']}} @endif</p>
                                                     
                                                     </div>
                                                 </div>
@@ -643,7 +575,7 @@
                                                     <div class="info">
                                                         
                                                         <h6>@lang('web/home.date-time-of-arrival') :</h6><br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['arrival_date_arrival']) {{$travelInfo['result']['arrival_date_arrival']}} @endif</p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['arrival_date_arrival'])) {{$travelInfo['result']['arrival_date_arrival']}} @endif</p>
 
                                                     </div>
                                                 </div>
@@ -658,7 +590,7 @@
                                                     <div class="info">
                                                         
                                                         <h6>@lang('web/home.airline_name') :</h6><br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['departure_airline_name']) {{$travelInfo['result']['departure_airline_name']}} @endif</p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['departure_airline_name'])) {{$travelInfo['result']['departure_airline_name']}} @endif</p>
 
                                                     </div>
                                                 </div>
@@ -666,7 +598,7 @@
                                                     <div class="info">
                                                     
                                                         <h6>@lang('web/home.flight-number') :</h6> <br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['departure_flight_number']) {{$travelInfo['result']['departure_flight_number']}} @endif</p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['departure_flight_number'])) {{$travelInfo['result']['departure_flight_number']}} @endif</p>
                                                     
                                                     </div>
                                                 </div>
@@ -675,7 +607,7 @@
                                                     <div class="info">
                                                         
                                                         <h6>@lang('web/home.date-time-of-departure') :</h6><br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && $travelInfo['result']['departure_date_departure']) {{$travelInfo['result']['departure_date_departure']}} @endif </p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['departure_date_departure'])) {{$travelInfo['result']['departure_date_departure']}} @endif </p>
 
                                                         
                                                     </div>
@@ -935,26 +867,24 @@
                                                 </div>
                                             </div> -->
                                            
-                                                @if($resultData['result']['added_as'] == null && !$SpouseInfoResult) 
-                                                    
-                                                    <h5>@lang('web/home.like_to_share_your_room')</h5>
+                                                @if($resultData['result']['added_as'] == null && !$SpouseInfoResult && $resultData['result']['share_your_room_with'] == null) 
+                                                        <h5>@lang('web/home.like_to_share_your_room')</h5>
                                                         <div class="arrival" style="padding-top:15px">
                                                             <p class="note">@lang('web/home.travel_note')</p>
-                                                            
                                                         </div>
                                                         <div class="col-lg-6">
                                                             <br><br>
                                                             <select class="form-control test" name="share_your_room_with"> 
                                                                 <option value="" >--@lang('web/home.attendee-name')--</option>
                                                                 @php 
-                                                                $users = \App\Models\User::where([['status', '!=', '1']])
+                                                                $users = \App\Models\User::where([['status', '!=', '1'],['designation_id', 2]])
                                                                         ->where(function ($query) {
                                                                             $query->where('added_as',null)
                                                                                 ->orWhere('added_as', '=', 'Group');
                                                                         })->where('id','!=',$resultData['result']['id'])->where('stage','>','2')->where('gender',$resultData['result']['gender'])->orderBy('updated_at', 'desc')->get();
                                                                 @endphp
 
-                                                                @if($users)
+                                                                @if(!empty($users) && count($users)>0)
                                                                     @foreach($users as $con)
                                                                         <option value="{{$con['id']}}">{{$con['name']}} {{$con['last_name']}}</option>
                                                                     @endforeach

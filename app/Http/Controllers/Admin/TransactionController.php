@@ -86,7 +86,14 @@ class TransactionController extends Controller {
 		    })
 
 			->addColumn('amount', function($data){
-				return '$'.$data->amount;
+
+				$exb = \App\Models\Wallet::where('user_id',$data->user_id)->where('transaction_id',$data->id)->where('type','Dr')->first();
+				if($exb){
+					return '<div class="span badge rounded-pill pill-badge-danger">-$'.$data->amount.'</div>';
+				}else{
+					return '$'.$data->amount;
+				}
+				
 		    })
 
 			->addColumn('payment_status', function($data){
@@ -496,6 +503,124 @@ class TransactionController extends Controller {
         \App\Helpers\commonHelper::setLocale();
 
         return view('admin.transaction.exhibitor_list');
+
+	}
+
+	
+    public function roomUpgradeList(Request $request) {
+		
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('room_upgrades');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			// $order = $columns[$request->input('order.0.column')];
+			// $dir = $request->input('order.0.dir');
+
+			$query = \App\Models\RoomUpgrade::orderBy('id','desc');
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData = \App\Models\RoomUpgrade::orderBy('id','desc')->count();
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));  
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('user_name', function($data){
+
+				return '<a style="color: blue !important;" href="'.url('admin/user/user-profile/'.$data->user_id).'" target="_blank" title="User Profile">'.\App\Helpers\commonHelper::getUserNameById($data->user_id).'</a>';
+				
+		    })
+
+			->addColumn('category', function($data){
+
+				return $data->category;
+				
+		    })
+			->addColumn('payment_by', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+					return $Transaction->bank;
+				}else{
+					return '';
+				}
+
+				
+		    })
+
+			->addColumn('method', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+					return $Transaction->method;
+				}else{
+					return '';
+				}
+				
+		    })
+			->addColumn('transaction_id', function($data){
+				return $data->order_id;
+		    })
+			->addColumn('bank_transaction_id', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+					return $Transaction->bank_transaction_id;
+				}else{
+					return '';
+				}
+		    })
+
+			->addColumn('amount', function($data){
+
+				return '$'.$data->amount;
+				
+				
+		    })
+
+			->addColumn('payment_status', function($data){
+
+				$Transaction = \App\Models\Transaction::where('order_id', $data->order_id)->where('particular_id', '5')->first();
+				if($Transaction){
+
+					if($Transaction->payment_status=='0' || $Transaction->payment_status=='1' || $Transaction->payment_status=='7' || $Transaction->payment_status=='8' || $Transaction->payment_status=='9') {
+						return '<div class="span badge rounded-pill pill-badge-danger">'.\App\Helpers\commonHelper::getPaymentStatusName($Transaction->payment_status).'</div>';
+					} else if($Transaction->payment_status=='3' || $Transaction->payment_status=='4' || $Transaction->payment_status=='6') {
+						return '<div class="span badge rounded-pill pill-badge-orange">'.\App\Helpers\commonHelper::getPaymentStatusName($Transaction->payment_status).'</div>';
+					} else if($Transaction->payment_status=='2' || $Transaction->payment_status=='5') {
+						return '<div class="span badge rounded-pill pill-badge-success">'.\App\Helpers\commonHelper::getPaymentStatusName($Transaction->payment_status).'</div>';
+					}
+
+				}else{
+
+					return '<div class="span badge rounded-pill pill-badge-orange" style="background-color: #b76d0a;">Pending</div>';
+				}
+
+				
+		    })
+
+			->addColumn('created_at', function($data){
+				return date('d-M-Y H:i:s',strtotime($data->created_at));
+		    })
+			
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+        \App\Helpers\commonHelper::setLocale();
+
+        return view('admin.transaction.room_upgrade');
 
 	}
 	

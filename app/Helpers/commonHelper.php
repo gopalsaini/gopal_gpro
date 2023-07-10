@@ -1222,7 +1222,7 @@ class commonHelper{
 		$payment->save();
 
 		$Wallet = new \App\Models\Wallet();
-		$Wallet->user_id = $user->id;
+		$Wallet->user_id = $user->id ?? null;
 		$Wallet->type  = 'Cr';
 		$Wallet->amount = $amount;
 		$Wallet->status = 'Pending';
@@ -1544,6 +1544,9 @@ class commonHelper{
 			'Obispo' => 'Bishop', // sp
 			'Rev.' => 'Rev.',
 			'Prof.' => 'Prof.',
+			'Srta'=> 'Mrs', // sp
+			'Senhora'=> 'Mrs' , // pt
+			'Mrs' => 'Mrs',
 			'' => '',
 		);
 		
@@ -1765,6 +1768,12 @@ class commonHelper{
 				'countries_doc_not_match_with_select_countries'=> 'los documentos del país no coinciden con los países seleccionados',
 				'Request_Updated_successfully'=> 'Request Updated successfully',
 				
+				'Room_Partner_Preference_Requests' => "Solicitudes de Preferencia de Compañero de Habitación",
+				'Preferred_Partner_Name' => "Nombre del Compañero de Elección",
+				'Request_Status' => "Estado de la Solicitud",
+				'Request_Approved_successfully' => "Solicitud Aprobada con éxito",
+				'Request_Declined_successfully' => "Solicitud Rechazada correctamente",
+				
 			);
 
 		}elseif($lang == 'fr'){
@@ -1982,6 +1991,12 @@ class commonHelper{
 				'countries_doc_not_match_with_select_countries'=> 'Le document des pays ne correspond pas aux pays sélectionnés',
 				'Request_Updated_successfully'=> 'Request Updated successfully',
 				
+				'Room_Partner_Preference_Requests' => "Demandes de préférences du colocataire",
+				'Preferred_Partner_Name' => "Nom du colocataire préféré",
+				'Request_Status' => "Statut de la demande",
+				'Request_Approved_successfully' => "Demande approuvée avec succès",
+				'Request_Declined_successfully' => "Demande rejetée avec succès",
+				
 			);
 
 		}elseif($lang == 'pt'){
@@ -2196,6 +2211,11 @@ class commonHelper{
 				'countries_doc_not_match_with_select_countries'=> 'Documento do país não corresponde aos países selecionados',
 				'Request_Updated_successfully'=> 'Request Updated successfully',
 
+				'Room_Partner_Preference_Requests' => "Pedidos de Colega de Quarto de Preferência",
+				'Preferred_Partner_Name' => "Nome do Colega Preferencial",
+				'Request_Status' => "Estado do Pedido",
+				'Request_Approved_successfully' => "Pedido Aprovado com sucesso",
+				'Request_Declined_successfully' => "Pedido Recusado com sucesso",
 				
 			);
 
@@ -2408,6 +2428,11 @@ class commonHelper{
 				'countries_doc_not_match_with_select_countries'=> 'countries doc not match with select countries',
 				'Request_Updated_successfully'=> 'Request Updated successfully',
 				
+				'Room_Partner_Preference_Requests' => "Room Partner Preference Requests",
+				'Preferred_Partner_Name' => "Preferred Partner Name",
+				'Request_Status' => "Request Status",
+				'Request_Approved_successfully' => "Request Approved successfully",
+				'Request_Declined_successfully' => "Request Declined successfully",
 				
 	
 				
@@ -3630,8 +3655,8 @@ class commonHelper{
 
 	public static function checkUserPassPortCategoryacordingToCountry($country_id){
 		
-		$doNotRequireVisa = ['82','6','7','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','40','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','113','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-		$RequireVisa = ['1','3','4','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
+		$doNotRequireVisa = ['82','6','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
+		$RequireVisa = ['1','3','4','7','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','40','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','113','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
 		$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 		
 
@@ -3651,6 +3676,42 @@ class commonHelper{
 
 		return $visa_category;
 	}
+
+	
+    public static function userDrBalance($userId){
+		
+		return \App\Models\Wallet::select('wallets.*')
+											->join('transactions','transactions.id','=','wallets.transaction_id')
+											->where([
+													['wallets.status','=','Success'],
+													['wallets.type','=','Dr'],
+													['wallets.user_id','=',$userId],
+													['transactions.particular_id','!=','3'],
+												])->sum('wallets.amount');	
+	
+	}
+	
+	public static function userCrBalance($userId){
+		
+		return \App\Models\Wallet::select('wallets.*')
+											->join('transactions','transactions.id','=','wallets.transaction_id')
+											->where([
+											['wallets.status','=','Success'],
+											['wallets.user_id','=',$userId],
+											['wallets.type','=','Cr'],
+											['transactions.particular_id','!=','3'],
+												])->sum('wallets.amount');	
+	
+	}
+
+	public static function userTotalBalance($userId){
+		
+		$confirmBalance= commonHelper::userCrBalance($userId);
+		$withdrawalBalance= commonHelper::userDrBalance($userId);
+		
+		return $confirmBalance-$withdrawalBalance;
+	}
+
 
 }
 

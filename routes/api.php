@@ -148,7 +148,7 @@ Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmails
 // Route::any("PassportInfoUpdateAdminProvideUserNameApi","API\PreLoginController@PassportInfoUpdateAdminProvideUserNameApi");
 // Route::any("testingEmailSend","API\PreLoginController@testingEmailSend");
 // Route::any("visaProcessingEmailSend","API\PreLoginController@visaProcessingEmailSend");
-Route::any("PaymenDeadlineMissed100OFF","API\PreLoginController@PaymenDeadlineMissed100OFF");
+// Route::any("PaymenDeadlineMissed100OFF","API\PreLoginController@PaymenDeadlineMissed100OFF");
 
 
 //dashboard API

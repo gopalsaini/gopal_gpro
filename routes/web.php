@@ -194,6 +194,8 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::match(['get','post'], 'sponsored-refund-amount', 'Admin\UserController@sponsoredRefundAmount')->name('sponsored.refund.amount');
 		Route::post('cash-payment-submit', 'Admin\UserController@cashPaymentSubmit')->name('cash-payment-submit'); 
 
+		Route::match(['get','post'], 'refund-amount-to-another-user', 'Admin\UserController@refundAmountToAnotherUser')->name('refund.amount.to.another.user');
+
 		Route::post('profile-status', 'Admin\UserController@profileStatus')->name('profile.status');
 		Route::post('profile-room-upgrade', 'Admin\UserController@profileRoomUpgrade')->name('profile.room-upgrade');
 
@@ -248,6 +250,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('payment-history/{id}', 'Admin\UserController@paymentHistory')->name('payment.history');
 		Route::get('sponsored-payment-history/{id}', 'Admin\UserController@sponsoredPaymentHistory')->name('sponsored.Payment.History');
 		Route::get('donate-payment-history/{id}', 'Admin\UserController@donatePaymentHistory')->name('donate.Payment.History');
+		Route::get('room-upgrade-payment-history/{id}', 'Admin\UserController@roomUpgradeList')->name('room-upgrade-payment-history');
 		Route::post('send-payment-reminder', 'Admin\UserController@sendPaymentReminder')->name('send.payment.reminder');
 		Route::get('travel-info/{id}', 'Admin\UserController@travelInfo')->name('travel.info');
 		Route::get('session-info/{id}', 'Admin\UserController@sessionInfo')->name('session.info');
@@ -290,6 +293,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 			Route::post('status', 'Admin\TransactionController@status')->name('status');
 		});
 
+
 		Route::get("get-exhibitor-user-data","Admin\UserController@getUserData");
 		Route::get("get-exhibitor-qrcode","Admin\UserController@getExhibitorQrcodeData");
 		Route::get("get-exhibitor-sponsorship","Admin\UserController@getExhibitorSponsorshipData");
@@ -312,6 +316,11 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 
 	});
 
+
+	// room-upgrade
+	Route::group(['prefix'=>'room-upgrade', 'as'=>'room-upgrade.'], function() {
+		Route::get('list', 'Admin\TransactionController@roomUpgradeList')->name('list');
+	});
 
 	// Offer
 	Route::group(['prefix'=>'offer', 'as'=>'offer.'], function() {

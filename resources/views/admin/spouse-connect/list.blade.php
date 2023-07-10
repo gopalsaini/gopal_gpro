@@ -76,16 +76,16 @@
                                 @if(!empty($datas) && count($datas)>0)
                                     @php $sn = 1; @endphp
                                     @foreach($datas as $data)
-                                        @php $results = \App\Models\User::where([['user_type', '!=', '1'], ['parent_id', $data->id],['added_as', 'Spouse']])->first() @endphp
+                                        @php $results = \App\Models\User::where('id',$data)->first() @endphp
                                         @if($results)
                                             <tr>
                                                 <td>{{$sn}}</td>
-                                                <td>{{$data->name}} {{$data->last_name}}</td>
-                                                <td><a href="javascript:void(0)" class="group-user-list" data-email="{{$data->email}}"></a> {{$data->email}}</td>
-                                                <td>+{{$data->phone_code}} {{$data->mobile}}</td>
+                                                <td>{{$results->name}} {{$results->last_name}}</td>
+                                                <td><a href="javascript:void(0)" class="group-user-list" data-email="{{$results->email}}"></a> {{$results->email}}</td>
+                                                <td>+{{$results->phone_code}} {{$results->mobile}}</td>
                                                 
                                                 <td>
-                                                    <div style="display:flex"><a href="{{route('admin.spouse-connect.update', ['id' => $data->id] )}}" title="Update Group" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-edit"></i></a></div>
+                                                    <div style="display:flex"><a href="{{route('admin.spouse-connect.update', ['id' => $results->id] )}}" title="Update Group" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-edit"></i></a></div>
                                                 </td>
                                             </tr>
 

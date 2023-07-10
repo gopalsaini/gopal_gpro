@@ -110,14 +110,11 @@ class SpouseConnectController extends Controller
 		$limit = $request->input('length');
 		$start = $request->input('start');
 		
-		$query = \App\Models\User::where([['stage', '>=', '3'],['designation_id', 2],['designation_id', '!=', '14']])
+		$query = \App\Models\User::where([['stage', '>=', '3'],['designation_id', 2],['added_as', '=', 'Spouse']]);
 
-					->where(function ($query1) {
-						$query1->where('added_as',null)
-							->orWhere('added_as', '=', 'Group');
-					})->orderBy('updated_at', 'desc');
+		$datas = $query->pluck('parent_id')->toArray();
 
-		$datas = $query->get();
+		$datas = array_unique($datas);
 			
         return view('admin.spouse-connect.list',compact('datas'));
 

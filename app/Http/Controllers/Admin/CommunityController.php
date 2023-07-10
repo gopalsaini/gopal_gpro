@@ -91,12 +91,13 @@ class CommunityController extends Controller
 		$limit = $request->input('length');
 		$start = $request->input('start');
 		
-		$query = \App\Models\User::where([['id', '!=', '1'],['designation_id', 2],['designation_id', '!=', '14']])->orderBy('updated_at', 'desc');
+		$query = \App\Models\User::where([['id', '!=', '1'],['designation_id', 2],['added_as', 'Group']])->orderBy('updated_at', 'desc');
 
 
-		$datas = $query->get();
-			
-		
+		$datas = $query->pluck('parent_id')->toArray();
+
+		$datas = array_unique($datas);
+
         return view('admin.community.list',compact('datas'));
 
 	}
