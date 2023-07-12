@@ -154,8 +154,8 @@ Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmails
 // Route::any("PaymenDeadlineMissed100OFF","API\PreLoginController@PaymenDeadlineMissed100OFF");
 
 
-Route::any("paidBeforeJuly1AddEB","API\PreLoginController@paidBeforeJuly1AddEB");
-Route::any("PassportInfoEmailSendToVisaNeededKenya","API\PreLoginController@PassportInfoEmailSendToVisaNeededKenya");
+// Route::any("paidBeforeJuly1AddEB","API\PreLoginController@paidBeforeJuly1AddEB");
+// Route::any("PassportInfoEmailSendToVisaNeededKenya","API\PreLoginController@PassportInfoEmailSendToVisaNeededKenya");
 
 
 //dashboard API
