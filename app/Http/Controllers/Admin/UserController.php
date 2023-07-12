@@ -23,6 +23,7 @@ class UserController extends Controller {
 					'contact_country_id' => 'required',
 					'contact_state_id' => 'required',
 					'contact_city_id' => 'required',
+					'contact_address' => 'required',
 				];
 
 				$result=\App\Models\User::find($request->post('id'));
@@ -110,6 +111,7 @@ class UserController extends Controller {
 					$data->contact_city_id = $request->post('contact_city_id');
 					$data->contact_city_name = $request->post('contact_city_name');
 					$data->contact_state_name = $request->post('contact_state_name');
+					$data->contact_address = $request->post('contact_address');
 					
 
 					if($data && $data->designation_id != '4' && $data->designation_id != '6'){
@@ -160,7 +162,7 @@ class UserController extends Controller {
 
 							$data->citizenship = $request->post('citizenship');
 							$data->profile_status = 'Approved';
-							$data->profile_update = 'Approved';
+							$data->profile_update = '1';
 							$data->amount = '0.00';
 							$data->stage = '3';
 							$data->payment_status = '2';
@@ -323,7 +325,7 @@ class UserController extends Controller {
 								$password = \Str::random(10);
 
 								$existSpouse->profile_status = 'Approved';
-								$existSpouse->profile_update = 'Approved';
+								$existSpouse->profile_update = '1';
 								$existSpouse->amount = '0.00';
 								$existSpouse->stage = '3';
 								$existSpouse->payment_status = '2';
@@ -552,6 +554,108 @@ class UserController extends Controller {
     public function list(Request $request, $designation) {
 
         return view('admin.user.list', compact('designation'));
+	}
+	
+
+	public function allUser(Request $request) {
+ 
+		if ($request->ajax()) {
+			
+			$columns = \Schema::getColumnListing('users');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			
+			$query = \App\Models\User::where('id', '!=', '1')->orderBy('updated_at', 'desc');
+
+			if ($request->input('search.value')) {
+
+				$query->where(function ($query1) use ($request) {
+					$query1->where('email', 'like', "%" . $request->input('search.value') . "%")
+						  ->orWhere('name', 'like', "%" . $request->input('search.value') . "%")
+						  ->orWhere('last_name', 'like', "%" . $request->input('search.value') . "%");
+				});
+
+			}
+
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData1 = \App\Models\User::where('id', '!=', '1')->orderBy('updated_at', 'desc');
+			
+			if ($request->input('search.value')) {
+
+				$totalData1->where(function ($query2) use ($request) {
+					$query2->where('email', 'like', "%" . $request->input('search.value') . "%")
+						  ->orWhere('name', 'like', "%" . $request->input('search.value') . "%")
+						  ->orWhere('last_name', 'like', "%" . $request->input('search.value') . "%");
+				});
+
+			}
+
+			$totalData = $totalData1->count();
+			
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));  
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('name', function($data){
+				return $data->name.' '.$data->last_name;
+		    })
+
+			->addColumn('email', function($data){
+				return $data->email;
+		    })
+			->addColumn('type', function($data){
+
+				return \App\Helpers\commonHelper::getDesignationName($data->designation_id);
+
+		    })
+
+			->addColumn('stage', function($data){
+
+				if($data->stage == 0){
+					return '<div class="span badge rounded-pill pill-badge-secondary">Stage 0 In Process</div>';
+				}elseif($data->stage == 1){
+					return '<div class="span badge rounded-pill pill-badge-secondary">Stage 1 In Process</div>';
+				}elseif($data->stage == 2){
+					return '<div class="span badge rounded-pill pill-badge-secondary">Stage 2 In Process</div>';
+				}elseif($data->stage == 3){
+					return '<div class="span badge rounded-pill pill-badge-secondary">Stage 3 In Process</div>';
+				}elseif($data->stage == 4){
+					return '<div class="span badge rounded-pill pill-badge-secondary">Stage 4 In Process</div>';
+				}elseif($data->stage == 5){
+					return '<div class="span badge rounded-pill pill-badge-secondary">Stage 5 In Process</div>';
+				}elseif($data->stage > 5){
+					return '<div class="span badge rounded-pill pill-badge-success">Completed</div>';
+				}else{
+					return '<div class="span badge rounded-pill pill-badge-warning">Pending</div>';
+				} 
+			})
+
+			->addColumn('action', function($data){
+				
+				return '<div style="display:flex"><a href="'.route('admin.user.profile', ['id' => $data->id] ).'" title="View user profile" class="btn btn-sm btn-primary px-3 m-1 text-white "><i class="fas fa-eye"></i></a></div>';
+
+			})
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+		
+        \App\Helpers\commonHelper::setLocale();
+		
+        return view('admin.user.all_user');
+
 	}
 
 	public function stageAll(Request $request, $type) {
@@ -1468,7 +1572,6 @@ class UserController extends Controller {
 		}
 
 	}
-
 
 	public function stageFour(Request $request, $type) {
 		
@@ -2854,11 +2957,16 @@ class UserController extends Controller {
 						$result->amount = $request->post('amount');
 						$result->payment_country = $request->post('citizenship');
 						$result->cash_payment_option = $request->post('cash_payment');
-						$result->role_id = $request->post('role_id');
+						
 						$result->status_change_at = date('Y-m-d H:i:s');
 						$result->stage = '2';
 						$result->profile_update = '1';
 						$name= $result->name.' '.$result->last_name;
+
+						if($request->post('role_id')){
+
+							$result->role_id = implode(',',$request->post('role_id'));
+						}
 
 						if($request->post('amount')>0){
 
@@ -3020,6 +3128,11 @@ class UserController extends Controller {
 							if($request->post('room_type') == 'Yes'  && $request->post('category') != ''){
 								$result->room = $request->post('category');
 							}
+
+							if($request->post('role_id')){
+
+								$result->role_id = implode(',',$request->post('role_id'));
+							}
 							$result->change_room_type = $request->post('room_type');
 		
 							$result->upgrade_category = $request->post('category');
@@ -3028,7 +3141,6 @@ class UserController extends Controller {
 							$result->amount = $request->post('amount');
 							$result->payment_country = $request->post('citizenship');
 							$result->cash_payment_option = $request->post('cash_payment');
-							$result->role_id = $request->post('role_id');
 							$result->status_change_at = date('Y-m-d H:i:s');
 							$result->stage = '2';
 							$result->profile_update = '1';
@@ -3134,6 +3246,11 @@ class UserController extends Controller {
 					if($request->post('room_type') == 'Yes'  && $request->post('category') != ''){
 						$result->room = $request->post('category');
 					}
+
+					if($request->post('role_id')){
+
+						$result->role_id = implode(',',$request->post('role_id'));
+					}
 					$result->change_room_type = $request->post('room_type');
 
 					$result->upgrade_category = $request->post('category');
@@ -3142,7 +3259,6 @@ class UserController extends Controller {
 					$result->amount = $request->post('amount');
 					$result->payment_country = $request->post('citizenship');
 					$result->cash_payment_option = $request->post('cash_payment');
-					$result->role_id = $request->post('role_id');
 					$result->status_change_at = date('Y-m-d H:i:s');
 					$result->stage = '2';
 					$result->profile_update = '1';
@@ -3323,6 +3439,12 @@ class UserController extends Controller {
 			$UserHistory->action_id=\Auth::user()->id;
 			$UserHistory->action='User Profile '.$request->post('status');
 			$UserHistory->save();
+
+			$data=new \App\Models\Comment();
+			$data->sender_id = \Auth::user()->id;
+			$data->receiver_id = $result->id;
+			$data->comment = $request->post('remark');
+			$data->save();
 
 			return response(array('error'=>false, 'reload'=>true, 'message'=>'Profile status change successful'), 200);
 		
@@ -9479,62 +9601,110 @@ class UserController extends Controller {
 				$roomupgrade->category =$request->post('category');
 				$roomupgrade->amount=$request->post('amount');
 				$roomupgrade->token = $token;
-				$roomupgrade->save();			
+				$roomupgrade->save();
 				
-				$name= $result->name.' '.$result->last_name;
+				$data=new \App\Models\Comment();
+				$data->sender_id = \Auth::user()->id;
+				$data->receiver_id = $request->post('user_id');
+				$data->comment = $request->post('remark');
+				$data->save();
 
-				$website = '<a href="'.url('room-change-payment/'.$token).'">Website</a>';
+				if($request->post('amount') <= 0){
 
-				if($result->language == 'sp'){
+					$roomupgrade = \App\Models\RoomUpgrade::where('user_id',$request->post('user_id'))->first();
+				
+					if($roomupgrade){
 
-					$subject = 'Le hemos mejorado la categoría de su habitación en el GProCongress II.';
-					$msg = '<p>Estimado '.$name.',</p>
-					<p>Gracias por su solicitud de cambio de categoría.  Su habitación ha sido mejorada a una '.$request->post('category').'. </p>
-					<p>Si aún no lo ha hecho, le rogamos que pague la diferencia de precio por la mejora de su habitación en '.$website.'</p>
-					<p>Si necesita hablar con un miembro de nuestro equipo, simplemente responda a este correo electrónico.</p>
-					<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
-					<p>Cordialmente,</p>
-					<p>Equipo GProCongress II</p>';
+						$roomupgrade->status ='Accept';
+						$roomupgrade->token =null;
+						$roomupgrade->save();
+					}
+					
+					$user = \App\Models\User::find($request->post('user_id'));
 
-				}elseif($result->language == 'fr'){
+					if($user){
+						$user->room = $roomupgrade->category;
+						$user->change_room_type = $roomupgrade->room_type;
+						$user->upgrade_category = $roomupgrade->category;
+						$user->save();	
 
-					$subject = 'Votre chambre à GProCongress II a été surclassée.';
-					$msg = "<p>Cher ".$name.",</p>
-					<p>Nous vous remercions pour votre demande de surclassement. Votre chambre a été surclassée à ".$request->post('category').". </p>
-					<p>Si vous ne l'avez pas encore fait, veuillez payer la différence de prix pour votre surclassement en vous rendant sur ".$website."</p>
-					<p>Si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
-					<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
-					<p>Chaleureusement,</p>
-					<p>L'équipe de GProCongress II</p>";
+						$spouseResult=\App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->first();
+						if($spouseResult){
+							$spouseResult->change_room_type = $roomupgrade->room_type;
+							$spouseResult->upgrade_category = $roomupgrade->category;
+							$spouseResult->save();	
+						}
 
-				}elseif($result->language == 'pt'){
+						$spouseParentResult=\App\Models\User::where('id',$user->parent_id)->first();
+						if($spouseParentResult){
+							$spouseParentResult->change_room_type = $roomupgrade->room_type;
+							$spouseParentResult->upgrade_category = $roomupgrade->category;
+							$spouseParentResult->save();	
+						}
 
-					$subject = 'O seu quarto no GProCongress II foi melhorado.';
-					$msg = '<p>Caro '.$name.',</p>
-					<p>Obrigado pelo seu pedido de upgrade.  O seu quarto foi atualizado para um '.$request->post('category').'. </p>
-					<p>Se ainda não o fez, pague a diferença de preço para o seu upgrade de quarto indo ao '.$website.'</p>
-					<p>Se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
-					<p>Ore conosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
-					<p>Cordialmente,</p>
-					<p>Equipe do GProCongress II</p>';
+						\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,'Room Change Request accept','Room Change Request accept','Room Change Request accept');
+
+					}
 
 				}else{
-			
-					$subject = 'Your room at GProCongress II has been upgraded';
-					$msg = '<p>Dear '.$name.',</p>
-					<p>Thank you for your upgrade request.  Your room has been upgraded to a '.$request->post('category').'. </p>
-					<p>If you have not already done so, please pay the price difference for your room upgrade by going to '.$website.'</p>
-					<p>If you need to speak with one of our team members, simply reply to this email.</p>
-					<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
-					<p>Warmly,</p>
-					<p>The GProCongress II Team</p>';
+
+					$name= $result->name.' '.$result->last_name;
+
+					$website = '<a href="'.url('room-change-payment/'.$token).'">Website</a>';
+
+					if($result->language == 'sp'){
+
+						$subject = 'Le hemos mejorado la categoría de su habitación en el GProCongress II.';
+						$msg = '<p>Estimado '.$name.',</p>
+						<p>Gracias por su solicitud de cambio de categoría.  Su habitación ha sido mejorada a una '.$request->post('category').'. </p>
+						<p>Si aún no lo ha hecho, le rogamos que pague la diferencia de precio por la mejora de su habitación en '.$website.'</p>
+						<p>Si necesita hablar con un miembro de nuestro equipo, simplemente responda a este correo electrónico.</p>
+						<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+						<p>Cordialmente,</p>
+						<p>Equipo GProCongress II</p>';
+
+					}elseif($result->language == 'fr'){
+
+						$subject = 'Votre chambre à GProCongress II a été surclassée.';
+						$msg = "<p>Cher ".$name.",</p>
+						<p>Nous vous remercions pour votre demande de surclassement. Votre chambre a été surclassée à ".$request->post('category').". </p>
+						<p>Si vous ne l'avez pas encore fait, veuillez payer la différence de prix pour votre surclassement en vous rendant sur ".$website."</p>
+						<p>Si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+						<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+						<p>Chaleureusement,</p>
+						<p>L'équipe de GProCongress II</p>";
+
+					}elseif($result->language == 'pt'){
+
+						$subject = 'O seu quarto no GProCongress II foi melhorado.';
+						$msg = '<p>Caro '.$name.',</p>
+						<p>Obrigado pelo seu pedido de upgrade.  O seu quarto foi atualizado para um '.$request->post('category').'. </p>
+						<p>Se ainda não o fez, pague a diferença de preço para o seu upgrade de quarto indo ao '.$website.'</p>
+						<p>Se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+						<p>Ore conosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
+						<p>Cordialmente,</p>
+						<p>Equipe do GProCongress II</p>';
+
+					}else{
+				
+						$subject = 'Your room at GProCongress II has been upgraded';
+						$msg = '<p>Dear '.$name.',</p>
+						<p>Thank you for your upgrade request.  Your room has been upgraded to a '.$request->post('category').'. </p>
+						<p>If you have not already done so, please pay the price difference for your room upgrade by going to '.$website.'</p>
+						<p>If you need to speak with one of our team members, simply reply to this email.</p>
+						<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+						<p>Warmly,</p>
+						<p>The GProCongress II Team</p>';
+
+					}
+
+					\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
+					\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,'Room Upgrade','Room Upgrade','Room Upgrade');
 
 				}
-
-				\App\Helpers\commonHelper::emailSendToUser($result->email, $subject, $msg);
-				\App\Helpers\commonHelper::userMailTrigger($result->id,$msg,$subject);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($result->id,'Room Upgrade','Room Upgrade','Room Upgrade');
-
+				
+				
 				return response(array('error'=>false, 'reload'=>true, 'message'=>'Room Change Request send'), 200);
 			}
 			

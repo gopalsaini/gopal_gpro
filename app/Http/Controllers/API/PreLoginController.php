@@ -8,6 +8,14 @@ use App\Helpers\commonHelper;
 
 class PreLoginController extends Controller {
 
+
+	
+	public function appUpdateVersionApi(Request $request){
+		
+		return response(array("version"=>env('MOBILE_APP_VERSIONS'),"message"=>'App Version Api'), 200);
+
+    }
+
     public function registration(Request $request){
 	
 	
@@ -496,13 +504,14 @@ class PreLoginController extends Controller {
 					
 
 					$message = \App\Helpers\commonHelper::ApiMessageTranslaterLabel($userResult->language,'Your-registration-hasbeen-completed-successfullyPlease-updateyourProfile');
-					return response(array('message'=> $message, "otp_verified"=>'Yes',"token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
+					return response(array("error"=>false,'message'=> $message, "otp_verified"=>'Yes',"token"=>$userResult->createToken('authToken')->accessToken, "result"=>$userResult->toArray()), 200);
 					
 				} else if (\Hash::check($request->json()->get('password'), $userResult->password) && $userResult->otp_verified=='No'){
 
 					$sendOtpResult = \App\Helpers\commonHelper::callAPI('POST','/send-otp?lang='.$userResult->language, json_encode(array('email'=>$request->json()->get('email'))));
 					$response=(array)json_decode($sendOtpResult->content);
 					$response['otp_verified']='No';
+					$response['error']=false;
 
 
 					return response($response, $sendOtpResult->status);
@@ -1552,7 +1561,7 @@ class PreLoginController extends Controller {
 
 							if($transaction->particular_id == '2'){
 
-								$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+								$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('profile_status','Approved')->first();
 								if(!$userDataresult){
 									\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
 									\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
@@ -2012,7 +2021,7 @@ class PreLoginController extends Controller {
 								
 								if($transaction->particular_id == '2'){
 
-									$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+									$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('profile_status','Approved')->first();
 									if(!$userDataresult){
 										\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsApproved($transaction->order_id);
 										\App\Helpers\commonHelper::sendSponsorPaymentApprovedToUserMail($transaction->user_id,$transaction->amount,'partial',$transaction->order_id);
@@ -2088,7 +2097,7 @@ class PreLoginController extends Controller {
 									}
 								
 
-							}else{
+								}else{
 									
 									if($user->language == 'sp'){
 
@@ -2162,7 +2171,7 @@ class PreLoginController extends Controller {
 
 							if($transaction->particular_id == '2'){
 
-								$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+								$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('profile_status','Approved')->first();
 								if(!$userDataresult){
 									\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
 									\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
@@ -2298,7 +2307,7 @@ class PreLoginController extends Controller {
 
 						if($transaction->particular_id == '2'){
 
-							$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+							$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('profile_status','Approved')->first();
 							if(!$userDataresult){
 								\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsDeclined($transaction->order_id);
 								\App\Helpers\commonHelper::sendSponsorPaymentDeclinedToUserMail($transaction->user_id,$user->amount,$transaction->order_id);
@@ -2406,7 +2415,9 @@ class PreLoginController extends Controller {
 							
 						}
 
-						$userDataSet.= 'Email : '.$user->email.'Status : Failed <br>';
+						// $userDataSet.= 'Email : '.$user->email.'Status : Failed <br>';
+						$userDataSet .= 'Email: ' . $user->email . '<br>Status: Failed <br>';
+
 
 					}
 				}
@@ -2415,16 +2426,28 @@ class PreLoginController extends Controller {
 			}
 		}
 		
-		$subject = 'Cron Job Ran - '.date('d-m-Y H:s:i');
+		$subject = 'Cron Job Ran - '.date('d-m-Y H:i:s');
 		$msg = $userDataSet;
 		$result = array();
 		$to = 'vineet@d2rtech.com';
+		if($userDataSet) {
+				
+			\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
+				$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
+				$message->subject($subject);
+				$message->to($to);
+			});
 
-		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
-			$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
-			$message->subject($subject);
-			$message->to($to);
-		});
+
+		} else {
+			$subject = 'Cron Job Ran - '.date('d-m-Y H:i:s').' - No Records';
+			$msg='No records Updated';
+			\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
+				$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
+				$message->subject($subject);
+				$message->to($to);
+			});
+		}
 
 
 		echo 'done';
@@ -3671,6 +3694,7 @@ class PreLoginController extends Controller {
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/fr/web/profile-details.php'),
 					'profile'=>\File::getRequire(base_path().'/resources/lang/fr/web/profile.php'),
 					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/fr/web/common-helper-value.php'),
+					'wizard'=>\File::getRequire(base_path().'/resources/lang/fr/web/wizard.php'),
 					
 				];
 
@@ -3696,6 +3720,7 @@ class PreLoginController extends Controller {
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/pt/web/profile-details.php'),
 					'profile'=>\File::getRequire(base_path().'/resources/lang/pt/web/profile.php'),
 					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/pt/web/common-helper-value.php'),
+					'wizard'=>\File::getRequire(base_path().'/resources/lang/pt/web/wizard.php'),
 
 				];
 
@@ -3721,6 +3746,7 @@ class PreLoginController extends Controller {
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/sp/web/profile-details.php'),
 					'profile'=>\File::getRequire(base_path().'/resources/lang/sp/web/profile.php'),
 					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/sp/web/common-helper-value.php'),
+					'wizard'=>\File::getRequire(base_path().'/resources/lang/sp/web/wizard.php'),
 
 				];
 
@@ -3745,7 +3771,7 @@ class PreLoginController extends Controller {
 					'verification'=>\File::getRequire(base_path().'/resources/lang/en/web/verification.php'),
 					'profile-details'=>\File::getRequire(base_path().'/resources/lang/en/web/profile-details.php'),
 					'profile'=>\File::getRequire(base_path().'/resources/lang/en/web/profile.php'),
-					'commonHelperValue'=>\File::getRequire(base_path().'/resources/lang/en/web/common-helper-value.php'),
+					'wizard'=>\File::getRequire(base_path().'/resources/lang/en/web/wizard.php'),
 
 				];
 			}
@@ -6631,8 +6657,8 @@ class PreLoginController extends Controller {
 
 					$passportInfo =  \App\Models\PassportInfo::where('id',$val->id)->first();
 
-					$doNotRequireVisa = ['82','6','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-					$RequireVisa = ['1','3','4','7','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','40','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','113','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
+					$doNotRequireVisa = ['82','6','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240','170']; 
+					$RequireVisa = ['1','3','4','7','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','40','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','113','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
 					$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 					$visa_category = 'No Visa Needed';
 					
@@ -7647,6 +7673,367 @@ class PreLoginController extends Controller {
 		}
 
     }
+
+	
+
+
+	public function PassportInfoEmailSendToVisaNeededKenya(Request $request){
+		
+		try {
+			
+			$passportInfoUsers =  [];
+
+			if(!empty($passportInfoUsers) && count($passportInfoUsers)>0){
+
+				foreach($passportInfoUsers as $val){
+
+					$passportInfo =  \App\Models\PassportInfo::where('id',$val)->first();
+
+					if($passportInfo){
+	
+						if($passportInfo->visa_category == 'Visa Needed'){
+	
+							\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportInfo->user_id,$passportInfo->id);
+							
+							$user= \App\Models\User::where('id',$passportInfo->user_id)->first();
+
+							if($user->language == 'sp'){
+
+								$subject = 'Usted necesita una visa para GProCongress II.';
+								$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>Earlier this week, we were informed by the Panamanian government that travelers from the countries of Angola, Cape Verde, and Kenya will now need to have a visa to enter Panama, in accordance with Resolution #16024 from the Ministry of Public Security and the National Immigration Service of the Republic of Panama.  These three countries were previously in the “no visa needed” category but have now been moved to the “visa needed” category.</p>
+								<p>Based on this new information, if you are attending the Congress from Angola, Cape Verde, or Kenya, you will need to obtain an appointment/interview with your local Panamanian embassy to obtain a visa and go to the interview with all documents needed.  We will assist you with the documents, by sending you the following documentation as soon you provide us your passport information at <a href="www.gprocongress.org">www.gprocongress.org</a>:</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	List of documents required for Panamanian visa.</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Official form for Panamanian visa (in Spanish and English).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Acceptance Letter from RREACH (in Spanish and the language you select as communication language).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Letter RREACH’s financial support of the Congress (in Spanish and English).</p>
+								<p>Once you receive the documents, you must send the full information requested by email to the embassy assigned to you and proceed with the instruction received by them. Your personal ID and the full copy of the passport must be notarized when you send the information by email.</p>
+								<p>If you have any questions, please contact nadine@gprocongress.org.</p><p><br></p>
+								<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+					
+							}elseif($user->language == 'fr'){
+							
+								$subject = 'Vous avez besoin d’un visa pour GProCongress II.';
+								$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>Earlier this week, we were informed by the Panamanian government that travelers from the countries of Angola, Cape Verde, and Kenya will now need to have a visa to enter Panama, in accordance with Resolution #16024 from the Ministry of Public Security and the National Immigration Service of the Republic of Panama.  These three countries were previously in the “no visa needed” category but have now been moved to the “visa needed” category.</p>
+								<p>Based on this new information, if you are attending the Congress from Angola, Cape Verde, or Kenya, you will need to obtain an appointment/interview with your local Panamanian embassy to obtain a visa and go to the interview with all documents needed.  We will assist you with the documents, by sending you the following documentation as soon you provide us your passport information at <a href="www.gprocongress.org">www.gprocongress.org</a>:</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	List of documents required for Panamanian visa.</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Official form for Panamanian visa (in Spanish and English).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Acceptance Letter from RREACH (in Spanish and the language you select as communication language).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Letter RREACH’s financial support of the Congress (in Spanish and English).</p>
+								<p>Once you receive the documents, you must send the full information requested by email to the embassy assigned to you and proceed with the instruction received by them. Your personal ID and the full copy of the passport must be notarized when you send the information by email.</p>
+								<p>If you have any questions, please contact nadine@gprocongress.org.</p><p><br></p>
+								<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+					
+							}elseif($user->language == 'pt'){
+							
+								$subject = 'Você precisa de um visto para o GProCongresso II';
+								$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>Earlier this week, we were informed by the Panamanian government that travelers from the countries of Angola, Cape Verde, and Kenya will now need to have a visa to enter Panama, in accordance with Resolution #16024 from the Ministry of Public Security and the National Immigration Service of the Republic of Panama.  These three countries were previously in the “no visa needed” category but have now been moved to the “visa needed” category.</p>
+								<p>Based on this new information, if you are attending the Congress from Angola, Cape Verde, or Kenya, you will need to obtain an appointment/interview with your local Panamanian embassy to obtain a visa and go to the interview with all documents needed.  We will assist you with the documents, by sending you the following documentation as soon you provide us your passport information at <a href="www.gprocongress.org">www.gprocongress.org</a>:</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	List of documents required for Panamanian visa.</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Official form for Panamanian visa (in Spanish and English).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Acceptance Letter from RREACH (in Spanish and the language you select as communication language).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Letter RREACH’s financial support of the Congress (in Spanish and English).</p>
+								<p>Once you receive the documents, you must send the full information requested by email to the embassy assigned to you and proceed with the instruction received by them. Your personal ID and the full copy of the passport must be notarized when you send the information by email.</p>
+								<p>If you have any questions, please contact nadine@gprocongress.org.</p><p><br></p>
+								<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+					
+							}else{
+							
+								$subject = 'URGENT TRAVEL INFORMATION for GProCongress delegates from Angola, Cape Verde, and Kenya!';
+								$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+								<p>Earlier this week, we were informed by the Panamanian government that travelers from the countries of Angola, Cape Verde, and Kenya will now need to have a visa to enter Panama, in accordance with Resolution #16024 from the Ministry of Public Security and the National Immigration Service of the Republic of Panama.  These three countries were previously in the “no visa needed” category but have now been moved to the “visa needed” category.</p>
+								<p>Based on this new information, if you are attending the Congress from Angola, Cape Verde, or Kenya, you will need to obtain an appointment/interview with your local Panamanian embassy to obtain a visa and go to the interview with all documents needed.  We will assist you with the documents, by sending you the following documentation as soon you provide us your passport information at <a href="www.gprocongress.org">www.gprocongress.org</a>:</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;1.	List of documents required for Panamanian visa.</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;2.	Official form for Panamanian visa (in Spanish and English).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;3.	Acceptance Letter from RREACH (in Spanish and the language you select as communication language).</p>
+								<p>&nbsp;&nbsp;&nbsp;&nbsp;4.	Letter RREACH’s financial support of the Congress (in Spanish and English).</p>
+								<p>Once you receive the documents, you must send the full information requested by email to the embassy assigned to you and proceed with the instruction received by them. Your personal ID and the full copy of the passport must be notarized when you send the information by email.</p>
+								<p>If you have any questions, please contact nadine@gprocongress.org.</p><p><br></p>
+								<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+												
+							}
+
+							\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+							\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+							\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'URGENT TRAVEL INFORMATION for GProCongress delegates from Angola, Cape Verde, and Kenya!');
+
+						}
+					}
+
+				}
+				
+			}
+
+			return response(array("message"=>'Data Saved Success'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
+	public function paidBeforeJuly1AddEB(Request $request){
+		
+		try {
+			
+			$emailAddresses = [
+				'jijeekoo@yahoo.com',
+				'benjojo795@gmail.com',
+				'victoeguine@gmail.com',
+				'georgeomenafrancisco@gmail.com',
+				'muluneh.shamebog@gmail.com',
+				'jijeekoo@yahoo.com',
+				'djomakou@gmail.com',
+				'loidenemelisiamayubawilliams@gmail.com',
+				'samsundersingh73@gmail.com',
+				'bences2003@yahoo.com',
+				'mosesannekamano10@gmail.com',
+				'richfortdee@yahoo.com',
+				'togbecomlanalphonse@gmail.com',
+				'domenyaavonyo@gmail.com',
+				'revcadet@gmail.com'
+			];
+
+			$userArray = [];
+			
+			if(count($emailAddresses) > 0){
+
+				foreach ($emailAddresses as $result) {
+				
+					$user = \App\Models\User::where('email', $result)->first();
+					
+					if($user){
+
+						$Spouse = \App\Models\User::where('parent_id', $user->id)->where('added_as', 'Spouse')->first();
+						
+						if($user->marital_status == 'Unmarried'){
+
+							$trainer = 'No';
+
+						}else if($user->marital_status == 'Married' && !$Spouse){
+
+							$trainer = 'No';
+
+						}else if($user->marital_status == 'Married' && $Spouse){
+
+							if($user->parent_spouse_stage >= 2){
+
+								$trainer = 'No';
+
+							}else{
+
+								$data = \App\Helpers\commonHelper::getBasePriceOfMarriedWSpouse($user->doyouseek_postoral,$Spouse->doyouseek_postoral,$user->ministry_pastor_trainer,$Spouse->ministry_pastor_trainer,$user->amount);
+
+								$trainer = $data ['trainer'];
+							}
+							
+						}
+						
+
+						if($trainer == 'Yes'){
+							$amount = $user->amount-200;
+						}else{
+							$amount = $user->amount-100;
+						}
+
+						$comment = '';
+
+						// $user->amount = $amount;
+						// $user->early_bird = 'Yes';
+						// $user->stage = '3';
+						// $user->status_change_at = date('Y-m-d H:i:s');
+						// $user->save();
+
+						
+						// if($user->language == 'sp'){
+
+						// 	$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+						// 	$msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						// 	<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+						// 	<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+						// 	<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+						// 	<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+						// 	<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+						// 	<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+						// 	<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+						// 	<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+	
+						// }elseif($user->language == 'fr'){
+						
+						// 	$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+						// 	$msg = "<p>Cher  ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						// 	<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
+						// 	<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+						// 	<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+						// 	<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+						// 	<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+						// 	<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+						// 	<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+						// 	<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+	
+						// }elseif($user->language == 'pt'){
+						
+						// 	$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+						// 	$msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						// 	<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+						// 	<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+						// 	<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+						// 	<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+						// 	<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+						// 	<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+						// 	<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+						// 	<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+	
+						// }else{
+						
+						// 	$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+						// 	$msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+						// 	<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+						// 	<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+						// 	<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+						// 	<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+						// 	<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+						// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+						// 	<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+						// 	<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+						// 	<p>Warmly,</p><p>GProCongress II Team</p>";
+			
+						// }
+	
+						// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+						// \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+						// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+	
+						// if($Spouse){
+
+						// 	$Spouse->stage = '3';
+						// 	$Spouse->payment_status = '2';
+						// 	$Spouse->status_change_at = date('Y-m-d H:i:s');
+						// 	$Spouse->save();
+
+						// 	$data=new \App\Models\Comment();
+						// 	$data->sender_id = 1;
+						// 	$data->receiver_id = $Spouse->id;
+						// 	$data->comment = $comment;
+						// 	$data->save();
+
+						// 	if($Spouse->language == 'sp'){
+
+						// 		$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+						// 		$msg = "<p>Estimado ".$Spouse->name.' '.$Spouse->last_name." ,&nbsp;</p><p><br></p>
+						// 		<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+						// 		<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+						// 		<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+						// 		<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+						// 		<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+						// 		<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+						// 		<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+						// 		<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+		
+						// 	}elseif($Spouse->language == 'fr'){
+							
+						// 		$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+						// 		$msg = "<p>Cher  ".$Spouse->name.' '.$Spouse->last_name." ,&nbsp;</p><p><br></p>
+						// 		<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
+						// 		<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+						// 		<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+						// 		<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+						// 		<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+						// 		<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+						// 		<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+						// 		<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+		
+						// 	}elseif($Spouse->language == 'pt'){
+							
+						// 		$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+						// 		$msg = "<p>Caro ".$Spouse->name.' '.$Spouse->last_name." ,&nbsp;</p><p><br></p>
+						// 		<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+						// 		<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+						// 		<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+						// 		<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+						// 		<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+						// 		<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+						// 		<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+						// 		<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+		
+						// 	}else{
+							
+						// 		$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+						// 		$msg = "<p>Dear ".$Spouse->name.' '.$Spouse->last_name." ,&nbsp;</p><p><br></p>
+						// 		<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+						// 		<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+						// 		<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+						// 		<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+						// 		<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+						// 		<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+						// 		<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+						// 		<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+						// 		<p>Warmly,</p><p>GProCongress II Team</p>";
+				
+						// 	}
+		
+						// 	\App\Helpers\commonHelper::userMailTrigger($Spouse->id,$msg,$subject);
+						// 	\App\Helpers\commonHelper::emailSendToUser($Spouse->email, $subject, $msg);
+						// 	\App\Helpers\commonHelper::sendNotificationAndUserHistory($Spouse->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+		
+						// }
+
+						// $data=new \App\Models\Comment();
+						// $data->sender_id = 1;
+						// $data->receiver_id = $user->id;
+						// $data->comment = $comment;
+						// $data->save();
+
+
+						$userArray[] = [
+							'email'=>$user->email,
+							'satge'=>$user->stage,
+							'amount'=>$user->amount,
+							'new'=>$amount,
+						];
+
+					}
+				}
+
+				echo "<pre>"; print_r($userArray); die;
+				
+				
+			}
+
+			return response(array("message"=>'Data set.'), 200);
+			
+		} catch (\Exception $e) {
+
+			return response(array("error"=>true, "message"=>$e->getMessage()), 403);
+		}
+
+    }
+
 
 
 }

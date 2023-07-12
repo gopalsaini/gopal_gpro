@@ -129,6 +129,13 @@ return [
     'Preferred_Partner_Name' => "Nom du colocataire préféré",
     'Request_Status' => "Statut de la demande",
     'Request_Approved_successfully' => "Demande approuvée avec succès",
-    'Request_Declined_successfully' => "Demande rejetée avec succès",
+    'Request_Declined_successfully' => "Demande rejetée avec succès", 
+    'Accept' => "Accepter",
+    'Decline' => "Déclin",
+    'Your_application_is_now_approved' => "Your application is now approved",
+    'Your_application_is_under_review' => "Your application is under review",
+    'Your_application_got_rejected' => "Your application got rejected",
+    'Reason' => "Reason",
+    'Resubmit' => "Resubmit",
 
 ];

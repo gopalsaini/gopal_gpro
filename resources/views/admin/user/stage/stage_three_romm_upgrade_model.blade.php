@@ -18,7 +18,9 @@
             <label for="inputName">Spouse : {{$spouseResult->name}} {{$spouseResult->last_name}}</label><br>
         @endif
         <label for="inputName">Current Room Category : {{$user->upgrade_category ?? ($user->room ?? 'Single')}}</label><br><br>
-        @php $userType = [6,4];  $room= ''; $roomKey = 0;
+        @php 
+            $userType = [6,4];  $room= ''; $roomKey = 0;
+
             if($user->room == null || $user->room == 'Single'){
                 $room= 'Upgrade to Single Deluxe Room';
             }elseif($user->room == 'Sharing'){
@@ -28,7 +30,10 @@
 
                 $room= $user->upgrade_category;
             }
-        
+
+            $keys = array_keys($category);
+
+
         @endphp
        
 
@@ -51,43 +56,62 @@
             <div class="form-group" id="CategoryDiv" style="display:none">
                 <div class="form-line">
                     <label for="inputName">Select Category <label class="text-danger">*</label></label>
+                    
                     <select name="category" class="form-control" id="selectCategory">
                         <option value="">Select </option>
-                        @php $arrayData  = []; @endphp
-                        @if(!empty($category))
-                            @foreach($category as $key=>$val)
-                                @php $arrayData[]  = [
-                                        'id'=>$key,
-                                        'val'=>$val,
-                                    ];
+                        
 
-                                @endphp
+                        @if(!empty($category) && count($category)>0)
 
-                            @endforeach
+                            @if($room == 'Twin Sharing Deluxe Room')
 
-                        @endif
-                        @if(!empty($arrayData))
-                            @foreach($arrayData as $key=>$val)
-                                @php 
-                                
-                                    if($room == $val['id']){
-                                        $roomKey = $key;
-                                    }else{
-                                        $roomKey = 1;
-                                    }
-                                @endphp
-
-                            @endforeach
-
-                        @endif
-
-                        @if(!empty($arrayData))
-                            @foreach($arrayData as $key=>$val)
-                                @if($key >= $roomKey )
-                                    <option value="{{$val['id']}}" data-amount="{{$val['val']}}">{{$val['id']}}</option>
+                                @if(isset($keys[0]) && $keys[0] == 'Upgrade to Single Deluxe Room')
+                                    <option value="{{$keys[0]}}" data-amount="{{$category['Upgrade to Single Deluxe Room']}}">{{$keys[0]}}</option>
                                 @endif
-                            @endforeach
+                                @if(isset($keys[1]) && $keys[1] == 'Upgrade to Club Floor')
+                                    <option value="{{$keys[1]}}" data-amount="{{$category['Upgrade to Club Floor']}}">{{$keys[1]}}</option>
+                                @endif
+                                @if(isset($keys[2]) && $keys[2] == 'Upgrade to Suite')
+                                    <option value="{{$keys[2]}}" data-amount="{{$category['Upgrade to Suite']}}">{{$keys[2]}}</option>
+                                @endif
+                                @if(isset($keys[3]) && $keys[3] == 'Day pass')
+                                    <option value="{{$keys[3]}}" data-amount="{{$category['Day pass']}}">{{$keys[3]}}</option>
+                                @endif
+                                
+                            @elseif($room == 'Upgrade to Single Deluxe Room')
 
+                                @if(isset($keys[0]) && $keys[0] == 'Upgrade to Club Floor')
+                                    <option value="{{$keys[0]}}" data-amount="{{$category['Upgrade to Club Floor']}}">{{$keys[0]}}</option>
+                                @endif
+                                @if(isset($keys[1]) && $keys[1] == 'Upgrade to Suite')
+                                    <option value="{{$keys[1]}}" data-amount="{{$category['Upgrade to Suite']}}">{{$keys[1]}}</option>
+                                @endif
+                                @if(isset($keys[2]) && $keys[2] == 'Day pass')
+                                    <option value="{{$keys[2]}}" data-amount="{{$category['Day pass']}}">{{$keys[2]}}</option>
+                                @endif
+
+
+                                @if(isset($keys[1]) && $keys[1] == 'Upgrade to Club Floor')
+                                    <option value="{{$keys[1]}}" data-amount="{{$category['Upgrade to Club Floor']}}">{{$keys[1]}}</option>
+                                @endif
+                                @if(isset($keys[2]) && $keys[2] == 'Upgrade to Suite')
+                                    <option value="{{$keys[2]}}" data-amount="{{$category['Upgrade to Suite']}}">{{$keys[2]}}</option>
+                                @endif
+                                @if(isset($keys[3]) && $keys[3] == 'Day pass')
+                                    <option value="{{$keys[3]}}" data-amount="{{$category['Day pass']}}">{{$keys[3]}}</option>
+                                @endif
+                                
+                            @elseif($room == 'Upgrade to Club Floor')
+
+                                @if(isset($keys[1]) && $keys[1] == 'Upgrade to Suite')
+                                    <option value="{{$keys[1]}}" data-amount="{{$category['Upgrade to Suite']}}">{{$keys[1]}}</option>
+                                @endif
+                                
+
+                            @endif
+                                
+                            
+                                
                         @endif
                                     
                     </select>

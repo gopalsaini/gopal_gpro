@@ -1469,29 +1469,29 @@ class PostLoginController extends Controller {
 						
 						$userOther = \App\Models\User::where('id',$request->json()->get('share_your_room_with'))->first();
 
-						// if($userOther->language == 'sp'){
+						if($userOther->language == 'sp'){
 
-						// 	$url = '<a href="'.url('travel-information').'">link</a>';
-						// 	$subject = 'Usted ha sido seleccionado como compañero de habitación en GProcongress II';
-						// 	$msg = '<p>Estimado: '.$userOther->name.' '.$userOther->last_name.',</p><p><br></p>
-						// 	<p>Otro delegado del GProCongress II, '.$request->user()->name.' '.$request->user()->last_name.', lo seleccionó como posible compañero de habitación. Para compartir habitación en el Congreso, ambas partes deben aceptar ser compañeros de habitación. No tiene que aceptar a '.$request->user()->name.' '.$request->user()->last_name.' como compañero de habitación. Es una decisión que usted debe tomar. No comunicaremos su elección a '.$request->user()->name.' '.$request->user()->last_name.'.</p>
-						// 	<p>Por favor,  indíquenos si acepta o declina está selección de compañero de habitación yendo a '.$url.'.</p>
-						// 	<p>Si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico. </p>
-						// 	<p>Únase a nuestra oración en pro de  multiplicar la cantidad y calidad de capacitadores de pastores.</p>
-						// 	<p>Atentamente,</p><p>Equipo GProCongress II </p>';
+							$url = '<a href="'.url('travel-information').'">link</a>';
+							$subject = 'Usted ha sido seleccionado como compañero de habitación en GProcongress II';
+							$msg = '<p>Estimado: '.$userOther->name.' '.$userOther->last_name.',</p><p><br></p>
+							<p>Otro delegado del GProCongress II, '.$request->user()->name.' '.$request->user()->last_name.', lo seleccionó como posible compañero de habitación. Para compartir habitación en el Congreso, ambas partes deben aceptar ser compañeros de habitación. No tiene que aceptar a '.$request->user()->name.' '.$request->user()->last_name.' como compañero de habitación. Es una decisión que usted debe tomar. No comunicaremos su elección a '.$request->user()->name.' '.$request->user()->last_name.'.</p>
+							<p>Por favor,  indíquenos si acepta o declina está selección de compañero de habitación yendo a '.$url.'.</p>
+							<p>Si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico. </p>
+							<p>Únase a nuestra oración en pro de  multiplicar la cantidad y calidad de capacitadores de pastores.</p>
+							<p>Atentamente,</p><p>Equipo GProCongress II </p>';
 
-						// }elseif($userOther->language == 'fr'){
+						}elseif($userOther->language == 'fr'){
 						
-						// 	$url = '<a href="'.url('travel-information').'">link</a>';
-						// 	$subject = 'Vous avez été sélectionné(e) comme colocataire à GProCongress II.';
-						// 	$msg = "<p>Cher ".$userOther->name." ".$userOther->last_name.",</p><p><br></p>
-						// 	<p>Un autre délégué au GProCongrès II, ".$request->user()->name." ".$request->user()->last_name.", vous a sélectionné comme colocataire possible. Pour pouvoir partager une chambre au Congrès, les deux participants doivent accepter d'être colocataires. Vous n'êtes pas obligé d'accepter ".$request->user()->name." ".$request->user()->last_name." comme colocataire. C'est votre choix. Nous ne communiquerons pas votre choix à ".$request->user()->name." ".$request->user()->last_name.".</p>
-						// 	<p>Veuillez indiquer si vous acceptez ou refusez cette sélection de colocataires en vous rendant sur le site ".$url.".</p>
-						// 	<p>Si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
-						// 	<p>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</p>
-						// 	<p>Chaleureusement,</p><p>L'équipe de GProCongress II</p>";
+							$url = '<a href="'.url('travel-information').'">link</a>';
+							$subject = 'Vous avez été sélectionné(e) comme colocataire à GProCongress II.';
+							$msg = "<p>Cher ".$userOther->name." ".$userOther->last_name.",</p><p><br></p>
+							<p>Un autre délégué au GProCongrès II, ".$request->user()->name." ".$request->user()->last_name.", vous a sélectionné comme colocataire possible. Pour pouvoir partager une chambre au Congrès, les deux participants doivent accepter d'être colocataires. Vous n'êtes pas obligé d'accepter ".$request->user()->name." ".$request->user()->last_name." comme colocataire. C'est votre choix. Nous ne communiquerons pas votre choix à ".$request->user()->name." ".$request->user()->last_name.".</p>
+							<p>Veuillez indiquer si vous acceptez ou refusez cette sélection de colocataires en vous rendant sur le site ".$url.".</p>
+							<p>Si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
+							<p>Priez avec nous pour multiplier la quantité et la qualité des pasteurs-formateurs.</p>
+							<p>Chaleureusement,</p><p>L'équipe de GProCongress II</p>";
 
-						// }elseif($userOther->language == 'pt'){
+						}elseif($userOther->language == 'pt'){
 						
 							$url = '<a href="'.url('travel-information').'">link</a>';
 							$subject = 'Foi selecionado como colega de quarto no GProCongresso II.';
@@ -1502,18 +1502,18 @@ class PostLoginController extends Controller {
 							<p>Ore conosco para multiplicar a quantidade e a qualidade dos pastores-formadores" Which should be</p>
 							<p>Cordialmente,</p><p>Equipe do GProCongresso II</p>';
 
-						// }else{
+						}else{
 						
-						// 	$url = '<a href="'.url('travel-information').'">link</a>';
-						// 	$subject = 'You have been selected as a roommate at GProCongress II.';
-						// 	$msg = '<p>Dear '.$userOther->name.' '.$userOther->last_name.',</p><p><br></p>
-						// 	<p>Another delegate at GProCongress II, '.$request->user()->name.' '.$request->user()->last_name.', has selected you as a possible roommate.  In order to room together at the Congress, both parties have to agree to be roommates.  You do not have to accept '.$request->user()->name.' '.$request->user()->last_name.' as a roommate.  It is your choice.  We will not communicate your choice to '.$request->user()->name.' '.$request->user()->last_name.'.</p>
-						// 	<p>Please indicate whether you accept or decline this roommate selection by going to '.$url.'.</p>
-						// 	<p>If you need to speak with one of our team members, simply reply to this email</p>
-						// 	<p>Pray with us toward multiplying the quantity and quality of pastor-trainers.</p>
-						// 	<p>Warmly,</p><p>GProCongress II Team </p>';
+							$url = '<a href="'.url('travel-information').'">link</a>';
+							$subject = 'You have been selected as a roommate at GProCongress II.';
+							$msg = '<p>Dear '.$userOther->name.' '.$userOther->last_name.',</p><p><br></p>
+							<p>Another delegate at GProCongress II, '.$request->user()->name.' '.$request->user()->last_name.', has selected you as a possible roommate.  In order to room together at the Congress, both parties have to agree to be roommates.  You do not have to accept '.$request->user()->name.' '.$request->user()->last_name.' as a roommate.  It is your choice.  We will not communicate your choice to '.$request->user()->name.' '.$request->user()->last_name.'.</p>
+							<p>Please indicate whether you accept or decline this roommate selection by going to '.$url.'.</p>
+							<p>If you need to speak with one of our team members, simply reply to this email</p>
+							<p>Pray with us toward multiplying the quantity and quality of pastor-trainers.</p>
+							<p>Warmly,</p><p>GProCongress II Team </p>';
 							
-						// }
+						}
 
 						\App\Helpers\commonHelper::emailSendToUser($userOther->email, $subject, $msg);
 						\App\Helpers\commonHelper::userMailTrigger($userOther->id,$msg,$subject);
@@ -3025,12 +3025,19 @@ class PostLoginController extends Controller {
 					$gender = 'Female';
 				}
 
+				if($SpouseParent->designation_id == '3' || $SpouseParent->designation_id == '4'){
+					$designation_id = false;
+				}else{
+					$designation_id = true;
+				}
+
 				$user = array(
 					'id'=> $SpouseParent['id'],
 					'added_as'=>'Spouse',
 					'salutation'=>$SpouseParent->salutation,
 					'name'=>$SpouseParent->name,
 					'last_name'=>$SpouseParent->last_name,
+					'designation_id'=>$designation_id,
 					'email'=>$SpouseParent['email'],
 					'phone_code'=>$SpouseParent['phone_code'],
 					'mobile'=>$SpouseParent['mobile'],
@@ -3069,12 +3076,19 @@ class PostLoginController extends Controller {
 
 				if($data){
 
+					if($data->designation_id == '3' || $data->designation_id == '4'){
+						$designation_id = false;
+					}else{
+						$designation_id = true;
+					}
+
 					$user = array(
 						'id'=> $data['id'],
 						'added_as'=>'Spouse',
 						'salutation'=>$data->salutation,
 						'name'=>$data->name,
 						'last_name'=>$data->last_name,
+						'designation_id'=>$designation_id,
 						'email'=>$data['email'],
 						'phone_code'=>$data['phone_code'],
 						'mobile'=>$data['mobile'],
@@ -3114,7 +3128,11 @@ class PostLoginController extends Controller {
 			}
 
 
-		
+			if($registerUser['designation_id'] == '3' || $registerUser['designation_id'] == '4'){
+				$designation_id = false;
+			}else{
+				$designation_id = true;
+			}
 			
 			
 			$RegisterData=[
@@ -3127,6 +3145,7 @@ class PostLoginController extends Controller {
 				'salutation'=>$registerUser['salutation'],
 				'first_name'=>$registerUser['name'],
 				'last_name'=>$registerUser['last_name'],
+				'designation_id'=>$designation_id,
 				'email'=>$registerUser['email'],
 				'phone_code'=>$registerUser['phone_code'],
 				'mobile'=>$registerUser['mobile'],
@@ -3401,7 +3420,7 @@ class PostLoginController extends Controller {
 			
 			'passport_copy' => 'required|array',
 			'diplomatic_passport' => 'required|in:Yes,No',
-			'passport_copy.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|min:5MB',
+			'passport_copy.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg,JPEG,pdf,PDF|min:5MB',
 		];
 
 		if($request->passport_valid == 'Yes'){
@@ -3435,7 +3454,7 @@ class PostLoginController extends Controller {
 		}else{
 
 
-			// try{
+			try{
 
 				$country = [];
 
@@ -3536,8 +3555,8 @@ class PostLoginController extends Controller {
 				$passportInfo->valid_residence_country = json_encode($country);
 
 
-				$doNotRequireVisa = ['82','6','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240']; 
-				$RequireVisa = ['1','3','4','7','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','40','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','113','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','170','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
+				$doNotRequireVisa = ['82','6','10','194','11','12','14','15','17','20','22','23','21','255','27','28','29','31','33','34','26','37','39','44','57','238','48','53','55','59','61','64','66','231','200','201','207','233','69','182','73','74','75','79','81','87','90','94','97','98','99','232','105','100','49','137','202','106','107','108','109','114','117','120','125','126','127','251','130','132','133','135','140','142','143','144','145','146','147','152','153','159','165','158','156','168','171','172','173','176','177','179','58','256','252','116','181','191','185','192','188','253','196','197','199','186','204','213','214','219','216','222','223','225','228','230','235','237','240','170']; 
+				$RequireVisa = ['1','3','4','7','16','18','19','24','35','36','43','115','54','65','68','70','80','93','67','102','103','104','40','111','112','118','248','119','122','121','123','124','134','149','139','150','151','154','160','161','166','167','169','51','183','195','198','215','203','208','209','210','217','218','224','226','229','236','113','245','254','246','2','5','8','9','13','25','30','32','41','46','47','52','60','63','71','72','76','77','78','84','85','86','88','89','91','92','96','110','128','129','136','138','141','148','155','157','162','163','164','175','178','180','184','187','189','190','193','205','206','211','221','227','234','241','242','243','244','249','250']; 
 				$restricted = ['38','45','56','62','174','83','95','101','131','42','50','212','220','239','247']; 
 				$visa_category = 'No Visa Needed';
 				 
@@ -3715,11 +3734,11 @@ class PostLoginController extends Controller {
 
 				return response(array("error" => false, "message" =>\App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Your_submission_has_been_sent')), 200);
 				
-			// }catch (\Exception $e){
+			}catch (\Exception $e){
 				
-			//     return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
+			    return response(array("error" => true, "message" => \App\Helpers\commonHelper::ApiMessageTranslaterLabel($request->user()->language,'Something-went-wrongPlease-try-again')), 403);
 			
-			// }
+			}
 
         }
 
@@ -4514,15 +4533,26 @@ class PostLoginController extends Controller {
 		try{
 
 			$result = [];
-			$SpouseInfoResult=\App\Models\User::where('parent_id',$request->user()->id)->where('added_as','Spouse')->first();
+			$SpouseInfoResult=\App\Models\User::
+												where('parent_id',$request->user()->id)
+												->where('added_as','Spouse')
+												->first();
 
-			if($request->user()->added_as == null && !$SpouseInfoResult && $request->user()->share_your_room_with == null) {
+			if($request->user()->added_as == null && !$SpouseInfoResult && $request->user()->share_your_room_with == null && ($request->user()->room == 'Sharing' || $request->user()->room == 'Twin Sharing Deluxe Room')) {
                 
 				$users = \App\Models\User::where([['status', '!=', '1'],['designation_id', 2]])
 						->where(function ($query) {
 							$query->where('added_as',null)
 								->orWhere('added_as', '=', 'Group');
-						})->where('id','!=',$request->user()->id)->where('stage','>','2')->where('gender',$request->user()->gender)->orderBy('updated_at', 'desc')->get();
+						})
+						->where('id','!=',$request->user()->id)
+						->where('stage','>','2')
+						->where('gender',$request->user()->gender)
+						->where(function ($query1) {
+							$query1->where('room','Sharing')
+								->orWhere('room','Twin Sharing Deluxe Room');
+						})
+						->orderBy('updated_at', 'desc')->get();
 				
 
 				if($users){

@@ -438,8 +438,8 @@
                                                 <td>
                                                     @if($room->status == 'Pending' && $room->from_user_id != $userId)
                                                         <div style="display: flex;">
-                                                            <a href="{{url('room-partner/approved/'.$room->id)}}" class="btn btn-primary " style="margin-right: 6px;"> Accept </a>
-                                                            <a href="{{url('room-partner/declined/'.$room->id)}}" class="btn btn-danger">  Decline</a>
+                                                            <a href="{{url('room-partner/approved/'.$room->id)}}" class="btn btn-primary " style="margin-right: 6px;"> @lang('web/app.Accept') </a>
+                                                            <a href="{{url('room-partner/declined/'.$room->id)}}" class="btn btn-danger">  @lang('web/app.Decline')</a>
 
                                                         </div>
                                                     @else
@@ -866,8 +866,10 @@
                                                     </div>
                                                 </div>
                                             </div> -->
+
+                                                
                                            
-                                                @if($resultData['result']['added_as'] == null && !$SpouseInfoResult && $resultData['result']['share_your_room_with'] == null) 
+                                                @if($resultData['result']['added_as'] == null && !$SpouseInfoResult && $resultData['result']['share_your_room_with'] == null && ($resultData['result']['room'] == 'Sharing' || $resultData['result']['room'] == 'Twin Sharing Deluxe Room')) 
                                                         <h5>@lang('web/home.like_to_share_your_room')</h5>
                                                         <div class="arrival" style="padding-top:15px">
                                                             <p class="note">@lang('web/home.travel_note')</p>
@@ -881,7 +883,13 @@
                                                                         ->where(function ($query) {
                                                                             $query->where('added_as',null)
                                                                                 ->orWhere('added_as', '=', 'Group');
-                                                                        })->where('id','!=',$resultData['result']['id'])->where('stage','>','2')->where('gender',$resultData['result']['gender'])->orderBy('updated_at', 'desc')->get();
+                                                                        })->where('id','!=',$resultData['result']['id'])
+                                                                        ->where('stage','>','2')
+                                                                        ->where('gender',$resultData['result']['gender'])
+                                                                        ->where(function ($query1) {
+                                                                            $query1->where('room','Sharing')
+                                                                                ->orWhere('room','Twin Sharing Deluxe Room');
+                                                                        })->orderBy('updated_at', 'desc')->get();
                                                                 @endphp
 
                                                                 @if(!empty($users) && count($users)>0)

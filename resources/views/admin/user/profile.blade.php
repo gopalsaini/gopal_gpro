@@ -221,6 +221,13 @@
                                                 </td>
                                             </tr>
                                         @endif
+
+                                        @if($result['designation_id'] == 3 )
+                                            <tr>
+                                                <td colspan="2"><strong>Role  :</strong> {{\App\Helpers\commonHelper::getVolunteerRole($result->role_id)}}
+                                                </td> 
+                                            <tr>
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>

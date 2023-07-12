@@ -27,8 +27,8 @@
         <div class="form-group" style="display: @if($user->designation_id == '3')) block @else none @endif">
             <div class="form-line">
                 <label for="inputName">Select Volunteer Role </label>
-                <select name="role_id" class="form-control test" id="role_id">
-                    <option value="0">Select</option>
+                <select name="role_id[]" class="form-control test" id="role_id" multiple>
+                    
                     @php $roles = \App\Models\Role::orderBy('name','Asc')->where('id','!=','1')->where('status','1')->get(); @endphp
                     @if(!empty($roles))
                         @foreach($roles as $key=>$role)

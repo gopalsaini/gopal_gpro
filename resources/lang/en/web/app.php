@@ -131,6 +131,13 @@ return [
     'Request_Status' => "Request Status",
     'Request_Approved_successfully' => "Request Approved successfully",
     'Request_Declined_successfully' => "Request Declined successfully",
+    'Accept' => "Accept",
+    'Decline' => "Decline",
+    'Your_application_is_now_approved' => "Your application is now approved",
+    'Your_application_is_under_review' => "Your application is under review",
+    'Your_application_got_rejected' => "Your application got rejected",
+    'Reason' => "Reason",
+    'Resubmit' => "Resubmit",
 
 
 

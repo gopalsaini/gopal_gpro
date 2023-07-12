@@ -178,6 +178,8 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 	Route::group(['prefix'=>'user', 'as'=>'user.'], function() {
 		Route::match(['get','post'], 'add', 'Admin\UserController@add')->name('add');
 		Route::get('edit/{id}', 'Admin\UserController@edit')->name('edit');
+		Route::get('all-user', 'Admin\UserController@allUser')->name('all-user');
+
 		Route::get('delete/{id}', 'Admin\UserController@delete')->name('delete');
 
 		Route::post('spouse-update', 'Admin\UserController@spouseUpdate')->name('spouse-update');
@@ -391,11 +393,10 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::post('status', 'Admin\CategoryController@status')->name('status');
 	});
 
-	// FAQ
+	// notification
 	Route::group(['prefix'=>'notification', 'as'=>'notification.'], function() {
 		Route::match(['get','post'], 'add', 'Admin\NotificationController@add')->name('add');
-		Route::get('list', 'Admin\NotificationController@list')->name('list');
-		Route::get('view/{id}', 'Admin\NotificationController@view')->name('view');
+
 		
 	});
 

@@ -132,5 +132,12 @@ return [
     'Request_Status' => "Estado do Pedido",
     'Request_Approved_successfully' => "Pedido Aprovado com sucesso",
     'Request_Declined_successfully' => "Pedido Recusado com sucesso",
+    'Accept' => "Aceitar",
+    'Decline' => "Declínio",
+    'Your_application_is_now_approved' => "Your application is now approved",
+    'Your_application_is_under_review' => "Your application is under review",
+    'Your_application_got_rejected' => "Your application got rejected",
+    'Reason' => "Reason",
+    'Resubmit' => "Resubmit",
 
 ];

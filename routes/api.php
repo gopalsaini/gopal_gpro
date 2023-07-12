@@ -77,6 +77,9 @@ Route::group([
 });
 
 
+Route::get('appUpdateVersionApi', 'API\PreLoginController@appUpdateVersionApi');
+
+
 Route::post('login', 'API\PreLoginController@login');
 Route::post('registration', 'API\PreLoginController@registration');
 Route::post('send-otp', 'API\PreLoginController@sendOtp');
@@ -149,6 +152,10 @@ Route::get('sendEmailsToPaymentCompleteDone', 'API\PreLoginController@SendEmails
 // Route::any("testingEmailSend","API\PreLoginController@testingEmailSend");
 // Route::any("visaProcessingEmailSend","API\PreLoginController@visaProcessingEmailSend");
 // Route::any("PaymenDeadlineMissed100OFF","API\PreLoginController@PaymenDeadlineMissed100OFF");
+
+
+Route::any("paidBeforeJuly1AddEB","API\PreLoginController@paidBeforeJuly1AddEB");
+Route::any("PassportInfoEmailSendToVisaNeededKenya","API\PreLoginController@PassportInfoEmailSendToVisaNeededKenya");
 
 
 //dashboard API

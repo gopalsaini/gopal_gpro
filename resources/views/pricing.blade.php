@@ -245,7 +245,7 @@
                     if(SingleRoomWOEB < 1075){
                         SingleRoomWOEB = 1075;
                     }else{
-                        SingleRoomWOEB = ((parseInt(filter[0].base_price)+parseInt(650)));
+                        SingleRoomWOEB = ((parseInt(filter[0].base_price)+parseInt(400)));
                     }
 
 
