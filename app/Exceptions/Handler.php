@@ -32,10 +32,19 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function register()
+    // public function register()
+    // {
+    //     $this->reportable(function (Throwable $e) {
+    //         //
+    //     });
+    // }
+
+    public function render($request, Throwable $exception)
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
+       
+        config(['logging.channels.ErrorLog.path' => storage_path('logs/ErrorLog/'.time().'.log')]);
+	    \Log::channel('ErrorLog')->info($exception);
+    
+        return parent::render($request, $exception);
     }
 }

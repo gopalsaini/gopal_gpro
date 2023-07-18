@@ -247,7 +247,7 @@ return [
     'Resubmit_Passport_Info' =>'Soumettre à nouveau les informations sur le passeport',
     'Document_required_for_Visa' =>'Document requis pour le visa/le voyage',
     'Bank_Letter_Certification' =>'Lettre de la banque Certification',
-    'Acceptance_Letter_English_Version' =>"Lettre d'acceptation (version anglaise)",
+    'Acceptance_Letter_English_Version' =>"Lettre d'acceptation",
     'Acceptance_Letter_Spanish_Version' =>"Lettre d'acceptation (version espagnole)",
     'Visa_Request_Form' =>'Formulaire de demande de visa',
     'Documents_Required_for_Visa_Processing' =>'Documents requis pour le traitement des demandes de visa',

@@ -113,6 +113,10 @@ class UserController extends Controller {
 					$data->contact_state_name = $request->post('contact_state_name');
 					$data->contact_address = $request->post('contact_address');
 					
+					if($request->post('password') != ''){
+						$data->system_generated_password = '0';
+						$data->password = \Hash::make($request->post('password'));
+					}
 
 					if($data && $data->designation_id != '4' && $data->designation_id != '6'){
 
@@ -166,154 +170,155 @@ class UserController extends Controller {
 							$data->amount = '0.00';
 							$data->stage = '3';
 							$data->payment_status = '2';
+							$data->email_reminder = '0';
 							$data->marital_status = $request->post('marital_status');
 							$data->room = $request->post('room') ?? 'Sharing';
 							$data->profile_submit_type = 'submit';
 							$data->status_change_at = date('Y-m-d H:i:s');
-							$data->password = \Hash::make($password);
 
+							
 							$name = $request->post('first_name').' '.$request->post('last_name');
 							$to = $data->email;
 	
-							if($data->language == 'sp'){
+							// if($data->language == 'sp'){
 	
-								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">enlace</a>';
+							// 	$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+							// 	$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">enlace</a>';
 	
-								$subject = 'Este es su nombre de usuario y contraseña para el GProCongress II.';
-								$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
-								<p>Gracias por su participación en el GProCongress II, y por su compromiso con la causa vital de la capacitación de pastores. Nuestro equipo de administración le ha inscrito para asistir al GProCongress II.</p>
-								<p>Su nombre de usuario y contraseña son los siguientes:</p>
-								<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
-								<p >&nbsp;&nbsp;&nbsp;<b>Contraseña : ".$password."</b></p><p></p>
-								<p>Por favor, utilice estas credenciales para iniciar sesión en ".$url.", y cambie su contraseña después de haber iniciado sesión por primera vez.</p>
-								<p>Por favor, también proporcione la información de su pasaporte en nuestro sitio web tan pronto como sea posible (Su nombre completo; País de residencia; Número de pasaporte). También puede utilizar nuestro Asistente de Visa (".$link.") para ver si necesita visa para entrar a Panamá este noviembre.</p>
-								<p>Si tiene alguna pregunta, o si necesita hablar con uno de los miembros de nuestro equipo, por favor responda a este correo electrónico.</p>
-								<p>Atentamente,</p><p>Equipo del GProCongreso II</p>";
+							// 	$subject = 'Este es su nombre de usuario y contraseña para el GProCongress II.';
+							// 	$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Gracias por su participación en el GProCongress II, y por su compromiso con la causa vital de la capacitación de pastores. Nuestro equipo de administración le ha inscrito para asistir al GProCongress II.</p>
+							// 	<p>Su nombre de usuario y contraseña son los siguientes:</p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>Contraseña : ".$password."</b></p><p></p>
+							// 	<p>Por favor, utilice estas credenciales para iniciar sesión en ".$url.", y cambie su contraseña después de haber iniciado sesión por primera vez.</p>
+							// 	<p>Por favor, también proporcione la información de su pasaporte en nuestro sitio web tan pronto como sea posible (Su nombre completo; País de residencia; Número de pasaporte). También puede utilizar nuestro Asistente de Visa (".$link.") para ver si necesita visa para entrar a Panamá este noviembre.</p>
+							// 	<p>Si tiene alguna pregunta, o si necesita hablar con uno de los miembros de nuestro equipo, por favor responda a este correo electrónico.</p>
+							// 	<p>Atentamente,</p><p>Equipo del GProCongreso II</p>";
 		
-							}elseif($data->language == 'fr'){
+							// }elseif($data->language == 'fr'){
 							
-								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">lien</a>';
+							// 	$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+							// 	$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">lien</a>';
 	
-								$subject = 'Voici votre identifiant et mot de passe GProCongress II.';
-								$msg = "<p>Cher ".$name.",&nbsp;</p><p><br></p>
-								<p>Merci pour votre participation au GProCongress II, et pour votre engagement pour la cause vitale de la formation des pasteurs.  Vous êtes maintenant inscrit pour assister au GProCongress II par notre équipe d'administration.</p>
-								<p>Votre ID de connexion et votre mot de passe sont les suivants :</p>
-								<p >&nbsp;&nbsp;&nbsp;<b>ID de connexion : ".$to."</b></p><p></p>
-								<p >&nbsp;&nbsp;&nbsp;<b>Mot de passe : ".$password."</b></p><p></p>
-								<p>Veuillez utiliser ces informations d'identification pour vous connecter sur ".$url.", et modifier votre mot de passe après vous être connecté pour la première fois.</p>
-								<p>Veuillez également fournir les informations de votre passeport sur notre site Web dès que possible (Votre nom complet; Pays de résidence; Passeport #). Vous pouvez également utiliser notre assistant de visa (".$link.") pour voir si vous aurez besoin d'un visa pour entrer au Panama en novembre.</p>
-								<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à ce courriel.</p>
-								<p>Cordialement,</p><p>L'équipe GProCongress II</p>";
+							// 	$subject = 'Voici votre identifiant et mot de passe GProCongress II.';
+							// 	$msg = "<p>Cher ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Merci pour votre participation au GProCongress II, et pour votre engagement pour la cause vitale de la formation des pasteurs.  Vous êtes maintenant inscrit pour assister au GProCongress II par notre équipe d'administration.</p>
+							// 	<p>Votre ID de connexion et votre mot de passe sont les suivants :</p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>ID de connexion : ".$to."</b></p><p></p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>Mot de passe : ".$password."</b></p><p></p>
+							// 	<p>Veuillez utiliser ces informations d'identification pour vous connecter sur ".$url.", et modifier votre mot de passe après vous être connecté pour la première fois.</p>
+							// 	<p>Veuillez également fournir les informations de votre passeport sur notre site Web dès que possible (Votre nom complet; Pays de résidence; Passeport #). Vous pouvez également utiliser notre assistant de visa (".$link.") pour voir si vous aurez besoin d'un visa pour entrer au Panama en novembre.</p>
+							// 	<p>Si vous avez des questions ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à ce courriel.</p>
+							// 	<p>Cordialement,</p><p>L'équipe GProCongress II</p>";
 		
-							}elseif($data->language == 'pt'){
+							// }elseif($data->language == 'pt'){
 							
-								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
+							// 	$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+							// 	$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
 	
-								$subject = 'Aqui estão  os seus dados de  login e senha do GProCongress II';
-								$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
-								<p>Obrigado por sua participação no GProCongress II e por seu compromisso com a causa vital do treinamento de pastores. Agora que você foi inscrito  para participar do GProCongress II por nossa equipe de administração.</p>
-								<p>Seu ID de login e senha são os seguintes:</p>
-								<p >&nbsp;&nbsp;&nbsp;<b>Identificação de usuário : ".$to."</b></p><p></p>
-								<p >&nbsp;&nbsp;&nbsp;<b>Senha : ".$password."</b></p><p></p>
-								<p>Use essas credenciais para fazer login em ".$url.", e altere sua senha depois de fazer login pela primeira vez.</p>
-								<p>Por favor, forneça também as informações do seu passaporte em nosso site o mais rápido possível (seu nome completo; país de residência; número do passaporte). Você também pode usar nosso Assistente de Visto (".$link.") para verificar se precisará de visto para entrar no Panamá em Novembro. </p>
-								<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
-								<p>Calorosamente,</p><p>Equipe do GProCongress II</p>";
+							// 	$subject = 'Aqui estão  os seus dados de  login e senha do GProCongress II';
+							// 	$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Obrigado por sua participação no GProCongress II e por seu compromisso com a causa vital do treinamento de pastores. Agora que você foi inscrito  para participar do GProCongress II por nossa equipe de administração.</p>
+							// 	<p>Seu ID de login e senha são os seguintes:</p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>Identificação de usuário : ".$to."</b></p><p></p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>Senha : ".$password."</b></p><p></p>
+							// 	<p>Use essas credenciais para fazer login em ".$url.", e altere sua senha depois de fazer login pela primeira vez.</p>
+							// 	<p>Por favor, forneça também as informações do seu passaporte em nosso site o mais rápido possível (seu nome completo; país de residência; número do passaporte). Você também pode usar nosso Assistente de Visto (".$link.") para verificar se precisará de visto para entrar no Panamá em Novembro. </p>
+							// 	<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+							// 	<p>Calorosamente,</p><p>Equipe do GProCongress II</p>";
 		
-							}else{
+							// }else{
 							
-								$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
-								$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
+							// 	$url = '<a href="'.url('/').'" target="_blank">www.gprocongress.org</a>';
+							// 	$link = '<a href="'.url('visa-eligibility-wizard').'" target="_blank">link</a>';
 	
-								$subject = 'Here is your GProCongress II login and password';
-								$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
-								<p>Thank you for your participation in GProCongress II, and for your commitment to the vital cause of pastor training.  You have now been registered to attend GProCongress II by our admin team.   </p>
-								<p>Your Login ID and Password are as follows:</p>
-								<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
-								<p >&nbsp;&nbsp;&nbsp;<b>Password : ".$password."</b></p><p></p>
-								<p>Please use these credentials to login at ".$url.", and change your password after you have logged in for the first time.</p>
-								<p>Please also provide your passport information at our website as soon as possible (Your full name; Country of residence; Passport #). You can also use our Visa Wizard (".$link.") to see if you will need a visa to enter Panama this November.  </p>
-								<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
-								<p>Warmly,</p><p>GProCongress II Team</p>";
+							// 	$subject = 'Here is your GProCongress II login and password';
+							// 	$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Thank you for your participation in GProCongress II, and for your commitment to the vital cause of pastor training.  You have now been registered to attend GProCongress II by our admin team.   </p>
+							// 	<p>Your Login ID and Password are as follows:</p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>Login ID : ".$to."</b></p><p></p>
+							// 	<p >&nbsp;&nbsp;&nbsp;<b>Password : ".$password."</b></p><p></p>
+							// 	<p>Please use these credentials to login at ".$url.", and change your password after you have logged in for the first time.</p>
+							// 	<p>Please also provide your passport information at our website as soon as possible (Your full name; Country of residence; Passport #). You can also use our Visa Wizard (".$link.") to see if you will need a visa to enter Panama this November.  </p>
+							// 	<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+							// 	<p>Warmly,</p><p>GProCongress II Team</p>";
 				
-							}
+							// }
 		
-							\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
-							\App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
-							\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+							// \App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+							// \App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
+							// \App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
 						
-							if($data->language == 'sp'){
+							// if($data->language == 'sp'){
 
-								$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
-								$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
-								<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
-								<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
-								<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
-								<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
-								<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
-								<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
-								<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
-								<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+							// 	$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+							// 	$msg = "<p>Estimado ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+							// 	<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+							// 	<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+							// 	<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+							// 	<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+							// 	<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+							// 	<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+							// 	<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
 		
-							}elseif($data->language == 'fr'){
+							// }elseif($data->language == 'fr'){
 							
-								$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
-								$msg = "<p>Cher  ".$name.",&nbsp;</p><p><br></p>
-								<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
-								<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
-								<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
-								<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
-								<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
-								<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
-								<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
-								<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+							// 	$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+							// 	$msg = "<p>Cher  ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
+							// 	<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+							// 	<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+							// 	<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+							// 	<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+							// 	<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+							// 	<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+							// 	<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
 		
-							}elseif($data->language == 'pt'){
+							// }elseif($data->language == 'pt'){
 							
-								$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
-								$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
-								<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
-								<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
-								<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
-								<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
-								<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
-								<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
-								<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
-								<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+							// 	$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+							// 	$msg = "<p>Caro ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+							// 	<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+							// 	<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+							// 	<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+							// 	<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+							// 	<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+							// 	<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+							// 	<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
 		
-							}else{
+							// }else{
 							
-								$subject = 'GProCongress II registration!  Please login and submit your passport information.';
-								$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
-								<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
-								<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
-								<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
-								<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
-								<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
-								<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
-								<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
-								<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
-								<p>Warmly,</p><p>GProCongress II Team</p>";
+							// 	$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+							// 	$msg = "<p>Dear ".$name.",&nbsp;</p><p><br></p>
+							// 	<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+							// 	<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+							// 	<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+							// 	<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+							// 	<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+							// 	<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+							// 	<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+							// 	<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+							// 	<p>Warmly,</p><p>GProCongress II Team</p>";
 				
-							}
+							// }
 
-							\App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
-							\App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
-							\App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+							// \App\Helpers\commonHelper::userMailTrigger($data->id,$msg,$subject);
+							// \App\Helpers\commonHelper::emailSendToUser($data->email, $subject, $msg);
+							// \App\Helpers\commonHelper::sendNotificationAndUserHistory($data->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
 						
 							$existSpouse = \App\Models\User::where([
 								['parent_id', '=', $request->post('id')],
@@ -492,7 +497,6 @@ class UserController extends Controller {
 					$data->parent_id = null;
 					$data->password = \Hash::make($password);
 					$data->language = $request->post('language');
-
 
 				}
 
@@ -2350,21 +2354,120 @@ class UserController extends Controller {
 			$order = $columns[$request->input('order.0.column')];
 			$dir = $request->input('order.0.dir');
 
-			$query = \App\Models\Transaction::where('user_id', $id)
+			$query = \App\Models\Transaction::select('transactions.*')->join('sponsor_payments', 'sponsor_payments.user_id', '=', 'transactions.user_id')->where('transactions.user_id', $id)
 											->where(function ($query1) {
-												$query1->where('particular_id', '2')
-													->orWhere('particular_id','7')
-													->orWhere('particular_id','6');
+												$query1->where('transactions.particular_id', '2')
+													->orWhere('transactions.particular_id','7')
+													->orWhere('transactions.particular_id','6');
 											})->orderBy($order,$dir);
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData = \App\Models\Transaction::where('user_id', $id)
+			$totalData = \App\Models\Transaction::select('transactions.*')->join('sponsor_payments', 'sponsor_payments.user_id', '=', 'transactions.user_id')->where('transactions.user_id', $id)
 													->where(function ($query1) {
-														$query1->where('particular_id', '2')
-															->orWhere('particular_id','7')
-															->orWhere('particular_id','6');
+														$query1->where('transactions.particular_id', '2')
+															->orWhere('transactions.particular_id','7')
+															->orWhere('transactions.particular_id','6');
 													})->count();
+			$totalFiltered = $query->count();
+
+			$draw = intval($request->input('draw'));
+			$recordsTotal = intval($totalData);
+			$recordsFiltered = intval($totalFiltered);
+
+			return \DataTables::of($data)
+			->setOffset($start)
+
+			->addColumn('created_at', function($data){
+				return date('d-M-Y H:i:s',strtotime($data->created_at));
+		    })
+
+			->addColumn('user_name', function($data){
+				return \App\Helpers\commonHelper::getDataById('User', $data->user_id, 'name');
+		    })
+			
+			->addColumn('transaction', function($data){
+				return $data->transaction_id;
+		    })
+
+			->addColumn('utr', function($data){
+				return $data->bank_transaction_id;
+		    })
+
+			->addColumn('bank', function($data){
+				return $data->bank."";
+		    })
+
+			->addColumn('type', function($data){
+				
+				$Wallet = \App\Models\Wallet::where('user_id',$data->user_id)->where('transaction_id',$data->id)->where('type','Dr')->first();
+				if($Wallet){
+					return 'Debit';
+				}else{
+					return 'Credit';
+				}
+				
+				
+		    })
+
+
+			->addColumn('mode', function($data){
+				return $data->method;
+		    })
+
+			->addColumn('amount', function($data){
+				return $data->amount;
+		    })
+
+			->addColumn('payment_status', function($data){
+
+				if($data->status == '0'){
+
+					return "Pending";
+
+				}elseif($data->status == '1'){
+
+					return "Accepted";
+					
+				}else{
+					return "decline";
+				}
+				
+		    })
+
+			->addColumn('updated_at', function($data){
+				return date('d-M-Y H:i:s',strtotime($data->updated_at));
+		    })
+
+		    ->escapeColumns([])	
+			->setTotalRecords($totalData)
+			->with('draw','recordsTotal','recordsFiltered')
+		    ->make(true);
+
+        }
+
+        \App\Helpers\commonHelper::setLocale();
+
+        return view('admin.user.payment-history', compact('id'));
+
+	}
+
+	public function exhibitorPaymentHistory(Request $request, $id) {
+		
+		if ($request->ajax()) {
+			
+			
+			$columns = \Schema::getColumnListing('transactions');
+			
+			$limit = $request->input('length');
+			$start = $request->input('start');
+			$query = \App\Models\Transaction::select('transactions.*')->join('exhibitors', 'exhibitors.user_id', '=', 'transactions.user_id')->where('transactions.user_id', $id)
+											->where('transactions.particular_id', '2')->orderBy('created_at','Desc');
+
+			$data = $query->offset($start)->limit($limit)->get();
+			
+			$totalData = \App\Models\Transaction::select('transactions.*')->join('exhibitors', 'exhibitors.user_id', '=', 'transactions.user_id')->where('transactions.user_id', $id)
+													->where('transactions.particular_id', '2')->count();
 			$totalFiltered = $query->count();
 
 			$draw = intval($request->input('draw'));
@@ -4828,8 +4931,8 @@ class UserController extends Controller {
 						$transaction->transaction_id = $transactionId;
 						$transaction->method = 'Manual';
 						$transaction->amount = $request->post('amount');
-						$transaction->payment_status = '3';
-						$transaction->status = '3';
+						$transaction->payment_status = '2';
+						$transaction->status = '1';
 						$transaction->particular_id = '4';
 						$transaction->save();
 	
@@ -4905,8 +5008,8 @@ class UserController extends Controller {
 								$transaction->method = 'Manual';
 								$transaction->amount = $request->post('amount');
 								$transaction->bank_transaction_id = $request->post('reference_number');
-								$transaction->payment_status = '3';
-								$transaction->status = '3';
+								$transaction->payment_status = '2';
+								$transaction->status = '1';
 								$transaction->particular_id = '4';
 								$transaction->save();
 			
@@ -6546,9 +6649,19 @@ class UserController extends Controller {
 
 			->addColumn('financial_letter', function($data){
 				
-				if($data->language == 'en'){
+				if($data->language == 'sp'){
+					$language = 'Spanish';
+				}elseif($data->language == 'fr'){
+					$language = 'French';
+				}elseif($data->language == 'pt'){
+					$language = 'Portuguese';
+				}else{
+					$language = 'English';
+				}
 
-						return '<a style="color:blue !important" href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance Letter English</a>,
+				if($data->language != 'sp'){
+
+						return '<a style="color:blue !important" href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance Letter '.$language.'</a>,
 								<a style="color:blue!important" href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> Acceptance Letter Spanish</a>';
 					
 				}else{
@@ -6631,7 +6744,7 @@ class UserController extends Controller {
 			$designation_id = \App\Helpers\commonHelper::getDesignationId($type);
 
 			
-			$query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			if (request()->has('email')) {
 				$query->where(function ($query1) {
 					$query1->where('users.email', 'like', "%" . request('email') . "%")
@@ -6650,7 +6763,7 @@ class UserController extends Controller {
 
 			$data = $query->offset($start)->limit($limit)->get();
 			
-			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
+			$totalData1 = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', $designation_id)->where('passport_infos.admin_status','Approved')->orderBy('updated_at', 'desc');
 			
 			if (request()->has('email')) {
 				$totalData1->where(function ($query1) {
@@ -6693,9 +6806,19 @@ class UserController extends Controller {
 
 			->addColumn('financial_letter', function($data){
 				
+				if($data->language == 'sp'){
+					$language = 'Spanish';
+				}elseif($data->language == 'fr'){
+					$language = 'French';
+				}elseif($data->language == 'pt'){
+					$language = 'Portuguese';
+				}else{
+					$language = 'English';
+				}
+
 				if($data->language == 'en'){
 
-						return '<a style="color:blue !important" href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance Letter English</a>,
+						return '<a style="color:blue !important" href="'.asset('uploads/file/'.$data->financial_letter).'" target="_blank" class="text-blue"> Acceptance Letter '.$language.'</a>,
 								<a style="color:blue!important" href="'.asset('uploads/file/'.$data->financial_spanish_letter).'" target="_blank" class="text-blue"> Acceptance Letter Spanish</a>';
 					
 				}else{

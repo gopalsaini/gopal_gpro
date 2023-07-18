@@ -251,6 +251,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 
 		Route::get('payment-history/{id}', 'Admin\UserController@paymentHistory')->name('payment.history');
 		Route::get('sponsored-payment-history/{id}', 'Admin\UserController@sponsoredPaymentHistory')->name('sponsored.Payment.History');
+		Route::get('exhibitor-payment-history/{id}', 'Admin\UserController@exhibitorPaymentHistory')->name('exhibitor.Payment.History');
 		Route::get('donate-payment-history/{id}', 'Admin\UserController@donatePaymentHistory')->name('donate.Payment.History');
 		Route::get('room-upgrade-payment-history/{id}', 'Admin\UserController@roomUpgradeList')->name('room-upgrade-payment-history');
 		Route::post('send-payment-reminder', 'Admin\UserController@sendPaymentReminder')->name('send.payment.reminder');

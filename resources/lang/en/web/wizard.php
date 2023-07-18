@@ -248,7 +248,7 @@ return [
     'Resubmit_Passport_Info' =>'Resubmit Passport Info',
     'Document_required_for_Visa' =>'Document required for Visa/Travel',
     'Bank_Letter_Certification' =>'Bank Letter Certification',
-    'Acceptance_Letter_English_Version' =>'Acceptance Letter English  Version',
+    'Acceptance_Letter_English_Version' =>'Acceptance Letter ',
     'Acceptance_Letter_Spanish_Version' =>'Acceptance Letter Spanish  Version',
     'Visa_Request_Form' =>'Visa Request Form',
     'Documents_Required_for_Visa_Processing' =>'Documents Required for Visa Processing',

@@ -131,11 +131,11 @@ return [
     'Request_Approved_successfully' => "Demande approuvée avec succès",
     'Request_Declined_successfully' => "Demande rejetée avec succès", 
     'Accept' => "Accepter",
-    'Decline' => "Déclin",
-    'Your_application_is_now_approved' => "Your application is now approved",
-    'Your_application_is_under_review' => "Your application is under review",
-    'Your_application_got_rejected' => "Your application got rejected",
-    'Reason' => "Reason",
-    'Resubmit' => "Resubmit",
+    'Decline' => "Décliner",
+    'Your_application_is_now_approved' => "Votre demande est maintenant approuvée",
+    'Your_application_is_under_review' => "Votre demande est en cours d'examen",
+    'Your_application_got_rejected' => "Votre demande a été refusée",
+    'Reason' => "Motif",
+    'Resubmit' => "Soumettre à nouveau",
 
 ];

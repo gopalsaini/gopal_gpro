@@ -411,7 +411,7 @@
                         <div class="table table-bordered table-hover table-responsive">
                             <table class="table table-border table-hover table-responsive">
                                 <tbody>
-                                    @php $query = \App\Models\PassportInfo::select('passport_infos.*')->join('users','users.id','=','passport_infos.user_id')->where('user_id',$result->id)->first(); @endphp
+                                    @php $query = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('user_id',$result->id)->first(); @endphp
                                     @if($query)
                                     <tr>
                                         <td colspan="5"><strong>Given Name :</strong> {{$query->salutation}}</td>
@@ -506,7 +506,17 @@
                                     <tr>
                                         
                                         <td colspan="15">
-                                          
+                                            @php 
+                                                if($query['language'] == 'sp'){
+                                                    $language = 'Spanish';
+                                                }elseif($query['language'] == 'fr'){
+                                                    $language = 'French';
+                                                }elseif($query['language'] == 'pt'){
+                                                    $language = 'Portuguese';
+                                                }else{
+                                                    $language = 'English';
+                                                }
+                                            @endphp
                                             <p><strong>Document Required for Visa/ Travel  :</strong></p>
                                             <br>
                                             @if($query['financial_spanish_letter'] != Null)
@@ -514,36 +524,36 @@
                                                 @if($query['visa_category'] == 'No Visa Needed')
                                                     
                                                     <div class="step-next" style="display: flex;">
-                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter </a>
-                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Bank Letter </a>
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter Spanish</a>
                                                         @if($query['financial_letter'])
-                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter {{$language}}</a>
                                                         @endif
                                                     </div>
 
                                                 @elseif($query['visa_category'] == 'Visa Needed')
                                                 
                                                     <div class="step-next">
-                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
-                                                        <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
-                                                        <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
-                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Bank Letter</a> 
+                                                        <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Visa Request Form</a>
+                                                        <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Documents Required for Visa Processing</a>
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter Spanish</a>
                                                         
                                                         @if($query['financial_letter'])
-                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter {{$language}}</a>
                                                         @endif
                                                     </div>
 
                                                 @elseif($query['visa_category'] == 'Restricted Country')
                                                 
                                                     <div class="step-next">
-                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Bank Letter</a> 
-                                                        <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Visa Request Form</a>
-                                                        <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> Documents Required for Visa Processing</a>
-                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter Spanish</a>
+                                                        <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Bank Letter</a> 
+                                                        <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Visa Request Form</a>
+                                                        <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Documents Required for Visa Processing</a>
+                                                        <a href="{{ asset('uploads/file/'.$query['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter Spanish</a>
                                                         
                                                         @if($query['financial_letter'])
-                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> Acceptance Letter English</a>
+                                                            <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter {{$language}}</a>
                                                         @endif
                                                     </div>
                                                     
@@ -806,6 +816,57 @@
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-header">
+                                    <h5>Exhibitor Payment</h5>
+                                </div>
+                                
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="display datatables" id="tablelist_exhibitor">
+                                            <thead>
+                                                <tr>
+                                                    <th> @lang('admin.id') </th>
+                                                    <th> @lang('admin.created_at') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
+                                                    <th> @lang('admin.transfer-id') </th>
+                                                    <th> @lang('admin.utr-no') </th>
+                                                    <th> @lang('admin.Mode') </th>
+                                                    <th> @lang('admin.type') </th>
+                                                    <th> @lang('admin.mode') </th>
+                                                    <th> @lang('admin.amount') </th>
+                                                    <th> @lang('admin.status') </th>
+                                                    <th> @lang('admin.updated_at') </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center" colspan="7">
+                                                        <div id="loader" class="spinner-border" role="status"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th> @lang('admin.id') </th>
+                                                    <th> @lang('admin.created_at') </th>
+                                                    <th> @lang('admin.user') @lang('admin.name') </th>
+                                                    <th> @lang('admin.transfer-id') </th>
+                                                    <th> @lang('admin.utr-no') </th>
+                                                    <th> @lang('admin.Mode') </th>
+                                                    <th> @lang('admin.type') </th>
+                                                    <th> @lang('admin.mode') </th>
+                                                    <th> @lang('admin.amount') </th>
+                                                    <th> @lang('admin.status') </th>
+                                                    <th> @lang('admin.updated_at') </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
                                     <h5>Donate Payment</h5>
                                 </div>
                                 <div class="card-body">
@@ -853,6 +914,7 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="col-sm-12">
                             <div class="card">
                                 <div class="card-header">
@@ -1376,6 +1438,74 @@ $(document).ready(function() {
 
         "ajax": {
             "url": "{{ route('admin.user.sponsored.Payment.History', [$id]) }}",
+            "dataType": "json",
+            "async": false,
+            "type": "get",
+            "error": function(xhr, textStatus) {
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+            },
+        },
+        "fnDrawCallback": function() {
+            fill_datatable();
+        },
+        "order": [0, 'desc'],
+        "columnDefs": [{
+                className: "text-center",
+                targets: "_all"
+            },
+        ],
+        "columns": [{
+                "data": null,
+                render: function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1 + '.';
+                },
+                className: "text-center font-weight-bold"
+            },
+            {
+                "data": "created_at"
+            },
+            {
+                "data": "user_name"
+            },
+            {
+                "data": "transaction"
+            },
+            {
+                "data": "utr"
+            },
+            {
+                "data": "bank"
+            },
+            {
+                "data": "type"
+            },
+            {
+                "data": "mode"
+            },
+            {
+                "data": "amount"
+            },
+            {
+                "data": "payment_status"
+            },
+            {
+                "data": "updated_at"
+            }
+        ]
+    });
+
+    $('#tablelist_exhibitor').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "searching": true,
+        "ordering": true,
+
+        "ajax": {
+            "url": "{{ route('admin.user.exhibitor.Payment.History', [$id]) }}",
             "dataType": "json",
             "async": false,
             "type": "get",

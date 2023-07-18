@@ -110,6 +110,14 @@
 															<input class="form-control" type="text" name="last_name" placeholder="Enter last name" value="@if($result){{ $result->last_name }}@endif" >
 														</div>
 													</div>
+													@if($result && $result->designation_id == '3' || $result->designation_id == '4'  || $result->designation_id == '6')
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="input">Password:</label>
+																<input class="form-control" type="text" name="password" placeholder="Enter Password" value="" >
+															</div>
+														</div>
+													@endif
 												</div>
 
 												

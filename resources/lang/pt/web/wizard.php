@@ -246,7 +246,7 @@ return [
     'Resubmit_Passport_Info' =>'Reenviar informações do passaporte',
     'Document_required_for_Visa' =>'Documento necessário para Visto/Viagem',
     'Bank_Letter_Certification' =>'Carta  de Comprovante  Bancário',
-    'Acceptance_Letter_English_Version' =>'Carta de Aceitação Versão em Inglês',
+    'Acceptance_Letter_English_Version' =>'Carta de Aceitação',
     'Acceptance_Letter_Spanish_Version' =>'Carta de Aceitação versão em espanhol',
     'Visa_Request_Form' =>'Formulário de Solicitação de Visto',
     'Documents_Required_for_Visa_Processing' =>'Documentos necessários para o processamento do visto',

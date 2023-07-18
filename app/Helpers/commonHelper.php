@@ -833,22 +833,28 @@ class commonHelper{
 	public static function getTotalPendingAmount($user_id, $number_format = false){
 
 		$user = \App\Models\User::where('id', $user_id)->first();
-		$totalAmount = $user->amount;
+		if($user){
+			$totalAmount = $user->amount;
 
-		$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($user_id);
+			$totalAcceptedAmount = \App\Helpers\commonHelper::getTotalAcceptedAmount($user_id);
+	
+			$totalPayAmount = $totalAcceptedAmount;
+	
+			$totalpendingAmount = 0.00;
+			if ($user->amount >= $totalPayAmount) {
+				$totalpendingAmount = $user->amount - $totalPayAmount;
+			}
+	
+			if ($number_format) {
+				return number_format($totalpendingAmount, 2);
+			} else {
+				return $totalpendingAmount;
+			}
+		}else{
 
-		$totalPayAmount = $totalAcceptedAmount;
-
-		$totalpendingAmount = 0.00;
-		if ($user->amount >= $totalPayAmount) {
-			$totalpendingAmount = $user->amount - $totalPayAmount;
+			return $totalpendingAmount = 0.00;
 		}
-
-		if ($number_format) {
-			return number_format($totalpendingAmount, 2);
-		} else {
-			return $totalpendingAmount;
-		}
+		
 		
 	}
 
@@ -1229,7 +1235,7 @@ class commonHelper{
 		$Wallet->transaction_id = $payment->id;
 		$Wallet->save();
 
-		if($particular != '2'){
+		if($particular == '1'){
 			\App\Helpers\commonHelper::sendPaymentTriggeredMailSend($user->id,$amount);
 		}
 		
@@ -2454,7 +2460,6 @@ class commonHelper{
 		
 	}
 
-	
 	public static function send($to,$data){
 
 		$api_key=env('FIREBASE_TOKEN');
@@ -3061,16 +3066,21 @@ class commonHelper{
 			<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 							
 		}
-		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->first(); 
+		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->where('spouse_confirm_status','Approve')->first(); 
 
         $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
 
 		if($Spouse){
-			$amount = $user->amount/2;
 
-		}elseif($SpouseParent && $user->added_as == 'Spouse'){
+			$amount = $user->amount+$Spouse->amount;
 
-			$amount = $SpouseParent->amount/2;
+			$amount = $amount/2;
+
+		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+
+			$amount = $user->amount+$SpouseParent->amount;
+			
+			$amount = $amount/2;
 
 		}else{
 
@@ -3087,12 +3097,22 @@ class commonHelper{
 			'lang'=>$user->language,
 		];
 
-		if($user->language == 'en'){
+		if($user->language == 'sp'){
+			$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'fr'){
+			$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'pt'){
+			$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}else{
+			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}
+
+		if($user->language != 'sp'){
 
 			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
 			$pdf->setPaper('L');
 			$pdf->output();
-			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+			
 			$path = public_path('uploads/file/');
 			
 			$pdf->save($path . '/' . $fileEnNameFl);
@@ -3213,16 +3233,21 @@ class commonHelper{
 							
 		}
 
-		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->first(); 
+		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->where('spouse_confirm_status','Approve')->first(); 
 
         $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
 
 		if($Spouse){
-			$amount = $user->amount/2;
 
-		}elseif($SpouseParent && $user->added_as == 'Spouse'){
+			$amount = $user->amount+$Spouse->amount;
 
-			$amount = $SpouseParent->amount/2;
+			$amount = $amount/2;
+
+		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+
+			$amount = $user->amount+$SpouseParent->amount;
+			
+			$amount = $amount/2;
 
 		}else{
 
@@ -3239,12 +3264,22 @@ class commonHelper{
 			'lang'=>$user->language,
 		];
 
-		if($user->language == 'en'){
+		if($user->language == 'sp'){
+			$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'fr'){
+			$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'pt'){
+			$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}else{
+			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}
+
+		if($user->language != 'sp'){
 
 			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
 			$pdf->setPaper('L');
 			$pdf->output();
-			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+			
 			$path = public_path('uploads/file/');
 			
 			$pdf->save($path . '/' . $fileEnNameFl);
@@ -3350,16 +3385,21 @@ class commonHelper{
 							
 		}
 
-		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->first(); 
+		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->where('spouse_confirm_status','Approve')->first(); 
 
         $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
 
 		if($Spouse){
-			$amount = $user->amount/2;
 
-		}elseif($SpouseParent && $user->added_as == 'Spouse'){
+			$amount = $user->amount+$Spouse->amount;
 
-			$amount = $SpouseParent->amount/2;
+			$amount = $amount/2;
+
+		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+
+			$amount = $user->amount+$SpouseParent->amount;
+			
+			$amount = $amount/2;
 
 		}else{
 
@@ -3375,12 +3415,22 @@ class commonHelper{
 			'lang'=>$user->language,
 		];
 
-		if($user->language == 'en'){
+		if($user->language == 'sp'){
+			$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'fr'){
+			$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'pt'){
+			$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}else{
+			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}
+
+		if($user->language != 'sp'){
 
 			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
 			$pdf->setPaper('L');
 			$pdf->output();
-			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+			
 			$path = public_path('uploads/file/');
 			
 			$pdf->save($path . '/' . $fileEnNameFl);
@@ -3485,7 +3535,6 @@ class commonHelper{
 		
 	}
 
-	
 	public static function sendExhibitorSponsorshipLetterMailSend($user_id) {
 		
 		$passportApprove= \App\Models\Exhibitors::where('user_id',$user_id)->first();
@@ -3576,7 +3625,6 @@ class commonHelper{
 		
 	}
 
-	
 	public static function sendExhibitorPaymentReminderMailSend($id) {
 		
 		$result = \App\Models\User::where('id',$id)->first();
@@ -3729,6 +3777,97 @@ class commonHelper{
 		}
 
 		return rtrim($data,", ");
+	}
+
+	public static function PassportInfoApprovedVipStaffVolunteer($id){
+		
+		$passportApprove= \App\Models\PassportInfo::where('id',$id)->first();
+
+		
+		$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
+
+		if($user){
+			$user->stage = '4';
+			$user->status_change_at = date('Y-m-d H:i:s');
+			$user->save();
+		}
+
+		$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
+
+		$Spouse = \App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->where('spouse_confirm_status','Approve')->first(); 
+
+        $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
+
+		if($Spouse){
+
+			$amount = $user->amount+$Spouse->amount;
+
+			$amount = $amount/2;
+
+		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+
+			$amount = $user->amount+$SpouseParent->amount;
+			
+			$amount = $amount/2;
+
+		}else{
+
+			$amount = $user->amount;
+		}
+
+		$passportApproveArray= [
+			'salutation'=>$passportApprove->salutation,
+			'name'=>$passportApprove->name,
+			'passport_no'=>$passportApprove->passport_no,
+			'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
+			'rajiv_richard'=>$rajiv_richard,
+			'amount'=>$amount,
+			'lang'=>$user->language,
+		];
+
+		if($user->language == 'sp'){
+			$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'fr'){
+			$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}elseif($user->language == 'pt'){
+			$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}else{
+			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+		}
+
+
+		if($user->language != 'sp'){
+
+			$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+			$pdf->setPaper('L');
+			$pdf->output();
+			
+			$path = public_path('uploads/file/');
+			
+			$pdf->save($path . '/' . $fileEnNameFl);
+
+			$passportApprove->financial_letter=$fileEnNameFl;
+
+			$fileEnName = public_path('uploads/file/'.$fileEnNameFl);
+
+		}
+		
+		$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
+		$pdf->setPaper('L');
+		$pdf->output();
+		$fileName = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+		$path = public_path('uploads/file/');
+		
+		$pdf->save($path . '/' . $fileName);
+
+		$passportApprove->financial_spanish_letter=$fileName;
+		$passportApprove->status='Approve';
+		
+		$passportApprove->admin_status='Approved';
+
+		$passportApprove->save();
+		
+		
 	}
 
 

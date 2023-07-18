@@ -5,11 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\commonHelper;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
+
 
 class PreLoginController extends Controller {
 
-
-	
 	public function appUpdateVersionApi(Request $request){
 		
 		return response(array("version"=>env('MOBILE_APP_VERSIONS'),"message"=>'App Version Api'), 200);
@@ -1162,6 +1163,61 @@ class PreLoginController extends Controller {
 									}
 									
 
+								}elseif($transaction->particular_id == '3'){
+									
+									// donation 
+									$user = \App\Models\User::where('id',$transaction->user_id)->first();
+									if($user){
+
+										if($user->language == 'sp'){
+
+											$subject = 'Su donación al GProCongress II ha sido aprobada.';
+											$msg = "<p>Estimado ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Gracias por su generosa donación al GProCongress II.  Se ha recibido de su parte la cantidad de $".$transaction->amount."</p>
+											<p>Este es su recibo por su contribución benéfica, el cual puede resultar necesario para obtener la deducción total del impuesto federal sobre los ingresos que permite la ley.  No se ha proporcionado ningún bien o servicio a cambio de esta contribución.</p>
+											<p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+											<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+											<p>Cordialmente,</p><p>Equipo GProCongress II</p>";
+
+										}elseif($user->language == 'fr'){
+										
+											$subject = 'Votre don à GProCongress II a été approuvé.';
+											$msg = "<p>Cher ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Nous vous remercions pour le généreux don que vous avez fait à GProCongress II.  Un paiement a été reçu de votre part pour un montant de $".$transaction->amount."</p>
+											<p>Il s'agit de votre reçu pour votre contribution de bienfaisance, qui peut être nécessaire pour obtenir la déduction d'impôt fédéral complète permise par la loi.  Aucun bien ou service n'a été fourni en échange de cette contribution.</p>
+											<p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet email.</p>
+											<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+											<p>Chaleureusement,</p><p>L'équipe GProCongress II</p>";
+
+										}elseif($user->language == 'pt'){
+										
+											$subject = 'A sua doação para o GProCongress II foi aprovada.';
+											$msg = "<p>Caro ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Obrigado pela generosa doação que efetuou para o GProCongress II.  Foi recebido um pagamento da sua parte no valor de  $".$transaction->amount."</p>
+											<p>Este é o recibo da sua contribuição generosa e, que pode ser necessário para obter a dedução total do imposto de renda federal permitida por lei.  Não foram fornecidos bens ou serviços em troca desta contribuição.</p>
+											<p>Se tiver alguma dúvida sobre o seu donativo, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+											<p>Ore conosco para multiplicar a quantidade e a qualidade dos treinadores de pastores.</p>
+											<p>Cordialmente,</p><p>Equipe do GProCongress II</p>";
+
+										}else{
+										
+											$subject = 'Your donation to GProCongress II has been approved.';
+											$msg = "<p>Dear ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Thank you for the generous donation you have made to GProCongress II.  A payment has been received from you in the amount of $".$transaction->amount."</p>
+											<p>This is your receipt for your charitable contribution, which may be necessary to obtain the full federal income tax deduction allowed by law.  No goods or services were provided in exchange for this contribution.</p>
+											<p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+											<p>Pray with us toward multiplying the quantity and quality of pastor-trainers</p>
+											<p>Warmly,</p><p>GProCongress II Team</p>";
+							
+										}
+
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your donation to GProCongress II has been approved.');
+
+									}
+
+									
 								}else{
 
 									$user = \App\Models\User::find($transaction->user_id);
@@ -1545,7 +1601,7 @@ class PreLoginController extends Controller {
 							$transaction->razorpay_order_id=$event->id;
 							$transaction->description=$event->data->object->last_payment_error->message;
 							$transaction->payment_status='7';
-							$transaction->status='0';
+							$transaction->status='2';
 							$transaction->save();
 
 							$Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
@@ -1638,6 +1694,60 @@ class PreLoginController extends Controller {
 									
 								}
 								
+
+							}elseif($transaction->particular_id == '3'){
+
+								// donation 
+								$user = \App\Models\User::where('id',$transaction->user_id)->first();
+								if($user){
+
+									if($user->language == 'sp'){
+
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Su donación ha sido rechazada.';
+										$msg = "<p>Estimado ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Gracias por su generosa donación al GProCongress II.  Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace:".$website."</p>
+										<p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+										<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+										<p>Cordialmente,</p><p>Equipo GProCongress II</p>";
+
+									}elseif($user->language == 'fr'){
+									
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Votre don a été refusé.';
+										$msg = "<p>Cher ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Nous vous remercions pour le généreux don que vous faites à GProCongress II.  Malheureusement, nous n'avons pas pu traiter votre paiement.  Veuillez réessayer votre paiement en allant sur ce lien:".$website."</p>
+										<p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet email.</p>
+										<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+										<p>Chaleureusement,</p><p>L'équipe GProCongress II</p>";
+
+									}elseif($user->language == 'pt'){
+									
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Sua doação foi recusada.';
+										$msg = "<p>Caro ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Obrigado pela generosa doação que você está fazendo ao GProCongress II. Infelizmente, não foi possível processar seu pagamento. Tente efetuar o pagamento novamente, acessando este link:".$website."</p>
+										<p>Se tiver alguma dúvida sobre o seu donativo, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+										<p>Ore conosco para multiplicar a quantidade e a qualidade dos treinadores de pastores.</p>
+										<p>Cordialmente,</p><p>Equipe do GProCongress II</p>";
+
+									}else{
+									
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Your donation has been declined.';
+										$msg = "<p>Dear ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Thank you for the generous donation you are making to GProCongress II.  Unfortunately, we could not process your payment.  Please try your payment again, by going to this link:".$website."</p>
+										<p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+										<p>Pray with us toward multiplying the quantity and quality of pastor-trainers.</p>
+										<p>Warmly,</p><p>GProCongress II Team</p>";
+						
+									}
+
+									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your donation has been declined.');
+
+								}
 
 							}else{
 
@@ -1746,97 +1856,9 @@ class PreLoginController extends Controller {
 
 							if(\App\Helpers\commonHelper::getTotalPendingAmount($transaction->user_id) == 0) {
 
-								$user = \App\Models\User::where('id',$transaction->user_id)->first();
-								$user->stage = 3;
-								$user->status_change_at = date('Y-m-d H:i:s');
-								$user->save();
-			
-								$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
-							
-								if($resultSpouse){
-			
-									$resultSpouse->stage = 3;
-									$resultSpouse->payment_status = '2';
-									$resultSpouse->status_change_at = date('Y-m-d H:i:s');
-									$resultSpouse->save();
-
-									if($resultSpouse->language == 'sp'){
-
-										$url = '<a href="'.url('pricing').'" target="_blank">enlace</a>';
-										$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
-										$msg = "<p>Estimado ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
-										<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
-										<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
-										<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
-										<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
-										<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
-										<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
-				
-									}elseif($resultSpouse->language == 'fr'){
-									
-										$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
-										$msg = "<p>Cher  ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
-										<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
-										<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
-										<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
-										<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
-										<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
-										<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
-				
-									}elseif($resultSpouse->language == 'pt'){
-									
-										$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
-										$msg = "<p>Caro ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
-										<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
-										<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
-										<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
-										<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
-										<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
-										<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
-										<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
-				
-									}else{
-									
-										$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
-										$subject = 'GProCongress II registration!  Please login and submit your passport information.';
-										$msg = "<p>Dear ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
-										<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
-										<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
-										<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
-										<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
-										<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
-										<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
-										<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
-										<p>Warmly,</p><p>GProCongress II Team</p>";
-						
-									}
-				
-									\App\Helpers\commonHelper::userMailTrigger($resultSpouse->id,$msg,$subject);
-									\App\Helpers\commonHelper::emailSendToUser($resultSpouse->email, $subject, $msg);
-									\App\Helpers\commonHelper::sendNotificationAndUserHistory($resultSpouse->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
-
-								}
-			
 								if($transaction->particular_id == '2'){
 
-									$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+									$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('profile_status','Approved')->first();
 									if(!$userDataresult){
 										\App\Helpers\commonHelper::sendMailMadeByTheSponsorIsApproved($transaction->order_id);
 										\App\Helpers\commonHelper::sendSponsorPaymentApprovedToUserMail($transaction->user_id,$transaction->amount,'full',$transaction->order_id);
@@ -1911,7 +1933,147 @@ class PreLoginController extends Controller {
 									}
 									
 	
+								}elseif($transaction->particular_id == '3'){
+									$user = \App\Models\User::where('id',$transaction->user_id)->first();
+									if($user){
+
+										if($user->language == 'sp'){
+
+											$subject = 'Su donación al GProCongress II ha sido aprobada.';
+											$msg = "<p>Estimado ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Gracias por su generosa donación al GProCongress II.  Se ha recibido de su parte la cantidad de $".$transaction->amount."</p>
+											<p>Este es su recibo por su contribución benéfica, el cual puede resultar necesario para obtener la deducción total del impuesto federal sobre los ingresos que permite la ley.  No se ha proporcionado ningún bien o servicio a cambio de esta contribución.</p>
+											<p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+											<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+											<p>Cordialmente,</p><p>Equipo GProCongress II</p>";
+
+										}elseif($user->language == 'fr'){
+										
+											$subject = 'Votre don à GProCongress II a été approuvé.';
+											$msg = "<p>Cher ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Nous vous remercions pour le généreux don que vous avez fait à GProCongress II.  Un paiement a été reçu de votre part pour un montant de $".$transaction->amount."</p>
+											<p>Il s'agit de votre reçu pour votre contribution de bienfaisance, qui peut être nécessaire pour obtenir la déduction d'impôt fédéral complète permise par la loi.  Aucun bien ou service n'a été fourni en échange de cette contribution.</p>
+											<p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet email.</p>
+											<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+											<p>Chaleureusement,</p><p>L'équipe GProCongress II</p>";
+
+										}elseif($user->language == 'pt'){
+										
+											$subject = 'A sua doação para o GProCongress II foi aprovada.';
+											$msg = "<p>Caro ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Obrigado pela generosa doação que efetuou para o GProCongress II.  Foi recebido um pagamento da sua parte no valor de  $".$transaction->amount."</p>
+											<p>Este é o recibo da sua contribuição generosa e, que pode ser necessário para obter a dedução total do imposto de renda federal permitida por lei.  Não foram fornecidos bens ou serviços em troca desta contribuição.</p>
+											<p>Se tiver alguma dúvida sobre o seu donativo, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+											<p>Ore conosco para multiplicar a quantidade e a qualidade dos treinadores de pastores.</p>
+											<p>Cordialmente,</p><p>Equipe do GProCongress II</p>";
+
+										}else{
+										
+											$subject = 'Your donation to GProCongress II has been approved.';
+											$msg = "<p>Dear ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Thank you for the generous donation you have made to GProCongress II.  A payment has been received from you in the amount of $".$transaction->amount."</p>
+											<p>This is your receipt for your charitable contribution, which may be necessary to obtain the full federal income tax deduction allowed by law.  No goods or services were provided in exchange for this contribution.</p>
+											<p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+											<p>Pray with us toward multiplying the quantity and quality of pastor-trainers</p>
+											<p>Warmly,</p><p>GProCongress II Team</p>";
+							
+										}
+
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your donation to GProCongress II has been approved.');
+
+									}
+
 								}else{
+
+									$user = \App\Models\User::where('id',$transaction->user_id)->first();
+									$user->stage = 3;
+									$user->status_change_at = date('Y-m-d H:i:s');
+									$user->save();
+				
+									$resultSpouse = \App\Models\User::where('added_as','Spouse')->where('parent_id',$user->id)->first();
+								
+									if($resultSpouse){
+				
+										$resultSpouse->stage = 3;
+										$resultSpouse->payment_status = '2';
+										$resultSpouse->status_change_at = date('Y-m-d H:i:s');
+										$resultSpouse->save();
+
+										if($resultSpouse->language == 'sp'){
+
+											$url = '<a href="'.url('pricing').'" target="_blank">enlace</a>';
+											$subject = '¡GProCongress II! Inicie sesión y envíe la información de su pasaporte.';
+											$msg = "<p>Estimado ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											<p>Ahora que ha pagado por completo, ha llegado a la siguiente etapa. Por favor, diríjase a nuestra nuestra pagina web e inicie sesión en su cuenta.  Usted ahora puede enviar la información de su pasaporte y verificar si necesitará  visa para ingresar a Panamá este noviembre.</p>
+											<p>Para aquellos que NO necesitan una visa para ingresar a Panamá, pueden enviar la información de su vuelo, una vez que lo hayan reservado. Para que su entrada sea sin problemas y con autorización de inmigración a Panamá, RREACH enviará su nombre y detalles de pasaporte a las Autoridades de Inmigratorias de Panamá.</p>
+											<p>Para aquellos que SÍ necesitan visa para entrar a Panamá, les solicitamos que primero obtengan la visa aprobada y/o sellada <b>antes de reservar su vuelo.</b></p>
+											<p style='background-color:yellow; display: inline;'><b>RREACH está tratando de facilitar el proceso de visa; sin embargo, la decisión final corresponde a las Autoridades de Inmigración de Panamá.</b></p><p></p>
+											<p style='background-color:yellow; display: inline;'><b>RREACH no es responsable de:</b></p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	La aprobación de la Visa.</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Pasajes aéreos de ida y vuelta a/desde Ciudad de Panamá; ni</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Los gastos de pasaporte y/o visa en los que incurra en relación con su asistencia al Congreso.</p>
+											<p>Si tiene alguna pregunta o si necesita hablar con alguno de los miemebros de nuestro equipo, solo responda a este correo.  </p>
+											<p>Juntos busquemos al Señor en pro del GProCongress II, para fortalecer y multiplicar los capacitadores de pastores, para décadas de impacto en el evangelio</p>
+											<p>Atentamente,</p><p>Equipo de GProCongress II</p>";
+					
+										}elseif($resultSpouse->language == 'fr'){
+										
+											$subject = "GProCongress II ! Veuillez vous connecter et soumettre les informations de votre passeport";
+											$msg = "<p>Cher  ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											<p>Maintenant que vous avez payé l'intégralité de votre inscription, vous avez atteint l'étape suivante ! Veuillez vous rendre sur notre site web et vous connecter à votre compte. À Info voyage, vous pouvez soumettre les informations de votre passeport et vérifier si vous avez besoin d'un visa pour entrer au Panama en novembre.</p>
+											<p>Pour ceux qui n'ont pas besoin de visa pour entrer au Panama, vous pouvez également soumettre les informations relatives à votre vol, une fois que vous avez réservé votre vol. Pour que votre entrée au Panama se fasse en douceur, RREACH soumettra votre nom et les détails de votre passeport aux autorités panaméennes de l'immigration.</p>
+											<p>Pour ceux qui ont besoin d'un visa pour entrer au Panama, nous vous demandons de faire approuver et/ou <b>timbrer le visa avant de réserver votre vol</b></p>
+											<p style='background-color:yellow; display: inline;'><b>RREACH s'efforce de faciliter le processus d'obtention du visa ; cependant, la décision finale revient aux autorités panaméennes de l'immigration.</b></p><p></p>
+											<p style='background-color:yellow; display: inline;'><b>RREACH n'est pas responsable de:</b></p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	L'approbation du visa.</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Le billet d’avion aller-retour vers/depuis Panama City ; ou</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Tous les frais de passeport et/ou de visa que vous encourez en lien avec votre venue au Congrès</p>
+											<p>Si vous avez des questions, ou si vous souhaitez parler à l'un des membres de notre équipe, veuillez répondre à cet email.</p>
+											<p>Ensemble, cherchons le Seigneur pour GProCongress II, afin de renforcer et de multiplier les pasteurs formateurs pour des décennies d'impact sur l'Evangile.</p>
+											<p>Cordialement,</p><p>L'équipe de GProCongress II</p>";
+					
+										}elseif($resultSpouse->language == 'pt'){
+										
+											$subject = 'GProCongresso II! Faça o login e envie as informações do seu passaporte';
+											$msg = "<p>Caro ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											<p>Agora que sua taxa de inscrição para o Congresso  foi paga integralmente, você atingiu o próxima etapa! Por favor, vá ao nosso site e faça o login na sua conta. No Informações de viagem, você pode enviar as informações do seu passaporte e verificar se precisará de visto para entrar no Panamá em Novembro.</p>
+											<p>Para aqueles que NÃO precisam de visto para entrar no Panamá, você também pode enviar suas informações de voo, depois de reservar seu voo. Para sua entrada tranquila e autorização de imigração no Panamá, a  RREACH enviará seu nome e detalhes do passaporte às autoridades de imigração panamenhas.</p>
+											<p>Para aqueles que precisam de visto para entrar no Panamá, solicitamos que você primeiro obtenha o visto aprovado e/ou carimbado antes de reservar seu voo.</p>
+											<p style='background-color:yellow; display: inline;'><b>A RREACH está tentando facilitar o processo de visto; no entanto, a decisão final cabe às Autoridades de Imigração do Panamá.</b></p><p></p>
+											<p style='background-color:yellow; display: inline;'><b>a RREACH não é responsável:</b></p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Pela aprovação do visto</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Bilhete de ida e volta para e da Cidade de Panamá, ou</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Qualquer taxa de visto ou de emissão de passaporte ligada a viagem para o Congresso</p>
+											<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+											<p>Juntos, vamos buscar o Senhor para o GProCongresso II, para fortalecer e multiplicar os pastores treinadores por décadas de impacto no evangelho.</p>
+											<p>Calorosamente,</p><p>Equipe GProCongresso II</p>";
+					
+										}else{
+										
+											$url = '<a href="'.url('pricing').'" target="_blank">link</a>';
+											$subject = 'GProCongress II registration!  Please login and submit your passport information.';
+											$msg = "<p>Dear ".$resultSpouse->name.' '.$resultSpouse->last_name." ,&nbsp;</p><p><br></p>
+											<p>Now that you are paid in full, you have reached Next stage!  Please go to our website and login to your account.  Under Travel info, you can submit your passport information, and check to see if you will need a visa to enter Panama this November. </p>
+											<p>For those who DO NOT need a visa to enter Panama, you can also submit your flight information, once you have booked your flight. For your smooth entry and immigration clearance into Panama, RREACH will submit your name and passport details to the Panamanian Immigration Authorities.</p>
+											<p>For those who DO need a visa to enter Panama, we request you first get the visa approved and/or stamped <b>before you book your flight.</b></p>
+											<p style='background-color:yellow; display: inline;'><b>RREACH is trying to facilitate the visa process. The final decision is up to the Panamanian Immigration Authorities.</b></p><p></p>
+											<p style='background-color:yellow; display: inline;'><b>RREACH is not responsible for:</b></p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;1. 	Any visa approval;</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;2. 	Round-trip airfare to/from Panama City; or</p><br>
+											<p style='background-color:yellow; display: inline;'>&nbsp;&nbsp;&nbsp;3. 	Any passport and/or visa fees you incur in connection with coming to the Congress.</p>
+											<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+											<p>Together let's seek the Lord for GProCongress II, to strengthen and multiply pastor trainers for decades of gospel impact.</p>
+											<p>Warmly,</p><p>GProCongress II Team</p>";
+							
+										}
+					
+										\App\Helpers\commonHelper::userMailTrigger($resultSpouse->id,$msg,$subject);
+										\App\Helpers\commonHelper::emailSendToUser($resultSpouse->email, $subject, $msg);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($resultSpouse->id,$subject,$msg,'GProCongress II registration!  Please login and submit your passport information.');
+
+									}
 
 									if($user->language == 'sp'){
 				
@@ -2097,6 +2259,60 @@ class PreLoginController extends Controller {
 									}
 								
 
+								}elseif($transaction->particular_id == '3'){
+
+									// donation 
+									$user = \App\Models\User::where('id',$transaction->user_id)->first();
+									if($user){
+
+										if($user->language == 'sp'){
+
+											$subject = 'Su donación al GProCongress II ha sido aprobada.';
+											$msg = "<p>Estimado ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Gracias por su generosa donación al GProCongress II.  Se ha recibido de su parte la cantidad de $".$transaction->amount."</p>
+											<p>Este es su recibo por su contribución benéfica, el cual puede resultar necesario para obtener la deducción total del impuesto federal sobre los ingresos que permite la ley.  No se ha proporcionado ningún bien o servicio a cambio de esta contribución.</p>
+											<p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+											<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+											<p>Cordialmente,</p><p>Equipo GProCongress II</p>";
+
+										}elseif($user->language == 'fr'){
+										
+											$subject = 'Votre don à GProCongress II a été approuvé.';
+											$msg = "<p>Cher ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Nous vous remercions pour le généreux don que vous avez fait à GProCongress II.  Un paiement a été reçu de votre part pour un montant de $".$transaction->amount."</p>
+											<p>Il s'agit de votre reçu pour votre contribution de bienfaisance, qui peut être nécessaire pour obtenir la déduction d'impôt fédéral complète permise par la loi.  Aucun bien ou service n'a été fourni en échange de cette contribution.</p>
+											<p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet email.</p>
+											<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+											<p>Chaleureusement,</p><p>L'équipe GProCongress II</p>";
+
+										}elseif($user->language == 'pt'){
+										
+											$subject = 'A sua doação para o GProCongress II foi aprovada.';
+											$msg = "<p>Caro ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Obrigado pela generosa doação que efetuou para o GProCongress II.  Foi recebido um pagamento da sua parte no valor de  $".$transaction->amount."</p>
+											<p>Este é o recibo da sua contribuição generosa e, que pode ser necessário para obter a dedução total do imposto de renda federal permitida por lei.  Não foram fornecidos bens ou serviços em troca desta contribuição.</p>
+											<p>Se tiver alguma dúvida sobre o seu donativo, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+											<p>Ore conosco para multiplicar a quantidade e a qualidade dos treinadores de pastores.</p>
+											<p>Cordialmente,</p><p>Equipe do GProCongress II</p>";
+
+										}else{
+										
+											$subject = 'Your donation to GProCongress II has been approved.';
+											$msg = "<p>Dear ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+											<p>Thank you for the generous donation you have made to GProCongress II.  A payment has been received from you in the amount of $".$transaction->amount."</p>
+											<p>This is your receipt for your charitable contribution, which may be necessary to obtain the full federal income tax deduction allowed by law.  No goods or services were provided in exchange for this contribution.</p>
+											<p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+											<p>Pray with us toward multiplying the quantity and quality of pastor-trainers</p>
+											<p>Warmly,</p><p>GProCongress II Team</p>";
+							
+										}
+
+										\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+										\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your donation to GProCongress II has been approved.');
+
+									}
+
 								}else{
 									
 									if($user->language == 'sp'){
@@ -2155,7 +2371,7 @@ class PreLoginController extends Controller {
 							$transaction->razorpay_order_id=$event->id;
 							$transaction->description=$event->last_payment_error->message;
 							$transaction->payment_status='7';
-							$transaction->status='0';
+							$transaction->status='2';
 							$transaction->save();
 
 							$Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
@@ -2249,6 +2465,57 @@ class PreLoginController extends Controller {
 								}
 								
 
+							}elseif($transaction->particular_id == '3'){
+								$user = \App\Models\User::where('id',$transaction->user_id)->first();
+								if($user){
+
+									if($user->language == 'sp'){
+
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Su donación ha sido rechazada.';
+										$msg = "<p>Estimado ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Gracias por su generosa donación al GProCongress II.  Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace:".$website."</p>
+										<p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+										<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+										<p>Cordialmente,</p><p>Equipo GProCongress II</p>";
+
+									}elseif($user->language == 'fr'){
+									
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Votre don a été refusé.';
+										$msg = "<p>Cher ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Nous vous remercions pour le généreux don que vous faites à GProCongress II.  Malheureusement, nous n'avons pas pu traiter votre paiement.  Veuillez réessayer votre paiement en allant sur ce lien:".$website."</p>
+										<p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet email.</p>
+										<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+										<p>Chaleureusement,</p><p>L'équipe GProCongress II</p>";
+
+									}elseif($user->language == 'pt'){
+									
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Sua doação foi recusada.';
+										$msg = "<p>Caro ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Obrigado pela generosa doação que você está fazendo ao GProCongress II. Infelizmente, não foi possível processar seu pagamento. Tente efetuar o pagamento novamente, acessando este link:".$website."</p>
+										<p>Se tiver alguma dúvida sobre o seu donativo, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+										<p>Ore conosco para multiplicar a quantidade e a qualidade dos treinadores de pastores.</p>
+										<p>Cordialmente,</p><p>Equipe do GProCongress II</p>";
+
+									}else{
+									
+										$website = '<a href="'.url('payent').'">LINK</a>';
+										$subject = 'Your donation has been declined.';
+										$msg = "<p>Dear ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+										<p>Thank you for the generous donation you are making to GProCongress II.  Unfortunately, we could not process your payment.  Please try your payment again, by going to this link:".$website."</p>
+										<p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+										<p>Pray with us toward multiplying the quantity and quality of pastor-trainers.</p>
+										<p>Warmly,</p><p>GProCongress II Team</p>";
+						
+									}
+
+									\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+									\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+									\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your donation has been declined.');
+
+								}
 							}else{
 
 								if($user->language == 'sp'){
@@ -2291,7 +2558,7 @@ class PreLoginController extends Controller {
 						$transaction->razorpay_order_id=$value->order_id;
 						$transaction->description='Payment failed';
 						$transaction->payment_status='7';
-						$transaction->status='0';
+						$transaction->status='2';
 						$transaction->save();
 
 						$Wallet = \App\Models\Wallet::where('transaction_id',$transaction->id)->first();
@@ -2384,6 +2651,57 @@ class PreLoginController extends Controller {
 							}
 							
 
+						}elseif($transaction->particular_id == '3'){
+							$user = \App\Models\User::where('id',$transaction->user_id)->first();
+							if($user){
+
+								if($user->language == 'sp'){
+
+									$website = '<a href="'.url('payent').'">LINK</a>';
+									$subject = 'Su donación ha sido rechazada.';
+									$msg = "<p>Estimado ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+									<p>Gracias por su generosa donación al GProCongress II.  Lamentablemente, no hemos podido procesar su pago.  Por favor, inténtelo de nuevo a través de este enlace:".$website."</p>
+									<p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+									<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+									<p>Cordialmente,</p><p>Equipo GProCongress II</p>";
+
+								}elseif($user->language == 'fr'){
+								
+									$website = '<a href="'.url('payent').'">LINK</a>';
+									$subject = 'Votre don a été refusé.';
+									$msg = "<p>Cher ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+									<p>Nous vous remercions pour le généreux don que vous faites à GProCongress II.  Malheureusement, nous n'avons pas pu traiter votre paiement.  Veuillez réessayer votre paiement en allant sur ce lien:".$website."</p>
+									<p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet email.</p>
+									<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
+									<p>Chaleureusement,</p><p>L'équipe GProCongress II</p>";
+
+								}elseif($user->language == 'pt'){
+								
+									$website = '<a href="'.url('payent').'">LINK</a>';
+									$subject = 'Sua doação foi recusada.';
+									$msg = "<p>Caro ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+									<p>Obrigado pela generosa doação que você está fazendo ao GProCongress II. Infelizmente, não foi possível processar seu pagamento. Tente efetuar o pagamento novamente, acessando este link:".$website."</p>
+									<p>Se tiver alguma dúvida sobre o seu donativo, ou se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
+									<p>Ore conosco para multiplicar a quantidade e a qualidade dos treinadores de pastores.</p>
+									<p>Cordialmente,</p><p>Equipe do GProCongress II</p>";
+
+								}else{
+								
+									$website = '<a href="'.url('payent').'">LINK</a>';
+									$subject = 'Your donation has been declined.';
+									$msg = "<p>Dear ".$user->name.' '.$user->last_name.",&nbsp;</p><p><br></p>
+									<p>Thank you for the generous donation you are making to GProCongress II.  Unfortunately, we could not process your payment.  Please try your payment again, by going to this link:".$website."</p>
+									<p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+									<p>Pray with us toward multiplying the quantity and quality of pastor-trainers.</p>
+									<p>Warmly,</p><p>GProCongress II Team</p>";
+					
+								}
+
+								\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+								\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+								\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Your donation has been declined.');
+
+							} 
 						}else{
 
 							if($user->language == 'sp'){
@@ -7674,9 +7992,6 @@ class PreLoginController extends Controller {
 
     }
 
-	
-
-
 	public function PassportInfoEmailSendToVisaNeededKenya(Request $request){
 		
 		try {
@@ -8032,6 +8347,22 @@ class PreLoginController extends Controller {
 		}
 
     }
+
+	public function databaseBackup(){
+
+		$files = Storage::files('GPro');
+
+		if (!empty($files)) {
+			Storage::delete($files);
+			
+		} else {
+			echo 'No files found in the specified directory.';
+		}
+		
+		Artisan::call('backup:run --only-db');
+
+		echo "Done"; die;
+	}
 
 
 

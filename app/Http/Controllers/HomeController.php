@@ -538,11 +538,53 @@ class HomeController extends Controller
 
                 $order_id = $data['order_id'];
 
-                $subject='User Donate Amount Submitted Payment';
-                $msg='User Donate Amount Submitted Payment';
-                 
-                \App\Helpers\commonHelper::sendNotificationAndUserHistory($request->post('user_id'),$subject,$msg,'User Donate Amount Submitted Payment');
-                
+                $user = \App\Models\User::where('id',$request->post('user_id'))->first();
+                if($user){
+
+                    if($user->language == 'sp'){
+
+                        $subject = 'Gracias por su donación al GProCongress II.';
+                        $msg = "<p>Estimado ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+                        <p>Gracias por su generosa donación al GProCongress II.  Su donación está siendo procesada por nuestro equipo.  Le notificaremos una vez que ésta haya sido aprobada.</p>
+                        <p>Si tiene alguna pregunta sobre su donación, o si necesita hablar con uno de los miembros de nuestro equipo, simplemente responda a este correo electrónico.</p>
+                        <p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
+                        <p>Cordialmente,</p><p>Equipo GProCongress II</p>";
+
+                    }elseif($user->language == 'fr'){
+                    
+                        $subject = 'Nous vous remercions pour votre don à GProCongress II.';
+                        $msg = "<p>Cher ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+                        <p>Nous vous remercions pour le généreux don que vous avez fait à GProCongress II.  Votre don est en cours de traitement par notre équipe.  Nous vous informerons lorsque votre don aura été approuvé.</p>
+                        <p>Si vous avez des questions concernant votre don, ou si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet email.</p>
+                        <p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs. </p>
+                        <p>Chaleureusement,</p><p>L'équipe GProCongress II</p>";
+
+                    }elseif($user->language == 'pt'){
+                    
+                        $subject = 'Obrigado pela sua doação ao GProCongresso II.';
+                        $msg = "<p>Caro ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+                        <p>Obrigado pela generosa doação que você concedeu ao GProCongresso II. Sua doação está sendo processada por nossa equipe. Avisaremos quando sua doação for aprovada.</p>
+                        <p>Se você tiver alguma dúvida sobre sua doação ou se precisar falar com um dos membros de nossa equipe, basta responder a este e-mail.</p>
+                        <p>Ore conosco para multiplicar a quantidade e qualidade dos treinadores de pastores. </p>
+                        <p>Calorosamente,</p><p>Equipe do GProCongresso II</p>";
+
+                    }else{
+                    
+                        $subject = 'Thanks for your donation to GProCongress II.';
+                        $msg = "<p>Dear ".$user->name.' '.$user->last_name." ,&nbsp;</p><p><br></p>
+                        <p>Thank you for the generous donation you have made to GProCongress II.  Your donation is being processed by our team.  We will notify you when your donation has been approved.</p>
+                        <p>If you have any questions about your donation, or if you need to speak to one of our team members, simply reply to this email.</p>
+                        <p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>
+                        <p>Warmly,</p><p>GProCongress II Team</p>";
+        
+                    }
+
+                    \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+                    \App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+                    \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Thanks for your donation to GProCongress II.');
+
+                }
+
                 return response(array('message'=>'','urlPage'=>true,'url'=>url('stripe/'.$order_id)), 200);
 	
 			} catch (\Exception $e) {

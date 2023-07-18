@@ -250,6 +250,20 @@
                         
                     </ul>
                 </div>
+
+                @php 
+                    if($resultData['result']['language'] == 'sp'){
+                        $language = 'Spanish';
+                    }elseif($resultData['result']['language'] == 'fr'){
+                        $language = 'French';
+                    }elseif($resultData['result']['language'] == 'pt'){
+                        $language = 'Portuguese';
+                    }else{
+                        $language = 'English';
+                    }
+
+                @endphp
+                
                 @if($passportInfo['admin_status'] =='Approved')
                     <div class="detail-wrap">
                         
@@ -268,11 +282,11 @@
                                                 <h4>@lang('web/wizard.Document_required_for_Visa')  </h4><br>
                                                 
                                                 <div class="step-next" style="display: flex;">
-                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification') </a>
+                                                    <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification') </a>
                                                     @if($passportInfo['financial_letter'])
-                                                        <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version')</a>
+                                                        <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version') {{$language}}</a>
                                                     @endif
-                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version')</a>
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version')</a>
 
                                                 </div>
                                             </div>
@@ -284,15 +298,17 @@
                                         <div class="row">
                                         <h4>@lang('web/wizard.Document_required_for_Visa') </h4><br><br>
                                             <div class="step-next">
-                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification')</a> 
+                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification')</a> 
                                                 @if($passportInfo['financial_letter'])
-                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version')</a>
+
+                                                    
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version') {{$language}}</a>
                                                 @endif
-                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version')</a>
+                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version')</a>
                                             </div>
                                             <div class="alphabet-vd-box mt-2">
-                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
-                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
+                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
+                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
                                             </div>
                                         </div>
                                         <br><br>
@@ -337,15 +353,15 @@
                                         <div class="row">
                                             <h4>@lang('web/wizard.Document_required_for_Visa') </h4><br><br>
                                             <div class="step-next">
-                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification') </a> 
+                                                <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification') </a> 
                                                 @if($passportInfo['financial_letter'])
-                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version')</a>
+                                                    <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version') {{$language}}</a>
                                                 @endif
-                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version') </a>
+                                                <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version') </a>
                                             </div>
                                             <div class="alphabet-vd-box mt-2">
-                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
-                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
+                                                <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
+                                                <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
                                             </div>
                                         </div>
                                         <br>
