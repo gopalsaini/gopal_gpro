@@ -739,25 +739,36 @@ class commonHelper{
 	public static function emailSendToUser($to, $subject, $msg, $template = false, $result = false, $pdf = false, $attachment = false){
 		// $to = 'deepeshjangid.img@gmail.com';
 
-		if (!$template) {
-			$template = 'mail';
-		}
-		if (!$result) {
-			$result = array();
-		}
+		$user = \App\Models\User::where('email',$to)->first();
+		if($user){
 
-		\Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject, $pdf,$attachment) {
-			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-			$message->subject($subject);
-			$message->to($to);
-			if ($pdf) {
-				$message->attachData($pdf->output(), "travel_info.pdf");
+			if($user->designation_id != '3' && $user->designation_id != '4' && $user->designation_id != '6'){
+
+				if (!$template) {
+					$template = 'mail';
+				}
+				if (!$result) {
+					$result = array();
+				}
+		
+				\Mail::send('email_templates.'.$template, compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject, $pdf,$attachment) {
+					$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+					$message->subject($subject);
+					$message->to($to);
+					if ($pdf) {
+						$message->attachData($pdf->output(), "travel_info.pdf");
+					}
+					
+					if ($attachment) {
+						$message->attach($attachment);
+					}
+				});
+
 			}
+
 			
-			if ($attachment) {
-				$message->attach($attachment);
-			}
-		});
+		}
+		
 	}
 
 
@@ -1779,6 +1790,7 @@ class commonHelper{
 				'Request_Status' => "Estado de la Solicitud",
 				'Request_Approved_successfully' => "Solicitud Aprobada con éxito",
 				'Request_Declined_successfully' => "Solicitud Rechazada correctamente",
+				'Spouse_email_ID_message' => "Spouse email ID is not a candidate email ID, Please connect admin if you are spouse of this email ID.",
 				
 			);
 
@@ -2002,6 +2014,8 @@ class commonHelper{
 				'Request_Status' => "Statut de la demande",
 				'Request_Approved_successfully' => "Demande approuvée avec succès",
 				'Request_Declined_successfully' => "Demande rejetée avec succès",
+				'Spouse_email_ID_message' => "Spouse email ID is not a candidate email ID, Please connect admin if you are spouse of this email ID.",
+				
 				
 			);
 
@@ -2222,6 +2236,8 @@ class commonHelper{
 				'Request_Status' => "Estado do Pedido",
 				'Request_Approved_successfully' => "Pedido Aprovado com sucesso",
 				'Request_Declined_successfully' => "Pedido Recusado com sucesso",
+				'Spouse_email_ID_message' => "Spouse email ID is not a candidate email ID, Please connect admin if you are spouse of this email ID.",
+				
 				
 			);
 
@@ -2439,6 +2455,8 @@ class commonHelper{
 				'Request_Status' => "Request Status",
 				'Request_Approved_successfully' => "Request Approved successfully",
 				'Request_Declined_successfully' => "Request Declined successfully",
+				'Spouse_email_ID_message' => "Spouse email ID is not a candidate email ID, Please connect admin if you are spouse of this email ID.",
+				
 				
 	
 				
@@ -2451,12 +2469,18 @@ class commonHelper{
 
 	public static function userMailTrigger($userId,$message,$subject){
 		
-		$data=new \App\Models\UserMailTrigger();
-		$data->user_id = $userId;
-		$data->subject = $subject;
-		$data->message = $message;
-		$data->save();
+		$user = \App\Models\User::where('id',$userId)->first();
+		if($user){
 
+			if($user->designation_id != '3' && $user->designation_id != '4' && $user->designation_id != '6'){
+
+				$data=new \App\Models\UserMailTrigger();
+				$data->user_id = $userId;
+				$data->subject = $subject;
+				$data->message = $message;
+				$data->save();
+			}
+		}
 		
 	}
 
@@ -3868,6 +3892,26 @@ class commonHelper{
 		$passportApprove->save();
 		
 		
+	}
+
+	public static function countClubFloorRoom(){
+		
+		$result = \App\Models\User::where('room','Upgrade to Club Floor')->count();
+		if($result == env('ClubFloorRoom')){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public static function countSuiteRoom(){
+		
+		$result = \App\Models\User::where('room','Upgrade to Suite')->count();
+		if($result == env('SuiteRoom')){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 

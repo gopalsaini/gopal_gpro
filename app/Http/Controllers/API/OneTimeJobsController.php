@@ -170,7 +170,7 @@ class OneTimeJobsController extends Controller {
 
 					if($user->language != 'sp'){
 
-						$userDataSet.='Email:'.$user->email.', Language:'.$user->language.', Stage:'.$user->stage.'<br>';
+						
 
 						$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
 
@@ -195,37 +195,39 @@ class OneTimeJobsController extends Controller {
 							$amount = $user->amount;
 						}
 
-						$passportApproveArray= [
-							'salutation'=>$passportInfo->salutation,
-							'name'=>$passportInfo->name,
-							'passport_no'=>$passportInfo->passport_no,
-							'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportInfo->country_id),
-							'rajiv_richard'=>$rajiv_richard,
-							'amount'=>$amount,
-							'lang'=>$user->language,
-						];
+						$userDataSet.='Email:'.$user->email.', Language:'.$user->language.', Stage:'.$user->stage.', Amount : '.$amount.'<br>';
 
-						if($user->language == 'sp'){
-							$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
-						}elseif($user->language == 'fr'){
-							$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
-						}elseif($user->language == 'pt'){
-							$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
-						}else{
-							$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
-						}
+						// $passportApproveArray= [
+						// 	'salutation'=>$passportInfo->salutation,
+						// 	'name'=>$passportInfo->name,
+						// 	'passport_no'=>$passportInfo->passport_no,
+						// 	'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportInfo->country_id),
+						// 	'rajiv_richard'=>$rajiv_richard,
+						// 	'amount'=>$amount,
+						// 	'lang'=>$user->language,
+						// ];
 
-						$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
-						$pdf->setPaper('L');
-						$pdf->output();
+						// if($user->language == 'sp'){
+						// 	$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+						// }elseif($user->language == 'fr'){
+						// 	$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+						// }elseif($user->language == 'pt'){
+						// 	$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+						// }else{
+						// 	$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+						// }
+
+						// $pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+						// $pdf->setPaper('L');
+						// $pdf->output();
 						
-						$path = public_path('uploads/file/');
+						// $path = public_path('uploads/file/');
 						
-						$pdf->save($path . '/' . $fileEnNameFl);
+						// $pdf->save($path . '/' . $fileEnNameFl);
 
-						$passportInfo->financial_letter=$fileEnNameFl;
+						// $passportInfo->financial_letter=$fileEnNameFl;
 
-						$passportInfo->save();
+						// $passportInfo->save();
 
 					}
 					
@@ -239,7 +241,7 @@ class OneTimeJobsController extends Controller {
 
 	public function acceptanceEmailSend(){ 
 
-		$results = [203];
+		$results = [719];
 
 		$userDataSet = '';
 		
@@ -254,51 +256,51 @@ class OneTimeJobsController extends Controller {
 				$to = $user->email; $fileEnName = '';
 				$rajiv_richard = '<img src="'.asset('images/rajiv_richard.png').'">';
 
-				if($user->language == 'sp'){
+				// if($user->language == 'sp'){
 
-					$subject = '¡Buenas noticias! No necesita una visa para GProCongress II';
-					$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>Según la información que envió, no necesita una visa para ingresar a Panamá en noviembre para el GProCongress II. Adjuntamos los siguientes documentos que deberá entregar a los funcionarios panameños a su llegada:</p>
-					<p>&nbsp;&nbsp;&nbsp;1.	Carta de aceptación: confirmando la invitación de RREACH para que asista al Congreso; y</p>
-					<p>&nbsp;&nbsp;&nbsp;2.	Carta de certificación bancaria: que confirma la intención y la capacidad de RREACH de pagar todos sus costos de viaje mientras usted esté en Panamá.</p>
-					<p>También se pueden encontrar copias de estos dos documentos en su perfil de GProCongress en nuestro sitio web.</p>
-					<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p>
-					<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+				// 	$subject = '¡Buenas noticias! No necesita una visa para GProCongress II';
+				// 	$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				// 	<p>Según la información que envió, no necesita una visa para ingresar a Panamá en noviembre para el GProCongress II. Adjuntamos los siguientes documentos que deberá entregar a los funcionarios panameños a su llegada:</p>
+				// 	<p>&nbsp;&nbsp;&nbsp;1.	Carta de aceptación: confirmando la invitación de RREACH para que asista al Congreso; y</p>
+				// 	<p>&nbsp;&nbsp;&nbsp;2.	Carta de certificación bancaria: que confirma la intención y la capacidad de RREACH de pagar todos sus costos de viaje mientras usted esté en Panamá.</p>
+				// 	<p>También se pueden encontrar copias de estos dos documentos en su perfil de GProCongress en nuestro sitio web.</p>
+				// 	<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p>
+				// 	<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
 
-				}elseif($user->language == 'fr'){
+				// }elseif($user->language == 'fr'){
 				
-					$subject = 'Bonne nouvelle!  Vous n’avez pas besoin de visa pour GProCongress II';
-					$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>D’après les informations que vous avez fournies, vous n’avez pas besoin de visa pour vous rendre au Panama en novembre pour le GProCongress II.  Nous avons joint les documents suivants, que vous devrez remettre aux autorités panaméennes à votre arrivée :</p>
-					<p>&nbsp;&nbsp;&nbsp;1.	Lettre d’acceptation – confirmant l’invitation de RREACH à participer au Congrès ;et</p>
-					<p>&nbsp;&nbsp;&nbsp;2.	Lettre de certification bancaire - confirmant l’intention et la capacité de RREACH  à payer tous vos frais de séjour au Panama.</p>
-					<p>Des copies de ces deux documents peuvent également être trouvées dans votre profil GProCongress sur notre site Web.</p>
-					<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.</p>
-					<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+				// 	$subject = 'Bonne nouvelle!  Vous n’avez pas besoin de visa pour GProCongress II';
+				// 	$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				// 	<p>D’après les informations que vous avez fournies, vous n’avez pas besoin de visa pour vous rendre au Panama en novembre pour le GProCongress II.  Nous avons joint les documents suivants, que vous devrez remettre aux autorités panaméennes à votre arrivée :</p>
+				// 	<p>&nbsp;&nbsp;&nbsp;1.	Lettre d’acceptation – confirmant l’invitation de RREACH à participer au Congrès ;et</p>
+				// 	<p>&nbsp;&nbsp;&nbsp;2.	Lettre de certification bancaire - confirmant l’intention et la capacité de RREACH  à payer tous vos frais de séjour au Panama.</p>
+				// 	<p>Des copies de ces deux documents peuvent également être trouvées dans votre profil GProCongress sur notre site Web.</p>
+				// 	<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.</p>
+				// 	<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
 
-				}elseif($user->language == 'pt'){
+				// }elseif($user->language == 'pt'){
 				
-					$subject = 'Boas notícias! Você não precisa de visto para o GProCongresso II';
-					$msg = '<p>Caro  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>Com base nas informações que você enviou, você não precisa de visto para ir ao Panamá em novembro para o GProCongresso II. Anexamos os seguintes documentos, que você deverá entregar aos funcionários panamenhos na sua chegada: </p>
-					<p>&nbsp;&nbsp;&nbsp;1.	Carta de aceitação – confirmando o convite da RREACH para você participar do Congresso; e</p>
-					<p>&nbsp;&nbsp;&nbsp;2.	Carta de Certificação Bancária - confirmando a intenção e a capacidade da RREACH de pagar todos os seus custos de viagem enquanto estiver no Panamá.</p>
-					<p>Cópias desses dois documentos também podem ser encontradas em seu perfil do GProCongresso em nosso site.</p>
-					<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
-					<p>Calorosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
+				// 	$subject = 'Boas notícias! Você não precisa de visto para o GProCongresso II';
+				// 	$msg = '<p>Caro  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				// 	<p>Com base nas informações que você enviou, você não precisa de visto para ir ao Panamá em novembro para o GProCongresso II. Anexamos os seguintes documentos, que você deverá entregar aos funcionários panamenhos na sua chegada: </p>
+				// 	<p>&nbsp;&nbsp;&nbsp;1.	Carta de aceitação – confirmando o convite da RREACH para você participar do Congresso; e</p>
+				// 	<p>&nbsp;&nbsp;&nbsp;2.	Carta de Certificação Bancária - confirmando a intenção e a capacidade da RREACH de pagar todos os seus custos de viagem enquanto estiver no Panamá.</p>
+				// 	<p>Cópias desses dois documentos também podem ser encontradas em seu perfil do GProCongresso em nosso site.</p>
+				// 	<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.</p>
+				// 	<p>Calorosamente,</p><p>Equipe GProCongresso II&nbsp; &nbsp;&nbsp;</p>';
 
-				}else{
+				// }else{
 				
-					$subject = 'Good news!  You don’t need a visa for GProCongress II.';
-					$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
-					<p>Based on the information you submitted, you do not need a visa to go to Panama in November for GProCongress II.  We have attached the following documents, which you will need to give to the Panamanian officials upon your arrival: </p>
-					<p>&nbsp;&nbsp;&nbsp;1.	Acceptance letter – confirming RREACH’s invitation to you to attend the Congress; and  </p>
-					<p>&nbsp;&nbsp;&nbsp;2.	Bank Certification letter – confirming RREACH’s intention and ability to pay for all your travel costs while in Panama.</p>
-					<p>Copies of these two documents can also be found in your GProCongress profile on our website.</p>
-					<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
-					<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+				// 	$subject = 'Good news!  You don’t need a visa for GProCongress II.';
+				// 	$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+				// 	<p>Based on the information you submitted, you do not need a visa to go to Panama in November for GProCongress II.  We have attached the following documents, which you will need to give to the Panamanian officials upon your arrival: </p>
+				// 	<p>&nbsp;&nbsp;&nbsp;1.	Acceptance letter – confirming RREACH’s invitation to you to attend the Congress; and  </p>
+				// 	<p>&nbsp;&nbsp;&nbsp;2.	Bank Certification letter – confirming RREACH’s intention and ability to pay for all your travel costs while in Panama.</p>
+				// 	<p>Copies of these two documents can also be found in your GProCongress profile on our website.</p>
+				// 	<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.</p>
+				// 	<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
 									
-				}
+				// }
 
 				$Spouse = \App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->where('spouse_confirm_status','Approve')->first(); 
 
@@ -320,76 +322,80 @@ class OneTimeJobsController extends Controller {
 
 					$amount = $user->amount;
 				}
-				$passportApproveArray= [
-					'salutation'=>$passportApprove->salutation,
-					'name'=>$passportApprove->name,
-					'passport_no'=>$passportApprove->passport_no,
-					'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
-					'rajiv_richard'=>$rajiv_richard,
-					'amount'=>$amount,
-					'lang'=>$user->language,
-				];
 
-				if($user->language == 'sp'){
-					$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
-				}elseif($user->language == 'fr'){
-					$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
-				}elseif($user->language == 'pt'){
-					$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
-				}else{
-					$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
-				}
+				$userDataSet.= 'id : '.$id.', amount : '.$amount."<br>";
 
-				if($user->language != 'sp'){
+				// $passportApproveArray= [
+				// 	'salutation'=>$passportApprove->salutation ?? '',
+				// 	'name'=>$passportApprove->name,
+				// 	'passport_no'=>$passportApprove->passport_no,
+				// 	'citizenship'=>\App\Helpers\commonHelper::getCountryNameById($passportApprove->country_id),
+				// 	'rajiv_richard'=>$rajiv_richard,
+				// 	'amount'=>$amount,
+				// 	'lang'=>$user->language,
+				// ];
 
-					$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
-					$pdf->setPaper('L');
-					$pdf->output();
+				// if($user->language == 'sp'){
+				// 	$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+				// }elseif($user->language == 'fr'){
+				// 	$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+				// }elseif($user->language == 'pt'){
+				// 	$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+				// }else{
+				// 	$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+				// }
+
+				// if($user->language != 'sp'){
+
+				// 	$pdf = \PDF::loadView('email_templates.financial_letter',$passportApproveArray);
+				// 	$pdf->setPaper('L');
+				// 	$pdf->output();
 					
-					$path = public_path('uploads/file/');
+				// 	$path = public_path('uploads/file/');
 					
-					$pdf->save($path . '/' . $fileEnNameFl);
+				// 	$pdf->save($path . '/' . $fileEnNameFl);
 
-					$passportApprove->financial_letter=$fileEnNameFl;
+				// 	// $passportApprove->financial_letter=$fileEnNameFl;
 
-					$fileEnName = public_path('uploads/file/'.$fileEnNameFl);
+				// 	$fileEnName = public_path('uploads/file/'.$fileEnNameFl);
 
-				}
+				// }
 				
-				$pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
-				$pdf->setPaper('L');
-				$pdf->output();
-				$fileName = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
-				$path = public_path('uploads/file/');
+				// $pdf = \PDF::loadView('email_templates.financial_sp_letter',$passportApproveArray);
+				// $pdf->setPaper('L');
+				// $pdf->output();
+				// $fileName = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+				// $path = public_path('uploads/file/');
 				
-				$pdf->save($path . '/' . $fileName);
+				// $pdf->save($path . '/' . $fileName);
 
-				$passportApprove->financial_spanish_letter=$fileName;
-				$passportApprove->status='Approve';
+				// $passportApprove->financial_spanish_letter=$fileName;
+				// $passportApprove->status='Approve';
 				
-				$passportApprove->save();
+				// $passportApprove->save();
+				
 
-				$files = [
-					public_path('uploads/file/'.$fileName),
-				];
+				// $files = [
+				// 	public_path('uploads/file/'.$fileName),
+				// ];
 
-				\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files,$fileEnName) {
-					$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
-					$message->subject($subject);
-					$message->to($to);
+				// \Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files,$fileEnName) {
+				// 	$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
+				// 	$message->subject($subject);
+				// 	$message->to($to);
 					
-					foreach ($files as $file){
-						$message->attach($file);
-					}
+				// 	foreach ($files as $file){
+				// 		$message->attach($file);
+				// 	}
 
-					if($fileEnName){
-						$message->attach($fileEnName);
-					}
+				// 	if($fileEnName){
+				// 		$message->attach($fileEnName);
+				// 	}
 					
-				});
+				// });
 				
-				\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
-				\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Update Acceptance Letter');
+				// \App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+				// \App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$msg,'Update Acceptance Letter');
 				
 				
 			}

@@ -425,6 +425,7 @@
                     </div>
                 @endif
 
+                @if($resultData['result']['designation_id'] == '2')
                     <div class="table-responsive">
                         <div class="" style="margin: 10px;">
                             <h4>@lang('web/app.Room_Partner_Preference_Requests')</h4>
@@ -471,7 +472,7 @@
                             </table>
                         </div>
                     </div>
-                
+                @endif
                 <div id="TravelInfoShowDiv" style="display:@if($TravelInfoShow) block @else none @endif">
                     @if($passportInfo['status']=='Approve')
                         <h4 class="inner-head section-gap">@lang('web/wizard.travel_Info')</h4>
@@ -728,10 +729,10 @@
                                         
                                     <div class="step-form">
                                         
-                                        <h5>@lang('web/home.Traveling_Country')</h5>
+                                        <h5>@lang('web/home.Traveling_Country') <span style="color:red">*</span></h5>
                                         <div class="col-lg-6 " style="padding-bottom: 21px;">
                                             <br>
-                                            <select class="form-control test" name="citizenship"> 
+                                            <select class="form-control test" name="citizenship" > 
                                                 <option value="" >--@lang('web/ministry-details.select')--</option>
                                                 @php 
                                                     $country=\App\Models\Country::select('id','name','phonecode')->get();
@@ -885,7 +886,7 @@
 
                                                 
                                            
-                                                @if($resultData['result']['added_as'] == null && !$SpouseInfoResult && $resultData['result']['share_your_room_with'] == null && ($resultData['result']['room'] == 'Sharing' || $resultData['result']['room'] == 'Twin Sharing Deluxe Room')) 
+                                                @if($resultData['result']['added_as'] == null && !$SpouseInfoResult && $resultData['result']['share_your_room_with'] == null && $resultData['result']['designation_id'] == '2' && ($resultData['result']['room'] == 'Sharing' || $resultData['result']['room'] == 'Twin Sharing Deluxe Room')) 
                                                         <h5>@lang('web/home.like_to_share_your_room')</h5>
                                                         <div class="arrival" style="padding-top:15px">
                                                             <p class="note">@lang('web/home.travel_note')</p>

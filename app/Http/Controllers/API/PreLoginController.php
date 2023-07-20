@@ -1075,7 +1075,7 @@ class PreLoginController extends Controller {
 							$Wallet->status = 'Success';
 							$Wallet->save();
 
-							$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('order_id',$transaction->order_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
+							$userDataresult = \App\Models\Exhibitors::where('user_id',$transaction->user_id)->where('profile_status','Approved')->where('payment_status','Pending')->first();
 									
 							if(!$userDataresult){
 
@@ -1160,6 +1160,40 @@ class PreLoginController extends Controller {
 										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,'Payment for your room upgrade at GProCongress II has been received','Payment for your room upgrade at GProCongress II has been received','Payment for your room upgrade at GProCongress II has been received');
 
 										
+									}
+
+									if(\App\Helpers\commonHelper::countClubFloorRoom()){
+
+										$roomupgrade = \App\Models\RoomUpgrade::where('category','Upgrade to Club Floor')->where('status','Pending')->get();
+										
+										if(!empty($roomupgrade) && count($roomupgrade)>0){
+
+											foreach($roomupgrade as $roomVal){
+
+												$roomUp = \App\Models\RoomUpgrade::where('id',$roomVal->id)->first();
+												$roomUp->status ='Declined';
+												$roomUp->token =null;
+												$roomUp->save();
+											}
+											
+										}
+									}
+
+									if(\App\Helpers\commonHelper::countSuiteRoom()){
+
+										$roomupgrade = \App\Models\RoomUpgrade::where('category','Upgrade to Suite')->where('status','Pending')->get();
+										
+										if(!empty($roomupgrade) && count($roomupgrade)>0){
+
+											foreach($roomupgrade as $roomVal){
+
+												$roomUp = \App\Models\RoomUpgrade::where('id',$roomVal->id)->first();
+												$roomUp->status ='Declined';
+												$roomUp->token =null;
+												$roomUp->save();
+											}
+											
+										}
 									}
 									
 
@@ -1931,6 +1965,42 @@ class PreLoginController extends Controller {
 										\App\Helpers\commonHelper::sendNotificationAndUserHistory($user->id,$subject,$subject,$subject);
 	
 									}
+
+									
+									if(\App\Helpers\commonHelper::countClubFloorRoom()){
+
+										$roomupgrade = \App\Models\RoomUpgrade::where('category','Upgrade to Club Floor')->where('status','Pending')->get();
+										
+										if(!empty($roomupgrade) && count($roomupgrade)>0){
+
+											foreach($roomupgrade as $roomVal){
+
+												$roomUp = \App\Models\RoomUpgrade::where('id',$roomVal->id)->first();
+												$roomUp->status ='Declined';
+												$roomUp->token =null;
+												$roomUp->save();
+											}
+											
+										}
+									}
+
+									if(\App\Helpers\commonHelper::countSuiteRoom()){
+
+										$roomupgrade = \App\Models\RoomUpgrade::where('category','Upgrade to Suite')->where('status','Pending')->get();
+										
+										if(!empty($roomupgrade) && count($roomupgrade)>0){
+
+											foreach($roomupgrade as $roomVal){
+
+												$roomUp = \App\Models\RoomUpgrade::where('id',$roomVal->id)->first();
+												$roomUp->status ='Declined';
+												$roomUp->token =null;
+												$roomUp->save();
+											}
+											
+										}
+									}
+									
 									
 	
 								}elseif($transaction->particular_id == '3'){

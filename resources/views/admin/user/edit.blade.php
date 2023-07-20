@@ -110,14 +110,7 @@
 															<input class="form-control" type="text" name="last_name" placeholder="Enter last name" value="@if($result){{ $result->last_name }}@endif" >
 														</div>
 													</div>
-													@if($result && $result->designation_id == '3' || $result->designation_id == '4'  || $result->designation_id == '6')
-														<div class="col-sm-4">
-															<div class="form-group">
-																<label for="input">Password:</label>
-																<input class="form-control" type="text" name="password" placeholder="Enter Password" value="" >
-															</div>
-														</div>
-													@endif
+													
 												</div>
 
 												
@@ -658,11 +651,11 @@
                                     <div class="col-lg-4 mt-2">
                                         <input type="text" autocomplete="off" placeholder="@lang('web/app.enter') @lang('web/app.last_name')" class="form-control" required name="last_name" value="@if($SpouseDetails) {{$SpouseDetails->last_name}} @endif">
                                     </div>
-                                    <div class="col-lg-6 mt-2">
+                                    <div class="col-lg-4 mt-2">
                                         <label for="">@lang('web/profile-details.email') <span>*</span> </label>
                                         <input type="email" autocomplete="off" placeholder="@lang('web/app.enter_email')" class="form-control" required name="email" value="@if($SpouseDetails) {{$SpouseDetails->email}} @endif">
                                     </div>
-                                    <div class="col-lg-6 mt-2">
+                                    <div class="col-lg-4 mt-2">
                                         <label for="">@lang('web/profile-details.gender') <span>*</span></label>
                                         <div class="common-select">
                                             <select id="name" placeholder="- @lang('web/ministry-details.select') -" class="form-control" required name="gender">
@@ -672,6 +665,12 @@
                                             </select>
                                         </div>
                                     </div>
+									<div class="col-lg-4 mt-2">
+										<div class="form-group">		
+											<label for="input">Password:</label>
+											<input class="form-control" type="text" id="spouse_password" required name="spouse_password" placeholder="Enter Password" value="" >					
+										</div>
+									</div>
                                     <div class="col-lg-6 mt-2">
                                         <label for="">@lang('web/profile-details.dob') <span>*</span></label>
                                         <input type="date" placeholder="DD/ MM/ YYYY" class="form-control" required name="date_of_birth" value="@if($SpouseDetails){{$SpouseDetails->dob}}@endif">

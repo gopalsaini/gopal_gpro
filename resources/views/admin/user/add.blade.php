@@ -30,7 +30,7 @@
 							<div class="col-sm-6">
 								<div class="form-group">
 									<label for="input">@lang('admin.designation'): <span style="color:red">*</span></label>
-									<select name="designation_id" class="form-control" required>
+									<select name="designation_id" class="form-control userType" required>
 										<option value="">Select</option>
 
 										@if (count($designations) > 0)
@@ -65,6 +65,12 @@
 										<option  value="fr">French</option>
 										<option  value="pt">Portuguese</option>
 									</select>
+								</div>
+							</div>
+							<div class="col-lg-6 passwordShow" style="display:none">
+								<div class="form-group">		
+									<label for="input">Password:</label>
+									<input class="form-control" type="text" id="password" name="password" placeholder="Enter Password" value="" >					
 								</div>
 							</div>
 							<div class="btn-showcase text-center">
@@ -164,6 +170,20 @@
 			processData: false,
 		});
 
-		});
+	});
+
+	$('.userType').on('change', function() {
+        if(this.value == '3' || this.value == '4' || this.value == '6'){
+
+            $(".passwordShow").css('display','block');
+            $("#password").attr('required',true);
+            $("#password").val(null);
+        }else{
+
+            $(".passwordShow").css('display','none');
+            $("#password").attr('required',false);
+			$("#password").val(null);
+        }
+    }); 
 </script>
 @endpush

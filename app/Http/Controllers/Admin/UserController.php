@@ -113,10 +113,6 @@ class UserController extends Controller {
 					$data->contact_state_name = $request->post('contact_state_name');
 					$data->contact_address = $request->post('contact_address');
 					
-					if($request->post('password') != ''){
-						$data->system_generated_password = '0';
-						$data->password = \Hash::make($request->post('password'));
-					}
 
 					if($data && $data->designation_id != '4' && $data->designation_id != '6'){
 
@@ -327,17 +323,7 @@ class UserController extends Controller {
 
 							if($existSpouse){
 
-								$password = \Str::random(10);
-
-								$existSpouse->profile_status = 'Approved';
-								$existSpouse->profile_update = '1';
-								$existSpouse->amount = '0.00';
-								$existSpouse->stage = '3';
-								$existSpouse->payment_status = '2';
-								$existSpouse->room = 'Sharing';
-								$existSpouse->password = \Hash::make($password);
-								$existSpouse->save();
-								
+							
 								$name = $existSpouse->name.' '.$existSpouse->last_name;
 								$to = $existSpouse->email;
 		
@@ -495,8 +481,20 @@ class UserController extends Controller {
 					$data->reg_type = 'email';
 					$data->designation_id = $request->post('designation_id');
 					$data->parent_id = null;
-					$data->password = \Hash::make($password);
+
+					if($request->post('password') != ''){
+
+						$data->system_generated_password = '0';
+						$data->password = \Hash::make($request->post('password'));
+					}else{
+						$data->password = \Hash::make($password);
+					}
+
 					$data->language = $request->post('language');
+
+					if($request->post('designation_id') == '3' || $request->post('designation_id') == '4' || $request->post('designation_id') == '6'){
+						$data->otp_verified = 'Yes';
+					}
 
 				}
 
@@ -9030,6 +9028,11 @@ class UserController extends Controller {
 								return response(array("error"=>true, "message"=>$message), 403);
 							}
 
+							if($users && $users->designation_id != $usersMain->designation_id){
+								
+								return response(array("error"=>true, "message"=>'Spouse not added as Staff/Vip/Volunteer'), 403);
+							}
+
 							$date1 = $dob;
 							$date2 = date('Y-m-d');
 							$diff = abs(strtotime($date2) - strtotime($date1));
@@ -9044,14 +9047,7 @@ class UserController extends Controller {
 
 								$usersParent = \App\Models\User::where('id', $request->post('user_id'))->first();
 								
-								$token = md5(rand(1111,4444));
-								$reminderData = [
-									'type'=>'spouse_reminder',
-									'date'=>date('Y-m-d'),
-									'reminder'=>'0',
-		
-								];
-								
+
 								$users = array(
 									'parent_id'=> $request->post('user_id'),
 									'added_as'=>'Spouse',
@@ -9065,10 +9061,17 @@ class UserController extends Controller {
 									'reg_type'=>'email',
 									'marital_status'=>'Married',
 									'designation_id'=>$usersParent->designation_id,
-									'otp_verified'=>'No',
-									'system_generated_password'=>'1',
-									'spouse_confirm_token'=>$token,
-									'spouse_confirm_reminder_email'=>json_encode($reminderData),
+									'language'=>$usersParent->language,
+									'otp_verified'=>'Yes',
+									'system_generated_password'=>'0',
+									'password'=>\Hash::make($request->post('spouse_password')),
+									'spouse_confirm_token'=>null,
+									'spouse_confirm_status'=>'Approve',
+									'room'=>'Sharing',
+									'profile_status'=>'Approved',
+									'profile_update'=>'1',
+									'stage'=>'3',
+									'spouse_confirm_reminder_email'=>null,
 									'contact_address'=>$request->post('contact_address'),
 									'contact_country_id'=>$request->post('spouse_contact_country_id'),
 									'contact_state_id'=>$request->post('spouse_contact_state_id'),
