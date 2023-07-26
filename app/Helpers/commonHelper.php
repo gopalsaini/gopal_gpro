@@ -3094,21 +3094,28 @@ class commonHelper{
 
         $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
 
-		if($Spouse){
+		if($passportApprove->amount > 0){
 
-			$amount = $user->amount+$Spouse->amount;
-
-			$amount = $amount/2;
-
-		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
-
-			$amount = $user->amount+$SpouseParent->amount;
-			
-			$amount = $amount/2;
+			$amount = $passportApprove->amount;
 
 		}else{
 
-			$amount = $user->amount;
+			if($Spouse){
+
+				$amount = $user->amount+$Spouse->amount;
+	
+				$amount = $amount/2;
+	
+			}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+	
+				$amount = $user->amount+$SpouseParent->amount;
+				
+				$amount = $amount/2;
+	
+			}else{
+	
+				$amount = $user->amount;
+			}
 		}
 
 		$passportApproveArray= [
@@ -3123,12 +3130,16 @@ class commonHelper{
 
 		if($user->language == 'sp'){
 			$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = '';
 		}elseif($user->language == 'fr'){
 			$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_French.docx';
 		}elseif($user->language == 'pt'){
 			$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_PT.docx';
 		}else{
 			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER	 = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_English.docx';
 		}
 
 		if($user->language != 'sp'){
@@ -3160,12 +3171,19 @@ class commonHelper{
 		
 		$passportApprove->save();
 
+		$ORGANIZATIONAL_LETTER_Spanish = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_Spanish.docx';
+
 		$files = [
             public_path('uploads/file/'.$fileName),
+            public_path('uploads/file/'.$ORGANIZATIONAL_LETTER_Spanish),
             public_path('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
             public_path('uploads/file/Visa_Request_Form.pdf'),
             public_path('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
         ];
+
+		if($ORGANIZATIONAL_LETTER){
+			$files[] = public_path('uploads/file/'.$ORGANIZATIONAL_LETTER);
+		}
 
 		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files,$fileEnName) {
 			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
@@ -3261,22 +3279,30 @@ class commonHelper{
 
         $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
 
-		if($Spouse){
+		if($passportApprove->amount > 0){
 
-			$amount = $user->amount+$Spouse->amount;
-
-			$amount = $amount/2;
-
-		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
-
-			$amount = $user->amount+$SpouseParent->amount;
-			
-			$amount = $amount/2;
+			$amount = $passportApprove->amount;
 
 		}else{
 
-			$amount = $user->amount;
+			if($Spouse){
+
+				$amount = $user->amount+$Spouse->amount;
+	
+				$amount = $amount/2;
+	
+			}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+	
+				$amount = $user->amount+$SpouseParent->amount;
+				
+				$amount = $amount/2;
+	
+			}else{
+	
+				$amount = $user->amount;
+			}
 		}
+		
 
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
@@ -3290,12 +3316,16 @@ class commonHelper{
 
 		if($user->language == 'sp'){
 			$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = '';
 		}elseif($user->language == 'fr'){
 			$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_French.docx';
 		}elseif($user->language == 'pt'){
 			$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_PT.docx';
 		}else{
 			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER	 = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_English.docx';
 		}
 
 		if($user->language != 'sp'){
@@ -3327,12 +3357,20 @@ class commonHelper{
 		
 		$passportApprove->save();
 
+		$ORGANIZATIONAL_LETTER_Spanish = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_Spanish.docx';
+
 		$files = [
             public_path('uploads/file/'.$fileName),
+            public_path('uploads/file/'.$ORGANIZATIONAL_LETTER_Spanish),
             public_path('uploads/file/BANK_LETTER_CERTIFICATION.pdf'),
             public_path('uploads/file/Visa_Request_Form.pdf'),
             public_path('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf'),
         ];
+
+		if($ORGANIZATIONAL_LETTER){
+			$files[] = public_path('uploads/file/'.$ORGANIZATIONAL_LETTER);
+		}
+		
 
 		\Mail::send('email_templates.mail', compact('to', 'subject', 'msg'), function($message) use ($to, $subject,$files,$fileEnName) {
 			$message->from(env('MAIL_FROM_ADDRESS'), env('MAIL_FROM_NAME'));
@@ -3409,26 +3447,35 @@ class commonHelper{
 							
 		}
 
+
 		$Spouse = \App\Models\User::where('parent_id',$user_id)->where('added_as','Spouse')->where('spouse_confirm_status','Approve')->first(); 
 
         $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
 
-		if($Spouse){
+		if($passportApprove->amount > 0){
 
-			$amount = $user->amount+$Spouse->amount;
-
-			$amount = $amount/2;
-
-		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
-
-			$amount = $user->amount+$SpouseParent->amount;
-			
-			$amount = $amount/2;
+			$amount = $passportApprove->amount;
 
 		}else{
 
-			$amount = $user->amount;
+			if($Spouse){
+
+				$amount = $user->amount+$Spouse->amount;
+	
+				$amount = $amount/2;
+	
+			}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+	
+				$amount = $user->amount+$SpouseParent->amount;
+				
+				$amount = $amount/2;
+	
+			}else{
+	
+				$amount = $user->amount;
+			}
 		}
+		
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
 			'name'=>$passportApprove->name,
@@ -3822,22 +3869,31 @@ class commonHelper{
 
         $SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
 
-		if($Spouse){
+		
+		if($passportApprove->amount > 0){
 
-			$amount = $user->amount+$Spouse->amount;
-
-			$amount = $amount/2;
-
-		}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
-
-			$amount = $user->amount+$SpouseParent->amount;
-			
-			$amount = $amount/2;
+			$amount = $passportApprove->amount;
 
 		}else{
 
-			$amount = $user->amount;
+			if($Spouse){
+
+				$amount = $user->amount+$Spouse->amount;
+	
+				$amount = $amount/2;
+	
+			}elseif($SpouseParent && $user->added_as == 'Spouse' && $user->spouse_confirm_status == 'Approve'){
+	
+				$amount = $user->amount+$SpouseParent->amount;
+				
+				$amount = $amount/2;
+	
+			}else{
+	
+				$amount = $user->amount;
+			}
 		}
+		
 
 		$passportApproveArray= [
 			'salutation'=>$passportApprove->salutation,
@@ -3851,12 +3907,16 @@ class commonHelper{
 
 		if($user->language == 'sp'){
 			$fileEnNameFl = 'acceptance_letter_spanish'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_Spanish.docx';
 		}elseif($user->language == 'fr'){
 			$fileEnNameFl = 'acceptance_letter_french'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_French.docx';
 		}elseif($user->language == 'pt'){
 			$fileEnNameFl = 'acceptance_letter_portuguese'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_PT.docx';
 		}else{
 			$fileEnNameFl = 'acceptance_letter_english'.strtotime("now").rand(0000000,9999999).'.pdf';
+			$ORGANIZATIONAL_LETTER	 = 'ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_English.docx';
 		}
 
 

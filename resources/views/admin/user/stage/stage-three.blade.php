@@ -705,11 +705,11 @@
 </div>
 
 <div class="modal fade" id="passportApproveRestricted" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Need to provide Name and email ID of the person who will coordinate with Candidate </h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="useRestrictedHeadingData"> </h5>
+         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
             <form id="passportRestrictedSubmit" action="{{ url('admin/user/passport/approve/restricted') }}" class="row" enctype="multipart/form-data">
@@ -721,6 +721,36 @@
                         <input type="hidden" id="Upload" name="type" value="2">
                         <div class="col-lg-12" >
                             <div class="info">
+                                <div class="RestrictedAmountShow" style="display:none">
+                                    
+                                    <div class="m-5">
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Full Name</th>
+                                                    <th scope="col">Current Stage</th>
+                                                    <th scope="col">Registration Amount </th>
+                                                    <th scope="col">Accepted Amount </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="userRestrictedTable">
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <br>
+                                    
+                                    <div class="information-box">
+                                        
+                                        <h6>Enter Amount <span style="color:red">*</span></h6>
+                                        <p><input type="tel" name="amount" id="" class="form-control" /></p>
+
+                                    </div>
+                                </div>
+                                <br>
+                                <h5 class="modal-title" id="exampleModalLabel">Need to provide Name and email ID of the person who will coordinate with Candidate </h5>
+       
+                                <br>
                                 <div class="information-box">
                                     <input type="hidden" name="id" id="passportId" cols="10" rows="5" class="form-control" required />
 
@@ -921,6 +951,66 @@
         </div>
     </div>
 </div>
+
+
+<div class="modal fade bd-example-modal-lg" id="passportApproveAmount" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="useHeadingData"> </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+            <form id="passportAmountChangeSubmit" action="{{ url('admin/user/passport/approve/amount-change') }}" class="row" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="id" required value="" placeholder="id" id="passportIdValue" class="mt-2" >
+
+                <div class="information-wrapper">
+                    <div class="row">
+                        <div class="col-lg-12" >
+                            <div class="info">
+                                <div class="m-5">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Full Name</th>
+                                                <th scope="col">Current Stage</th>
+                                                <th scope="col">Registration Amount </th>
+                                                <th scope="col">Accepted Amount </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="userTable">
+                                            
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <br><br>
+                                <div class="information-box">
+                                    
+                                    <h6>Enter Amount <span style="color:red">*</span></h6>
+                                    <p><input type="tel" name="amount" id="" class="form-control" required /></p>
+
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="col-lg-12">
+                    <div class="step-next">
+                        <button type="submit" class="btn btn-sm btn-primary m-1 text-white" form="passportAmountChangeSubmit">Submit</button>
+                    </div>
+                </div>
+            </form>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+
 
 @endsection
 
@@ -1677,6 +1767,25 @@
         
             $('#passportApproveRestricted').modal('show');
             $('#passportId').val($(this).data('id'));
+            if($(this).data('show') == '1'){
+
+                $('.RestrictedAmountShow').show();
+                $('#useRestrictedHeadingData').html($(this).data('heading'));
+                $('.userRestrictedTable').html($(this).data('usertable'));
+            }else{
+                $('.RestrictedAmountShow').hide();
+                $('#useRestrictedHeadingData').html('');
+            }
+            
+        });
+
+        $('.passportApproveAmount').click(function() {
+
+        
+            $('#passportApproveAmount').modal('show');
+            $('#passportIdValue').val($(this).data('id'));
+            $('#useHeadingData').html($(this).data('heading'));
+            $('.userTable').html($(this).data('usertable'));
         });
 
         $('.sendEmail').click(function() {
@@ -1987,7 +2096,48 @@
                 $('#preloader').css('display', 'none');
                 sweetAlertMsg('success', data.message);
                 $('#passportApproveRestricted').modal('hide');
+                $('#passportApproveAmount').modal('hide');
                 $('#passportId').val(null);
+                window.location.reload();
+            },
+            cache: false,
+            contentType: false,
+            processData: false,
+        });
+    });
+
+    $("form#passportAmountChangeSubmit").submit(function(e) {
+        e.preventDefault();
+        
+        var formId = $(this).attr('id');
+        var formAction = $(this).attr('action');
+
+        $.ajax({
+            url: formAction,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: new FormData(this),
+            dataType: 'json',
+            type: 'post',
+            beforeSend: function() {
+                $('#preloader').css('display', 'block');
+            },
+            error: function(xhr, textStatus) {
+
+                if (xhr && xhr.responseJSON.message) {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.responseJSON.message);
+                } else {
+                    sweetAlertMsg('error', xhr.status + ': ' + xhr.statusText);
+                }
+                $('#preloader').css('display', 'none');
+            },
+            success: function(data) {
+
+                $('#preloader').css('display', 'none');
+                sweetAlertMsg('success', data.message);
+                $('#passportApproveAmount').modal('hide');
+                $('#passportIdValue').val(null);
                 window.location.reload();
             },
             cache: false,

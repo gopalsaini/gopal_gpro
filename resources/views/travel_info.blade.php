@@ -254,12 +254,16 @@
                 @php 
                     if($resultData['result']['language'] == 'sp'){
                         $language = 'Spanish';
+                        $Organization = '';
                     }elseif($resultData['result']['language'] == 'fr'){
                         $language = 'French';
+                        $Organization = '<a href="'.asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_French.docx').'" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i>  Organizational Letter Immigration </a>';
                     }elseif($resultData['result']['language'] == 'pt'){
                         $language = 'Portuguese';
+                        $Organization = '<a href="'.asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_PT.docx').'" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration  </a>';
                     }else{
                         $language = 'English';
+                        $Organization = '<a href="'.asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_English.docx').'" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration  </a>';
                     }
 
                 @endphp
@@ -283,11 +287,11 @@
                                                 
                                                 <div class="step-next" style="display: flex;">
                                                     <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification') </a>
+                                                   
                                                     @if($passportInfo['financial_letter'])
                                                         <a href="{{ asset('uploads/file/'.$passportInfo['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_English_Version') {{$language}}</a>
                                                     @endif
                                                     <a href="{{ asset('uploads/file/'.$passportInfo['financial_spanish_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Acceptance_Letter_Spanish_Version')</a>
-
                                                 </div>
                                             </div>
                                         </div>
@@ -299,6 +303,7 @@
                                         <h4>@lang('web/wizard.Document_required_for_Visa') </h4><br><br>
                                             <div class="step-next">
                                                 <a href="{{ asset('uploads/file/BANK_LETTER_CERTIFICATION.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Bank_Letter_Certification')</a> 
+                                                
                                                 @if($passportInfo['financial_letter'])
 
                                                     
@@ -309,6 +314,9 @@
                                             <div class="alphabet-vd-box mt-2">
                                                 <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
                                                 <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
+                                                {!! $Organization !!}
+                                                <a href="{{asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_Spanish.docx')}}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration  Spanish</a>
+
                                             </div>
                                         </div>
                                         <br><br>
@@ -362,6 +370,9 @@
                                             <div class="alphabet-vd-box mt-2">
                                                 <a href="{{ asset('uploads/file/Visa_Request_Form.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Visa_Request_Form')</a>
                                                 <a href="{{ asset('uploads/file/DOCUMENTS_REQUIRED_FOR_VISA_PROCESSING.pdf') }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> @lang('web/wizard.Documents_Required_for_Visa_Processing')</a>
+                                                {!! $Organization !!}
+                                                <a href="{{asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_Spanish.docx')}}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration  Spanish</a>
+
                                             </div>
                                         </div>
                                         <br>
@@ -1009,8 +1020,6 @@
         </div>
     </div>
 
-    
-    
     <div class="login-modal" >
         <div class="modal fade" id="WhyVisaIsNotGranted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
             aria-hidden="true">

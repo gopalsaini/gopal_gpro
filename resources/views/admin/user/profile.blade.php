@@ -507,15 +507,22 @@
                                         
                                         <td colspan="15">
                                             @php 
+
+
                                                 if($query['language'] == 'sp'){
                                                     $language = 'Spanish';
+                                                    $Organization = '';
                                                 }elseif($query['language'] == 'fr'){
                                                     $language = 'French';
+                                                    $Organization = '<a href="'.asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_French.docx') .'" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration  </a>';
                                                 }elseif($query['language'] == 'pt'){
                                                     $language = 'Portuguese';
+                                                    $Organization = '<a href="'.asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_PT.docx') .'" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration  </a>';
                                                 }else{
                                                     $language = 'English';
+                                                    $Organization = '<a href="'.asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_English.docx') .'" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration  </a>';
                                                 }
+                                                
                                             @endphp
                                             <p><strong>Document Required for Visa/ Travel  :</strong></p>
                                             <br>
@@ -542,6 +549,9 @@
                                                         @if($query['financial_letter'])
                                                             <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter {{$language}}</a>
                                                         @endif
+                                                        {!! $Organization !!}
+                                                        <a href="{{asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_Spanish.docx')}}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration Spanish </a>
+
                                                     </div>
 
                                                 @elseif($query['visa_category'] == 'Restricted Country')
@@ -555,6 +565,9 @@
                                                         @if($query['financial_letter'])
                                                             <a href="{{ asset('uploads/file/'.$query['financial_letter']) }}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> Acceptance Letter {{$language}}</a>
                                                         @endif
+                                                        {!! $Organization !!}
+                                                        <a href="{{asset('uploads/file/ORGANIZATIONAL_LETTER_FOR_IMMIGRATION_Spanish.docx')}}" target="_blank" class="text-blue btn btn-primary" style="margin: 5px;"> <i class="fa fa-file" aria-hidden="true"></i> Organizational Letter Immigration Spanish </a>
+
                                                     </div>
                                                     
                                                     <p class="pt-5" style='background-color:yellow; display: inline;'>You will need to work with one of our team members to get your visa.  The person assigned to help you is <b >{{$query['admin_provide_name']}}</b>. His/her email address is <b >{{$query['admin_provide_email']}}</b>. Please contact them as soon as possible to begin working on your visa.</p>

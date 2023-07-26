@@ -222,6 +222,7 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('passport/approve/{id}', 'Admin\UserController@PassportInfoApprove')->name('approve');
 		Route::match(['get', 'post'], 'passport/decline', 'Admin\UserController@PassportInfoReject')->name('decline');
 		Route::match(['get', 'post'], 'passport/approve/restricted', 'Admin\UserController@PassportApproveRestricted')->name('approve.restricted');
+		Route::match(['get', 'post'], 'passport/approve/amount-change', 'Admin\UserController@PassportApproveAmountChange')->name('approve.amount-change');
 		Route::match(['get', 'post'], 'passport/all/{type}', 'Admin\UserController@passportListAll')->name('passport-all');
 		Route::match(['get', 'post'], 'passport/restricted-list/{type}', 'Admin\UserController@passportListRestrictedList')->name('passport-restricted-list');
 

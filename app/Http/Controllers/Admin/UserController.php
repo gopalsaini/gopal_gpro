@@ -6324,20 +6324,95 @@ class UserController extends Controller {
 
 				} else if ($data->admin_status === 'Pending') {
 
+					$amountOption = false;
+
+					$user = \App\Models\User::where('id',$data->user_id)->first();
+
+					$Spouse = \App\Models\User::where('parent_id',$user->id)->where('added_as','Spouse')->where('spouse_confirm_status','Approve')->first(); 
+
+					$SpouseParent = \App\Models\User::where('id',$user->parent_id)->first();
+
+					if($Spouse && ($user->stage != $Spouse->stage)){
+
+						$amountOption = true;
+						$userTable = '<tr>
+										<td>'.$user->name.' '.$user->last_name.'</td>
+										<td>'.$user->stage.'</td>
+										<td>'.$user->amount.'</td>
+										<td>'.\App\Helpers\commonHelper::getTotalAcceptedAmount($user->id, true).'</td>
+									</tr>
+									<tr>
+										<td>'.$Spouse->name.' '.$Spouse->last_name.'</td>
+										<td>'.$Spouse->stage.'</td>
+										<td>'.$Spouse->amount.'</td>
+										<td>'.\App\Helpers\commonHelper::getTotalAcceptedAmount($Spouse->id, true).'</td>
+									</tr>';
+
+					}elseif($SpouseParent && $user->added_as == 'Spouse' && ($user->stage != $SpouseParent->stage)){
+
+						$amountOption = true;
+						$userTable = '<tr>
+										<td>'.$user->name.' '.$user->last_name.'</td>
+										<td>'.$user->stage.'</td>
+										<td>'.$user->amount.'</td>
+										<td>'.\App\Helpers\commonHelper::getTotalAcceptedAmount($user->id, true).'</td>
+									</tr>
+									<tr>
+										<td>'.$SpouseParent->name.' '.$SpouseParent->last_name.'</td>
+										<td>'.$SpouseParent->stage.'</td>
+										<td>'.$SpouseParent->amount.'</td>
+										<td>'.\App\Helpers\commonHelper::getTotalAcceptedAmount($SpouseParent->id, true).'</td>
+									</tr>';
+
+					}else{
+
+						$amountOption = false;
+					}
+					
 					if(\Auth::user()->designation_id == '1' || \Auth::user()->designation_id == 16){
 
 						if($countryType  == 'restricted'){
 
-							return '<div style="display:flex">
-							<a data-id="'.$data->id.'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveRestricted">Approve</a>
-									<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
-								</div>';
+							if($amountOption){
+
+								$useHeading = 'To Approve '.$user->name.' '.$user->last_name.' Passport info, Please enter the Amount that needs to be reflected in Acceptance letter.';
+								
+								return '<div style="display:flex">
+										<a data-id="'.$data->id.'" data-usertable="'.$userTable.'" data-heading="'.$useHeading.'" data-show="1"  data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveRestricted">Approve</a>
+												<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
+											</div>';
+
+							
+							}else{
+
+								return '<div style="display:flex">
+										<a data-id="'.$data->id.'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveRestricted">Approve</a>
+												<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-danger m-1 passportReject">Decline</a>
+											</div>';
+							}
+
+							
 						}else{
 
-							return '<div style="display:flex">
-									<a href="'.url('admin/user/passport/approve/'.$data->id).'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 ">Approve</a>
-									<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
-								</div>';
+							if($amountOption){
+
+								$useHeading = 'To Approve '.$user->name.' '.$user->last_name.' Passport info, Please enter the Amount that needs to be reflected in Acceptance letter.';
+								
+
+								return '<div style="display:flex">
+											<a data-id="'.$data->id.'" data-type="1" data-usertable="'.$userTable.'" data-heading="'.$useHeading.'" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 passportApproveAmount">Approve</a>
+											<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
+										</div>';
+							
+							}else{
+
+								return '<div style="display:flex">
+											<a href="'.url('admin/user/passport/approve/'.$data->id).'" data-type="1" title="Passport Approve" class="btn btn-sm btn-outline-success m-1 ">Approve</a>
+											<a data-lang="'.$lang.'" data-id="'.$data->id.'" data-type="1" title="Passport Decline" class="btn btn-sm btn-outline-success m-1 passportReject">Decline</a>
+										</div>';
+							}
+
+							
 						}
 
 					}else{
@@ -7053,7 +7128,6 @@ class UserController extends Controller {
 			
 			$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
 
-
 			if($passportApprove->visa_category == 'No Visa Needed'){
 
 				\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');  // 2 letter acc, bank
@@ -7378,6 +7452,9 @@ class UserController extends Controller {
 				$passportApprove->admin_status='Approved';
 				$passportApprove->admin_provide_name=$request->post('name');
 				$passportApprove->admin_provide_email=$request->post('email');
+				if($request->post('amount')>0){
+					$passportApprove->amount=$request->post('amount');
+				}
 				
 				$passportApprove->save();
 
@@ -7386,6 +7463,111 @@ class UserController extends Controller {
 				\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$passportApprove->id);  // 4 letter
 				\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id, 'Passport Info Approved', 'Passport Info Approved', 'Passport Info Approved');
 		
+				return response(array('message'=>'Passport Information Approved successfully'),200);
+				
+			}catch (\Exception $e){
+			
+				return response(array("error"=>true, "message" => $e->getMessage()),200); 
+			
+			}
+		}
+	
+	}
+
+	public function PassportApproveAmountChange(Request $request){
+	
+		$rules = [
+			'id' => 'required',
+			'amount' => 'required',
+		];
+
+		$validator = \Validator::make($request->all(), $rules);
+            
+		if ($validator->fails()) {
+			$message = [];
+			$messages_l = json_decode(json_encode($validator->messages()), true);
+			foreach ($messages_l as $msg) {
+				$message= $msg[0];
+				break;
+			}
+		
+			return response(array('message'=>$message,"error" => true),403);
+		
+	
+		}else{
+
+			try{
+
+				$passportApprove= \App\Models\PassportInfo::where('id',$request->post('id'))->first();
+				
+				$passportApprove->admin_status='Approved';
+				$passportApprove->amount=$request->post('amount');
+				$passportApprove->save();
+	
+				$user= \App\Models\User::where('id',$passportApprove->user_id)->first();
+
+				$id = $request->post('id');
+
+				if($passportApprove->visa_category == 'No Visa Needed'){
+
+					\App\Helpers\commonHelper::sendFinancialLetterMailSend($passportApprove->user_id,$id,'financial');  // 2 letter acc, bank
+
+					if($user->language == 'sp'){
+
+						$subject = 'Por favor, envíe la información de su vuelo para GProCongress II.';
+						$msg = '<p>Estimado  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>Inicie sesión en su cuenta en el sitio web de GProCongress lo antes posible y responda las preguntas de la Etapa 3 para brindarnos la información de su vuelo para su viaje a Panamá.</p>
+						<p>Si tiene alguna pregunta o si necesita hablar con uno de los miembros de nuestro equipo, responda a este correo electrónico.</p><p><br></p>
+						<p>Atentamente,</p><p>Equipo GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+			
+					}elseif($user->language == 'fr'){
+					
+						$subject = 'Veuillez soumettre les informations relatives à votre vol pour le GProCongress II.';
+						$msg = '<p>Cher  '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>Veuillez vous connecter à votre compte sur le site Web du GProCongress dès que possible et répondre aux questions de l’étape 3 afin de nous fournir les informations relatives à votre vol pour votre voyage au Panama.</p>
+						<p>Si vous avez des questions ou si vous souhaitez parler à l’un des membres de notre équipe, veuillez répondre à cet e-mail.&nbsp;</p><p><br></p>
+						<p>Cordialement,</p><p>L’équipe GProCongress II&nbsp; &nbsp;&nbsp;</p>';
+			
+					}elseif($user->language == 'pt'){
+					
+						$subject = 'Por favor, envie suas informações de voo para o GProCongresso II.';
+						$msg = '<p>Caro '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>Faça login em sua conta no site do GProCongresso o mais rápido possível e responda às perguntas da Etapa 3, para nos fornecer suas informações de voo para sua viagem ao Panamá.</p>
+						<p>Se você tiver alguma dúvida ou precisar falar com um dos membros da nossa equipe, responda a este e-mail.&nbsp;</p><p><br></p>
+						<p>Calorosamente,</p><p>Equipe GProCongresso  II&nbsp; &nbsp;&nbsp;</p>';
+			
+					}else{
+					
+						$subject = 'Please submit your flight information for GProCongress II';
+						$msg = '<p>Dear '.$user->name.' '.$user->last_name.',&nbsp;</p><p><br></p>
+						<p>Please login to your account at the GProCongress website as soon as possible, and answer the questions under Stage 3, to give us your flight information for your trip to Panama.</p>
+						<p>If you have any questions, or if you need to speak with one of our team members, please reply to this email.&nbsp;</p><p><br></p>
+						<p>Warmly,</p><p>GProCongress II Team&nbsp; &nbsp;&nbsp;</p>';
+										
+					}
+
+					if($user){
+						$user->stage = '4';
+						$user->status_change_at = date('Y-m-d H:i:s');
+						$user->save();
+					}
+
+					\App\Helpers\commonHelper::emailSendToUser($user->email, $subject, $msg);
+
+					\App\Helpers\commonHelper::userMailTrigger($user->id,$msg,$subject);
+					\App\Helpers\commonHelper::sendNotificationAndUserHistory(\Auth::user()->id, $subject, $msg, 'Passport Info Approved');
+			
+
+				}elseif($passportApprove->visa_category == 'Visa Needed'){
+
+					\App\Helpers\commonHelper::sendSponsorshipLetterMailSend($passportApprove->user_id,$id);  // 4 letter
+
+				}elseif($passportApprove->visa_category == 'Restricted Country'){
+
+					\App\Helpers\commonHelper::sendSponsorshipLetterRestrictedMailSend($passportApprove->user_id,$id);  // 4 letter
+
+				}
+
 				return response(array('message'=>'Passport Information Approved successfully'),200);
 				
 			}catch (\Exception $e){
@@ -9778,11 +9960,23 @@ class UserController extends Controller {
 
 					$website = '<a href="'.url('room-change-payment/'.$token).'">Website</a>';
 
+					if($request->post('category') == 'Upgrade to Club Floor'){
+
+						$category = 'Club Floor';
+
+					}elseif($request->post('category') == 'Upgrade to Suite'){
+
+						$category = 'Suite';
+					}else{
+						
+						$category = $request->post('category');
+					}
+
 					if($result->language == 'sp'){
 
 						$subject = 'Le hemos mejorado la categoría de su habitación en el GProCongress II.';
 						$msg = '<p>Estimado '.$name.',</p>
-						<p>Gracias por su solicitud de cambio de categoría.  Su habitación ha sido mejorada a una '.$request->post('category').'. </p>
+						<p>Gracias por su solicitud de cambio de categoría.  Su habitación ha sido mejorada a una '.$category.'. </p>
 						<p>Si aún no lo ha hecho, le rogamos que pague la diferencia de precio por la mejora de su habitación en '.$website.'</p>
 						<p>Si necesita hablar con un miembro de nuestro equipo, simplemente responda a este correo electrónico.</p>
 						<p>Únase a nuestra oración en pos de multiplicar la cantidad y calidad de los capacitadores de pastores.</p>
@@ -9793,7 +9987,7 @@ class UserController extends Controller {
 
 						$subject = 'Votre chambre à GProCongress II a été surclassée.';
 						$msg = "<p>Cher ".$name.",</p>
-						<p>Nous vous remercions pour votre demande de surclassement. Votre chambre a été surclassée à ".$request->post('category').". </p>
+						<p>Nous vous remercions pour votre demande de surclassement. Votre chambre a été surclassée à ".$category.". </p>
 						<p>Si vous ne l'avez pas encore fait, veuillez payer la différence de prix pour votre surclassement en vous rendant sur ".$website."</p>
 						<p>Si vous souhaitez parler à l'un des membres de notre équipe, répondez simplement à cet e-mail.</p>
 						<p>Priez avec nous pour multiplier la quantité et la qualité des formateurs de pasteurs.</p>
@@ -9804,7 +9998,7 @@ class UserController extends Controller {
 
 						$subject = 'O seu quarto no GProCongress II foi melhorado.';
 						$msg = '<p>Caro '.$name.',</p>
-						<p>Obrigado pelo seu pedido de upgrade.  O seu quarto foi atualizado para um '.$request->post('category').'. </p>
+						<p>Obrigado pelo seu pedido de upgrade.  O seu quarto foi atualizado para um '.$category.'. </p>
 						<p>Se ainda não o fez, pague a diferença de preço para o seu upgrade de quarto indo ao '.$website.'</p>
 						<p>Se precisar de falar com um dos membros da nossa equipe, basta responder a este e-mail.</p>
 						<p>Ore conosco para multiplicar a quantidade e a qualidade dos Treinadores de Pastores.</p>
@@ -9815,7 +10009,7 @@ class UserController extends Controller {
 				
 						$subject = 'Your room at GProCongress II has been upgraded';
 						$msg = '<p>Dear '.$name.',</p>
-						<p>Thank you for your upgrade request.  Your room has been upgraded to a '.$request->post('category').'. </p>
+						<p>Thank you for your upgrade request.  Your room has been upgraded to a '.$category.'. </p>
 						<p>If you have not already done so, please pay the price difference for your room upgrade by going to '.$website.'</p>
 						<p>If you need to speak with one of our team members, simply reply to this email.</p>
 						<p>Pray with us toward multiplying the quantity and quality of pastor-trainers. </p>

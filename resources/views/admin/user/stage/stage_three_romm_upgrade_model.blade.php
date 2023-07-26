@@ -74,9 +74,9 @@
                                 @if(isset($keys[2]) && $keys[2] == 'Upgrade to Suite' && \App\Helpers\commonHelper::countSuiteRoom() == false)
                                     <option value="{{$keys[2]}}" data-amount="{{$category['Upgrade to Suite']}}">{{$keys[2]}}</option>
                                 @endif
-                                @if(isset($keys[3]) && $keys[3] == 'Day pass')
+                                <!-- @if(isset($keys[3]) && $keys[3] == 'Day pass')
                                     <option value="{{$keys[3]}}" data-amount="{{$category['Day pass']}}">{{$keys[3]}}</option>
-                                @endif
+                                @endif -->
                                 
                             @elseif($room == 'Upgrade to Single Deluxe Room')
 
@@ -86,9 +86,9 @@
                                 @if(isset($keys[1]) && $keys[1] == 'Upgrade to Suite' && \App\Helpers\commonHelper::countSuiteRoom() == false)
                                     <option value="{{$keys[1]}}" data-amount="{{$category['Upgrade to Suite']}}">{{$keys[1]}}</option>
                                 @endif
-                                @if(isset($keys[2]) && $keys[2] == 'Day pass')
+                                <!-- @if(isset($keys[2]) && $keys[2] == 'Day pass')
                                     <option value="{{$keys[2]}}" data-amount="{{$category['Day pass']}}">{{$keys[2]}}</option>
-                                @endif
+                                @endif -->
 
 
                                 @if(isset($keys[1]) && $keys[1] == 'Upgrade to Club Floor' && \App\Helpers\commonHelper::countClubFloorRoom() == false)
@@ -97,9 +97,9 @@
                                 @if(isset($keys[2]) && $keys[2] == 'Upgrade to Suite' && \App\Helpers\commonHelper::countSuiteRoom() == false)
                                     <option value="{{$keys[2]}}" data-amount="{{$category['Upgrade to Suite']}}">{{$keys[2]}}</option>
                                 @endif
-                                @if(isset($keys[3]) && $keys[3] == 'Day pass')
+                                <!-- @if(isset($keys[3]) && $keys[3] == 'Day pass')
                                     <option value="{{$keys[3]}}" data-amount="{{$category['Day pass']}}">{{$keys[3]}}</option>
-                                @endif
+                                @endif -->
                                 
                             @elseif($room == 'Upgrade to Club Floor')
 

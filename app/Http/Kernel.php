@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'UserCheckPassword' => \App\Http\Middleware\UserCheckPassword::class,
         'checkadminurl' => \App\Http\Middleware\CheckAdminUrl::class,
         'ConfigureCompanyDatabase' => \App\Http\Middleware\ConfigureCompanyDatabase::class,
+        'LogRoute' => \App\Http\Middleware\LogRoute::class,
     ];
 }
