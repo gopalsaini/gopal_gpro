@@ -4505,7 +4505,17 @@ class UserController extends Controller {
 										'Passport number', 
 										'Passport Issued by (Country)', 
 										'Current Residence/Travelling From (Country)',
-										'Status'
+										'Status',
+										'Arrival Airline Name',
+										'Arrival Flight Number',
+										'Arrival Date Time Of Arrival',
+										'Departure Airline Name',
+										'Departure Flight Number',
+										'Departure Date Time Of Arrival',
+										'Emergency Contact Name',
+										'Emergency Contact Phone',
+										'Would you like to be picked by GProCongress from Airport(PTY)',
+										'Would you like to be dropped by GProCongress at Airport(PTY)',
 									); 
 					fputcsv($f, $fields, $delimiter); 
 
@@ -4551,13 +4561,68 @@ class UserController extends Controller {
 							$admin_status = 'Passport Info Pending';
 						}
 
+						$result = \App\Models\User::with('TravelInfo')->where([['designation_id', 2], ['id', $row['user_id']]])->first();
+			
+
+						if($result['TravelInfo'] && $result['TravelInfo']['flight_details']) {
+
+							$flight_details = json_decode($result['TravelInfo']['flight_details']);
+							$logistics_dropped = $result['TravelInfo']['logistics_dropped'];
+							$logistics_picked = $result['TravelInfo']['logistics_picked'];
+							$emergency_mobile = $result['TravelInfo']['mobile'];
+							$emergency_name = $result['TravelInfo']['name'];
+
+							if(!empty($flight_details)){
+
+								$arrival_airline_name = '';
+								if(isset($flight_details->arrival_airline_name)){
+									$arrival_airline_name = $flight_details->arrival_airline_name;
+								}
+
+								$departure_airline_name = '';
+								if(isset($flight_details->departure_airline_name)){
+									$departure_airline_name = $flight_details->departure_airline_name;
+								}
+
+								$arrival_flight_number = $flight_details->arrival_flight_number;
+								$arrival_date_arrival = date('d-m-Y H:s:i',strtotime($flight_details->arrival_date_arrival));
+								$departure_flight_number = $flight_details->departure_flight_number;
+								$departure_date_departure = date('d-m-Y H:s:i',strtotime($flight_details->departure_date_departure));
+							}
+							
+						}else{
+
+							$logistics_dropped = '';
+							$logistics_picked = '';
+							$emergency_mobile = '';
+							$emergency_name = '';
+							$arrival_airline_name = '';
+							$arrival_flight_number = '';
+							$arrival_date_arrival = '';
+							$departure_airline_name = '';
+							$departure_flight_number = '';
+							$departure_date_departure = '';
+
+						}
+
+
 						$lineData = array(
 							($i), 
 							$name,
 							$row['passport_no'], 
 							$countryPass,
 							$country,
-							$admin_status
+							$admin_status,
+							$arrival_airline_name,
+							$arrival_flight_number,
+							$arrival_date_arrival,
+							$departure_airline_name,
+							$departure_flight_number,
+							$departure_date_departure,
+							$emergency_name,
+							$emergency_mobile,
+							$logistics_picked,
+							$logistics_dropped,
 						); 
 						
 						fputcsv($f, $lineData, $delimiter); 
@@ -4627,6 +4692,16 @@ class UserController extends Controller {
 									"Is your passport valid until May 31, 2024?",
 									'What countries among Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union you hold the Valid Visa?',
 									'Is your Visa Granted ?',
+									'Arrival Airline Name',
+									'Arrival Flight Number',
+									'Arrival Date Time Of Arrival',
+									'Departure Airline Name',
+									'Departure Flight Number',
+									'Departure Date Time Of Arrival',
+									'Emergency Contact Name',
+									'Emergency Contact Phone',
+									'Would you like to be picked by GProCongress from Airport(PTY)',
+									'Would you like to be dropped by GProCongress at Airport(PTY)',
 								); 
 				fputcsv($f, $fields, $delimiter); 
 
@@ -4666,6 +4741,50 @@ class UserController extends Controller {
 					}else{
 						$ResidenceProof = 'N/A';
 					}
+
+					$result = \App\Models\User::with('TravelInfo')->where([['designation_id', 2], ['id', $row['user_id']]])->first();
+			
+
+					if($result['TravelInfo'] && $result['TravelInfo']['flight_details']) {
+
+						$flight_details = json_decode($result['TravelInfo']['flight_details']);
+						$logistics_dropped = $result['TravelInfo']['logistics_dropped'];
+						$logistics_picked = $result['TravelInfo']['logistics_picked'];
+						$emergency_mobile = $result['TravelInfo']['mobile'];
+						$emergency_name = $result['TravelInfo']['name'];
+
+						if(!empty($flight_details)){
+
+							$arrival_airline_name = '';
+							if(isset($flight_details->arrival_airline_name)){
+								$arrival_airline_name = $flight_details->arrival_airline_name;
+							}
+
+							$departure_airline_name = '';
+							if(isset($flight_details->departure_airline_name)){
+								$departure_airline_name = $flight_details->departure_airline_name;
+							}
+
+							$arrival_flight_number = $flight_details->arrival_flight_number;
+							$arrival_date_arrival = date('d-m-Y H:s:i',strtotime($flight_details->arrival_date_arrival));
+							$departure_flight_number = $flight_details->departure_flight_number;
+							$departure_date_departure = date('d-m-Y H:s:i',strtotime($flight_details->departure_date_departure));
+						}
+						
+					}else{
+
+						$logistics_dropped = '';
+						$logistics_picked = '';
+						$emergency_mobile = '';
+						$emergency_name = '';
+						$arrival_airline_name = '';
+						$arrival_flight_number = '';
+						$arrival_date_arrival = '';
+						$departure_airline_name = '';
+						$departure_flight_number = '';
+						$departure_date_departure = '';
+
+					}
 					
 					$lineData = array(
 						($i), 
@@ -4681,6 +4800,17 @@ class UserController extends Controller {
 						$row['passport_valid'] == Null ? 'N/A' : $row['passport_valid'],
 						$ResidenceProof,
 						$row['visa_granted'] == Null ? 'N/A' : $row['visa_granted'],
+						
+						$arrival_airline_name,
+						$arrival_flight_number,
+						$arrival_date_arrival,
+						$departure_airline_name,
+						$departure_flight_number,
+						$departure_date_departure,
+						$emergency_name,
+						$emergency_mobile,
+						$logistics_picked,
+						$logistics_dropped,
 					); 
 					
 					fputcsv($f, $lineData, $delimiter); 

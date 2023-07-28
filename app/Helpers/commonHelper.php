@@ -1790,7 +1790,7 @@ class commonHelper{
 				'Request_Status' => "Estado de la Solicitud",
 				'Request_Approved_successfully' => "Solicitud Aprobada con éxito",
 				'Request_Declined_successfully' => "Solicitud Rechazada correctamente",
-				'Spouse_email_ID_message' => "Spouse email ID is not a candidate email ID, Please connect admin if you are spouse of this email ID.",
+				'Spouse_email_ID_message' => "El ID de correo electrónico del cónyuge no es un ID de un candidato, por favor, conéctese con el administrador si es el cónyuge de este ID de correo electrónico",
 				
 			);
 
@@ -2014,7 +2014,7 @@ class commonHelper{
 				'Request_Status' => "Statut de la demande",
 				'Request_Approved_successfully' => "Demande approuvée avec succès",
 				'Request_Declined_successfully' => "Demande rejetée avec succès",
-				'Spouse_email_ID_message' => "Spouse email ID is not a candidate email ID, Please connect admin if you are spouse of this email ID.",
+				'Spouse_email_ID_message' => "L'adresse électronique du conjoint/e n'est pas celle d'un candidat. Veuillez vous connecter à l'administrateur si vous êtes le conjoint/e de l'adresse électronique de cette personne",
 				
 				
 			);
@@ -2236,7 +2236,7 @@ class commonHelper{
 				'Request_Status' => "Estado do Pedido",
 				'Request_Approved_successfully' => "Pedido Aprovado com sucesso",
 				'Request_Declined_successfully' => "Pedido Recusado com sucesso",
-				'Spouse_email_ID_message' => "Spouse email ID is not a candidate email ID, Please connect admin if you are spouse of this email ID.",
+				'Spouse_email_ID_message' => "O e-mail do cônjuge não é o e-mail do candidato, Por favor, contacte o administrador se for o cônjuge deste e-mail",
 				
 				
 			);

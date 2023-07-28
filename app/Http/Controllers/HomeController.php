@@ -393,6 +393,17 @@ class HomeController extends Controller
 
     }
 
+    public function programs(Request $request) {
+
+        if(isset($_GET['lang']) && $_GET['lang'] !=  ''){
+            \App::setLocale($_GET['lang']);
+        }
+        \App\Helpers\commonHelper::setLocale();
+
+        return view('programs');
+
+    }
+
     public function localization(Request $request) {
 		if($request->ajax() && $request->isMethod('post')){
 

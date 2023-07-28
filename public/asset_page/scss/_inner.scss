@@ -1,0 +1,884 @@
+.au-banner-wrap{
+    .au-banner-slider{
+        position: relative;
+        .banner-cont{
+            position: absolute;
+            top: 50%;
+            // left: 50%;
+            transform:translateY(-50%);
+            width: 100%;
+            text-align: center;
+            z-index: 2;
+            h1{
+                color: $white-color;
+            }
+            ul{
+                display: flex;
+                column-gap: 54px;
+                justify-content: center;
+                margin-top: 40px;
+                li{
+                    color: $white-color;
+                    padding-left: 25px;
+                    position: relative;
+                    font-size: 30px;
+                    &::before{
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width:10px;
+                        height: 10px;
+                        border-radius: 50px;
+                        background-color: $white-color;
+                    }
+                }
+            }
+            .comm-btn{
+                margin-top: 65px !important;
+                min-width: 220px;
+                background-color: $primary-color2;
+                color: $white-color;
+            }
+        }
+        .item{
+            position: relative;
+            .img{
+                position: relative;
+                &::before{
+                    content: '';
+                    position:absolute;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(56, 13,54, 0.8);
+                }
+            }
+
+        }
+         .owl-dots{
+            display: block;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            bottom: 50px;
+            span{
+                width: 20px;
+                height: 20px;
+                background-color: transparent;
+                border: 1.5px solid rgba(255,255,255,0.5);
+                transition: $transition;
+                margin-right:0 ;
+            }
+            .owl-dot{
+                &:hover{
+                    span{
+                        background-color: $white-color;
+                    }
+                }
+                &.active{
+                    span{
+                        background-color: $white-color;
+                    }
+                }
+            }
+
+         }
+    }
+}
+
+/* president wrapper */
+.au-president-wrap{
+    padding: 160px 0 180px;
+    position: relative;
+    h2{
+        max-width: 1300px;
+        margin: 0 auto;
+        text-align: center;
+        font-family: $font-family2;
+        color: $primary-color1;
+        line-height: 55px;
+        margin-top: 40px;
+        font-weight: 500;
+    }
+    img{
+        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+    }
+    &:before{
+        content: '';
+        position: absolute;
+        width: 100%;
+        background-image: url("../images/president-bg.png");
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+}
+
+
+/* au schedule section  */
+.au-schedule-wrap{
+    padding: 90px 0;
+    .schedule-section-tab{
+        margin-top: 50px;
+        .nav-tabs{
+            justify-content: center;
+            border-bottom: 0;
+            column-gap: 30px;
+            margin-bottom: 35px;
+            .nav-item{
+                .nav-link{
+                    display: flex;
+                    border: 1px solid $border-color;
+                    column-gap: 15px;
+                    align-items: center;
+                    border-radius: 5px;
+                    position: relative;
+                    min-width: 255px;
+                    min-height: 87px;
+                    &:before{
+                        content: '';
+                        position: absolute;
+                        width: 32px;
+                        height: 32px;
+                        background-color: $primary-color2;
+                        clip-path: polygon(0 0, 0% 100%, 100% 0);
+                        left: -1px;
+                        bottom: -32px;
+                        opacity: 0;
+                    }
+                    .date{
+                        text-align: left;
+                        strong{
+                            font-size: $font-22;
+                            font-family: $font-family2;
+                            color: $primary-color2;
+                        }
+                        small{
+                            display: block;
+                            font-size: $font-14;
+                            color: rgba(1,1,1,0.5);
+                        }
+                    }
+                    &.active{
+                        background-color: $primary-color2;
+                        border-color:$primary-color2 ;
+                        border-bottom-left-radius: 0;
+                        &:before{
+                            opacity: 1;
+                        }
+                        strong{
+                            color: $white-color;
+                        }
+                        small{
+                            color: $white-color;
+                        }
+                        svg{
+                           path{
+                            fill: $white-color;
+                           }
+                        }
+                    }
+                    &:hover{
+                        background-color: $primary-color2;
+                        border-color:$primary-color2 ;
+                        border-bottom-left-radius: 0;
+                        &:before{
+                            opacity: 1;
+                        }
+                        strong{
+                            color: $white-color;
+                        }
+                        small{
+                            color: $white-color;
+                        }
+                        svg{
+                           path{
+                            fill: $white-color;
+                           }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    .schedule-detail{
+        padding: 50px 0;
+        border-bottom: 1px solid rgba(56, 13,54, 0.2);
+        transition: $transition;
+        .row{
+            row-gap: 25px;
+        }
+        img{
+            border-radius: 10px;
+        }
+        ul{
+            display: flex;
+            min-width: 450px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            width: fit-content;
+            column-gap: 60px;
+            li{
+                font-family: $font-family2;
+            }
+        }
+        h4{
+            font-weight: 500;
+            a{
+             font-family: $font-family2;
+             line-height: 39px;
+             color: $primary-color1;
+             display: inline-block;
+             text-transform: uppercase;
+             line-height: 47px;
+            }
+         }
+         p{
+             color: $text-color;
+             font-size: $font-20;
+             line-height: 30px;
+             margin-top: 15px;
+         }
+         .comm-btn{
+            background-color: $secondary-color;
+            color: $primary-color1;
+            margin-top: 15px;
+         }
+         .rm-btn{
+            display: inline-block;
+            color: $primary-color2;
+            font-family: $font-family1;
+            font-size: $font-20;
+            text-decoration: underline;
+        }
+        &:hover{
+            transform: scale(1.1);
+        }
+    }
+}
+
+/* search section */
+.search-wrap{
+    display: flex;
+    justify-content: space-between;
+    column-gap: 15px;
+    border: 1px solid #dddddd;
+    padding: 8px 8px 8px 30px;
+    box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.06);
+    border-radius: 5px;
+    background-color: $white-color;
+
+    .comm-btn{
+        background-color: $secondary-color;
+        min-width: 220px;
+        &:hover{
+            color: $black-color;
+        }
+    }
+    .input-box{
+        width: 100%;
+        display: flex;
+        align-items: center;
+        column-gap: 15px;
+        input{
+            width: 100%;
+            border: none;
+            &:focus-visible{
+                outline: 0;
+            }
+        }
+    }
+
+}
+
+/* bread crumb main */
+.bread-crumb-main{
+    background-image: url('../images/bread-crumb.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 165px 0;
+    text-align: center;
+    h2{
+        color: $white-color;
+    }
+    ol{
+        justify-content: center;
+        margin-top: 15px;
+        li{
+            color: $secondary-color;
+            font-size: $font-22;
+            &:before{
+                color: $secondary-color !important;
+            }
+            &.active{
+                color: $secondary-color;
+            }
+            a{
+                color: $secondary-color;
+            }
+            +li{
+                padding-left: 15px !important;
+                &:before{
+                    padding-right: 15px !important;
+                }
+            }
+        }
+    }
+}
+
+
+/* video player */
+.au-video-wrap{
+    padding: 80px 0;
+    .player-wrap{
+        width: 100%;
+        min-height: 600px;
+        iframe{
+            min-height: 600px;
+        }
+    }
+    video{
+        max-height: 618px;
+    }
+    .disp-img{
+        display: none !important;
+    }
+    .video-img{
+        position: absolute;
+        top: 0;
+        left: 0;
+        // img{
+        //     max-height: 100%;
+        //     border-radius: 10px;
+        //  }    
+        background-image: url('../images/video-img.webp');    
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100%;  
+    }
+    .btn-icon{
+        width: 70px;
+        height: 70px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        img{
+            position: relative;
+        }
+        &:before {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            left: 50%;
+            top: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            display: block;
+            width: 100px;
+            height: 100px;
+            background: #ba1f24;
+            border-radius: 50%;
+            animation: pulse-border 1500ms ease-out infinite;
+          }
+    }
+    h4{
+        color: $primary-color1;
+        margin-top: 30px;
+        font-weight: 600;
+    }
+    p{
+        font-size: $font-family1;
+        color: $text-color;
+        font-size: $font-18;
+        line-height: 28px;
+        margin-top: 24px;
+    }
+}
+
+
+
+/* contact page css start */
+.au-contact-wrap{
+    padding-top: 80px;
+    .contact-box{
+        background-image: url('../images/contact-address-bg.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        position: relative;
+        border-radius: 10px;
+        &:before{
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background-color: rgba(208, 31, 59, 0.9);
+            border-radius: 10px;
+        }
+        &:after{
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            right: -50px;
+            top: 50%;
+            background-color: $primary-color2;
+            transform: translateY(-50%);
+            clip-path: polygon(0 0, 0% 100%, 100% 50%);
+        }
+        ul{
+            position: relative;
+            padding: 70px 40px 70px 70px;
+            li{
+                display: flex;
+                align-items: flex-start;
+                column-gap: 15px;
+                +li{
+                    margin-top: 40px;
+                }
+                h5{
+                    font-size: $font-22;
+                    line-height: 24px;
+                    color: $white-color;
+                }
+                p{
+                    font-size: $font-18;
+                    line-height: 28px;
+                    font-family: $font-family1;
+                    color: $white-color;
+                    margin-top: 15px;
+                }
+                a{
+                    color: $white-color;
+                }
+            }
+        }
+    }
+    .map-area{
+        margin-left: 60px;
+    }
+}
+/* contact page css end */
+
+/* magnific popup */
+.au-image-wrap{
+    .image{
+        overflow: hidden;
+        width: 100%;
+        position: relative;
+        margin-top: 30px;
+        img{
+            border-radius: 5px;
+        }
+        &:before{
+            content: "";
+            background: #fff;
+            height: 0;
+            width: 0;
+            z-index: 1;
+            right: 0;
+            opacity: 0.7;
+            top: 0;
+            position: absolute;
+            transition-duration: 1.3s !important;
+        }
+        &:after{
+            content: "";
+            position: absolute;
+            background: #fff;
+            height: 0;
+            width: 0;
+            z-index: 1;
+            bottom: 0;
+            opacity: 0.7;
+            left: 0;
+            transition-duration: 1.3s !important;
+        }
+        &:hover{
+            &:before, &:after{
+                height: 100%;
+                opacity: 0;
+                width: 100%;
+            }
+        }
+    }
+}
+
+.au-form-wrap{
+    background-image: url('../images/form-bg.png');
+    background-position: center;
+    background-size: cover;
+    padding: 150px 0 100px;
+    margin-top: 105px;
+    .form-main{
+        background-color: $white-color;
+        box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.06);
+        border-radius: 5px;
+        padding: 50px;
+        .comm-btn{
+            background-color: $secondary-color;
+            font-weight: 600;
+            color: $primary-color1;
+        }
+    }
+    .contact-detail{
+        background: linear-gradient(90deg, #D01F3B 0%, #D01F3B 0.01%, #380D36 100%);
+        border-radius: 5px;
+        padding: 20px;
+        ul{
+            li{
+                text-align: center;
+                border-bottom:1px solid rgba(255,255,255,0.2);
+                padding: 30px 0;
+                p{
+                    font-size: $font-22;
+                    font-weight: 700;
+                    line-height: 24px;
+                    color: $white-color;
+                    margin: 20px 0 15px;
+                }
+                small{
+                    font-size: $font-16;
+                    line-height: 17px;
+                    color: $white-color;
+                }
+            }
+        }
+    }
+}
+
+
+/* modal Scss */
+.modal-wrap{
+    .select-main{
+        
+    }
+}
+
+@keyframes pulse-border {
+    0% {
+      transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateX(-50%) translateY(-50%) translateZ(0) scale(1.5);
+      opacity: 0;
+    }
+  }
+
+@include for-1440{
+    .au-president-wrap {
+        padding: 100px 0;
+        h2{
+            font-size: 30px;
+            line-height: 45px;
+        }
+    }
+}
+
+@include for-1366{
+    .tl-content{
+        top:35%;
+    }
+}
+
+@include for-1199{
+    h1{
+        font-size: 70px;
+    }
+    .au-banner-wrap {
+        .au-banner-slider {
+            .banner-cont {
+                ul{
+                    margin-top: 25px;
+                    li{
+                        font-size: 16px;
+                    }
+                }
+                .comm-btn{
+                    margin-top: 35px !important;
+                 }
+            }
+
+        }
+    }
+    .au-schedule-wrap .schedule-section-tab  .schedule-detail ul{
+        flex-wrap: wrap;
+        row-gap: 10px;
+        margin-bottom: 12px;
+        min-width:auto;
+    }
+    .au-schedule-wrap .schedule-section-tab  {
+        h4{
+            font-size: 20px;
+            a{
+                line-height: 30px;
+            }
+        }
+        p{
+            font-size: 16px;
+            line-height: 27px;
+            margin-top: 10px;
+        }
+    }
+}
+
+@include for-991{
+    .au-president-wrap h2 {
+        font-size: 20px;
+        line-height: 35px;
+    }
+    .comm-heading h2{
+        font-size: 28px;
+    }
+    .au-schedule-wrap .schedule-section-tab .nav-tabs{
+        flex-direction: column;
+        row-gap: 20px;
+        button{
+            width: 100%;
+        }
+       .nav-item {
+        .nav-link{
+            &.active{
+                border-bottom-left-radius: 5px;
+                &:before{
+                    display: none;
+                }
+
+            }
+        }
+       }
+    }
+    .au-contact-wrap {
+        
+        .contact-box{
+            margin-bottom: 30px;
+            &:after{
+                display: none;
+            }
+        }
+        .map-area{
+            margin-left: 0;
+        }
+    }
+    .au-form-wrap{
+        padding: 80px 0;
+    }
+    #timeline{
+        flex-wrap: wrap;
+        .tl-item{
+            width: 50%;
+            &:hover{
+                width: 50%;
+            }
+        }
+        &:hover{
+            width: 100%;
+        }
+    }
+    .tl-item:hover {
+        width: 50% !important;
+    }
+    #timeline:hover .tl-item {
+        width: 50%;
+    }
+}
+
+@include for-767{
+    .au-banner-wrap {
+        .au-banner-slider {
+            h1{
+                font-size: 40px;
+            }
+            .owl-dots{
+                bottom: 25px;
+            }
+        }
+    }
+    #timeline{
+        flex-wrap: wrap;
+        .tl-item{
+            width: 100%;
+            &:hover{
+                width: 100%;
+            }
+        }
+        &:hover{
+            width: 100%;
+        }
+    }
+    .tl-item:hover {
+        width: 100% !important;
+    }
+    #timeline:hover .tl-item {
+        width: 100%;
+    }
+    
+}
+@include for-576{
+    .au-banner-wrap {
+        .au-banner-slider {
+            .banner-cont ul {
+                margin: 20px auto;
+                flex-direction: column;
+                max-width: 280px;
+                li {
+                    font-size: 16px;
+                    text-align: left;
+                }
+            }
+            h1 {
+                font-size: 22px;
+                // text-align: left;
+                margin: 0 20px;
+            }
+            .item {
+                .img{
+                    img{
+                        min-height: 330px;
+                    }
+                }
+
+                .comm-btn{
+                    min-width: 180px;
+                    margin-top: 15px !important;
+                    font-size: 16px;
+                }
+            }
+             .owl-dots {
+                bottom: 5px;
+            }
+        }
+    }
+    .comm-heading {
+        margin: 0 auto;
+        h2 {
+            font-size: 20px; 
+        }
+        &:before{
+            left: -15px;
+        }
+        &:after{
+            right: -15px;
+        }
+    }
+    .au-schedule-wrap .schedule-section-tab .nav-tabs .nav-item .nav-link {
+        .date{
+            strong{
+                font-size: 16px;
+            }
+            small{
+                line-height: 20px;
+            }
+        }
+        svg{
+            width: 30px;
+        }
+    }
+    .au-schedule-wrap .schedule-section-tab .tab-content h4 {
+        font-size: 16px;
+        a{
+            line-height: 26px;
+        }
+    }
+    .au-schedule-wrap {
+        padding: 50px 0;
+    }
+    .au-schedule-wrap  .schedule-detail{
+        padding: 25px 0;
+        &:hover{
+            transform: scale(1);
+        }
+    }
+    .au-schedule-wrap .schedule-section-tab .nav-tabs{
+        margin-bottom: 15px;
+    }
+    .au-schedule-wrap  .schedule-detail ul li{
+        font-size: 16px;
+    }
+    .search-wrap{
+        flex-wrap: wrap;
+        row-gap: 15px;
+        border: 0;
+        box-shadow: none;
+        background-color: transparent;
+        padding: 0;
+        .input-box{
+            border: 1px solid #dddddd;
+            border-radius: 5px;
+            height: 60px;
+            padding:10px 30px ;
+            background-color: $white-color;
+        }
+    }
+    .bread-crumb-main{
+        padding: 65px 0;
+        h2{
+            font-size: 30px;
+        }
+    }
+    .contact-field{
+        flex-wrap: wrap;
+        row-gap: 20px;
+    }
+}
+
+@include for-480{
+    .au-president-wrap {
+        padding: 50px 0;
+        h2 {
+            font-size: 18px;
+            line-height: 32px;
+            margin-top: 20px;
+        }
+    }
+    .au-form-wrap .form-main{
+        padding: 30px 20px;
+    }
+}
+.one{
+    display: none;
+    padding: 15px 0;
+    &.option-checked {
+        display: block;
+    }
+    .row{
+        row-gap: 15px;
+    }
+}
+.child-area{
+    display:flex;
+    align-items: center;
+    column-gap:20px;
+    label{
+        min-width: 60px;
+        margin: 0;
+    }
+    
+}
+
+.select-child{
+    display: flex;
+    align-items: center;
+    column-gap: 10px;
+    flex-wrap: wrap;
+    
+}
+
+@include for-380{
+    .comm-heading {
+        margin: 0 auto;
+    }
+}

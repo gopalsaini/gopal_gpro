@@ -4,6 +4,7 @@
 @section('title',__('travel-information'))
 
 @section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css">
 <style>
     .step-form .detail-wrap {
         /* display: block !important; */
@@ -603,7 +604,7 @@
                                                     <div class="info">
                                                         
                                                         <h6>@lang('web/home.date-time-of-arrival') :</h6><br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['arrival_date_arrival'])) {{$travelInfo['result']['arrival_date_arrival']}} @endif</p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['arrival_date_arrival'])) {{date('Y-m-d H:i',strtotime($travelInfo['result']['arrival_date_arrival']))}} @endif</p>
 
                                                     </div>
                                                 </div>
@@ -635,7 +636,7 @@
                                                     <div class="info">
                                                         
                                                         <h6>@lang('web/home.date-time-of-departure') :</h6><br>
-                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['departure_date_departure'])) {{$travelInfo['result']['departure_date_departure']}} @endif </p>
+                                                        <p>&nbsp;&nbsp;@if($travelInfo['result'] && isset($travelInfo['result']['departure_date_departure'])) {{date('Y-m-d H:i',strtotime($travelInfo['result']['departure_date_departure']))}} @endif </p>
 
                                                         
                                                     </div>
@@ -789,7 +790,7 @@
                                                     <div class="info">
                                                         <div class="information-box">
                                                             <h6>@lang('web/home.date-time-of-arrival') <span style="color:red">*</span></h6>
-                                                            <p><input type="datetime-local" name="arrival_date_arrival" required value="@if($travelInfo['result'] && $travelInfo['result']['arrival_date_arrival']) {{$travelInfo['result']['arrival_date_arrival']}} @endif" class="mt-2" ></p>
+                                                            <p><input type="text" id="datetimepicker" name="arrival_date_arrival" required value="@if($travelInfo['result'] && $travelInfo['result']['arrival_date_arrival']) {{$travelInfo['result']['arrival_date_arrival']}} @else {{date('Y-m-d H:i')}} @endif" class="mt-2" ></p>
 
                                                         </div>
                                                     </div>
@@ -815,7 +816,7 @@
                                                         <div class="information-box">
                                                             <h6>@lang('web/home.flight-number') <span style="color:red">*</span></h6>
                                                             
-                                                            <p><input type="text" name="departure_flight_number" required value="@if($travelInfo['result'] && $travelInfo['result']['departure_flight_number']) {{$travelInfo['result']['departure_flight_number']}} @endif" placeholder="@lang('web/home.flight-number')" class="mt-2" ></p>
+                                                            <p><input type="text"  name="departure_flight_number" required value="@if($travelInfo['result'] && $travelInfo['result']['departure_flight_number']) {{$travelInfo['result']['departure_flight_number']}} @endif" placeholder="@lang('web/home.flight-number')" class="mt-2" ></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -823,7 +824,7 @@
                                                     <div class="info">
                                                         <div class="information-box">
                                                             <h6>@lang('web/home.date-time-of-departure') <span style="color:red">*</span></h6>
-                                                            <p><input type="datetime-local" name="departure_date_departure" required value="@if($travelInfo['result'] && $travelInfo['result']['departure_date_departure']) {{$travelInfo['result']['departure_date_departure']}} @endif" class="mt-2" ></p>
+                                                            <p><input type="text" id="datetimepicker1" name="departure_date_departure" required value="@if($travelInfo['result'] && $travelInfo['result']['departure_date_departure']) {{$travelInfo['result']['departure_date_departure']}} @else {{date('Y-m-d H:i')}} @endif" class="mt-2" ></p>
 
                                                         </div>
                                                     </div>
@@ -1084,6 +1085,8 @@
 
 @push('custom_js')
 
+<!-- Datepicker library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
 <script>
 
     $('.test').fSelect();
@@ -1378,4 +1381,18 @@
     });
 
 </script>
+
+<script>
+    $(document).ready(function() {
+       
+        $('#datetimepicker').datetimepicker({
+            format: 'Y-m-d H:i', 
+            step: 5, 
+        });
+        $('#datetimepicker1').datetimepicker({
+            format: 'Y-m-d H:i', 
+            step: 5, 
+        });
+    });
+  </script>
 @endpush
