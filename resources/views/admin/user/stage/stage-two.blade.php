@@ -56,9 +56,9 @@
             </div>
             <div class="col-sm-7">
                 <div class="list-group flex-row" id="list-tab" role="tablist">
-                    <a href="{{ url('admin/user/stage-two-download-excel-passport') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-file me-2"></i>Reach Report </a>
+                    <!-- <a href="{{ url('admin/user/stage-two-download-excel-passport') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-file me-2"></i>Reach Report </a> -->
                     <a href="{{ route('admin.user.add') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-plus me-2" ></i>Send Invitation</a>
-                    <a href="{{ url('admin/user/transaction-data/download') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-plus me-2"></i>Data Download</a>
+                    <a href="{{ url('admin/user/transaction-data/download') }}" class="btn btn-outline-primary" style="font-size: 11px;margin: 2px;"><i class="fas fa-plus me-2"></i>Transaction Reports</a>
                 </div>
             </div>
         </div>

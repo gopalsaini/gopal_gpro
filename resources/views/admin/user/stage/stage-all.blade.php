@@ -49,7 +49,7 @@
             <div class="col-sm-3">
                 <div class="bookmark">
                     <ul>
-                        <a href="{{ url('admin/user/stage-all-download-excel-file') }}" class="btn btn-outline-primary"><i class="fas fa-file me-2"></i>Download Report</a>
+                        <a href="{{ url('admin/user/stage-all-download-excel-file') }}" class="btn btn-outline-primary"><i class="fas fa-file me-2"></i>REACH GLOBAL REPORT</a>
                     </ul>
                 </div>
             </div>

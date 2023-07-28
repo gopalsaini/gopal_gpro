@@ -2818,24 +2818,24 @@ class PreLoginController extends Controller {
 		$msg = $userDataSet;
 		$result = array();
 		$to = 'vineet@d2rtech.com';
-		// if($userDataSet) {
+		if($userDataSet) {
 				
-		// 	\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
-		// 		$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
-		// 		$message->subject($subject);
-		// 		$message->to($to);
-		// 	});
+			\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
+				$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
+				$message->subject($subject);
+				$message->to($to);
+			});
 
 
-		// } else {
-		// 	$subject = 'Cron Job Ran - '.date('d-m-Y H:i:s').' - No Records';
-		// 	$msg='No records Updated';
-		// 	\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
-		// 		$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
-		// 		$message->subject($subject);
-		// 		$message->to($to);
-		// 	});
-		// }
+		} else {
+			$subject = 'Cron Job Ran - '.date('d-m-Y H:i:s').' - No Records';
+			$msg='No records Updated';
+			\Mail::send('email_templates.mail', compact('to', 'subject', 'msg', 'result'), function($message) use ($to, $subject) {
+				$message->from(env('MAIL_FROM_ADDRESS'), 'GProCongress II Team');
+				$message->subject($subject);
+				$message->to($to);
+			});
+		}
 
 
 		echo 'done';

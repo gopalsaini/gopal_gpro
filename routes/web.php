@@ -26,7 +26,6 @@ Route::get('visa-eligibility-wizard', "HomeController@visaEligibilityWizard");
 
 Route::get('pricing', "PricingController@index")->name('pricing');
 Route::get('donate', "HomeController@donate")->name('donate');
-Route::get('programs', "HomeController@programs")->name('programs');
 Route::get('attend-the-congress', "HomeController@attendTheCongress")->name('attend-the-congress');
 Route::get('information/{slug}', "HomeController@information")->name('information');
 Route::get('faq', "HomeController@faq")->name('faq');
@@ -428,58 +427,6 @@ Route::group(['prefix'=>'admin','as'=>'admin','middleware'=>['auth','checkadminu
 		Route::get('edit/{id}', 'Admin\RoleController@edit')->name('edit');
 		Route::get('delete/{id}', 'Admin\RoleController@delete')->name('delete');
 		Route::post('status', 'Admin\RoleController@status')->name('status');
-	});
-
-	// plenary-groups
-	Route::group(['prefix'=>'plenary-groups', 'as'=>'plenary-groups.'], function() {
-		Route::match(['get','post'], 'add', 'Admin\PlenaryGroupsController@add')->name('add');
-		Route::get('list', 'Admin\PlenaryGroupsController@list')->name('list');
-		Route::get('edit/{id}', 'Admin\PlenaryGroupsController@edit')->name('edit');
-		Route::get('delete/{id}', 'Admin\PlenaryGroupsController@delete')->name('delete');
-		Route::post('status', 'Admin\PlenaryGroupsController@status')->name('status');
-		Route::post("get-user-data","Admin\PlenaryGroupsController@getGroupUsersList")->name('get-user-data');
-	});
-
-
-	// plenary-groups
-	Route::group(['prefix'=>'regional-affinity', 'as'=>'regional_affinity.'], function() {
-		Route::match(['get','post'], 'add', 'Admin\RegionalAffinityController@add')->name('add');
-		Route::get('list', 'Admin\RegionalAffinityController@list')->name('list');
-		Route::get('edit/{id}', 'Admin\RegionalAffinityController@edit')->name('edit');
-		Route::get('delete/{id}', 'Admin\RegionalAffinityController@delete')->name('delete');
-		Route::post('status', 'Admin\RegionalAffinityController@status')->name('status');
-		Route::post("get-user-data","Admin\RegionalAffinityController@getGroupUsersList")->name('get-user-data');
-
-	});
-	// Sector Tracks 
-	Route::group(['prefix'=>'sector-tracks', 'as'=>'Sector_Tracks.'], function() {
-		Route::match(['get','post'], 'add', 'Admin\SectorTracksController@add')->name('add');
-		Route::get('list', 'Admin\SectorTracksController@list')->name('list');
-		Route::get('edit/{id}', 'Admin\SectorTracksController@edit')->name('edit');
-		Route::get('delete/{id}', 'Admin\SectorTracksController@delete')->name('delete');
-		Route::post('status', 'Admin\SectorTracksController@status')->name('status');
-		Route::post("get-user-data","Admin\SectorTracksController@getGroupUsersList")->name('get-user-data');
-
-	});
-	// Sector Tracks 
-	Route::group(['prefix'=>'delivery-affinity', 'as'=>'Delivery_Affinity.'], function() {
-		Route::match(['get','post'], 'add', 'Admin\DeliveryAffinityController@add')->name('add');
-		Route::get('list', 'Admin\DeliveryAffinityController@list')->name('list');
-		Route::get('edit/{id}', 'Admin\DeliveryAffinityController@edit')->name('edit');
-		Route::get('delete/{id}', 'Admin\DeliveryAffinityController@delete')->name('delete');
-		Route::post('status', 'Admin\DeliveryAffinityController@status')->name('status');
-		Route::post("get-user-data","Admin\DeliveryAffinityController@getGroupUsersList")->name('get-user-data');
-
-	});
-	// Content Affinity 
-	Route::group(['prefix'=>'content-affinity', 'as'=>'Content_Affinity.'], function() {
-		Route::match(['get','post'], 'add', 'Admin\ContentAffinityController@add')->name('add');
-		Route::get('list', 'Admin\ContentAffinityController@list')->name('list');
-		Route::get('edit/{id}', 'Admin\ContentAffinityController@edit')->name('edit');
-		Route::get('delete/{id}', 'Admin\ContentAffinityController@delete')->name('delete');
-		Route::post('status', 'Admin\ContentAffinityController@status')->name('status');
-		Route::post("get-user-data","Admin\ContentAffinityController@getGroupUsersList")->name('get-user-data');
-
 	});
 
 	

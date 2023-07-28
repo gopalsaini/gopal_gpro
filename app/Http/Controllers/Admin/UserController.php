@@ -3890,11 +3890,13 @@ class UserController extends Controller {
 
 	}
 
+
+	
 	public function stageAllDownloadExcelFile(Request $request){
 
 		// try{
 
-			$result = \App\Models\User::with('TravelInfo')->where([['designation_id', 2], ['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc')->get();
+			$result = \App\Models\User::with('TravelInfo')->where([['parent_id', NULL], ['added_as', NULL]])->orderBy('updated_at', 'desc')->get();
 			
 			if($result->count()==0){
 
@@ -3911,6 +3913,7 @@ class UserController extends Controller {
 					//$f = fopen('php://memory', 'w');
 					$fields = array('Id', 'Current Stage', 
 										'Candidate Name', 
+										'Designation',
 										'Candidate email Address', 
 										'Candidate Mobile Number', 
 										'Country', 
@@ -3961,6 +3964,7 @@ class UserController extends Controller {
 										'Emergency Contact Phone',
 										'Would you like to be picked by GProCongress from Airport(PTY)',
 										'Would you like to be dropped by GProCongress at Airport(PTY)',
+										'Role',
 									); 
 					fputcsv($f, $fields, $delimiter); 
 
@@ -4147,8 +4151,22 @@ class UserController extends Controller {
 							
 						}
 
+						$roleData = '';
+						if($row['role_id']){
+							$roles = explode(',',$row['role_id']);
+							foreach($roles as $role){
+								
+								$roles = \App\Models\Role::where('id',$role)->where('status','1')->first();
+								if($roles){
+									$roleData.= $roles->name.',';
+								}
+
+							}
+						}
+
 						$lineData = array(($i), 'Stage '.$row['stage'], 
 						$row['name'].' '.$row['last_name'], 
+						\App\Helpers\commonHelper::getDesignationName($row['designation_id']), 
 						$row['email'], 
 						$mobile, 
 						\App\Helpers\commonHelper::getCountryNameById($row['contact_country_id']), 
@@ -4195,6 +4213,7 @@ class UserController extends Controller {
 						$emergency_mobile,
 						$logistics_picked,
 						$logistics_dropped,
+						rtrim($roleData,",")
 					); 
 						
 						fputcsv($f, $lineData, $delimiter); 
@@ -4389,8 +4408,23 @@ class UserController extends Controller {
 									
 								}
 
+								$roleData = '';
+								if($val['role_id']){
+									$roles = explode(',',$val['role_id']);
+									foreach($roles as $role){
+										
+										$roles = \App\Models\Role::where('id',$role)->where('status','1')->first();
+										if($roles){
+											$roleData.= $roles->name.',';
+										}
+
+									}
+								}
+
+								
 								$lineData = array(($i), 'Stage '.$val['stage'], 
-									$val['name'].' '.$val['last_name'], 
+									$val['name'].' '.$val['last_name'],
+									\App\Helpers\commonHelper::getDesignationName($val['designation_id']), 
 									$val['email'], 
 									$mobile, 
 									\App\Helpers\commonHelper::getCountryNameById($val['contact_country_id']), 
@@ -4437,6 +4471,7 @@ class UserController extends Controller {
 									$emergency_mobile,
 									$logistics_picked,
 									$logistics_dropped,
+									rtrim($roleData,",")
 								); 
 								fputcsv($f, $lineData, $delimiter);
 
@@ -4484,7 +4519,7 @@ class UserController extends Controller {
 
 		try{
 
-			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->where('users.designation_id', '2')->orderBy('updated_at', 'desc');
+			$query = \App\Models\PassportInfo::select('passport_infos.*','users.language')->join('users','users.id','=','passport_infos.user_id')->orderBy('updated_at', 'desc');
 
 			$result = $query->get();
 			
@@ -4516,6 +4551,7 @@ class UserController extends Controller {
 										'Emergency Contact Phone',
 										'Would you like to be picked by GProCongress from Airport(PTY)',
 										'Would you like to be dropped by GProCongress at Airport(PTY)',
+										
 									); 
 					fputcsv($f, $fields, $delimiter); 
 
@@ -4561,7 +4597,7 @@ class UserController extends Controller {
 							$admin_status = 'Passport Info Pending';
 						}
 
-						$result = \App\Models\User::with('TravelInfo')->where([['designation_id', 2], ['id', $row['user_id']]])->first();
+						$result = \App\Models\User::with('TravelInfo')->where([['id', $row['user_id']]])->first();
 			
 
 						if($result['TravelInfo'] && $result['TravelInfo']['flight_details']) {
@@ -4604,7 +4640,6 @@ class UserController extends Controller {
 							$departure_date_departure = '';
 
 						}
-
 
 						$lineData = array(
 							($i), 
@@ -4692,16 +4727,6 @@ class UserController extends Controller {
 									"Is your passport valid until May 31, 2024?",
 									'What countries among Canada, the United States of America, the Commonwealth of Australia, the Republic of Korea, the State of Japan, the United Kingdom of Great Britain and Northern Ireland, Republic of Singapore, or any of the States that make up the European Union you hold the Valid Visa?',
 									'Is your Visa Granted ?',
-									'Arrival Airline Name',
-									'Arrival Flight Number',
-									'Arrival Date Time Of Arrival',
-									'Departure Airline Name',
-									'Departure Flight Number',
-									'Departure Date Time Of Arrival',
-									'Emergency Contact Name',
-									'Emergency Contact Phone',
-									'Would you like to be picked by GProCongress from Airport(PTY)',
-									'Would you like to be dropped by GProCongress at Airport(PTY)',
 								); 
 				fputcsv($f, $fields, $delimiter); 
 
@@ -4741,50 +4766,6 @@ class UserController extends Controller {
 					}else{
 						$ResidenceProof = 'N/A';
 					}
-
-					$result = \App\Models\User::with('TravelInfo')->where([['designation_id', 2], ['id', $row['user_id']]])->first();
-			
-
-					if($result['TravelInfo'] && $result['TravelInfo']['flight_details']) {
-
-						$flight_details = json_decode($result['TravelInfo']['flight_details']);
-						$logistics_dropped = $result['TravelInfo']['logistics_dropped'];
-						$logistics_picked = $result['TravelInfo']['logistics_picked'];
-						$emergency_mobile = $result['TravelInfo']['mobile'];
-						$emergency_name = $result['TravelInfo']['name'];
-
-						if(!empty($flight_details)){
-
-							$arrival_airline_name = '';
-							if(isset($flight_details->arrival_airline_name)){
-								$arrival_airline_name = $flight_details->arrival_airline_name;
-							}
-
-							$departure_airline_name = '';
-							if(isset($flight_details->departure_airline_name)){
-								$departure_airline_name = $flight_details->departure_airline_name;
-							}
-
-							$arrival_flight_number = $flight_details->arrival_flight_number;
-							$arrival_date_arrival = date('d-m-Y H:s:i',strtotime($flight_details->arrival_date_arrival));
-							$departure_flight_number = $flight_details->departure_flight_number;
-							$departure_date_departure = date('d-m-Y H:s:i',strtotime($flight_details->departure_date_departure));
-						}
-						
-					}else{
-
-						$logistics_dropped = '';
-						$logistics_picked = '';
-						$emergency_mobile = '';
-						$emergency_name = '';
-						$arrival_airline_name = '';
-						$arrival_flight_number = '';
-						$arrival_date_arrival = '';
-						$departure_airline_name = '';
-						$departure_flight_number = '';
-						$departure_date_departure = '';
-
-					}
 					
 					$lineData = array(
 						($i), 
@@ -4800,17 +4781,6 @@ class UserController extends Controller {
 						$row['passport_valid'] == Null ? 'N/A' : $row['passport_valid'],
 						$ResidenceProof,
 						$row['visa_granted'] == Null ? 'N/A' : $row['visa_granted'],
-						
-						$arrival_airline_name,
-						$arrival_flight_number,
-						$arrival_date_arrival,
-						$departure_airline_name,
-						$departure_flight_number,
-						$departure_date_departure,
-						$emergency_name,
-						$emergency_mobile,
-						$logistics_picked,
-						$logistics_dropped,
 					); 
 					
 					fputcsv($f, $lineData, $delimiter); 

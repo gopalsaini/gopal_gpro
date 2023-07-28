@@ -24,12 +24,11 @@ class LogRoute
             'URI' => $request->getUri(),
             'METHOD' => $request->getMethod(),
             'REQUEST_BODY' => $request->all(),
-            'Header_BODY' => $request->all(),
             'RESPONSE' => $response->getContent()
         ];
 
         config(['logging.channels.ErrorLog.path' => storage_path('logs/ErrorLog/'.time().'.log')]);
-	    \Log::channel('ErrorLog')->info(json_encode($log));
+	    \Log::channel('ErrorLog')->info($log);
     
         return $response;
     }
